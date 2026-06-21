@@ -12,8 +12,8 @@ export const SETTINGS = {
     "innerOutlineColor": "none"
   },
   "subtitle": {
-    "bottomOffset": 40,
-    "maxWidthPercent": 55,
+    "bottomOffset": 300,
+    "maxWidthPercent": 80,
     "maxWidthPixels": 1000,
     "outlineWidth": 14,
     "innerOutlineWidth": 8
@@ -29,13 +29,13 @@ export const SETTINGS = {
     "bottomPadding": 0
   },
   "video": {
-    "width": 1920,
-    "height": 1080,
+    "width": 1080,
+    "height": 1920,
     "fps": 30,
-    "playbackRate": 1.2
+    "playbackRate": 1.5
   },
   "colors": {
-    "background": "#ffffff",
+    "background": "#000000",
     "text": "#ffffff",
     "zundamon": "#228B22",
     "metan": "#FF1493"
@@ -44,6 +44,10 @@ export const SETTINGS = {
 
 // キャラクターごとの利用可能な画像ファイル
 export const AVAILABLE_IMAGES: Record<string, string[]> = {
+  "kuro_zunda": [
+    "mouth_close.png",
+    "mouth_open.png"
+  ],
   "metan": [
     "mouth_close.png",
     "mouth_open.png"

@@ -10,6 +10,7 @@ const parser = loadDefaultJapaneseParser();
 interface SubtitleProps {
   text: string;
   character: CharacterId;
+  durationInFrames: number;
 }
 
 // BudouXで分割したテキストをレンダリングするコンポーネント
@@ -41,17 +42,29 @@ const BudouXText = ({ text }: { text: string }) => {
   );
 };
 
-export const Subtitle: React.FC<SubtitleProps> = ({ text, character }) => {
+export const Subtitle: React.FC<SubtitleProps> = ({ text, character, durationInFrames }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   // 設定から値を取得
   const { font, subtitle, colors } = SETTINGS;
 
-  // フェードインアニメーション
-  const opacity = interpolate(frame, [0, fps * 0.15], [0, 1], {
-    extrapolateRight: "clamp",
-  });
+  const fadeFrames = fps * 0.2; // フェードの長さ（0.2秒）
+  const fadeOutStart = durationInFrames - fadeFrames;
+
+  // フェードイン：下から上へ / フェードアウト：上へ抜ける
+  const opacity = interpolate(
+    frame,
+    [0, fadeFrames, fadeOutStart, durationInFrames],
+    [0, 1, 1, 0],
+    { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
+  );
+  const translateY = interpolate(
+    frame,
+    [0, fadeFrames, fadeOutStart, durationInFrames],
+    [30, 0, 0, -30],
+    { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
+  );
 
   // キャラクター色を取得
   const characterColor = character === "zundamon" ? colors.zundamon : colors.metan;
@@ -80,7 +93,7 @@ export const Subtitle: React.FC<SubtitleProps> = ({ text, character }) => {
         position: "absolute",
         bottom: subtitle.bottomOffset,
         left: "50%",
-        transform: "translateX(-50%)",
+        transform: `translateX(-50%) translateY(${translateY}px)`,
         opacity,
         width: `${subtitle.maxWidthPercent}%`,
         maxWidth: subtitle.maxWidthPixels,

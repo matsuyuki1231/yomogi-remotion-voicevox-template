@@ -34,10 +34,10 @@ font:
 subtitle:
   # 画面下からの位置（ピクセル）
   # コンテンツと被らないように調整
-  bottomOffset: 40
+  bottomOffset: 300
 
   # 字幕の最大幅（パーセント）
-  maxWidthPercent: 55
+  maxWidthPercent: 80
 
   # 字幕の最大幅（ピクセル上限）
   maxWidthPixels: 1000
@@ -86,17 +86,17 @@ content:
 # 動画基本設定
 # -------------------------------------------
 video:
-  width: 1920
-  height: 1080
+  width: 1080
+  height: 1920
   fps: 30
   # 再生速度（音声生成時に考慮）
-  playbackRate: 1.2
+  playbackRate: 1.5
 
 # -------------------------------------------
 # カラー設定（黒板風デザイン）
 # -------------------------------------------
 colors:
-  background: "#ffffff"    # 外側の白背景
+  background: "#000000"    # 黒背景
   text: "#ffffff"          # 白文字
   zundamon: "#228B22"      # フォレストグリーン（暗め）
   metan: "#FF1493"         # ディープピンク

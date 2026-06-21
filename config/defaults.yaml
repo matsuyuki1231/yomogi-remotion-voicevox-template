@@ -12,3 +12,8 @@ automation:
   voiceOnSave: false
   # voiceFileを自動命名（{id}_{character}.wav）
   autoVoiceFileName: true
+
+bgm:
+  src: "BGM_-_135_-_Melancholic_New_York.mp3"
+  volume: 0.2
+  loop: true

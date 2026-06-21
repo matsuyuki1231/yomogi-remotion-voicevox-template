@@ -88,14 +88,24 @@ async function synthesize(
   return response.arrayBuffer();
 }
 
-// WAVファイルの長さを取得（秒）
+// WAVファイルの長さを取得（秒） - WAVヘッダーから直接読み取り
 function getWavDuration(filePath: string): number {
   try {
-    const result = execSync(
-      `python3 -c "import wave; w=wave.open('${filePath}','r'); print(w.getnframes()/w.getframerate())"`,
-      { encoding: "utf-8" }
-    );
-    return parseFloat(result.trim());
+    const buf = fs.readFileSync(filePath);
+    // byte rate = bytes 28-31, data chunk size = bytes 40-43
+    const byteRate = buf.readUInt32LE(28);
+    // "data" チャンクを探す（fmt チャンクサイズが可変の場合に対応）
+    let dataOffset = 12;
+    while (dataOffset < buf.length - 8) {
+      const chunkId = buf.toString("ascii", dataOffset, dataOffset + 4);
+      const chunkSize = buf.readUInt32LE(dataOffset + 4);
+      if (chunkId === "data") {
+        return chunkSize / byteRate;
+      }
+      dataOffset += 8 + chunkSize;
+    }
+    console.error(`Failed to find data chunk in ${filePath}`);
+    return 0;
   } catch (e) {
     console.error(`Failed to get duration for ${filePath}`);
     return 0;
@@ -106,7 +116,7 @@ function getWavDuration(filePath: string): number {
 async function main() {
   const host = "http://localhost:50021";
   const fps = 30;
-  const playbackRate = 1.2;
+  const playbackRate = 1.5;
 
   // VOICEVOX確認
   if (!(await checkVoicevox(host))) {
@@ -185,9 +195,9 @@ async function main() {
       // ファイル保存
       fs.writeFileSync(outputPath, Buffer.from(audio));
 
-      // 長さを取得してフレーム数を計算
+      // 長さを取得してフレーム数を計算（playbackRateは掛けない。Main.tsxで除算して実再生フレームを得る）
       const duration = getWavDuration(outputPath);
-      const frames = Math.ceil(duration * fps * playbackRate);
+      const frames = Math.ceil(duration * fps);
 
       durationsArray.push({
         id: line.id,

@@ -58,6 +58,11 @@ interface Defaults {
     voiceOnSave: boolean;
     autoVoiceFileName: boolean;
   };
+  bgm?: {
+    src: string;
+    volume?: number;
+    loop?: boolean;
+  };
 }
 
 function loadDurations(): Record<string, number> {
@@ -117,12 +122,15 @@ export type AnimationType = "none" | "fadeIn" | "slideUp" | "slideLeft" | "zoomI
 
 // ビジュアルの型定義
 export interface VisualContent {
-  type: "image" | "text" | "none";
+  type: "image" | "text" | "none" | "video";
   src?: string;
   text?: string;
   fontSize?: number;
   color?: string;
   animation?: AnimationType;
+  startFrom?: number;
+  backgroundSrc?: string;       // text/image タイプの背景動画
+  backgroundStartFrom?: number; // 背景動画の開始フレーム（省略時はシード乱数）
 }
 
 // 効果音の型定義
@@ -139,7 +147,11 @@ export interface BGMConfig {
 }
 
 // BGM設定（動画全体で使用）
-export const bgmConfig: BGMConfig | null = null;
+export const bgmConfig: BGMConfig | null = ${
+  defaults.bgm
+    ? JSON.stringify(defaults.bgm)
+    : "null"
+};
 
 // セリフデータの型定義
 export interface ScriptLine {

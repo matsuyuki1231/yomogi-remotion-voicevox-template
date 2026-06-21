@@ -1,14 +1,14 @@
 // 動画設定
 export const VIDEO_CONFIG = {
-  width: 1920,
-  height: 1080,
+  width: 1080,
+  height: 1920,
   fps: 30,
-  playbackRate: 1.2, // 再生速度（音声生成時に考慮）
+  playbackRate: 1.5, // 再生速度（音声生成時に考慮）
 };
 
 // カラーパレット（黒板風デザイン）
 export const COLORS = {
-  background: "#ffffff",      // 外側の白背景
+  background: "#000000",      // 黒背景
   blackboard: "#2d5a3d",      // 黒板の緑
   blackboardBorder: "#8B4513", // 黒板の茶色フチ
   text: "#ffffff",            // 白文字

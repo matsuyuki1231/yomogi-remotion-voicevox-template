@@ -10,6 +10,7 @@
     "sync": "npm run sync-settings && npm run sync-script",
     "sync-settings": "npx ts-node scripts/sync-settings.ts",
     "sync-script": "npx ts-node scripts/sync-script.ts",
+    "scan-durations": "npx ts-node scripts/scan-video-durations.ts",
     "init": "npx ts-node scripts/init-project.ts",
     "editor": "concurrently \"npm run editor:server\" \"npm run editor:client\"",
     "editor:client": "cd editor && npm run dev",
@@ -26,7 +27,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remotion": "^4.0.0",
-    "yaml": "^2.3.4"
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

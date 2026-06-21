@@ -182,6 +182,8 @@ colors:
   metan: "#FF1493"
 ```
 
+動画素材を追加した場合: npm run scan-durationsを実行してください
+
 ---
 
 ## BGM・効果音

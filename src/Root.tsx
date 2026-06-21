@@ -3,13 +3,15 @@ import { Main } from "./Main";
 import { scriptData } from "./data/script";
 import { VIDEO_CONFIG } from "./config";
 
-// 動画の総フレーム数を計算
+// 動画の総フレーム数を計算（Main.tsx と同じ playbackRate 調整を適用）
 const calculateTotalFrames = () => {
-  let total = 60; // オープニング用の余白
+  const getAdjustedFrames = (frames: number) =>
+    Math.ceil(frames / VIDEO_CONFIG.playbackRate);
+
+  let total = 0;
   for (const line of scriptData) {
-    total += line.durationInFrames + line.pauseAfter;
+    total += getAdjustedFrames(line.durationInFrames) + getAdjustedFrames(line.pauseAfter);
   }
-  total += 60; // エンディング用の余白
   return total;
 };
 

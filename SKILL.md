@@ -128,15 +128,19 @@ curl -s http://localhost:50021/version
 # 音声生成
 TEXT="セリフ"
 SPEAKER=3  # ずんだもん=3, めたん=2
-curl -s "http://localhost:50021/audio_query?speaker=${SPEAKER}&text=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$TEXT'))")" -X POST | \
+curl -s "http://localhost:50021/audio_query?speaker=${SPEAKER}&text=$(python -c "import urllib.parse; print(urllib.parse.quote('$TEXT'))")" -X POST | \
   curl -s "http://localhost:50021/synthesis?speaker=${SPEAKER}" -X POST -H "Content-Type: application/json" -d @- -o output.wav
 ```
 
 ### durationInFrames計算
 
+`npm run voices` 実行後に自動計算・更新される。手動計算する場合：
+
 ```
-durationInFrames = 音声秒数 × 30fps × 1.2playbackRate
+durationInFrames = ceil(音声秒数 × fps ÷ playbackRate)
 ```
+
+例: 音声2秒、fps=30、playbackRate=1.5 → ceil(2 × 30 ÷ 1.5) = 40フレーム
 
 ---
 

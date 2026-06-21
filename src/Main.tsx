@@ -3,7 +3,6 @@ import { loadFont } from "@remotion/google-fonts/MPLUSRounded1c";
 import { scriptData, scenes, ScriptLine, bgmConfig } from "./data/script";
 import { COLORS, VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
-import { Character } from "./components/Character";
 import { SceneVisuals } from "./components/SceneVisuals";
 
 // Google Fontsをロード
@@ -43,6 +42,13 @@ export const Main: React.FC = () => {
 
   const sceneInfo = scenes.find((s) => s.id === currentScene) || scenes[0];
 
+  // BGM の長さを動画本体と揃える
+  const bgmTotalFrames = scriptData.reduce(
+    (acc, line) =>
+      acc + getAdjustedFrames(line.durationInFrames) + getAdjustedFrames(line.pauseAfter),
+    0
+  );
+
   // 各セリフの開始フレームを計算
   const getLineStartFrame = (index: number): number => {
     let startFrame = 0;
@@ -65,37 +71,15 @@ export const Main: React.FC = () => {
         fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif",
       }}
     >
-      {/* 黒板背景 */}
-      <div
-        style={{
-          position: "absolute",
-          top: 40,
-          left: 60,
-          right: 60,
-          bottom: 160,
-          background: COLORS.blackboard,
-          borderRadius: 8,
-        }}
-      />
-      {/* 黒板の茶色フチ（下部） */}
-      <div
-        style={{
-          position: "absolute",
-          left: 60,
-          right: 60,
-          bottom: 160,
-          height: 24,
-          background: COLORS.blackboardBorder,
-          borderRadius: "0 0 8px 8px",
-        }}
-      />
-      {/* BGM再生 */}
+      {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmConfig && (
-        <Audio
-          src={staticFile(`bgm/${bgmConfig.src}`)}
-          volume={bgmConfig.volume ?? 0.3}
-          loop={bgmConfig.loop ?? true}
-        />
+        <Sequence durationInFrames={bgmTotalFrames}>
+          <Audio
+            src={staticFile(`bgm/${bgmConfig.src}`)}
+            volume={bgmConfig.volume ?? 0.3}
+            loop={bgmConfig.loop ?? true}
+          />
+        </Sequence>
       )}
 
       {/* 音声再生 */}
@@ -123,26 +107,20 @@ export const Main: React.FC = () => {
         );
       })}
 
-      {/* シーンごとのビジュアル */}
-      <SceneVisuals
-        scene={currentScene}
-        lineId={currentLine?.id ?? null}
-        frame={frame}
-        fps={fps}
-        visual={currentLine?.visual}
-      />
-
-      {/* キャラクター */}
-      <Character
-        characterId="metan"
-        isSpeaking={isSpeaking && currentLine?.character === "metan"}
-        emotion={currentLine?.character === "metan" ? currentLine.emotion : "normal"}
-      />
-      <Character
-        characterId="zundamon"
-        isSpeaking={isSpeaking && currentLine?.character === "zundamon"}
-        emotion={currentLine?.character === "zundamon" ? currentLine.emotion : "normal"}
-      />
+      {/* 各セリフのビジュアル（Sequence内でフレームをリセットし動画が先頭から再生される） */}
+      {scriptData.map((line, index) => {
+        if (!line.visual || line.visual.type === "none") return null;
+        const startFrame = getLineStartFrame(index);
+        return (
+          <Sequence
+            key={`visual-${line.id}`}
+            from={startFrame}
+            durationInFrames={getLineDuration(line)}
+          >
+            <SceneVisuals visual={line.visual} lineId={line.id} />
+          </Sequence>
+        );
+      })}
 
       {/* 字幕 */}
       {currentLine && (
@@ -154,6 +132,7 @@ export const Main: React.FC = () => {
           <Subtitle
             text={currentLine.displayText ?? currentLine.text}
             character={currentLine.character}
+            durationInFrames={getLineDuration(currentLine)}
           />
         </Sequence>
       )}
