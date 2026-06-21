@@ -28,3 +28,7 @@ npm-debug.log*
 
 # Generated voices (optional - uncomment if you don't want to track)
 # public/voices/
+/public/content/
+/public/bgm/
+/public/se/
+/public/voices/
