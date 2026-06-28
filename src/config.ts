@@ -20,16 +20,17 @@ export const COLORS = {
   pink: "#ec4899",
   zundamon: "#228B22",        // フォレストグリーン（暗め）
   metan: "#FF1493",           // ディープピンク
+  tsumugi: "#FF8C00",         // ダークオレンジ
 };
 
 // キャラクター定義
-export type CharacterId = "zundamon" | "metan";
+export type CharacterId = "zundamon" | "metan" | "tsumugi";
 
 export interface CharacterConfig {
   id: CharacterId;
   name: string;
   voicevoxSpeakerId: number;
-  position: "left" | "right";
+  position: "left" | "right" | "center";
   color: string;
   // 画像設定（口パクアニメーション用）
   images: {
@@ -66,12 +67,25 @@ export const DEFAULT_CHARACTERS: CharacterConfig[] = [
     },
     flipX: false,
   },
+  {
+    id: "tsumugi",
+    name: "春日部つむぎ",
+    voicevoxSpeakerId: 8,
+    position: "center",
+    color: COLORS.tsumugi,
+    images: {
+      mouthOpen: "images/tsumugi/mouth_open.png",
+      mouthClose: "images/tsumugi/mouth_close.png",
+    },
+    flipX: false,
+  },
 ];
 
 // キャラクターIDからspeakerIdを取得するマップ
 export const characterSpeakerMap: Record<CharacterId, number> = {
   zundamon: 3,
   metan: 2,
+  tsumugi: 8,
 };
 
 // シーン背景タイプ

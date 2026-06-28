@@ -3,6 +3,7 @@
 // npm run sync-settings で再生成されます
 
 export const SETTINGS = {
+  "videoStyle": "dialogue",
   "font": {
     "family": "M PLUS Rounded 1c",
     "size": 70,
@@ -20,7 +21,7 @@ export const SETTINGS = {
   },
   "character": {
     "height": 275,
-    "useImages": true,
+    "useImages": false,
     "imagesBasePath": "images"
   },
   "content": {
@@ -38,7 +39,8 @@ export const SETTINGS = {
     "background": "#000000",
     "text": "#ffffff",
     "zundamon": "#228B22",
-    "metan": "#FF1493"
+    "metan": "#FF1493",
+    "tsumugi": "#FF8C00"
   }
 } as const;
 

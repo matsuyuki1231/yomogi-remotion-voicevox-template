@@ -66,8 +66,13 @@ export const Subtitle: React.FC<SubtitleProps> = ({ text, character, durationInF
     { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
   );
 
-  // キャラクター色を取得
-  const characterColor = character === "zundamon" ? colors.zundamon : colors.metan;
+  // キャラクター色を取得（colors に対応キーがあれば使用、なければ白）
+  const characterColorMap: Record<string, string> = {
+    zundamon: colors.zundamon,
+    metan: colors.metan,
+    tsumugi: colors.tsumugi,
+  };
+  const characterColor = characterColorMap[character] ?? colors.text;
 
   // フォント色の決定
   const getColor = (colorValue: string) => {

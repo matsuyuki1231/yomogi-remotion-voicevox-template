@@ -21,3 +21,10 @@ kuro_zunda:
   position: right
   color: "#333333"
   defaultPauseAfter: 15
+
+tsumugi:
+  name: 春日部つむぎ
+  speakerId: 8
+  position: center
+  color: "#FF8C00"
+  defaultPauseAfter: 15

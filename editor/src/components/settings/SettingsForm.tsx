@@ -25,6 +25,10 @@ export function SettingsForm({ settings, onSave }: SettingsFormProps) {
     }));
   };
 
+  const handleVideoStyleChange = (value: "dialogue" | "solo") => {
+    setFormData((prev) => ({ ...prev, videoStyle: value }));
+  };
+
   const handleColorChange = (key: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -68,6 +72,27 @@ export function SettingsForm({ settings, onSave }: SettingsFormProps) {
           {message}
         </div>
       )}
+
+      {/* Video Style */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4">Video Style</h3>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Style
+          </label>
+          <select
+            value={formData.videoStyle ?? 'dialogue'}
+            onChange={(e) => handleVideoStyleChange(e.target.value as "dialogue" | "solo")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="dialogue">対話スタイル（ずんだもん＆めたん）</option>
+            <option value="solo">単独解説スタイル（春日部つむぎ）</option>
+          </select>
+          <p className="mt-1 text-xs text-gray-500">
+            対話: zundamon / metan を使用 ｜ 単独: tsumugi を使用
+          </p>
+        </div>
+      </div>
 
       {/* Font Settings */}
       <div className="bg-white rounded-lg shadow p-6">

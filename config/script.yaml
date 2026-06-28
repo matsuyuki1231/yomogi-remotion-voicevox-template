@@ -2,193 +2,273 @@
 # セリフを編集後、npm run sync-script で反映
 
 - id: 1
-  character: zundamon
-  text: 誰が嘘をついているのか！読み合いが熱すぎる「マイクラ人狼」なのだ！
+  character: metan
+  text: ねえ、よもぎサーバーの生活鯖ってどんなことができるの？
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2026-03-14 21-52-29.mkv"
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す1.mp3"
     volume: 0.7
 
 - id: 2
-  character: metan
-  text: マイクラで人狼ゲームができるのよね！どんな感じなの？
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "マイクラ人狼/2024-08-27 22-38-32_無実負けたけど良試合.mkv"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す2.mp3"
-    volume: 0.7
-
-- id: 3
   character: zundamon
-  text: 市民と人狼に分かれてマインクラフトのステージ上でバトルするのだ！一撃弓で相手を狙い合うのだ！
+  text: なんとマイクラの中で本当に車が走るのだ！
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2026-03-14 22-36-04.mkv"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す3.mp3"
-    volume: 0.7
-
-- id: 4
-  character: metan
-  text: 誰を狙えばいいかわかるの？
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "マイクラ人狼/2024-08-27 23-30-59_殺し屋で霊媒のフリ.mkv"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す4.mp3"
-    volume: 0.7
-
-- id: 5
-  character: zundamon
-  text: それが難しいのだ！味方も撃てるから、誰が敵かを見極めないといけないのだ！
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "マイクラ人狼/2026-03-14 22-12-22.mkv"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す5.mp3"
-    volume: 0.7
-
-- id: 6
-  character: metan
-  text: 会議で話し合うのね！
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "マイクラ人狼/2026-03-14 21-52-29.mkv"
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す22.mp3"
     volume: 0.7
 
-- id: 7
-  character: zundamon
-  text: カードを使って自分の役職を宣言できるのだ！でも嘘の役職を宣言することもできるのだ！
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "マイクラ人狼/2024-08-27 23-19-48_霊媒市民勝利.mkv"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す23.mp3"
-    volume: 0.7
-
-- id: 8
+- id: 3
   character: metan
-  text: 誰を信じればいいかわからなくなりそうね
+  text: えっ、マイクラで車！？他にはどんなことができるの？
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2024-08-27 23-30-59_殺し屋で霊媒のフリ.mkv"
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す31.mp3"
     volume: 0.7
 
-- id: 9
+- id: 4
   character: zundamon
-  text: 人狼はサボタージュを発動できるのだ！60秒以内に市民が2箇所解除できないと市民の負けなのだ！
+  text: 好きな場所に土地を買って自分だけのエリアが作れるのだ！
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2026-03-14 22-36-04.mkv"
+    src: "生活サーバー/新しい土地を土地保護している動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す32.mp3"
+    src: "決定ボタンを押す5.mp3"
     volume: 0.7
 
-- id: 10
+- id: 5
   character: metan
-  text: タイムプレッシャーまであるの！？
+  text: 自分のエリアに家やお店を建てられるのね！
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2026-03-14 22-12-22.mkv"
+    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.7
+
+- id: 6
+  character: zundamon
+  text: 役職を選べばお金稼ぎも思いのままなのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/roleコマンドで役職を変更している動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す42.mp3"
     volume: 0.7
 
-- id: 11
-  character: zundamon
-  text: さらにゲーム開始時にランダムで特殊アイテムも配られるから、毎回違う展開になって飽きないのだ！
+- id: 7
+  character: metan
+  text: 採掘者なら鉱石を掘ってお金が稼げるのね？
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2024-08-27 22-38-32_無実負けたけど良試合.mkv"
+    src: "生活サーバー/自然資源で採掘をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.7
+
+- id: 8
+  character: zundamon
+  text: バフで採掘速度と暗視をつけてガンガン稼げるのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す23.mp3"
+    volume: 0.7
+
+- id: 9
+  character: metan
+  text: 木こりは原木を伐るだけでいいの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/人工資源で原木を掘っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.7
+
+- id: 10
+  character: zundamon
+  text: 木こりも農家も役職に合った活動でどんどんお金が稼げるのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す32.mp3"
+    volume: 0.7
+
+- id: 11
+  character: metan
+  text: 集めたアイテムはしっかり保管できるの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/チェスト保護をしている動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す1.mp3"
     volume: 0.7
 
 - id: 12
-  character: metan
-  text: 何回やっても楽しめそう！
+  character: zundamon
+  text: チェスト保護で安全管理できて、そのまま無人ショップも開けるのだ！
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "マイクラ人狼/2024-08-27 23-19-48_霊媒市民勝利.mkv"
+    src: "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す22.mp3"
+    volume: 0.7
+
+- id: 13
+  character: metan
+  text: プレイヤーが作った商店街もあるって本当？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.7
+
+- id: 14
+  character: zundamon
+  text: プレイヤー同士で会社を立ち上げて本格ビジネスもできちゃうのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す5.mp3"
+    volume: 0.7
+
+- id: 15
+  character: metan
+  text: 公式ショップでもお買い物できるのね！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/公式ショップで商品を買っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.7
+
+- id: 16
+  character: zundamon
+  text: 毎日ガチャも引けてレアアイテムを狙えるのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/ガチャを引いている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+- id: 17
+  character: metan
+  text: 釣りでのんびりするのもよさそうね！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/釣りをしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 18
+  character: zundamon
+  text: 称号を集めて自分だけのオリジナルキャラを作れるのも楽しいのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/称号を購入して変更している動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す2.mp3"
     volume: 0.7
 
-- id: 13
-  character: zundamon
-  text: ネットで「よもぎサーバー」と検索して、マイクラ人狼をぜひ体験してみてなのだ！
+- id: 19
+  character: metan
+  text: これは絶対に参加してみたいわ！どうやって参加できるの？
   scene: 1
   pauseAfter: -3
   visual:
-    type: text
-    text: "「よもぎサーバー」で検索！"
-    fontSize: 72
-    color: "#ffffff"
-    animation: bounce
-    backgroundSrc: "マイクラ人狼/2026-03-14 21-52-29.mkv"
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す23.mp3"
+    volume: 0.7
+
+- id: 20
+  character: zundamon
+  text: ネットで「よもぎサーバー」と検索してみて！ぜひよもぎサーバーに参加してほしいのだ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
   se:
     src: "spotlight.mp3"
     volume: 0.8
 
-- id: 14
+- id: 21
   character: metan
   text: バイバイ〜！
   scene: 1
   pauseAfter: 0
-  visual:
-    type: video
-    src: "マイクラ人狼/2024-08-27 23-30-59_殺し屋で霊媒のフリ.mkv"
-    animation: fadeIn
 
-- id: 15
+- id: 22
   character: zundamon
   text: バイバイなのだ〜！
   scene: 1
   pauseAfter: 60
-  visual:
-    type: video
-    src: "マイクラ人狼/2026-03-14 22-12-22.mkv"
-    animation: fadeIn

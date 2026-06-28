@@ -12,6 +12,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import * as yaml from "yaml";
 import { execSync } from "child_process";
 
 const ROOT_DIR = process.cwd();
@@ -132,13 +133,17 @@ async function main() {
   // Note: 実際の実装ではesbuildなどでビルドしてから読み込む
   console.log("スクリプトデータを読み込んでいます...");
 
-  // ここでは例としてハードコードされたデータを使用
-  // 実際にはscript.tsをパースして使用
+  // config/characters.yaml からキャラクターとspeakerIdを読み込む
+  const charactersYamlPath = path.join(ROOT_DIR, "config/characters.yaml");
+  const charactersRaw: Record<string, { speakerId: number | null }> = yaml.parse(
+    fs.readFileSync(charactersYamlPath, "utf-8")
+  );
   const scriptData: ScriptLine[] = [];
-  const characters: Map<string, number> = new Map([
-    ["zundamon", 3],
-    ["metan", 2],
-  ]);
+  const characters: Map<string, number> = new Map(
+    Object.entries(charactersRaw)
+      .filter(([, cfg]) => cfg.speakerId !== null)
+      .map(([id, cfg]) => [id, cfg.speakerId as number])
+  );
 
   // script.tsを読み込んでパース
   const scriptContent = fs.readFileSync(SCRIPT_PATH, "utf-8");

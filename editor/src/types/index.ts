@@ -56,6 +56,7 @@ export interface Metadata {
 
 // video-settings.yaml の型定義
 export interface VideoSettings {
+  videoStyle?: "dialogue" | "solo";
   font: {
     family: string;
     size: number;

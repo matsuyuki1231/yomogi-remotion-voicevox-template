@@ -6,6 +6,7 @@ const ROOT_DIR = path.resolve(process.cwd(), '..');
 const YAML_PATH = path.join(ROOT_DIR, 'video-settings.yaml');
 
 export interface VideoSettings {
+  videoStyle?: "dialogue" | "solo";
   font: {
     family: string;
     size: number;

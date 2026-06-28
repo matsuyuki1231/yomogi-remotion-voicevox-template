@@ -14,6 +14,7 @@ const OUTPUT_PATH = path.join(ROOT_DIR, "src", "settings.generated.ts");
 const IMAGES_DIR = path.join(ROOT_DIR, "public", "images");
 
 interface VideoSettings {
+  videoStyle?: "dialogue" | "solo";
   font: {
     family: string;
     size: number;
@@ -50,6 +51,8 @@ interface VideoSettings {
     text: string;
     zundamon: string;
     metan: string;
+    tsumugi?: string;
+    [key: string]: string | undefined;
   };
 }
 

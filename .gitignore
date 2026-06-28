@@ -26,6 +26,10 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# YouTube OAuth token (sensitive — do not commit)
+youtube-token.json
+youtube-client-secret.json
+
 /public/content/
 /public/bgm/
 /public/se/
