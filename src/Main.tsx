@@ -5,6 +5,7 @@ import { COLORS, VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
 import { HeadlineOverlay } from "./components/HeadlineOverlay";
+import { ImpactOverlay } from "./components/ImpactOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -123,22 +124,44 @@ export const Main: React.FC = () => {
         );
       })}
 
-      {/* デカ文字見出し・ランキングバッジ（画面上部） */}
-      {currentLine && (currentLine.headline || currentLine.rank) && (
+      {/* インパクトスタンプ・できることカウンター（ギャップ実証型フォーマット） */}
+      {currentLine && (currentLine.stamp || currentLine.combo || currentLine.chip) && (
         <Sequence
-          key={`headline-${currentLine.id}`}
+          key={`impact-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineDuration(currentLine)}
         >
-          <HeadlineOverlay
-            headline={currentLine.headline}
-            rank={currentLine.rank}
-            kicker={currentLine.kicker}
+          <ImpactOverlay
+            stamp={currentLine.stamp}
+            stampSub={currentLine.stampSub}
+            combo={currentLine.combo}
+            chip={currentLine.chip}
             character={currentLine.character}
             durationInFrames={getLineDuration(currentLine)}
           />
         </Sequence>
       )}
+
+      {/* デカ文字見出し・ランキングバッジ（旧ランキング型フォーマット・後方互換） */}
+      {currentLine &&
+        !currentLine.stamp &&
+        !currentLine.combo &&
+        !currentLine.chip &&
+        (currentLine.headline || currentLine.rank) && (
+          <Sequence
+            key={`headline-${currentLine.id}`}
+            from={currentLineStartFrame}
+            durationInFrames={getLineDuration(currentLine)}
+          >
+            <HeadlineOverlay
+              headline={currentLine.headline}
+              rank={currentLine.rank}
+              kicker={currentLine.kicker}
+              character={currentLine.character}
+              durationInFrames={getLineDuration(currentLine)}
+            />
+          </Sequence>
+        )}
 
       {/* 字幕（画面下部） */}
       {currentLine && (

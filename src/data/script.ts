@@ -30,7 +30,7 @@ export interface BGMConfig {
 }
 
 // BGM設定（動画全体で使用）
-export const bgmConfig: BGMConfig | null = {"src":"retrogamecenter.mp3","volume":0.18,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"Midnight_party.mp3","volume":0.16,"loop":true};
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -41,6 +41,10 @@ export interface ScriptLine {
   headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
   rank?: string;            // ランキングの番号バッジ（例 "No.1"）
   kicker?: string;          // 見出し上の小ラベル
+  stamp?: string;           // 中央に叩き込むデカ文字スタンプ
+  stampSub?: string;        // スタンプ上の小ラベル
+  combo?: number;           // 「できること」カウンター
+  chip?: string;            // 左上のカテゴリチップ
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -69,9 +73,9 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "マイクラで友達を全員疑うゲーム、知ってる？",
-    "headline": "全員が敵かも",
-    "kicker": "マイクラ人狼",
+    "text": "このマイクラの試合、1人だけ嘘つきが混ざってるの。",
+    "stampSub": "問題",
+    "stamp": "誰が嘘つき？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -84,13 +88,13 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 109
+    "durationInFrames": 108
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "その名もマイクラ人狼！誰が味方か分からないのだ！",
-    "headline": "誰が人狼だ！？",
+    "text": "その名も、マイクラ人狼！誰が味方か分からないのだ！",
+    "stamp": "マイクラ人狼",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -103,14 +107,14 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 137
+    "durationInFrames": 149
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "役職はなんと41種類！今日はヤバい役職をランキングするわ！",
-    "headline": "ヤバい役職ランキング",
-    "kicker": "全41役職",
+    "text": "役職はなんと41種類！能力がぶっ飛んでるの！",
+    "stamp": "役職41種類",
+    "chip": "心理戦",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -123,14 +127,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 146
+    "durationInFrames": 116
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "第6位、占い師！生きてる1人が人狼か、ズバリ見抜けるのだ！",
-    "headline": "白黒を暴く占い師",
-    "rank": "No.6",
+    "text": "占い師は、生きてる1人が人狼か、ズバリ見抜けるのだ！",
+    "stamp": "白黒を見抜く",
+    "chip": "占い師",
+    "combo": 1,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -143,14 +148,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 187
+    "durationInFrames": 151
   },
   {
     "id": 5,
     "character": "metan",
-    "text": "第5位、霊媒師！死んだ人が人狼だったか、鑑定できるの！",
-    "headline": "死者を鑑定する霊媒師",
-    "rank": "No.5",
+    "text": "霊媒師は、死んだ人が人狼だったか鑑定できるの！",
+    "stamp": "死者を鑑定",
+    "chip": "霊媒師",
+    "combo": 2,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -163,14 +169,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "05_metan.wav",
-    "durationInFrames": 156
+    "durationInFrames": 115
   },
   {
     "id": 6,
     "character": "zundamon",
-    "text": "第4位、死神！なんと死んだ仲間を、生き返らせるのだ！",
-    "headline": "死者を蘇らせる死神",
-    "rank": "No.4",
+    "text": "死神はなんと、死んだ仲間を生き返らせるのだ！",
+    "stamp": "死者を蘇生",
+    "chip": "死神",
+    "combo": 3,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -183,14 +190,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 165
+    "durationInFrames": 126
   },
   {
     "id": 7,
     "character": "metan",
-    "text": "第3位、狙撃手！壁を貫通する銃で、どこからでも撃ち抜くの！",
-    "headline": "壁を撃ち抜く狙撃手",
-    "rank": "No.3",
+    "text": "狙撃手は、壁を貫通する銃でどこからでも撃ち抜くの！",
+    "stamp": "壁を撃ち抜く",
+    "chip": "狙撃手",
+    "combo": 4,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -203,14 +211,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "07_metan.wav",
-    "durationInFrames": 163
+    "durationInFrames": 120
   },
   {
     "id": 8,
     "character": "zundamon",
-    "text": "第2位、殺し屋！会議中にこっそり1人、始末できるのだ！",
-    "headline": "会議中に暗殺 殺し屋",
-    "rank": "No.2",
+    "text": "殺し屋は、会議中にこっそり1人始末できるのだ！",
+    "stamp": "会議中に暗殺",
+    "chip": "殺し屋",
+    "combo": 5,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -223,33 +232,15 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 171
+    "durationInFrames": 129
   },
   {
     "id": 9,
     "character": "metan",
-    "text": "そして気になる第1位は…！",
-    "headline": "第1位は…？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/無実の人の試合.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 55
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "無実の人！全員に潔白が証明される、最強の信頼役なのだ！",
-    "headline": "全員が信じる無実の人",
-    "rank": "No.1",
+    "text": "無実の人は、全員に潔白が証明される最強の信頼役なの！",
+    "stamp": "全員が信じる",
+    "chip": "無実の人",
+    "combo": 6,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -261,14 +252,53 @@ export const scriptData: ScriptLine[] = [
       "src": "boom.mp3",
       "volume": 0.6
     },
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 152
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "難しそう？やることは、たった1つなのだ。",
+    "stampSub": "安心して",
+    "stamp": "嘘を見抜くだけ",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/人狼の試合1.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.5
+    },
     "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 191
+    "durationInFrames": 121
   },
   {
     "id": 11,
     "character": "metan",
-    "text": "こんなガチの心理戦が、マイクラで無料で楽しめちゃうの！",
-    "headline": "無料で遊べる心理戦",
+    "text": "怪しい人を、みんなで会議して追放するだけなの！",
+    "stamp": "会議して追放",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/人狼の試合3.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す32.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 110
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "このガチの心理戦が、マイクラで無料で遊べるのだ！",
+    "stamp": "無料で心理戦",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -277,31 +307,70 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す32.mp3",
+      "src": "決定ボタンを押す23.mp3",
       "volume": 0.7
     },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 116
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 128
   },
   {
-    "id": 12,
-    "character": "zundamon",
-    "text": "気になったらネットでよもぎサーバーと検索なのだ！毎週土曜の夜21時半、みんなの参加を待ってるのだ！",
-    "headline": "「よもぎサーバー」で検索",
-    "kicker": "毎週土曜21:30開催",
+    "id": 13,
+    "character": "metan",
+    "text": "開催は毎週土曜の、夜9時半からなの！",
+    "stamp": "毎週土曜21時半",
+    "chip": "開催",
     "scene": 1,
-    "pauseAfter": 40,
+    "pauseAfter": -3,
     "visual": {
-      "type": "image",
-      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
+      "type": "video",
+      "src": "マイクラ人狼/人狼の試合2.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "spotlight.mp3",
       "volume": 0.8
     },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 265
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 104
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "気になったら、ネットで「よもぎサーバー」と検索なのだ！",
+    "stampSub": "ネットで検索",
+    "stamp": "よもぎサーバー",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "image",
+      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す42.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 150
+  },
+  {
+    "id": 15,
+    "character": "metan",
+    "text": "君も参加して、名探偵になりましょ！",
+    "stamp": "参加して名探偵に",
+    "scene": 1,
+    "pauseAfter": 50,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/無実の人の試合.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 91
   }
 ];
 

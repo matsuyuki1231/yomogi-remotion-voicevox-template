@@ -24,6 +24,10 @@ interface ScriptLine {
   headline?: string;
   rank?: string;
   kicker?: string;
+  stamp?: string;
+  stampSub?: string;
+  combo?: number;
+  chip?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -165,6 +169,10 @@ export interface ScriptLine {
   headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
   rank?: string;            // ランキングの番号バッジ（例 "No.1"）
   kicker?: string;          // 見出し上の小ラベル
+  stamp?: string;           // 中央に叩き込むデカ文字スタンプ
+  stampSub?: string;        // スタンプ上の小ラベル
+  combo?: number;           // 「できること」カウンター
+  chip?: string;            // 左上のカテゴリチップ
   scene: number;
   voiceFile: string;
   durationInFrames: number;

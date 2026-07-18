@@ -1,0 +1,246 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / ギャップ実証型フォーマット）
+# セリフを編集後、npm run sync-script で反映
+#
+# ■ フォーマット: 「え、これ全部マイクラ？」ギャップ実証型ショート
+#   バズるショートの王道「パターンインタラプト → 常識破壊の連打 → 反論処理 → CTAループ」で構成。
+#   冒頭で正体を隠して意表を突き、生活サーバーの神機能を「できることカウンター」で畳みかける。
+#
+# ■ 新フィールド（ImpactOverlay 用）:
+#   stamp    : 画面中央に叩き込むデカ文字スタンプ（スラムイン＋揺れ＋白フラッシュ）
+#   stampSub : スタンプ上の小ラベル（省略可）
+#   combo    : 「できること」カウンター（右上・数字）。1→6 で escalation
+#   chip     : 画面左上のカテゴリチップ（省略可）
+#
+# 情報ソース: docs/yomogi/living 配下（会社/土地保護/バフ/チェストショップ 等）
+# 素材: public/content/生活サーバー 配下
+
+# ===== フック（0-4秒：正体を隠して意表を突く） =====
+- id: 1
+  character: metan
+  text: ねぇ、この映像、何のゲームだと思う？
+  stampSub: 問題
+  stamp: 何のゲーム？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す1.mp3"
+    volume: 0.7
+
+- id: 2
+  character: zundamon
+  text: 正解は…なんと、全部マイクラなのだ！
+  stamp: 全部マイクラ！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+- id: 3
+  character: metan
+  text: この生活サーバー、自由度がバグってるの！
+  stamp: 自由度がバグってる
+  chip: 神サーバー
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.7
+
+# ===== 常識破壊の連打（できること 1→6） =====
+- id: 4
+  character: zundamon
+  text: まず、街を車で走り回れるのだ！
+  stamp: 車で爆走
+  chip: 自由度
+  combo: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.7
+
+- id: 5
+  character: metan
+  text: 自分だけのお店だって開けちゃうの！
+  stamp: お店を開ける
+  chip: お金稼ぎ
+  combo: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.7
+
+- id: 6
+  character: zundamon
+  text: なんと、本格的な会社経営までできるのだ！
+  stamp: 会社を経営
+  chip: お金稼ぎ
+  combo: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.7
+
+- id: 7
+  character: metan
+  text: 豪華なガチャだって楽しめちゃう！
+  stamp: ガチャで一攫千金
+  chip: 運試し
+  combo: 4
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/ガチャを引いている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す5.mp3"
+    volume: 0.7
+
+- id: 8
+  character: zundamon
+  text: 称号を集めて、自分を飾れるのだ！
+  stamp: 称号コンプ
+  chip: やり込み
+  combo: 5
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/称号を購入して変更している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す22.mp3"
+    volume: 0.7
+
+- id: 9
+  character: metan
+  text: バフを付ければ、採掘だって一瞬なの！
+  stamp: バフで無双
+  chip: 効率化
+  combo: 6
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す32.mp3"
+    volume: 0.7
+
+# ===== 反論処理（不安を先回りで潰す） =====
+- id: 10
+  character: zundamon
+  text: でも、荒らされそう…って思ったのだ？
+  stampSub: ここ重要
+  stamp: 治安は大丈夫？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/新しい土地を土地保護している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "anxiety_piano.mp3"
+    volume: 0.5
+
+- id: 11
+  character: metan
+  text: 土地を買えば、他人はブロック1つ触れないの！
+  stamp: 荒らし完全ブロック
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+# ===== ピーク → CTA =====
+- id: 12
+  character: zundamon
+  text: 釣りに農業、コツコツ暮らすのも最高なのだ！
+  stamp: スローライフも最高
+  chip: まったり
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/釣りをしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す23.mp3"
+    volume: 0.7
+
+- id: 13
+  character: metan
+  text: ここまで遊べて、参加はなんと完全無料なの！
+  stamp: 参加は無料！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.8
+
+- id: 14
+  character: zundamon
+  text: 気になったら、ネットで「よもぎサーバー」と検索なのだ！
+  stampSub: ネットで検索
+  stamp: よもぎサーバー
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 15
+  character: metan
+  text: 君も参加して、第二の人生をここで始めましょ！
+  stamp: 第二の人生をここで
+  scene: 1
+  pauseAfter: 50
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6

@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 out/
+build/
 
 # Remotion
 .remotion/
@@ -27,7 +28,7 @@ Thumbs.db
 npm-debug.log*
 
 # YouTube OAuth token (sensitive — do not commit)
-youtube-token.json
+youtube-token*.json
 youtube-client-secret.json
 
 /public/content/
