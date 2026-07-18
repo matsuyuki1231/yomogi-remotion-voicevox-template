@@ -14,6 +14,6 @@ automation:
   autoVoiceFileName: true
 
 bgm:
-  src: "Catch_me.mp3"
-  volume: 0.2
+  src: "retrogamecenter.mp3"
+  volume: 0.18
   loop: true

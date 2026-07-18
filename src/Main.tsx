@@ -4,6 +4,7 @@ import { scriptData, scenes, ScriptLine, bgmConfig } from "./data/script";
 import { COLORS, VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
+import { HeadlineOverlay } from "./components/HeadlineOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -122,7 +123,24 @@ export const Main: React.FC = () => {
         );
       })}
 
-      {/* 字幕 */}
+      {/* デカ文字見出し・ランキングバッジ（画面上部） */}
+      {currentLine && (currentLine.headline || currentLine.rank) && (
+        <Sequence
+          key={`headline-${currentLine.id}`}
+          from={currentLineStartFrame}
+          durationInFrames={getLineDuration(currentLine)}
+        >
+          <HeadlineOverlay
+            headline={currentLine.headline}
+            rank={currentLine.rank}
+            kicker={currentLine.kicker}
+            character={currentLine.character}
+            durationInFrames={getLineDuration(currentLine)}
+          />
+        </Sequence>
+      )}
+
+      {/* 字幕（画面下部） */}
       {currentLine && (
         <Sequence
           key={`subtitle-${currentLine.id}`}

@@ -21,6 +21,9 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
+  headline?: string;
+  rank?: string;
+  kicker?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -159,6 +162,9 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
+  headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
+  rank?: string;            // ランキングの番号バッジ（例 "No.1"）
+  kicker?: string;          // 見出し上の小ラベル
   scene: number;
   voiceFile: string;
   durationInFrames: number;

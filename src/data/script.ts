@@ -30,7 +30,7 @@ export interface BGMConfig {
 }
 
 // BGM設定（動画全体で使用）
-export const bgmConfig: BGMConfig | null = {"src":"Catch_me.mp3","volume":0.2,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"retrogamecenter.mp3","volume":0.18,"loop":true};
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -38,6 +38,9 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
+  headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
+  rank?: string;            // ランキングの番号バッジ（例 "No.1"）
+  kicker?: string;          // 見出し上の小ラベル
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -66,7 +69,9 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "ねえ、よもぎサーバーの生活鯖ってどんなことができるの？",
+    "text": "ねえ、この動画、何のゲームか分かる？",
+    "headline": "何のゲーム？",
+    "kicker": "マイクラ 生活サーバー",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -79,12 +84,13 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 134
+    "durationInFrames": 101
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "なんとマイクラの中で本当に車が走るのだ！",
+    "text": "正解はマインクラフトなのだ！",
+    "headline": "正解はマイクラ！",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -93,16 +99,17 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.7
+      "src": "boom.mp3",
+      "volume": 0.6
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 112
+    "durationInFrames": 73
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "えっ、マイクラで車！？他にはどんなことができるの？",
+    "text": "えっ、マイクラでこんなことできるの！？",
+    "headline": "常識を壊す生活鯖",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -115,174 +122,14 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 128
+    "durationInFrames": 88
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "好きな場所に土地を買って自分だけのエリアが作れるのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す5.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 124
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "自分のエリアに家やお店を建てられるのね！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 87
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "役職を選べばお金稼ぎも思いのままなのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/roleコマンドで役職を変更している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す42.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 111
-  },
-  {
-    "id": 7,
-    "character": "metan",
-    "text": "採掘者なら鉱石を掘ってお金が稼げるのね？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 102
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "バフで採掘速度と暗視をつけてガンガン稼げるのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す23.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 124
-  },
-  {
-    "id": 9,
-    "character": "metan",
-    "text": "木こりは原木を伐るだけでいいの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/人工資源で原木を掘っている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 73
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "木こりも農家も役職に合った活動でどんどんお金が稼げるのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 151
-  },
-  {
-    "id": 11,
-    "character": "metan",
-    "text": "集めたアイテムはしっかり保管できるの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェスト保護をしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 84
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "チェスト保護で安全管理できて、そのまま無人ショップも開けるのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 151
-  },
-  {
-    "id": 13,
-    "character": "metan",
-    "text": "プレイヤーが作った商店街もあるって本当？",
+    "text": "今日は生活鯖の神機能を、ランキングで紹介するのだ！",
+    "headline": "神機能ランキング",
+    "kicker": "生活・経済サーバー",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -291,16 +138,18 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す31.mp3",
+      "src": "決定ボタンを押す5.mp3",
       "volume": 0.7
     },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 99
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 145
   },
   {
-    "id": 14,
+    "id": 5,
     "character": "zundamon",
-    "text": "プレイヤー同士で会社を立ち上げて本格ビジネスもできちゃうのだ！",
+    "text": "第6位、プレイヤー同士で会社を作って経営ができるのだ！",
+    "headline": "会社を設立できる",
+    "rank": "No.6",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -309,34 +158,78 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
+      "src": "決定ボタンを押す2.mp3",
       "volume": 0.7
     },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 143
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 156
   },
   {
-    "id": 15,
+    "id": 6,
     "character": "metan",
-    "text": "公式ショップでもお買い物できるのね！",
+    "text": "第5位、無人ショップを置けば、寝てる間もお金が増えるの！",
+    "headline": "寝てても金が増える",
+    "rank": "No.5",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.7
     },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 74
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 133
   },
   {
-    "id": 16,
+    "id": 7,
     "character": "zundamon",
-    "text": "毎日ガチャも引けてレアアイテムを狙えるのだ！",
+    "text": "第4位、採掘バフでお金がザクザク湧いてくるのだ！",
+    "headline": "採掘で一攫千金",
+    "rank": "No.4",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 136
+  },
+  {
+    "id": 8,
+    "character": "metan",
+    "text": "第3位、好きな場所に土地を買って、自分だけの街が作れるの！",
+    "headline": "土地を買って街づくり",
+    "rank": "No.3",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す22.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "08_metan.wav",
+    "durationInFrames": 147
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "第2位、毎日無料のガチャでレアアイテムが狙えるのだ！",
+    "headline": "毎日 無料ガチャ",
+    "rank": "No.2",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -345,52 +238,56 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
+      "src": "決定ボタンを押す23.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 138
+  },
+  {
+    "id": 10,
+    "character": "metan",
+    "text": "そして気になる第1位は…！",
+    "headline": "第1位は…？",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "10_metan.wav",
+    "durationInFrames": 55
+  },
+  {
+    "id": 11,
+    "character": "zundamon",
+    "text": "なんとマイクラなのに、本物みたいな車で街を爆走できるのだ！",
+    "headline": "マイクラで車が走る",
+    "rank": "No.1",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
       "src": "boom.mp3",
       "volume": 0.6
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 103
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 159
   },
   {
-    "id": 17,
+    "id": 12,
     "character": "metan",
-    "text": "釣りでのんびりするのもよさそうね！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す42.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "17_metan.wav",
-    "durationInFrames": 64
-  },
-  {
-    "id": 18,
-    "character": "zundamon",
-    "text": "称号を集めて自分だけのオリジナルキャラを作れるのも楽しいのだ！",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/称号を購入して変更している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 150
-  },
-  {
-    "id": 19,
-    "character": "metan",
-    "text": "これは絶対に参加してみたいわ！どうやって参加できるの？",
+    "text": "しかもこれ全部、無料で遊べちゃうのよ！",
+    "headline": "ぜんぶ無料！",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -399,18 +296,20 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す23.mp3",
+      "src": "決定ボタンを押す32.mp3",
       "volume": 0.7
     },
-    "voiceFile": "19_metan.wav",
-    "durationInFrames": 122
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 91
   },
   {
-    "id": 20,
+    "id": 13,
     "character": "zundamon",
-    "text": "ネットで「よもぎサーバー」と検索してみて！ぜひよもぎサーバーに参加してほしいのだ！",
+    "text": "気になったらネットでよもぎサーバーと検索なのだ！みんなの参加を待ってるのだ！",
+    "headline": "「よもぎサーバー」で検索",
+    "kicker": "統合版・参加費無料",
     "scene": 1,
-    "pauseAfter": -3,
+    "pauseAfter": 40,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
@@ -420,26 +319,8 @@ export const scriptData: ScriptLine[] = [
       "src": "spotlight.mp3",
       "volume": 0.8
     },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 216
-  },
-  {
-    "id": 21,
-    "character": "metan",
-    "text": "バイバイ〜！",
-    "scene": 1,
-    "pauseAfter": 0,
-    "voiceFile": "21_metan.wav",
-    "durationInFrames": 21
-  },
-  {
-    "id": 22,
-    "character": "zundamon",
-    "text": "バイバイなのだ〜！",
-    "scene": 1,
-    "pauseAfter": 60,
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 38
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 178
   }
 ];
 

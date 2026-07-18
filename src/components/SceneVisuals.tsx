@@ -1,4 +1,4 @@
-import { Img, OffthreadVideo, staticFile, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Img, OffthreadVideo, staticFile, interpolate, spring, Easing, useCurrentFrame, useVideoConfig } from "remotion";
 import { COLORS } from "../config";
 import { VisualContent, AnimationType } from "../data/script";
 import videoDurations from "../../public/content/video-durations.json";
@@ -101,6 +101,12 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
       { extrapolateRight: "clamp" }
     );
 
+    // カット冒頭のパンチイン・ズーム（1.12倍 → 1.0倍に素早く収束）
+    const punch = interpolate(frame, [0, fps * 0.4], [1.12, 1], {
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    });
+
     return (
       <div style={{ ...fullScreen, overflow: "hidden" }}>
         <OffthreadVideo
@@ -112,7 +118,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
             width: `${SCALE * 100}%`,
             height: "100%",
             objectFit: "cover",
-            transform: `translateX(calc(-50% + ${panX}px))`,
+            transform: `translateX(calc(-50% + ${panX}px)) scale(${punch})`,
           }}
           startFrom={startFrom}
           muted
