@@ -28,6 +28,9 @@ interface ScriptLine {
   stampSub?: string;
   combo?: number;
   chip?: string;
+  day?: string;
+  phrase?: string;
+  phraseSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -173,6 +176,9 @@ export interface ScriptLine {
   stampSub?: string;        // スタンプ上の小ラベル
   combo?: number;           // 「できること」カウンター
   chip?: string;            // 左上のカテゴリチップ
+  day?: string;             // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
+  phrase?: string;          // 移住ストーリー型: 中央のエモ・パンチライン
+  phraseSub?: string;       // 移住ストーリー型: パンチライン上の小ラベル
   scene: number;
   voiceFile: string;
   durationInFrames: number;

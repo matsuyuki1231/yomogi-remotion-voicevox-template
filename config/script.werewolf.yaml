@@ -1,0 +1,246 @@
+# スクリプトデータ（マイクラ人狼 宣伝ショート / ギャップ実証型フォーマット）
+# セリフを編集後、npm run sync-script で反映
+#
+# ■ フォーマット: 生活サーバー版と同じ「ImpactOverlay」型（stamp/combo/chip）を人狼に適用。
+#   フック → ヤバい能力の連打（カウンター 1→6）→ 反論処理（難しそう？）→ CTAループ。
+#   ※旧ランキング型（No.6→No.1）とは別物。中央スタンプのスラムイン＋カウンター演出で畳みかける。
+#
+# ■ 新フィールド（ImpactOverlay 用）:
+#   stamp    : 画面中央に叩き込むデカ文字スタンプ
+#   stampSub : スタンプ上の小ラベル（省略可）
+#   combo    : 「できること」カウンター（右上・数字）。1→6 で escalation
+#   chip     : 画面左上のカテゴリチップ（ここでは役職名）
+#
+# 情報ソース: docs/yomogi/wolf 配下（毎週土曜21:30開催・統合版・参加費無料・全41役職）
+# 素材: public/content/マイクラ人狼 配下
+
+# ===== フック（0-4秒：正体を隠して意表を突く） =====
+- id: 1
+  character: metan
+  text: このマイクラの試合、1人だけ嘘つきが混ざってるの。
+  stampSub: 問題
+  stamp: 誰が嘘つき？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合1.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す1.mp3"
+    volume: 0.7
+
+- id: 2
+  character: zundamon
+  text: その名も、マイクラ人狼！誰が味方か分からないのだ！
+  stamp: マイクラ人狼
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合2.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+- id: 3
+  character: metan
+  text: 役職はなんと41種類！能力がぶっ飛んでるの！
+  stamp: 役職41種類
+  chip: 心理戦
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合3.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.7
+
+# ===== ヤバい能力の連打（できること 1→6） =====
+- id: 4
+  character: zundamon
+  text: 占い師は、生きてる1人が人狼か、ズバリ見抜けるのだ！
+  stamp: 白黒を見抜く
+  chip: 占い師
+  combo: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合1.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.7
+
+- id: 5
+  character: metan
+  text: 霊媒師は、死んだ人が人狼だったか鑑定できるの！
+  stamp: 死者を鑑定
+  chip: 霊媒師
+  combo: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/霊媒師で市民勝利.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.7
+
+- id: 6
+  character: zundamon
+  text: 死神はなんと、死んだ仲間を生き返らせるのだ！
+  stamp: 死者を蘇生
+  chip: 死神
+  combo: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合3.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.7
+
+- id: 7
+  character: metan
+  text: 狙撃手は、壁を貫通する銃でどこからでも撃ち抜くの！
+  stamp: 壁を撃ち抜く
+  chip: 狙撃手
+  combo: 4
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合2.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す5.mp3"
+    volume: 0.7
+
+- id: 8
+  character: zundamon
+  text: 殺し屋は、会議中にこっそり1人始末できるのだ！
+  stamp: 会議中に暗殺
+  chip: 殺し屋
+  combo: 5
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/殺し屋が霊媒師のフリ.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す22.mp3"
+    volume: 0.7
+
+- id: 9
+  character: metan
+  text: 無実の人は、全員に潔白が証明される最強の信頼役なの！
+  stamp: 全員が信じる
+  chip: 無実の人
+  combo: 6
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/無実の人の試合.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+# ===== 反論処理（難しそう？を先回りで潰す） =====
+- id: 10
+  character: zundamon
+  text: 難しそう？やることは、たった1つなのだ。
+  stampSub: 安心して
+  stamp: 嘘を見抜くだけ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合1.mp4"
+    animation: fadeIn
+  se:
+    src: "anxiety_piano.mp3"
+    volume: 0.5
+
+- id: 11
+  character: metan
+  text: 怪しい人を、みんなで会議して追放するだけなの！
+  stamp: 会議して追放
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合3.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す32.mp3"
+    volume: 0.7
+
+# ===== ピーク → CTA =====
+- id: 12
+  character: zundamon
+  text: このガチの心理戦が、マイクラで無料で遊べるのだ！
+  stamp: 無料で心理戦
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す23.mp3"
+    volume: 0.7
+
+- id: 13
+  character: metan
+  text: 開催は毎週土曜の、夜9時半からなの！
+  stamp: 毎週土曜21時半
+  chip: 開催
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "マイクラ人狼/人狼の試合2.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.8
+
+- id: 14
+  character: zundamon
+  text: 気になったら、ネットで「よもぎサーバー」と検索なのだ！
+  stampSub: ネットで検索
+  stamp: よもぎサーバー
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 15
+  character: metan
+  text: 君も参加して、名探偵になりましょ！
+  stamp: 参加して名探偵に
+  scene: 1
+  pauseAfter: 50
+  visual:
+    type: video
+    src: "マイクラ人狼/無実の人の試合.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6

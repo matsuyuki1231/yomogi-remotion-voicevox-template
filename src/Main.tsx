@@ -6,6 +6,7 @@ import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
 import { HeadlineOverlay } from "./components/HeadlineOverlay";
 import { ImpactOverlay } from "./components/ImpactOverlay";
+import { StoryOverlay } from "./components/StoryOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -124,8 +125,28 @@ export const Main: React.FC = () => {
         );
       })}
 
+      {/* DAYバッジ・エモ大字（移住ストーリー型フォーマット） */}
+      {currentLine && (currentLine.day || currentLine.phrase) && (
+        <Sequence
+          key={`story-${currentLine.id}`}
+          from={currentLineStartFrame}
+          durationInFrames={getLineDuration(currentLine)}
+        >
+          <StoryOverlay
+            day={currentLine.day}
+            phrase={currentLine.phrase}
+            phraseSub={currentLine.phraseSub}
+            character={currentLine.character}
+            durationInFrames={getLineDuration(currentLine)}
+          />
+        </Sequence>
+      )}
+
       {/* インパクトスタンプ・できることカウンター（ギャップ実証型フォーマット） */}
-      {currentLine && (currentLine.stamp || currentLine.combo || currentLine.chip) && (
+      {currentLine &&
+        !currentLine.day &&
+        !currentLine.phrase &&
+        (currentLine.stamp || currentLine.combo || currentLine.chip) && (
         <Sequence
           key={`impact-${currentLine.id}`}
           from={currentLineStartFrame}
