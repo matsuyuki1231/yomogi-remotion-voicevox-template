@@ -14,7 +14,7 @@ automation:
   autoVoiceFileName: true
 
 bgm:
-  # 甘茶の音楽工房「テクノフォビア」（フリーBGM・商用可・クレジット任意）
-  src: "amacha_technophobia.mp3"
+  # 甘茶の音楽工房「ピコピコディスコ」（フリーBGM・商用可・クレジット任意）
+  src: "amacha_picopicodisco.mp3"
   volume: 0.15
   loop: true

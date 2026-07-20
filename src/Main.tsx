@@ -9,6 +9,7 @@ import { ImpactOverlay } from "./components/ImpactOverlay";
 import { StoryOverlay } from "./components/StoryOverlay";
 import { QuizOverlay } from "./components/QuizOverlay";
 import { LegendOverlay } from "./components/LegendOverlay";
+import { DiagnosisOverlay } from "./components/DiagnosisOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -126,6 +127,35 @@ export const Main: React.FC = () => {
           </Sequence>
         );
       })}
+
+      {/* タイプ診断型フォーマット（バッジ・設問カード・A/B選択肢・結果カード・コメント誘発） */}
+      {currentLine &&
+        (currentLine.diagBadge ||
+          currentLine.diagQ ||
+          currentLine.diagA ||
+          currentLine.diagB ||
+          currentLine.diagResult ||
+          currentLine.diagBait) && (
+          <Sequence
+            key={`diag-${currentLine.id}`}
+            from={currentLineStartFrame}
+            durationInFrames={getLineDuration(currentLine)}
+          >
+            <DiagnosisOverlay
+              badge={currentLine.diagBadge}
+              q={currentLine.diagQ}
+              choiceA={currentLine.diagA}
+              choiceB={currentLine.diagB}
+              step={currentLine.diagStep}
+              result={currentLine.diagResult}
+              resultSub={currentLine.diagResultSub}
+              resultTag={currentLine.diagResultTag}
+              bait={currentLine.diagBait}
+              character={currentLine.character}
+              durationInFrames={getLineDuration(currentLine)}
+            />
+          </Sequence>
+        )}
 
       {/* 都市伝説検証型フォーマット（FILEバッジ・ウワサ見出し・信憑性ゲージ・検証スタンプ） */}
       {currentLine &&

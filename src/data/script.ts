@@ -30,7 +30,7 @@ export interface BGMConfig {
 }
 
 // BGM設定（動画全体で使用）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_technophobia.mp3","volume":0.15,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true};
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -64,6 +64,15 @@ export interface ScriptLine {
   legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
   legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
   legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
+  diagBadge?: string;       // タイプ診断型: 上部のグラデーションピルバッジ（"Q1"/"結果発表"）
+  diagQ?: string;           // タイプ診断型: 白カードの設問・見出し
+  diagA?: string;           // タイプ診断型: 選択肢カードA
+  diagB?: string;           // タイプ診断型: 選択肢カードB
+  diagStep?: number;        // タイプ診断型: 進行ドット（1〜3）
+  diagResult?: string;      // タイプ診断型: 結果カードのタイプ名（紙吹雪つき）
+  diagResultSub?: string;   // タイプ診断型: 結果カード上の条件ラベル
+  diagResultTag?: string;   // タイプ診断型: 結果カード下の天職チップ
+  diagBait?: string;        // タイプ診断型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -92,33 +101,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "マイクラには、もうひとつの人生が始まる世界がある…そんなウワサがあるのだ。今からガチで検証するのだ。",
-    "displayText": "“第二の人生が始まる世界”のウワサを検証",
-    "legendFile": "FILE No.013",
-    "legendRumor": "マイクラに“第二の人生”が始まる世界がある…？",
-    "legendCred": 0,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.75
-    },
-    "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 263
-  },
-  {
-    "id": 2,
-    "character": "metan",
-    "text": "はいはい、どうせガセよ。マイクラはブロックを積むゲームなんだから。",
-    "displayText": "どうせガセよ。ブロックのゲームだもの",
-    "legendFile": "FILE No.013",
-    "legendRumor": "マイクラに“第二の人生”が始まる世界がある…？",
-    "legendCred": 0,
+    "text": "たった3問で、キミのマイクラタイプがガチでわかる診断なのだ。最後の結果、けっこう当たるのだ…！",
+    "displayText": "3問でわかる！マイクラタイプ診断",
+    "diagBadge": "マイクラタイプ診断",
+    "diagQ": "あなたは何タイプ？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -128,66 +114,180 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す1.mp3",
-      "volume": 0.5
+      "volume": 0.6
     },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 135
+    "voiceFile": "01_zundamon.wav",
+    "durationInFrames": 246
   },
   {
-    "id": 3,
+    "id": 2,
     "character": "zundamon",
-    "text": "目撃情報その1。この世界では、車が走っているらしいのだ…。",
-    "displayText": "目撃情報① 車が走っている…？",
-    "legendFile": "FILE No.013",
-    "legendRumor": "車が走っている…？",
-    "legendEvidence": "目撃情報①",
-    "legendCred": 10,
+    "text": "第1問。新しいワールドに降り立った。最初にやることは、どっちなのだ？",
+    "displayText": "Q1 新ワールドで最初にやるのは？",
+    "diagBadge": "Q1",
+    "diagQ": "新ワールドで最初にやるのは？",
+    "diagA": "A 拠点づくり",
+    "diagB": "B とにかく探検",
+    "diagStep": 1,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
-      "volume": 0.6
+      "volume": 0.7
     },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 174
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 201
   },
   {
-    "id": 4,
-    "character": "zundamon",
-    "text": "いたのだ…。ほんとに車で街を走ってるのだ！ウワサは本当だったのだ！",
-    "displayText": "実在した。ほんとに走ってる…！",
-    "legendFile": "FILE No.013",
-    "legendStamp": "実在確認",
-    "legendStampSub": "目撃情報①",
-    "legendCred": 30,
+    "id": 3,
+    "character": "metan",
+    "text": "わたしは断然、拠点づくりね。安全第一だもの。",
+    "displayText": "わたしは断然、拠点づくりね",
+    "diagBadge": "Q1",
+    "diagQ": "新ワールドで最初にやるのは？",
+    "diagA": "A 拠点づくり",
+    "diagB": "B とにかく探検",
+    "diagStep": 1,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
-      "src": "boom.mp3",
+      "src": "決定ボタンを押す31.mp3",
       "volume": 0.55
     },
+    "voiceFile": "03_metan.wav",
+    "durationInFrames": 124
+  },
+  {
+    "id": 4,
+    "character": "zundamon",
+    "text": "第2問。ダイヤを掘り当てた！どうするのだ？",
+    "displayText": "Q2 ダイヤを掘り当てた。どうする？",
+    "diagBadge": "Q2",
+    "diagQ": "ダイヤを掘り当てた。どうする？",
+    "diagA": "A 自分の装備にする",
+    "diagB": "B 売ってお金にする",
+    "diagStep": 2,
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.7
+    },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 176
+    "durationInFrames": 121
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "目撃情報その2。住民が自分の店を開く、商店街があるらしいのだ。",
-    "displayText": "目撃情報② 住民が店を開く商店街…？",
-    "legendFile": "FILE No.013",
-    "legendRumor": "住民が店を開く商店街がある…？",
-    "legendEvidence": "目撃情報②",
-    "legendCred": 30,
+    "text": "最終問題。理想の休日は、どっちなのだ？",
+    "displayText": "Q3 理想の休日は？",
+    "diagBadge": "Q3",
+    "diagQ": "理想の休日は？",
+    "diagA": "A 一人でコツコツ",
+    "diagB": "B みんなでワイワイ",
+    "diagStep": 3,
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.7
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 136
+  },
+  {
+    "id": 6,
+    "character": "metan",
+    "text": "答えは決まった？それじゃあ、結果発表よ。",
+    "displayText": "それじゃあ、結果発表よ",
+    "diagBadge": "結果発表",
+    "diagQ": "あなたはどのタイプ…？",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "data_analysis.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 112
+  },
+  {
+    "id": 7,
+    "character": "zundamon",
+    "text": "Aばっかりだったキミは、もくもく職人タイプ！自分の土地で、理想の家をコツコツ作ると幸せなのだ。",
+    "displayText": "全部A→もくもく職人タイプ",
+    "diagResult": "もくもく職人タイプ",
+    "diagResultSub": "全部Aのあなた",
+    "diagResultTag": "天職：建築・土地づくり",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.65
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 260
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "Aが多めだったキミは、まったり生活タイプ。畑を耕して、釣りをして、スローライフが似合うのだ。",
+    "displayText": "A多め→まったり生活タイプ",
+    "diagResult": "まったり生活タイプ",
+    "diagResultSub": "Aが2つのあなた",
+    "diagResultTag": "天職：農業・釣り",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.65
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 256
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "Bが多めだったキミは、やり手商人タイプ！自分のお店を開いたら、あっという間に大金持ちなのだ。",
+    "displayText": "B多め→やり手商人タイプ",
+    "diagResult": "やり手商人タイプ",
+    "diagResultSub": "Bが2つのあなた",
+    "diagResultTag": "天職：お店の経営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -196,89 +296,20 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 201
-  },
-  {
-    "id": 6,
-    "character": "metan",
-    "text": "うそ…ほんとに商店街だわ。帽子まで売ってるじゃない…。",
-    "displayText": "うそ…帽子まで売ってる…",
-    "legendFile": "FILE No.013",
-    "legendStamp": "実在確認",
-    "legendStampSub": "目撃情報②",
-    "legendCred": 55,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "boom.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 120
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "目撃情報その3。この世界には、会社を作って社長になった者がいるとか…。",
-    "displayText": "目撃情報③ 社長になった者がいる…？",
-    "legendFile": "FILE No.013",
-    "legendRumor": "会社を作って社長になった者がいる…？",
-    "legendEvidence": "目撃情報③",
-    "legendCred": 55,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
       "src": "決定ボタンを押す4.mp3",
-      "volume": 0.6
+      "volume": 0.65
     },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 201
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 253
   },
   {
-    "id": 8,
-    "character": "metan",
-    "text": "会社!? ちょっと待って、ブロックのゲームで就職ってどういうことよ!?",
-    "displayText": "会社!? 就職ってどういうこと!?",
-    "legendFile": "FILE No.013",
-    "legendRumor": "会社を作って社長になった者がいる…？",
-    "legendCred": 55,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 156
-  },
-  {
-    "id": 9,
+    "id": 10,
     "character": "zundamon",
-    "text": "実在確認、なのだ。しかも社員を雇って、会社を大きくした記録まで残ってるのだ。",
-    "displayText": "実在確認。社員を雇った記録まで…",
-    "legendFile": "FILE No.013",
-    "legendStamp": "実在確認",
-    "legendStampSub": "目撃情報③",
-    "legendCred": 80,
+    "text": "そして全部Bのキミは…カリスマ社長タイプ！仲間を集めて、会社を作って、世界を動かす器なのだ！",
+    "displayText": "全部B→カリスマ社長タイプ",
+    "diagResult": "カリスマ社長タイプ",
+    "diagResultSub": "全部Bのあなた",
+    "diagResultTag": "天職：会社の経営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -291,64 +322,16 @@ export const scriptData: ScriptLine[] = [
       "src": "boom.mp3",
       "volume": 0.55
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 225
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "さらに住民は土地を買い、家を建て、畑を耕して暮らしているのだ…。もはや、これは人生なのだ。",
-    "displayText": "土地を買い、家を建て、畑を耕す…もはや人生",
-    "legendFile": "FILE No.013",
-    "legendRumor": "住民は土地を買い、家を建て、暮らしている",
-    "legendCred": 90,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.6
-    },
     "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 256
+    "durationInFrames": 277
   },
   {
     "id": 11,
     "character": "metan",
-    "text": "…ここまで来たら認めるわ。ねえ、この世界の正体、いったい何なの？",
-    "displayText": "…この世界の正体、何なの？",
-    "legendFile": "FILE No.013",
-    "legendRumor": "この世界の正体は…？",
-    "legendCred": 90,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "startFrom": 150,
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 173
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "このウワサは、全部実話だったのだ！正体は、統合版マイクラの、よもぎ生活サーバーなのだ！",
-    "displayText": "全部実話。正体は『よもぎ生活サーバー』",
-    "legendFile": "FILE No.013",
-    "legendRumor": "その名は『よもぎ生活サーバー』",
-    "legendStamp": "全部実話",
-    "legendStampSub": "検証結果",
-    "legendCred": 100,
+    "text": "ちょっと待って。この診断、マイクラの話よね？お店とか会社とか、どこでやるのよ。",
+    "displayText": "その遊び、どこでできるのよ？",
+    "diagBadge": "？？？",
+    "diagQ": "その遊び、どこでできるの？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -357,21 +340,42 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
+      "src": "決定ボタンを押す22.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 199
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "実はぜんぶ、実在するのだ！統合版マイクラの、よもぎ生活サーバーなら、この4タイプ全員が本気で遊べるのだ！",
+    "displayText": "実在する。『よもぎ生活サーバー』",
+    "diagResult": "よもぎ生活サーバー",
+    "diagResultSub": "4タイプ全員の楽園",
+    "diagResultTag": "統合版マイクラで遊べる",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
       "src": "spotlight.mp3",
       "volume": 0.8
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 249
+    "durationInFrames": 302
   },
   {
     "id": 13,
     "character": "zundamon",
-    "text": "しかも参加費は、まさかの無料。今日から誰でも、この世界の住民になれるのだ！",
-    "displayText": "しかも参加費は、まさかの無料",
-    "legendFile": "FILE No.013",
-    "legendStamp": "参加費0円",
-    "legendStampSub": "追加調査",
-    "legendCred": 100,
+    "text": "しかも参加は無料！今日からキミの天職、始められるのだ！",
+    "displayText": "しかも参加は無料",
+    "diagResult": "参加は無料",
+    "diagResultSub": "しかも",
+    "diagResultTag": "今日から天職を始めよう",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -384,16 +388,14 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 203
+    "durationInFrames": 155
   },
   {
     "id": 14,
     "character": "zundamon",
-    "text": "ネットで、よもぎサーバー、と検索すると、ウワサの真相をその目で確かめられるのだ！",
-    "displayText": "「よもぎサーバー」で検索して真相を確かめて",
-    "legendFile": "FILE No.013",
-    "legendCred": 100,
-    "legendBait": "信じるか信じないかは、調べてから決めて",
+    "text": "ネットで、よもぎサーバー、と検索！キミのタイプに合う暮らしが、きっと見つかるのだ！",
+    "displayText": "「よもぎサーバー」で検索！",
+    "diagBait": "「よもぎサーバー」で検索！",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -406,21 +408,20 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 219
+    "durationInFrames": 215
   },
   {
     "id": 15,
     "character": "metan",
-    "text": "次にこのウワサの目撃者になるのは、あなたかもしれないわ。…待ってるわよ。",
-    "displayText": "次の目撃者は、あなたかもしれない",
-    "legendFile": "FILE No.013",
-    "legendCred": 100,
-    "legendBait": "このウワサ、信じる？コメントで教えて",
+    "text": "それで、あなたは何タイプだった？コメントで教えてね。",
+    "displayText": "あなたは何タイプだった？",
+    "diagBadge": "マイクラタイプ診断",
+    "diagBait": "診断結果をコメントで教えて！",
     "scene": 1,
     "pauseAfter": 60,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -428,7 +429,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "15_metan.wav",
-    "durationInFrames": 156
+    "durationInFrames": 123
   }
 ];
 

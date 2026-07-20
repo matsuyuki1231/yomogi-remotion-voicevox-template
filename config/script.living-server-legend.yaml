@@ -1,0 +1,295 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 都市伝説検証型フォーマット）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「都市伝説検証型」フェイクアウト・ドキュメンタリー
+#   マイクラ系ショートで実績のある「都市伝説・検証系」の釣りジャンルに寄せた新設計。
+#   前半は「マイクラに"第二の人生が始まる世界"があるというウワサ」を検証する体で
+#   都市伝説動画として釣り、目撃情報（＝サーバーの実映像）を集めるたびに
+#   信憑性ゲージが上昇。「実在確認」スタンプを連打して、後半で正体＝よもぎ生活サーバーを
+#   リビールし「参加費0円」→ 検索CTA → コメント誘発で着地する。
+#   ずんだもん＝検証役、めたん＝懐疑役（視聴者代弁で疑い、途中で寝返る）。
+#
+# ■ 新フィールド（LegendOverlay 用）:
+#   legendFile     : 左上のファイルバッジ（"FILE No.013"）
+#   legendRumor    : 上部のウワサ見出し（明朝体・ドキュメンタリー風）
+#   legendCred     : ウワサ信憑性ゲージ（0〜100、100でゴールド化＝リビール）
+#   legendEvidence : 目撃情報タグ（"目撃情報①" など、危険テープ風）
+#   legendStamp    : 中央に叩き込む検証スタンプ（"実在確認" / "全部実話" / "参加費0円"）
+#   legendStampSub : スタンプ上の小ラベル（"目撃情報①" / "検証結果"）
+#   legendBait     : 下部のコメント誘発リボン
+#
+# 情報ソース: docs/yomogi/living 配下（車/チェストショップ/会社/農業/釣り/参加費無料/統合版）
+# 素材: public/content 配下、BGM: 甘茶の音楽工房「テクノフォビア」（フリー・商用可）
+
+# ===== フック（0-3秒：都市伝説のフリで釣る） =====
+- id: 1
+  character: zundamon
+  text: マイクラには、もうひとつの人生が始まる世界がある…そんなウワサがあるのだ。今からガチで検証するのだ。
+  displayText: "“第二の人生が始まる世界”のウワサを検証"
+  legendFile: FILE No.013
+  legendRumor: マイクラに“第二の人生”が始まる世界がある…？
+  legendCred: 0
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
+    animation: fadeIn
+  se:
+    src: "anxiety_piano.mp3"
+    volume: 0.75
+
+- id: 2
+  character: metan
+  text: はいはい、どうせガセよ。マイクラはブロックを積むゲームなんだから。
+  displayText: "どうせガセよ。ブロックのゲームだもの"
+  legendFile: FILE No.013
+  legendRumor: マイクラに“第二の人生”が始まる世界がある…？
+  legendCred: 0
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す1.mp3"
+    volume: 0.5
+
+# ===== 目撃情報①：車 =====
+- id: 3
+  character: zundamon
+  text: 目撃情報その1。この世界では、車が走っているらしいのだ…。
+  displayText: "目撃情報① 車が走っている…？"
+  legendFile: FILE No.013
+  legendRumor: 車が走っている…？
+  legendEvidence: 目撃情報①
+  legendCred: 10
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.6
+
+- id: 4
+  character: zundamon
+  text: いたのだ…。ほんとに車で街を走ってるのだ！ウワサは本当だったのだ！
+  displayText: "実在した。ほんとに走ってる…！"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報①
+  legendCred: 30
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.55
+
+# ===== 目撃情報②：商店街 =====
+- id: 5
+  character: zundamon
+  text: 目撃情報その2。住民が自分の店を開く、商店街があるらしいのだ。
+  displayText: "目撃情報② 住民が店を開く商店街…？"
+  legendFile: FILE No.013
+  legendRumor: 住民が店を開く商店街がある…？
+  legendEvidence: 目撃情報②
+  legendCred: 30
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/チェストショップでオーブを購入している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.6
+
+- id: 6
+  character: metan
+  text: うそ…ほんとに商店街だわ。帽子まで売ってるじゃない…。
+  displayText: "うそ…帽子まで売ってる…"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報②
+  legendCred: 55
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.5
+
+# ===== 目撃情報③：会社 =====
+- id: 7
+  character: zundamon
+  text: 目撃情報その3。この世界には、会社を作って社長になった者がいるとか…。
+  displayText: "目撃情報③ 社長になった者がいる…？"
+  legendFile: FILE No.013
+  legendRumor: 会社を作って社長になった者がいる…？
+  legendEvidence: 目撃情報③
+  legendCred: 55
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.6
+
+- id: 8
+  character: metan
+  text: 会社!? ちょっと待って、ブロックのゲームで就職ってどういうことよ!?
+  displayText: "会社!? 就職ってどういうこと!?"
+  legendFile: FILE No.013
+  legendRumor: 会社を作って社長になった者がいる…？
+  legendCred: 55
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.55
+
+- id: 9
+  character: zundamon
+  text: 実在確認、なのだ。しかも社員を雇って、会社を大きくした記録まで残ってるのだ。
+  displayText: "実在確認。社員を雇った記録まで…"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報③
+  legendCred: 80
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4"
+    startFrom: 1200
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.55
+
+# ===== モンタージュ（信憑性90%へ） =====
+- id: 10
+  character: zundamon
+  text: さらに住民は土地を買い、家を建て、畑を耕して暮らしているのだ…。もはや、これは人生なのだ。
+  displayText: "土地を買い、家を建て、畑を耕す…もはや人生"
+  legendFile: FILE No.013
+  legendRumor: 住民は土地を買い、家を建て、暮らしている
+  legendCred: 90
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "data_analysis.mp3"
+    volume: 0.6
+
+- id: 11
+  character: metan
+  text: …ここまで来たら認めるわ。ねえ、この世界の正体、いったい何なの？
+  displayText: "…この世界の正体、何なの？"
+  legendFile: FILE No.013
+  legendRumor: この世界の正体は…？
+  legendCred: 90
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活ワールドの街並みを散策している動画.mp4"
+    startFrom: 150
+    animation: fadeIn
+  se:
+    src: "anxiety_piano.mp3"
+    volume: 0.45
+
+# ===== リビール（都市伝説→実話＝よもぎ生活サーバー） =====
+- id: 12
+  character: zundamon
+  text: このウワサは、全部実話だったのだ！正体は、統合版マイクラの、よもぎ生活サーバーなのだ！
+  displayText: "全部実話。正体は『よもぎ生活サーバー』"
+  legendFile: FILE No.013
+  legendRumor: その名は『よもぎ生活サーバー』
+  legendStamp: 全部実話
+  legendStampSub: 検証結果
+  legendCred: 100
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.8
+
+- id: 13
+  character: zundamon
+  text: しかも参加費は、まさかの無料。今日から誰でも、この世界の住民になれるのだ！
+  displayText: "しかも参加費は、まさかの無料"
+  legendFile: FILE No.013
+  legendStamp: 参加費0円
+  legendStampSub: 追加調査
+  legendCred: 100
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+# ===== CTA（検索誘導＋コメント誘発＋ループ） =====
+- id: 14
+  character: zundamon
+  text: ネットで、よもぎサーバー、と検索すると、ウワサの真相をその目で確かめられるのだ！
+  displayText: "「よもぎサーバー」で検索して真相を確かめて"
+  legendFile: FILE No.013
+  legendCred: 100
+  legendBait: 信じるか信じないかは、調べてから決めて
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 15
+  character: metan
+  text: 次にこのウワサの目撃者になるのは、あなたかもしれないわ。…待ってるわよ。
+  displayText: "次の目撃者は、あなたかもしれない"
+  legendFile: FILE No.013
+  legendCred: 100
+  legendBait: このウワサ、信じる？コメントで教えて
+  scene: 1
+  pauseAfter: 60
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.4

@@ -47,6 +47,15 @@ interface ScriptLine {
   legendStamp?: string;
   legendStampSub?: string;
   legendBait?: string;
+  diagBadge?: string;
+  diagQ?: string;
+  diagA?: string;
+  diagB?: string;
+  diagStep?: number;
+  diagResult?: string;
+  diagResultSub?: string;
+  diagResultTag?: string;
+  diagBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -211,6 +220,15 @@ export interface ScriptLine {
   legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
   legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
   legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
+  diagBadge?: string;       // タイプ診断型: 上部のグラデーションピルバッジ（"Q1"/"結果発表"）
+  diagQ?: string;           // タイプ診断型: 白カードの設問・見出し
+  diagA?: string;           // タイプ診断型: 選択肢カードA
+  diagB?: string;           // タイプ診断型: 選択肢カードB
+  diagStep?: number;        // タイプ診断型: 進行ドット（1〜3）
+  diagResult?: string;      // タイプ診断型: 結果カードのタイプ名（紙吹雪つき）
+  diagResultSub?: string;   // タイプ診断型: 結果カード上の条件ラベル
+  diagResultTag?: string;   // タイプ診断型: 結果カード下の天職チップ
+  diagBait?: string;        // タイプ診断型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
