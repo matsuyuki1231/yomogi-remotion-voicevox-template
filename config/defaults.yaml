@@ -14,6 +14,7 @@ automation:
   autoVoiceFileName: true
 
 bgm:
-  src: "retrogamecenter.mp3"
-  volume: 0.16
+  # 甘茶の音楽工房「テクノフォビア」（フリーBGM・商用可・クレジット任意）
+  src: "amacha_technophobia.mp3"
+  volume: 0.15
   loop: true

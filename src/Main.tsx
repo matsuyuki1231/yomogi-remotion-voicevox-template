@@ -8,6 +8,7 @@ import { HeadlineOverlay } from "./components/HeadlineOverlay";
 import { ImpactOverlay } from "./components/ImpactOverlay";
 import { StoryOverlay } from "./components/StoryOverlay";
 import { QuizOverlay } from "./components/QuizOverlay";
+import { LegendOverlay } from "./components/LegendOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -125,6 +126,33 @@ export const Main: React.FC = () => {
           </Sequence>
         );
       })}
+
+      {/* 都市伝説検証型フォーマット（FILEバッジ・ウワサ見出し・信憑性ゲージ・検証スタンプ） */}
+      {currentLine &&
+        (currentLine.legendFile ||
+          currentLine.legendRumor ||
+          currentLine.legendCred !== undefined ||
+          currentLine.legendEvidence ||
+          currentLine.legendStamp ||
+          currentLine.legendBait) && (
+          <Sequence
+            key={`legend-${currentLine.id}`}
+            from={currentLineStartFrame}
+            durationInFrames={getLineDuration(currentLine)}
+          >
+            <LegendOverlay
+              file={currentLine.legendFile}
+              rumor={currentLine.legendRumor}
+              cred={currentLine.legendCred}
+              evidence={currentLine.legendEvidence}
+              stamp={currentLine.legendStamp}
+              stampSub={currentLine.legendStampSub}
+              bait={currentLine.legendBait}
+              character={currentLine.character}
+              durationInFrames={getLineDuration(currentLine)}
+            />
+          </Sequence>
+        )}
 
       {/* 参加型・○✕クイズ型フォーマット（設問・選択肢・判定・スコア・コメント誘発） */}
       {currentLine &&

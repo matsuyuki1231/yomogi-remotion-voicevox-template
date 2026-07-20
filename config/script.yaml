@@ -1,57 +1,70 @@
-# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 参加型・○✕クイズ型フォーマット）
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 都市伝説検証型フォーマット）
 # セリフを編集後、npm run sync-script → npm run voices の順で反映
 #
-# ■ フォーマット: 「参加型・○✕クイズ型」インタラクティブ・ショート
-#   2026年のバズるショート傾向（コメント誘発の設計 / 二択タップ参加 / 直接視聴者へ問いかけ /
-#   代弁者がわざと外して「いや違うw」を誘発 / 冒頭3秒フック / 完走率重視）に合わせて設計。
-#   ずんだもんが「マイクラでここまでできる？」を出題し、視聴者に○/×で当てさせる。
-#   めたんは視聴者代弁の“外し役”。正解リビールで「できる！」を叩き込み、連続正解カウンターが伸びる。
-#   最終問題「遊ぶのにお金は必要？」→「参加は無料」でCTAへ着地。
+# ■ フォーマット: 「都市伝説検証型」フェイクアウト・ドキュメンタリー
+#   マイクラ系ショートで実績のある「都市伝説・検証系」の釣りジャンルに寄せた新設計。
+#   前半は「マイクラに"第二の人生が始まる世界"があるというウワサ」を検証する体で
+#   都市伝説動画として釣り、目撃情報（＝サーバーの実映像）を集めるたびに
+#   信憑性ゲージが上昇。「実在確認」スタンプを連打して、後半で正体＝よもぎ生活サーバーを
+#   リビールし「参加費0円」→ 検索CTA → コメント誘発で着地する。
+#   ずんだもん＝検証役、めたん＝懐疑役（視聴者代弁で疑い、途中で寝返る）。
 #
-# ■ 新フィールド（QuizOverlay 用）:
-#   quizNo      : 上部の問題番号バッジ（"Q1"/"最終問題" など）
-#   quizQ       : 大きな設問（CTA行では見出しとして使用）
-#   choiceA     : 選択肢A（"○ できる" など）
-#   choiceB     : 選択肢B（"× ムリ" など）
-#   answer      : リビール時の正解（"A" / "B"）→ 正解チップが緑に光る
-#   verdict     : 中央に叩き込む判定スタンプ（"できる！"）
-#   verdictSub  : 判定スタンプ上の小ラベル（"正解"）
-#   score       : 右上の「連続できる」カウンター（1→4）
-#   commentBait : 下部のコメント誘発リボン
-#   ※ 設問行→（めたんの外し）→リビール行 の2〜3行で1問。設問文脈は各行に引き継ぐ
+# ■ 新フィールド（LegendOverlay 用）:
+#   legendFile     : 左上のファイルバッジ（"FILE No.013"）
+#   legendRumor    : 上部のウワサ見出し（明朝体・ドキュメンタリー風）
+#   legendCred     : ウワサ信憑性ゲージ（0〜100、100でゴールド化＝リビール）
+#   legendEvidence : 目撃情報タグ（"目撃情報①" など、危険テープ風）
+#   legendStamp    : 中央に叩き込む検証スタンプ（"実在確認" / "全部実話" / "参加費0円"）
+#   legendStampSub : スタンプ上の小ラベル（"目撃情報①" / "検証結果"）
+#   legendBait     : 下部のコメント誘発リボン
 #
-# 情報ソース: docs/yomogi/living 配下（車/チェストショップ/会社/バフ/参加は無料 等）
-# 素材: public/content/生活サーバー 配下
+# 情報ソース: docs/yomogi/living 配下（車/チェストショップ/会社/農業/釣り/参加費無料/統合版）
+# 素材: public/content 配下、BGM: 甘茶の音楽工房「テクノフォビア」（フリー・商用可）
 
-# ===== フック（0-3秒：ルール提示＝○か×で参加させる） =====
+# ===== フック（0-3秒：都市伝説のフリで釣る） =====
 - id: 1
   character: zundamon
-  text: マイクラでここまでできるか、当ててみてほしいのだ。できると思ったら○、ムリだと思ったら×、なのだ！
-  displayText: "マイクラでどこまでできる？○か×で当てて！"
-  quizNo: 参加型クイズ
-  quizQ: できる？ できない？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  commentBait: 答えは○か×でコメント！
+  text: マイクラには、もうひとつの人生が始まる世界がある…そんなウワサがあるのだ。今からガチで検証するのだ。
+  displayText: "“第二の人生が始まる世界”のウワサを検証"
+  legendFile: FILE No.013
+  legendRumor: マイクラに“第二の人生”が始まる世界がある…？
+  legendCred: 0
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
+    animation: fadeIn
+  se:
+    src: "anxiety_piano.mp3"
+    volume: 0.75
+
+- id: 2
+  character: metan
+  text: はいはい、どうせガセよ。マイクラはブロックを積むゲームなんだから。
+  displayText: "どうせガセよ。ブロックのゲームだもの"
+  legendFile: FILE No.013
+  legendRumor: マイクラに“第二の人生”が始まる世界がある…？
+  legendCred: 0
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す1.mp3"
-    volume: 0.6
+    volume: 0.5
 
-# ===== Q1：車で街を走れる？ =====
-- id: 2
+# ===== 目撃情報①：車 =====
+- id: 3
   character: zundamon
-  text: 第1問。マイクラの世界で、車に乗って街を走れるのだ？
-  displayText: "Q1 車で街を走れる？"
-  quizNo: Q1
-  quizQ: 車で街を走れる？
-  choiceA: ○ できる
-  choiceB: × ムリ
+  text: 目撃情報その1。この世界では、車が走っているらしいのだ…。
+  displayText: "目撃情報① 車が走っている…？"
+  legendFile: FILE No.013
+  legendRumor: 車が走っている…？
+  legendEvidence: 目撃情報①
+  legendCred: 10
   scene: 1
   pauseAfter: -3
   visual:
@@ -60,38 +73,16 @@
     animation: fadeIn
   se:
     src: "決定ボタンを押す2.mp3"
-    volume: 0.7
-
-- id: 3
-  character: metan
-  text: さすがにそれはムリでしょ…だってマイクラだもの。
-  displayText: "いや、さすがにムリでしょ…"
-  quizNo: Q1
-  quizQ: 車で街を走れる？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す31.mp3"
     volume: 0.6
 
 - id: 4
   character: zundamon
-  text: 正解は…できる、なのだ！ブーンって街を走れるのだ！
-  displayText: "正解は…できる！"
-  quizNo: Q1
-  quizQ: 車で街を走れる？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  answer: A
-  verdict: できる！
-  verdictSub: 正解
-  score: 1
+  text: いたのだ…。ほんとに車で街を走ってるのだ！ウワサは本当だったのだ！
+  displayText: "実在した。ほんとに走ってる…！"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報①
+  legendCred: 30
   scene: 1
   pauseAfter: -3
   visual:
@@ -102,16 +93,15 @@
     src: "boom.mp3"
     volume: 0.55
 
-# ===== Q2：お店に常連がつく？ =====
+# ===== 目撃情報②：商店街 =====
 - id: 5
   character: zundamon
-  text: 第2問。自分のお店を開いて、常連さんまで作れるのだ？
-  displayText: "Q2 お店に常連がつく？"
-  quizNo: Q2
-  quizQ: お店に常連がつく？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  score: 1
+  text: 目撃情報その2。住民が自分の店を開く、商店街があるらしいのだ。
+  displayText: "目撃情報② 住民が店を開く商店街…？"
+  legendFile: FILE No.013
+  legendRumor: 住民が店を開く商店街がある…？
+  legendEvidence: 目撃情報②
+  legendCred: 30
   scene: 1
   pauseAfter: -3
   visual:
@@ -123,17 +113,13 @@
     volume: 0.6
 
 - id: 6
-  character: zundamon
-  text: これも…できる！チェストショップで、りっぱなお店屋さんなのだ！
-  displayText: "これもできる！"
-  quizNo: Q2
-  quizQ: お店に常連がつく？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  answer: A
-  verdict: できる！
-  verdictSub: 正解
-  score: 2
+  character: metan
+  text: うそ…ほんとに商店街だわ。帽子まで売ってるじゃない…。
+  displayText: "うそ…帽子まで売ってる…"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報②
+  legendCred: 55
   scene: 1
   pauseAfter: -3
   visual:
@@ -141,19 +127,18 @@
     src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す4.mp3"
-    volume: 0.7
+    src: "boom.mp3"
+    volume: 0.5
 
-# ===== Q3：社長になって会社経営？（14〜15秒地点の二次フック） =====
+# ===== 目撃情報③：会社 =====
 - id: 7
   character: zundamon
-  text: 第3問。社長になって、本物みたいに会社を経営できるのだ？
-  displayText: "Q3 会社を経営できる？"
-  quizNo: Q3
-  quizQ: 社長になって会社経営？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  score: 2
+  text: 目撃情報その3。この世界には、会社を作って社長になった者がいるとか…。
+  displayText: "目撃情報③ 社長になった者がいる…？"
+  legendFile: FILE No.013
+  legendRumor: 会社を作って社長になった者がいる…？
+  legendEvidence: 目撃情報③
+  legendCred: 55
   scene: 1
   pauseAfter: -3
   visual:
@@ -161,18 +146,16 @@
     src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す5.mp3"
-    volume: 0.7
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.6
 
 - id: 8
   character: metan
-  text: 会社!? もう、それマイクラの範囲を超えてるわ…！
-  displayText: "会社!? もう範囲を超えてる…！"
-  quizNo: Q3
-  quizQ: 社長になって会社経営？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  score: 2
+  text: 会社!? ちょっと待って、ブロックのゲームで就職ってどういうことよ!?
+  displayText: "会社!? 就職ってどういうこと!?"
+  legendFile: FILE No.013
+  legendRumor: 会社を作って社長になった者がいる…？
+  legendCred: 55
   scene: 1
   pauseAfter: -3
   visual:
@@ -180,21 +163,17 @@
     src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す32.mp3"
-    volume: 0.6
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.55
 
 - id: 9
   character: zundamon
-  text: できる、なのだ！社員を雇って、みんなで大きくもできるのだ。
-  displayText: "できる！社員も雇えるのだ"
-  quizNo: Q3
-  quizQ: 社長になって会社経営？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  answer: A
-  verdict: できる！
-  verdictSub: 正解
-  score: 3
+  text: 実在確認、なのだ。しかも社員を雇って、会社を大きくした記録まで残ってるのだ。
+  displayText: "実在確認。社員を雇った記録まで…"
+  legendFile: FILE No.013
+  legendStamp: 実在確認
+  legendStampSub: 目撃情報③
+  legendCred: 80
   scene: 1
   pauseAfter: -3
   visual:
@@ -202,58 +181,17 @@
     src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
     animation: fadeIn
   se:
-    src: "spotlight.mp3"
-    volume: 0.7
+    src: "boom.mp3"
+    volume: 0.55
 
-# ===== Q4：採掘が爆速になる？ =====
+# ===== モンタージュ（信憑性90%へ） =====
 - id: 10
   character: zundamon
-  text: 第4問。バフを盛れば、採掘スピードが爆速になるのだ？
-  displayText: "Q4 採掘が爆速になる？"
-  quizNo: Q4
-  quizQ: 採掘が爆速になる？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  score: 3
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す22.mp3"
-    volume: 0.7
-
-- id: 11
-  character: zundamon
-  text: できる！暗視も付ければ、洞窟がもう作業ゲーなのだ！
-  displayText: "できる！洞窟が作業ゲーに"
-  quizNo: Q4
-  quizQ: 採掘が爆速になる？
-  choiceA: ○ できる
-  choiceB: × ムリ
-  answer: A
-  verdict: できる！
-  verdictSub: 正解
-  score: 4
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す23.mp3"
-    volume: 0.6
-
-# ===== 中間フック：ここまで全部できる → 参加を煽る =====
-- id: 12
-  character: metan
-  text: 車に、お店に、会社に、採掘…もう、これひとつの街じゃない。
-  displayText: "もう、ひとつの街だわ…"
-  score: 4
-  commentBait: ここまで全部できる！何問わかった？
+  text: さらに住民は土地を買い、家を建て、畑を耕して暮らしているのだ…。もはや、これは人生なのだ。
+  displayText: "土地を買い、家を建て、畑を耕す…もはや人生"
+  legendFile: FILE No.013
+  legendRumor: 住民は土地を買い、家を建て、暮らしている
+  legendCred: 90
   scene: 1
   pauseAfter: -3
   visual:
@@ -261,19 +199,16 @@
     src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す42.mp3"
+    src: "data_analysis.mp3"
     volume: 0.6
 
-# ===== 最終問題：遊ぶのにお金は必要？（答え＝参加は無料） =====
-- id: 13
-  character: zundamon
-  text: 最終問題。ここまで全部できるこの世界、遊ぶのにお金は必要なのだ？
-  displayText: "最終問題 遊ぶのにお金は必要？"
-  quizNo: 最終問題
-  quizQ: 遊ぶのにお金は必要？
-  choiceA: ○ 必要
-  choiceB: × いらない
-  score: 4
+- id: 11
+  character: metan
+  text: …ここまで来たら認めるわ。ねえ、この世界の正体、いったい何なの？
+  displayText: "…この世界の正体、何なの？"
+  legendFile: FILE No.013
+  legendRumor: この世界の正体は…？
+  legendCred: 90
   scene: 1
   pauseAfter: -3
   visual:
@@ -281,20 +216,19 @@
     src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す5.mp3"
-    volume: 0.7
+    src: "anxiety_piano.mp3"
+    volume: 0.45
 
-- id: 14
+# ===== リビール（都市伝説→実話＝よもぎ生活サーバー） =====
+- id: 12
   character: zundamon
-  text: 答えは…参加は無料。誰でも今日から、この生活を始められるのだ！
-  displayText: "答えは…参加は無料！"
-  quizNo: 最終問題
-  quizQ: 遊ぶのにお金は必要？
-  choiceA: ○ 必要
-  choiceB: × いらない
-  answer: B
-  verdict: 参加は無料！
-  verdictSub: 正解
+  text: このウワサは、全部実話だったのだ！正体は、統合版マイクラの、よもぎ生活サーバーなのだ！
+  displayText: "全部実話。正体は『よもぎ生活サーバー』"
+  legendFile: FILE No.013
+  legendRumor: その名は『よもぎ生活サーバー』
+  legendStamp: 全部実話
+  legendStampSub: 検証結果
+  legendCred: 100
   scene: 1
   pauseAfter: -3
   visual:
@@ -305,13 +239,32 @@
     src: "spotlight.mp3"
     volume: 0.8
 
-# ===== CTA：検索誘導＋コメント誘発 → 冒頭にループ =====
-- id: 15
+- id: 13
   character: zundamon
-  text: 何問できたのだ？ネットで「よもぎサーバー」って検索して、続きは自分の目で確かめてほしいのだ！
-  displayText: "「よもぎサーバー」で検索！"
-  quizQ: 「よもぎサーバー」で検索！
-  commentBait: 何問正解できた？コメントで教えて！
+  text: しかも参加費は、まさかの無料。今日から誰でも、この世界の住民になれるのだ！
+  displayText: "しかも参加費は、まさかの無料"
+  legendFile: FILE No.013
+  legendStamp: 参加費0円
+  legendStampSub: 追加調査
+  legendCred: 100
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/ガチャを引いている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+# ===== CTA（検索誘導＋コメント誘発＋ループ） =====
+- id: 14
+  character: zundamon
+  text: ネットで、よもぎサーバー、と検索すると、ウワサの真相をその目で確かめられるのだ！
+  displayText: "「よもぎサーバー」で検索して真相を確かめて"
+  legendFile: FILE No.013
+  legendCred: 100
+  legendBait: 信じるか信じないかは、調べてから決めて
   scene: 1
   pauseAfter: -3
   visual:
@@ -322,16 +275,19 @@
     src: "決定ボタンを押す42.mp3"
     volume: 0.7
 
-- id: 16
+- id: 15
   character: metan
-  text: あなたの「できる」を、ここで試してみて。待ってるわ。
-  displayText: "あなたの「できる」を、ここで"
+  text: 次にこのウワサの目撃者になるのは、あなたかもしれないわ。…待ってるわよ。
+  displayText: "次の目撃者は、あなたかもしれない"
+  legendFile: FILE No.013
+  legendCred: 100
+  legendBait: このウワサ、信じる？コメントで教えて
   scene: 1
-  pauseAfter: 50
+  pauseAfter: 60
   visual:
     type: video
     src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
     animation: fadeIn
   se:
-    src: "boom.mp3"
-    volume: 0.55
+    src: "spotlight.mp3"
+    volume: 0.4

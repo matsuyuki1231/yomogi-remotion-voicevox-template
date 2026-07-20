@@ -1,0 +1,337 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 参加型・○✕クイズ型フォーマット）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「参加型・○✕クイズ型」インタラクティブ・ショート
+#   2026年のバズるショート傾向（コメント誘発の設計 / 二択タップ参加 / 直接視聴者へ問いかけ /
+#   代弁者がわざと外して「いや違うw」を誘発 / 冒頭3秒フック / 完走率重視）に合わせて設計。
+#   ずんだもんが「マイクラでここまでできる？」を出題し、視聴者に○/×で当てさせる。
+#   めたんは視聴者代弁の“外し役”。正解リビールで「できる！」を叩き込み、連続正解カウンターが伸びる。
+#   最終問題「遊ぶのにお金は必要？」→「参加は無料」でCTAへ着地。
+#
+# ■ 新フィールド（QuizOverlay 用）:
+#   quizNo      : 上部の問題番号バッジ（"Q1"/"最終問題" など）
+#   quizQ       : 大きな設問（CTA行では見出しとして使用）
+#   choiceA     : 選択肢A（"○ できる" など）
+#   choiceB     : 選択肢B（"× ムリ" など）
+#   answer      : リビール時の正解（"A" / "B"）→ 正解チップが緑に光る
+#   verdict     : 中央に叩き込む判定スタンプ（"できる！"）
+#   verdictSub  : 判定スタンプ上の小ラベル（"正解"）
+#   score       : 右上の「連続できる」カウンター（1→4）
+#   commentBait : 下部のコメント誘発リボン
+#   ※ 設問行→（めたんの外し）→リビール行 の2〜3行で1問。設問文脈は各行に引き継ぐ
+#
+# 情報ソース: docs/yomogi/living 配下（車/チェストショップ/会社/バフ/参加は無料 等）
+# 素材: public/content/生活サーバー 配下
+
+# ===== フック（0-3秒：ルール提示＝○か×で参加させる） =====
+- id: 1
+  character: zundamon
+  text: マイクラでここまでできるか、当ててみてほしいのだ。できると思ったら○、ムリだと思ったら×、なのだ！
+  displayText: "マイクラでどこまでできる？○か×で当てて！"
+  quizNo: 参加型クイズ
+  quizQ: できる？ できない？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  commentBait: 答えは○か×でコメント！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す1.mp3"
+    volume: 0.6
+
+# ===== Q1：車で街を走れる？ =====
+- id: 2
+  character: zundamon
+  text: 第1問。マイクラの世界で、車に乗って街を走れるのだ？
+  displayText: "Q1 車で街を走れる？"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.7
+
+- id: 3
+  character: metan
+  text: さすがにそれはムリでしょ…だってマイクラだもの。
+  displayText: "いや、さすがにムリでしょ…"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.6
+
+- id: 4
+  character: zundamon
+  text: 正解は…できる、なのだ！ブーンって街を走れるのだ！
+  displayText: "正解は…できる！"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.55
+
+# ===== Q2：お店に常連がつく？ =====
+- id: 5
+  character: zundamon
+  text: 第2問。自分のお店を開いて、常連さんまで作れるのだ？
+  displayText: "Q2 お店に常連がつく？"
+  quizNo: Q2
+  quizQ: お店に常連がつく？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.6
+
+- id: 6
+  character: zundamon
+  text: これも…できる！チェストショップで、りっぱなお店屋さんなのだ！
+  displayText: "これもできる！"
+  quizNo: Q2
+  quizQ: お店に常連がつく？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.7
+
+# ===== Q3：社長になって会社経営？（14〜15秒地点の二次フック） =====
+- id: 7
+  character: zundamon
+  text: 第3問。社長になって、本物みたいに会社を経営できるのだ？
+  displayText: "Q3 会社を経営できる？"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す5.mp3"
+    volume: 0.7
+
+- id: 8
+  character: metan
+  text: 会社!? もう、それマイクラの範囲を超えてるわ…！
+  displayText: "会社!? もう範囲を超えてる…！"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す32.mp3"
+    volume: 0.6
+
+- id: 9
+  character: zundamon
+  text: できる、なのだ！社員を雇って、みんなで大きくもできるのだ。
+  displayText: "できる！社員も雇えるのだ"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.7
+
+# ===== Q4：採掘が爆速になる？ =====
+- id: 10
+  character: zundamon
+  text: 第4問。バフを盛れば、採掘スピードが爆速になるのだ？
+  displayText: "Q4 採掘が爆速になる？"
+  quizNo: Q4
+  quizQ: 採掘が爆速になる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す22.mp3"
+    volume: 0.7
+
+- id: 11
+  character: zundamon
+  text: できる！暗視も付ければ、洞窟がもう作業ゲーなのだ！
+  displayText: "できる！洞窟が作業ゲーに"
+  quizNo: Q4
+  quizQ: 採掘が爆速になる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 4
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す23.mp3"
+    volume: 0.6
+
+# ===== 中間フック：ここまで全部できる → 参加を煽る =====
+- id: 12
+  character: metan
+  text: 車に、お店に、会社に、採掘…もう、これひとつの街じゃない。
+  displayText: "もう、ひとつの街だわ…"
+  score: 4
+  commentBait: ここまで全部できる！何問わかった？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.6
+
+# ===== 最終問題：遊ぶのにお金は必要？（答え＝参加は無料） =====
+- id: 13
+  character: zundamon
+  text: 最終問題。ここまで全部できるこの世界、遊ぶのにお金は必要なのだ？
+  displayText: "最終問題 遊ぶのにお金は必要？"
+  quizNo: 最終問題
+  quizQ: 遊ぶのにお金は必要？
+  choiceA: ○ 必要
+  choiceB: × いらない
+  score: 4
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す5.mp3"
+    volume: 0.7
+
+- id: 14
+  character: zundamon
+  text: 答えは…参加は無料。誰でも今日から、この生活を始められるのだ！
+  displayText: "答えは…参加は無料！"
+  quizNo: 最終問題
+  quizQ: 遊ぶのにお金は必要？
+  choiceA: ○ 必要
+  choiceB: × いらない
+  answer: B
+  verdict: 参加は無料！
+  verdictSub: 正解
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.8
+
+# ===== CTA：検索誘導＋コメント誘発 → 冒頭にループ =====
+- id: 15
+  character: zundamon
+  text: 何問できたのだ？ネットで「よもぎサーバー」って検索して、続きは自分の目で確かめてほしいのだ！
+  displayText: "「よもぎサーバー」で検索！"
+  quizQ: 「よもぎサーバー」で検索！
+  commentBait: 何問正解できた？コメントで教えて！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 16
+  character: metan
+  text: あなたの「できる」を、ここで試してみて。待ってるわ。
+  displayText: "あなたの「できる」を、ここで"
+  scene: 1
+  pauseAfter: 50
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.55

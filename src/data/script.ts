@@ -30,7 +30,7 @@ export interface BGMConfig {
 }
 
 // BGM設定（動画全体で使用）
-export const bgmConfig: BGMConfig | null = {"src":"retrogamecenter.mp3","volume":0.16,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_technophobia.mp3","volume":0.15,"loop":true};
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -57,6 +57,13 @@ export interface ScriptLine {
   verdictSub?: string;      // 参加型クイズ型: 判定スタンプ上の小ラベル（"正解"）
   score?: number;           // 参加型クイズ型: 右上の連続できるカウンター
   commentBait?: string;     // 参加型クイズ型: 下部のコメント誘発リボン
+  legendFile?: string;      // 都市伝説検証型: 左上のファイルバッジ（"FILE No.013"）
+  legendRumor?: string;     // 都市伝説検証型: 上部のウワサ見出し（明朝体）
+  legendCred?: number;      // 都市伝説検証型: ウワサ信憑性ゲージ（0〜100、100でゴールド化）
+  legendEvidence?: string;  // 都市伝説検証型: 目撃情報タグ（危険テープ風）
+  legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
+  legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
+  legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -85,36 +92,56 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "マイクラでここまでできるか、当ててみてほしいのだ。できると思ったら○、ムリだと思ったら×、なのだ！",
-    "displayText": "マイクラでどこまでできる？○か×で当てて！",
-    "quizNo": "参加型クイズ",
-    "quizQ": "できる？ できない？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "commentBait": "答えは○か×でコメント！",
+    "text": "マイクラには、もうひとつの人生が始まる世界がある…そんなウワサがあるのだ。今からガチで検証するのだ。",
+    "displayText": "“第二の人生が始まる世界”のウワサを検証",
+    "legendFile": "FILE No.013",
+    "legendRumor": "マイクラに“第二の人生”が始まる世界がある…？",
+    "legendCred": 0,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.75
+    },
+    "voiceFile": "01_zundamon.wav",
+    "durationInFrames": 263
+  },
+  {
+    "id": 2,
+    "character": "metan",
+    "text": "はいはい、どうせガセよ。マイクラはブロックを積むゲームなんだから。",
+    "displayText": "どうせガセよ。ブロックのゲームだもの",
+    "legendFile": "FILE No.013",
+    "legendRumor": "マイクラに“第二の人生”が始まる世界がある…？",
+    "legendCred": 0,
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す1.mp3",
-      "volume": 0.6
+      "volume": 0.5
     },
-    "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 261
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 135
   },
   {
-    "id": 2,
+    "id": 3,
     "character": "zundamon",
-    "text": "第1問。マイクラの世界で、車に乗って街を走れるのだ？",
-    "displayText": "Q1 車で街を走れる？",
-    "quizNo": "Q1",
-    "quizQ": "車で街を走れる？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
+    "text": "目撃情報その1。この世界では、車が走っているらしいのだ…。",
+    "displayText": "目撃情報① 車が走っている…？",
+    "legendFile": "FILE No.013",
+    "legendRumor": "車が走っている…？",
+    "legendEvidence": "目撃情報①",
+    "legendCred": 10,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -124,47 +151,20 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 168
-  },
-  {
-    "id": 3,
-    "character": "metan",
-    "text": "さすがにそれはムリでしょ…だってマイクラだもの。",
-    "displayText": "いや、さすがにムリでしょ…",
-    "quizNo": "Q1",
-    "quizQ": "車で街を走れる？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
       "volume": 0.6
     },
-    "voiceFile": "03_metan.wav",
-    "durationInFrames": 98
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 174
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "正解は…できる、なのだ！ブーンって街を走れるのだ！",
-    "displayText": "正解は…できる！",
-    "quizNo": "Q1",
-    "quizQ": "車で街を走れる？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "answer": "A",
-    "verdict": "できる！",
-    "verdictSub": "正解",
-    "score": 1,
+    "text": "いたのだ…。ほんとに車で街を走ってるのだ！ウワサは本当だったのだ！",
+    "displayText": "実在した。ほんとに走ってる…！",
+    "legendFile": "FILE No.013",
+    "legendStamp": "実在確認",
+    "legendStampSub": "目撃情報①",
+    "legendCred": 30,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -177,18 +177,17 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.55
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 153
+    "durationInFrames": 176
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "第2問。自分のお店を開いて、常連さんまで作れるのだ？",
-    "displayText": "Q2 お店に常連がつく？",
-    "quizNo": "Q2",
-    "quizQ": "お店に常連がつく？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "score": 1,
+    "text": "目撃情報その2。住民が自分の店を開く、商店街があるらしいのだ。",
+    "displayText": "目撃情報② 住民が店を開く商店街…？",
+    "legendFile": "FILE No.013",
+    "legendRumor": "住民が店を開く商店街がある…？",
+    "legendEvidence": "目撃情報②",
+    "legendCred": 30,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -201,21 +200,17 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 163
+    "durationInFrames": 201
   },
   {
     "id": 6,
-    "character": "zundamon",
-    "text": "これも…できる！チェストショップで、りっぱなお店屋さんなのだ！",
-    "displayText": "これもできる！",
-    "quizNo": "Q2",
-    "quizQ": "お店に常連がつく？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "answer": "A",
-    "verdict": "できる！",
-    "verdictSub": "正解",
-    "score": 2,
+    "character": "metan",
+    "text": "うそ…ほんとに商店街だわ。帽子まで売ってるじゃない…。",
+    "displayText": "うそ…帽子まで売ってる…",
+    "legendFile": "FILE No.013",
+    "legendStamp": "実在確認",
+    "legendStampSub": "目撃情報②",
+    "legendCred": 55,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -224,22 +219,21 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.7
+      "src": "boom.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 161
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 120
   },
   {
     "id": 7,
     "character": "zundamon",
-    "text": "第3問。社長になって、本物みたいに会社を経営できるのだ？",
-    "displayText": "Q3 会社を経営できる？",
-    "quizNo": "Q3",
-    "quizQ": "社長になって会社経営？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "score": 2,
+    "text": "目撃情報その3。この世界には、会社を作って社長になった者がいるとか…。",
+    "displayText": "目撃情報③ 社長になった者がいる…？",
+    "legendFile": "FILE No.013",
+    "legendRumor": "会社を作って社長になった者がいる…？",
+    "legendEvidence": "目撃情報③",
+    "legendCred": 55,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -248,22 +242,20 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
-      "volume": 0.7
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.6
     },
     "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 176
+    "durationInFrames": 201
   },
   {
     "id": 8,
     "character": "metan",
-    "text": "会社!? もう、それマイクラの範囲を超えてるわ…！",
-    "displayText": "会社!? もう範囲を超えてる…！",
-    "quizNo": "Q3",
-    "quizQ": "社長になって会社経営？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "score": 2,
+    "text": "会社!? ちょっと待って、ブロックのゲームで就職ってどういうことよ!?",
+    "displayText": "会社!? 就職ってどういうこと!?",
+    "legendFile": "FILE No.013",
+    "legendRumor": "会社を作って社長になった者がいる…？",
+    "legendCred": 55,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -272,25 +264,21 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.6
+      "src": "決定ボタンを押す31.mp3",
+      "volume": 0.55
     },
     "voiceFile": "08_metan.wav",
-    "durationInFrames": 115
+    "durationInFrames": 156
   },
   {
     "id": 9,
     "character": "zundamon",
-    "text": "できる、なのだ！社員を雇って、みんなで大きくもできるのだ。",
-    "displayText": "できる！社員も雇えるのだ",
-    "quizNo": "Q3",
-    "quizQ": "社長になって会社経営？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "answer": "A",
-    "verdict": "できる！",
-    "verdictSub": "正解",
-    "score": 3,
+    "text": "実在確認、なのだ。しかも社員を雇って、会社を大きくした記録まで残ってるのだ。",
+    "displayText": "実在確認。社員を雇った記録まで…",
+    "legendFile": "FILE No.013",
+    "legendStamp": "実在確認",
+    "legendStampSub": "目撃情報③",
+    "legendCred": 80,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -299,70 +287,20 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "spotlight.mp3",
-      "volume": 0.7
+      "src": "boom.mp3",
+      "volume": 0.55
     },
     "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 163
+    "durationInFrames": 225
   },
   {
     "id": 10,
     "character": "zundamon",
-    "text": "第4問。バフを盛れば、採掘スピードが爆速になるのだ？",
-    "displayText": "Q4 採掘が爆速になる？",
-    "quizNo": "Q4",
-    "quizQ": "採掘が爆速になる？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "score": 3,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 165
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "できる！暗視も付ければ、洞窟がもう作業ゲーなのだ！",
-    "displayText": "できる！洞窟が作業ゲーに",
-    "quizNo": "Q4",
-    "quizQ": "採掘が爆速になる？",
-    "choiceA": "○ できる",
-    "choiceB": "× ムリ",
-    "answer": "A",
-    "verdict": "できる！",
-    "verdictSub": "正解",
-    "score": 4,
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す23.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 143
-  },
-  {
-    "id": 12,
-    "character": "metan",
-    "text": "車に、お店に、会社に、採掘…もう、これひとつの街じゃない。",
-    "displayText": "もう、ひとつの街だわ…",
-    "score": 4,
-    "commentBait": "ここまで全部できる！何問わかった？",
+    "text": "さらに住民は土地を買い、家を建て、畑を耕して暮らしているのだ…。もはや、これは人生なのだ。",
+    "displayText": "土地を買い、家を建て、畑を耕す…もはや人生",
+    "legendFile": "FILE No.013",
+    "legendRumor": "住民は土地を買い、家を建て、暮らしている",
+    "legendCred": 90,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -371,22 +309,20 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す42.mp3",
+      "src": "data_analysis.mp3",
       "volume": 0.6
     },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 176
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 256
   },
   {
-    "id": 13,
-    "character": "zundamon",
-    "text": "最終問題。ここまで全部できるこの世界、遊ぶのにお金は必要なのだ？",
-    "displayText": "最終問題 遊ぶのにお金は必要？",
-    "quizNo": "最終問題",
-    "quizQ": "遊ぶのにお金は必要？",
-    "choiceA": "○ 必要",
-    "choiceB": "× いらない",
-    "score": 4,
+    "id": 11,
+    "character": "metan",
+    "text": "…ここまで来たら認めるわ。ねえ、この世界の正体、いったい何なの？",
+    "displayText": "…この世界の正体、何なの？",
+    "legendFile": "FILE No.013",
+    "legendRumor": "この世界の正体は…？",
+    "legendCred": 90,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -395,24 +331,22 @@ export const scriptData: ScriptLine[] = [
       "animation": "fadeIn"
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
-      "volume": 0.7
+      "src": "anxiety_piano.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 199
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 173
   },
   {
-    "id": 14,
+    "id": 12,
     "character": "zundamon",
-    "text": "答えは…参加は無料。誰でも今日から、この生活を始められるのだ！",
-    "displayText": "答えは…参加は無料！",
-    "quizNo": "最終問題",
-    "quizQ": "遊ぶのにお金は必要？",
-    "choiceA": "○ 必要",
-    "choiceB": "× いらない",
-    "answer": "B",
-    "verdict": "参加は無料！",
-    "verdictSub": "正解",
+    "text": "このウワサは、全部実話だったのだ！正体は、統合版マイクラの、よもぎ生活サーバーなのだ！",
+    "displayText": "全部実話。正体は『よもぎ生活サーバー』",
+    "legendFile": "FILE No.013",
+    "legendRumor": "その名は『よもぎ生活サーバー』",
+    "legendStamp": "全部実話",
+    "legendStampSub": "検証結果",
+    "legendCred": 100,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -424,16 +358,40 @@ export const scriptData: ScriptLine[] = [
       "src": "spotlight.mp3",
       "volume": 0.8
     },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 186
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 249
   },
   {
-    "id": 15,
+    "id": 13,
     "character": "zundamon",
-    "text": "何問できたのだ？ネットで「よもぎサーバー」って検索して、続きは自分の目で確かめてほしいのだ！",
-    "displayText": "「よもぎサーバー」で検索！",
-    "quizQ": "「よもぎサーバー」で検索！",
-    "commentBait": "何問正解できた？コメントで教えて！",
+    "text": "しかも参加費は、まさかの無料。今日から誰でも、この世界の住民になれるのだ！",
+    "displayText": "しかも参加費は、まさかの無料",
+    "legendFile": "FILE No.013",
+    "legendStamp": "参加費0円",
+    "legendStampSub": "追加調査",
+    "legendCred": 100,
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 203
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "ネットで、よもぎサーバー、と検索すると、ウワサの真相をその目で確かめられるのだ！",
+    "displayText": "「よもぎサーバー」で検索して真相を確かめて",
+    "legendFile": "FILE No.013",
+    "legendCred": 100,
+    "legendBait": "信じるか信じないかは、調べてから決めて",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -445,27 +403,30 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す42.mp3",
       "volume": 0.7
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 264
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 219
   },
   {
-    "id": 16,
+    "id": 15,
     "character": "metan",
-    "text": "あなたの「できる」を、ここで試してみて。待ってるわ。",
-    "displayText": "あなたの「できる」を、ここで",
+    "text": "次にこのウワサの目撃者になるのは、あなたかもしれないわ。…待ってるわよ。",
+    "displayText": "次の目撃者は、あなたかもしれない",
+    "legendFile": "FILE No.013",
+    "legendCred": 100,
+    "legendBait": "このウワサ、信じる？コメントで教えて",
     "scene": 1,
-    "pauseAfter": 50,
+    "pauseAfter": 60,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.55
+      "src": "spotlight.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 147
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 156
   }
 ];
 

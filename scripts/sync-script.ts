@@ -40,6 +40,13 @@ interface ScriptLine {
   verdictSub?: string;
   score?: number;
   commentBait?: string;
+  legendFile?: string;
+  legendRumor?: string;
+  legendCred?: number;
+  legendEvidence?: string;
+  legendStamp?: string;
+  legendStampSub?: string;
+  legendBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -197,6 +204,13 @@ export interface ScriptLine {
   verdictSub?: string;      // 参加型クイズ型: 判定スタンプ上の小ラベル（"正解"）
   score?: number;           // 参加型クイズ型: 右上の連続できるカウンター
   commentBait?: string;     // 参加型クイズ型: 下部のコメント誘発リボン
+  legendFile?: string;      // 都市伝説検証型: 左上のファイルバッジ（"FILE No.013"）
+  legendRumor?: string;     // 都市伝説検証型: 上部のウワサ見出し（明朝体）
+  legendCred?: number;      // 都市伝説検証型: ウワサ信憑性ゲージ（0〜100、100でゴールド化）
+  legendEvidence?: string;  // 都市伝説検証型: 目撃情報タグ（危険テープ風）
+  legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
+  legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
+  legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
