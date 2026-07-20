@@ -192,7 +192,7 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -260,7 +260,7 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -283,7 +283,8 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "startFrom": 1200,
       "animation": "fadeIn"
     },
     "se": {
@@ -327,7 +328,8 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "startFrom": 150,
       "animation": "fadeIn"
     },
     "se": {
@@ -374,7 +376,7 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
