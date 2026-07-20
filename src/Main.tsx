@@ -1,16 +1,18 @@
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, Audio, Sequence, staticFile, Loop } from "remotion";
+import {
+  AbsoluteFill,
+  useCurrentFrame,
+  useVideoConfig,
+  Audio,
+  Sequence,
+  staticFile,
+  interpolate,
+} from "remotion";
 import { loadFont } from "@remotion/google-fonts/MPLUSRounded1c";
 import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/script";
-import { COLORS, VIDEO_CONFIG } from "./config";
+import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { HeadlineOverlay } from "./components/HeadlineOverlay";
-import { ImpactOverlay } from "./components/ImpactOverlay";
-import { StoryOverlay } from "./components/StoryOverlay";
-import { QuizOverlay } from "./components/QuizOverlay";
-import { LegendOverlay } from "./components/LegendOverlay";
-import { DiagnosisOverlay } from "./components/DiagnosisOverlay";
-import { ChatOverlay, ChatMessage } from "./components/ChatOverlay";
+import { AeroBackground, AeroOS, AERO_WINDOW } from "./components/AeroOS";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -27,11 +29,9 @@ export const Main: React.FC = () => {
   let accumulatedFrames = 0;
   let currentLine: ScriptLine | null = null;
   let currentLineStartFrame = 0;
-  let currentLineIndex = -1;
   let currentScene = 1;
-  let isSpeaking = false;
 
-  for (const [index, line] of scriptData.entries()) {
+  for (const line of scriptData) {
     const adjustedDuration = getAdjustedFrames(line.durationInFrames);
     const adjustedPause = getAdjustedFrames(line.pauseAfter);
     const lineEndFrame = accumulatedFrames + adjustedDuration + adjustedPause;
@@ -39,17 +39,15 @@ export const Main: React.FC = () => {
     if (frame >= accumulatedFrames && frame < lineEndFrame) {
       currentLine = line;
       currentLineStartFrame = accumulatedFrames;
-      currentLineIndex = index;
       currentScene = line.scene;
-      // 音声再生中は adjustedDuration の間だけ
-      isSpeaking = frame < accumulatedFrames + adjustedDuration;
       break;
     }
     accumulatedFrames = lineEndFrame;
     currentScene = line.scene;
   }
 
-  const sceneInfo = scenes.find((s) => s.id === currentScene) || scenes[0];
+  // シーン情報（背景の切り替えに使う予約）
+  void (scenes.find((s) => s.id === currentScene) || scenes[0]);
 
   // BGM の長さを動画本体と揃える
   const bgmTotalFrames = scriptData.reduce(
@@ -73,36 +71,29 @@ export const Main: React.FC = () => {
   const getLineDuration = (line: ScriptLine): number =>
     getAdjustedFrames(line.durationInFrames);
 
-  // ---- チャットストーリー型: 現在行までの吹き出しを積み上げる ----
-  const chatHistory: ChatMessage[] =
-    currentLineIndex >= 0
-      ? scriptData.slice(0, currentLineIndex + 1).flatMap((line) =>
-          line.chatMsg
-            ? [
-                {
-                  id: line.id,
-                  from: line.chatFrom ?? "them",
-                  msg: line.chatMsg,
-                  img: line.chatImg,
-                  time: line.chatTime,
-                  divider: line.chatDivider,
-                },
-              ]
-            : []
-        )
-      : [];
+  // フラットUI化の進行度：該当セリフに入ってから0.4秒かけてツヤが消える
+  const flatness = currentLine?.aeroFlat
+    ? interpolate(frame - currentLineStartFrame, [0, fps * 0.4], [0, 1], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 0;
 
-  // ヘッダーは直近で指定された値を引き継ぐ（毎行書かなくてよい）
-  const findLatest = (key: "chatTitle" | "chatSub"): string | undefined => {
-    for (let i = currentLineIndex; i >= 0; i--) {
-      const value = scriptData[i][key];
-      if (value) return value;
-    }
-    return undefined;
-  };
-
-  const isChatLine =
-    !!currentLine && (!!currentLine.chatMsg || !!currentLine.chatTyping || !!currentLine.chatBreak);
+  // AeroOSのUIパーツが1つでも指定されているか
+  const hasAeroUI = (line: ScriptLine): boolean =>
+    !!(
+      line.aeroBoot ||
+      line.aeroDesktop ||
+      line.aeroWindow ||
+      line.aeroBadge ||
+      line.aeroHeadline ||
+      line.aeroTip ||
+      line.aeroCounter !== undefined ||
+      line.aeroFlat ||
+      line.aeroFlare ||
+      line.aeroCta ||
+      line.aeroBait
+    );
 
   // BGM区間の開始フレームと長さを算出
   const bgmTrack = bgmSegments
@@ -119,12 +110,10 @@ export const Main: React.FC = () => {
     : null;
 
   return (
-    <AbsoluteFill
-      style={{
-        background: COLORS.background,
-        fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif",
-      }}
-    >
+    <AbsoluteFill style={{ fontFamily }}>
+      {/* 壁紙（空・草原・泡）。Sequenceの外に置き、セリフをまたいでも泡が途切れないようにする */}
+      <AeroBackground flatness={flatness} />
+
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
         ? bgmTrack.map((segment, i) => (
@@ -175,189 +164,71 @@ export const Main: React.FC = () => {
         );
       })}
 
-      {/* 各セリフのビジュアル（Sequence内でフレームをリセットし動画が先頭から再生される） */}
+      {/* 各セリフのビジュアル。aeroWindow 指定時はウィンドウの画面部分に嵌め込む */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
         const startFrame = getLineStartFrame(index);
+        const windowed = !!line.aeroWindow;
         return (
           <Sequence
             key={`visual-${line.id}`}
             from={startFrame}
             durationInFrames={getLineDuration(line)}
           >
-            <SceneVisuals visual={line.visual} lineId={line.id} />
+            <div
+              style={
+                windowed
+                  ? {
+                      position: "absolute",
+                      left: AERO_WINDOW.left,
+                      top: AERO_WINDOW.screenTop,
+                      width: AERO_WINDOW.width,
+                      height: AERO_WINDOW.screenHeight,
+                      borderRadius: `0 0 ${AERO_WINDOW.radius}px ${AERO_WINDOW.radius}px`,
+                      overflow: "hidden",
+                    }
+                  : { position: "absolute", inset: 0 }
+              }
+            >
+              <SceneVisuals visual={line.visual} lineId={line.id} />
+            </div>
           </Sequence>
         );
       })}
 
-      {/* チャットストーリー型フォーマット（スマホのトーク画面・入力中・既読・リビール） */}
-      {currentLine && isChatLine && (
-        <Sequence
-          key={`chat-${currentLine.id}`}
-          from={currentLineStartFrame}
-          durationInFrames={getLineDuration(currentLine)}
-        >
-          <ChatOverlay
-            history={chatHistory}
-            title={findLatest("chatTitle") ?? ""}
-            sub={findLatest("chatSub")}
-            typing={currentLine.chatTyping}
-            read={currentLine.chatRead}
-            breakout={currentLine.chatBreak}
-            durationInFrames={getLineDuration(currentLine)}
-          />
-        </Sequence>
-      )}
-
-      {/* タイプ診断型フォーマット（バッジ・設問カード・A/B選択肢・結果カード・コメント誘発） */}
-      {currentLine &&
-        (currentLine.diagBadge ||
-          currentLine.diagQ ||
-          currentLine.diagA ||
-          currentLine.diagB ||
-          currentLine.diagResult ||
-          currentLine.diagBait) && (
+      {/* Frutiger Aero のUIパーツ（起動画面・デスクトップ・ウィンドウ枠・見出し・CTA） */}
+      {scriptData.map((line, index) => {
+        if (!hasAeroUI(line)) return null;
+        const startFrame = getLineStartFrame(index);
+        return (
           <Sequence
-            key={`diag-${currentLine.id}`}
-            from={currentLineStartFrame}
-            durationInFrames={getLineDuration(currentLine)}
+            key={`aero-${line.id}`}
+            from={startFrame}
+            durationInFrames={getLineDuration(line)}
           >
-            <DiagnosisOverlay
-              badge={currentLine.diagBadge}
-              q={currentLine.diagQ}
-              choiceA={currentLine.diagA}
-              choiceB={currentLine.diagB}
-              step={currentLine.diagStep}
-              result={currentLine.diagResult}
-              resultSub={currentLine.diagResultSub}
-              resultTag={currentLine.diagResultTag}
-              bait={currentLine.diagBait}
-              character={currentLine.character}
-              durationInFrames={getLineDuration(currentLine)}
+            <AeroOS
+              boot={line.aeroBoot}
+              bootSub={line.aeroBootSub}
+              desktop={line.aeroDesktop}
+              windowTitle={line.aeroWindow}
+              badge={line.aeroBadge}
+              sub={line.aeroSub}
+              headline={line.aeroHeadline}
+              tip={line.aeroTip}
+              counter={line.aeroCounter}
+              flat={line.aeroFlat}
+              flare={line.aeroFlare}
+              cta={line.aeroCta}
+              bait={line.aeroBait}
+              character={line.character}
+              durationInFrames={getLineDuration(line)}
             />
           </Sequence>
-        )}
+        );
+      })}
 
-      {/* 都市伝説検証型フォーマット（FILEバッジ・ウワサ見出し・信憑性ゲージ・検証スタンプ） */}
-      {currentLine &&
-        (currentLine.legendFile ||
-          currentLine.legendRumor ||
-          currentLine.legendCred !== undefined ||
-          currentLine.legendEvidence ||
-          currentLine.legendStamp ||
-          currentLine.legendBait) && (
-          <Sequence
-            key={`legend-${currentLine.id}`}
-            from={currentLineStartFrame}
-            durationInFrames={getLineDuration(currentLine)}
-          >
-            <LegendOverlay
-              file={currentLine.legendFile}
-              rumor={currentLine.legendRumor}
-              cred={currentLine.legendCred}
-              evidence={currentLine.legendEvidence}
-              stamp={currentLine.legendStamp}
-              stampSub={currentLine.legendStampSub}
-              bait={currentLine.legendBait}
-              character={currentLine.character}
-              durationInFrames={getLineDuration(currentLine)}
-            />
-          </Sequence>
-        )}
-
-      {/* 参加型・○✕クイズ型フォーマット（設問・選択肢・判定・スコア・コメント誘発） */}
-      {currentLine &&
-        (currentLine.quizNo ||
-          currentLine.quizQ ||
-          currentLine.choiceA ||
-          currentLine.choiceB ||
-          currentLine.answer ||
-          currentLine.verdict ||
-          currentLine.score ||
-          currentLine.commentBait) && (
-          <Sequence
-            key={`quiz-${currentLine.id}`}
-            from={currentLineStartFrame}
-            durationInFrames={getLineDuration(currentLine)}
-          >
-            <QuizOverlay
-              quizNo={currentLine.quizNo}
-              quizQ={currentLine.quizQ}
-              choiceA={currentLine.choiceA}
-              choiceB={currentLine.choiceB}
-              answer={currentLine.answer}
-              verdict={currentLine.verdict}
-              verdictSub={currentLine.verdictSub}
-              score={currentLine.score}
-              commentBait={currentLine.commentBait}
-              character={currentLine.character}
-              durationInFrames={getLineDuration(currentLine)}
-            />
-          </Sequence>
-        )}
-
-      {/* DAYバッジ・エモ大字（移住ストーリー型フォーマット） */}
-      {currentLine && (currentLine.day || currentLine.phrase) && (
-        <Sequence
-          key={`story-${currentLine.id}`}
-          from={currentLineStartFrame}
-          durationInFrames={getLineDuration(currentLine)}
-        >
-          <StoryOverlay
-            day={currentLine.day}
-            phrase={currentLine.phrase}
-            phraseSub={currentLine.phraseSub}
-            character={currentLine.character}
-            durationInFrames={getLineDuration(currentLine)}
-          />
-        </Sequence>
-      )}
-
-      {/* インパクトスタンプ・できることカウンター（ギャップ実証型フォーマット） */}
-      {currentLine &&
-        !currentLine.day &&
-        !currentLine.phrase &&
-        (currentLine.stamp || currentLine.combo || currentLine.chip || currentLine.bait) && (
-        <Sequence
-          key={`impact-${currentLine.id}`}
-          from={currentLineStartFrame}
-          durationInFrames={getLineDuration(currentLine)}
-        >
-          <ImpactOverlay
-            stamp={currentLine.stamp}
-            stampSub={currentLine.stampSub}
-            combo={currentLine.combo}
-            chip={currentLine.chip}
-            bait={currentLine.bait}
-            character={currentLine.character}
-            durationInFrames={getLineDuration(currentLine)}
-          />
-        </Sequence>
-      )}
-
-      {/* デカ文字見出し・ランキングバッジ（旧ランキング型フォーマット・後方互換） */}
-      {currentLine &&
-        !currentLine.stamp &&
-        !currentLine.combo &&
-        !currentLine.chip &&
-        (currentLine.headline || currentLine.rank) && (
-          <Sequence
-            key={`headline-${currentLine.id}`}
-            from={currentLineStartFrame}
-            durationInFrames={getLineDuration(currentLine)}
-          >
-            <HeadlineOverlay
-              headline={currentLine.headline}
-              rank={currentLine.rank}
-              kicker={currentLine.kicker}
-              character={currentLine.character}
-              durationInFrames={getLineDuration(currentLine)}
-            />
-          </Sequence>
-        )}
-
-      {/* 字幕（画面下部・チャット中は吹き出しが字幕を兼ねるので出さない） */}
-      {currentLine && !currentLine.chatMsg && (
+      {/* 字幕（画面下部） */}
+      {currentLine && (
         <Sequence
           key={`subtitle-${currentLine.id}`}
           from={currentLineStartFrame}
@@ -367,7 +238,6 @@ export const Main: React.FC = () => {
             text={currentLine.displayText ?? currentLine.text}
             character={currentLine.character}
             durationInFrames={getLineDuration(currentLine)}
-            position={isChatLine ? "top" : "bottom"}
           />
         </Sequence>
       )}

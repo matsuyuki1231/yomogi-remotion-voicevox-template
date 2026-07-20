@@ -35,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_solarisnoame.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"BGM_-_135_-_Melancholic_New_York.mp3","volume":0.13,"loop":true,"fromLineId":1},{"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true,"fromLineId":14}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_solarisnoame.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_marbletechno1.mp3","volume":0.17,"loop":true,"fromLineId":15}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -46,52 +46,19 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
-  rank?: string;            // ランキングの番号バッジ（例 "No.1"）
-  kicker?: string;          // 見出し上の小ラベル
-  stamp?: string;           // 中央に叩き込むデカ文字スタンプ
-  stampSub?: string;        // スタンプ上の小ラベル
-  combo?: number;           // 「できること」カウンター
-  chip?: string;            // 左上のカテゴリチップ
-  bait?: string;            // 下部のコメント誘発リボン
-  day?: string;          // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
-  phrase?: string;          // 移住ストーリー型: 中央のエモ・パンチライン
-  phraseSub?: string;       // 移住ストーリー型: パンチライン上の小ラベル
-  quizNo?: string;          // 参加型クイズ型: 上部の問題番号バッジ（"Q1"/"最終問題"）
-  quizQ?: string;           // 参加型クイズ型: 大きな設問（またはCTA見出し）
-  choiceA?: string;         // 参加型クイズ型: 選択肢A（"○ できる"）
-  choiceB?: string;         // 参加型クイズ型: 選択肢B（"× ムリ"）
-  answer?: "A" | "B";       // 参加型クイズ型: リビール時の正解
-  verdict?: string;         // 参加型クイズ型: 中央の判定スタンプ（"できる！"）
-  verdictSub?: string;      // 参加型クイズ型: 判定スタンプ上の小ラベル（"正解"）
-  score?: number;           // 参加型クイズ型: 右上の連続できるカウンター
-  commentBait?: string;     // 参加型クイズ型: 下部のコメント誘発リボン
-  legendFile?: string;      // 都市伝説検証型: 左上のファイルバッジ（"FILE No.013"）
-  legendRumor?: string;     // 都市伝説検証型: 上部のウワサ見出し（明朝体）
-  legendCred?: number;      // 都市伝説検証型: ウワサ信憑性ゲージ（0〜100、100でゴールド化）
-  legendEvidence?: string;  // 都市伝説検証型: 目撃情報タグ（危険テープ風）
-  legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
-  legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
-  legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
-  diagBadge?: string;       // タイプ診断型: 上部のグラデーションピルバッジ（"Q1"/"結果発表"）
-  diagQ?: string;           // タイプ診断型: 白カードの設問・見出し
-  diagA?: string;           // タイプ診断型: 選択肢カードA
-  diagB?: string;           // タイプ診断型: 選択肢カードB
-  diagStep?: number;        // タイプ診断型: 進行ドット（1〜3）
-  diagResult?: string;      // タイプ診断型: 結果カードのタイプ名（紙吹雪つき）
-  diagResultSub?: string;   // タイプ診断型: 結果カード上の条件ラベル
-  diagResultTag?: string;   // タイプ診断型: 結果カード下の天職チップ
-  diagBait?: string;        // タイプ診断型: 下部のコメント誘発リボン
-  chatTitle?: string;       // チャットストーリー型: ヘッダーのトーク相手名
-  chatSub?: string;         // チャットストーリー型: ヘッダーの状態表示（"最終ログイン 21日前"）
-  chatFrom?: "me" | "them"; // チャットストーリー型: 吹き出しの左右（me=右 / them=左）
-  chatMsg?: string;         // チャットストーリー型: 吹き出し本文（指定時は字幕を出さない）
-  chatImg?: string;         // チャットストーリー型: 吹き出し内に貼る画像
-  chatTime?: string;        // チャットストーリー型: 吹き出し脇のタイムスタンプ
-  chatDivider?: string;     // チャットストーリー型: 直前に挟む未読区切り線
-  chatTyping?: boolean;     // チャットストーリー型: 相手が入力中（…）
-  chatRead?: string;        // チャットストーリー型: 自分の最新吹き出し下のラベル（"既読"/"未読"）
-  chatBreak?: boolean;      // チャットストーリー型: UIを吹き飛ばして全画面映像へ移行
+  aeroBoot?: string;        // Frutiger Aero型: 起動スプラッシュの大文字ロゴ
+  aeroBootSub?: string;     // Frutiger Aero型: 起動スプラッシュの小文字（"2007"など）
+  aeroDesktop?: boolean;    // Frutiger Aero型: ツヤツヤアイコンとドックのデスクトップを表示
+  aeroWindow?: string;      // Frutiger Aero型: ウィンドウ枠のタイトル（映像が枠内に嵌まる）
+  aeroBadge?: string;       // Frutiger Aero型: 左上のグロッシーなカテゴリピル
+  aeroSub?: string;         // Frutiger Aero型: 見出し上の小ラベル
+  aeroHeadline?: string;    // Frutiger Aero型: 中央の光沢見出し
+  aeroTip?: string;         // Frutiger Aero型: 下部の情報バー（豆知識）
+  aeroCounter?: number;     // Frutiger Aero型: 右上の「できること」カウンターオーブ
+  aeroFlat?: boolean;       // Frutiger Aero型: ツヤと彩度を奪ってフラットUI化する
+  aeroFlare?: boolean;      // Frutiger Aero型: リビールの光と泡の弾け
+  aeroCta?: string;         // Frutiger Aero型: 検索バー風CTA（文字がタイプされる）
+  aeroBait?: string;        // Frutiger Aero型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -120,262 +87,272 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "ねぇ、生きてる？",
-    "chatTitle": "ずんだもん",
-    "chatSub": "最終ログイン 21日前",
-    "chatFrom": "me",
-    "chatMsg": "ねぇ、生きてる？",
-    "chatDivider": "ここから未読",
-    "chatTime": "2:41",
-    "chatRead": "未読",
+    "text": "ねぇ、この起動画面、見おぼえない？",
+    "displayText": "この起動画面、見おぼえない？",
+    "aeroBoot": "Aero",
+    "aeroBootSub": "2 0 0 7",
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
       "src": "決定ボタンを押す1.mp3",
-      "volume": 0.5
+      "volume": 0.4
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 52
+    "durationInFrames": 100
   },
   {
     "id": 2,
-    "character": "metan",
-    "text": "3週間ゲームに来ないし、既読もつかないんだけど。",
-    "chatFrom": "me",
-    "chatMsg": "3週間ゲームに来ないし、既読もつかないんだけど",
-    "chatRead": "未読",
+    "character": "zundamon",
+    "text": "うわあ、なつかしいのだ！",
+    "displayText": "うわあ、なつかしいのだ！",
+    "aeroDesktop": true,
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "決定ボタンを押す2.mp3",
+      "src": "決定ボタンを押す22.mp3",
       "volume": 0.5
     },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 112
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 75
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "なんかあった？　心配してるんだけど。",
-    "chatFrom": "me",
-    "chatMsg": "なんかあった？心配してるんだけど",
-    "chatRead": "未読 ・ 21日間",
+    "text": "青い空と、草原の壁紙。アイコンはぜんぶツヤツヤ。",
+    "displayText": "青い空と草原の壁紙、ツヤツヤのアイコン",
+    "aeroDesktop": true,
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.5
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 81
+    "durationInFrames": 126
   },
   {
     "id": 4,
-    "character": "metan",
-    "text": "……え、待って。入力中になってる。",
-    "displayText": "え、待って。入力中になってる",
-    "chatTyping": true,
+    "character": "zundamon",
+    "text": "窓も半透明で、向こうが透けてたのだ。",
+    "displayText": "窓も半透明で、向こうが透けてた",
+    "aeroWindow": "ウィンドウ",
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "anxiety_piano.mp3",
+      "src": "決定ボタンを押す3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "04_metan.wav",
+    "voiceFile": "04_zundamon.wav",
     "durationInFrames": 106
   },
   {
     "id": 5,
-    "character": "zundamon",
-    "text": "ごめんなのだ。",
-    "chatFrom": "them",
-    "chatMsg": "ごめんなのだ",
-    "chatTime": "2:43",
+    "character": "metan",
+    "text": "水滴とか、シャボン玉とか、なぜか魚も泳いでたわね。",
+    "displayText": "水滴、シャボン玉、なぜか魚も泳いでた",
+    "aeroDesktop": true,
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.6
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 36
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 135
   },
   {
     "id": 6,
     "character": "metan",
-    "text": "急にどうしたのよ。今までどこ行ってたの。",
-    "chatFrom": "me",
-    "chatMsg": "急にどうしたのよ、今までどこ行ってたの",
+    "text": "あの、未来っぽい感じ。なんだったのかしら。",
+    "displayText": "あの「未来っぽい感じ」なんだったの？",
+    "aeroDesktop": true,
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.5
+      "src": "決定ボタンを押す5.mp3",
+      "volume": 0.45
     },
     "voiceFile": "06_metan.wav",
-    "durationInFrames": 88
+    "durationInFrames": 105
   },
   {
     "id": 7,
     "character": "zundamon",
-    "text": "マイクラ、やってたのだ。",
-    "chatFrom": "them",
-    "chatMsg": "マイクラやってたのだ",
+    "text": "あれ、ちゃんと名前があるのだ。",
+    "displayText": "あれ、ちゃんと名前があるのだ",
+    "aeroDesktop": true,
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "fadeIn"
-    },
     "se": {
-      "src": "決定ボタンを押す23.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 66
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "は？　うちのワールド、ずっと来てないじゃない。",
-    "chatFrom": "me",
-    "chatMsg": "は？うちのワールド来てないじゃない",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す5.mp3",
+      "src": "spotlight.mp3",
       "volume": 0.5
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 109
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "うん。別のとこにいたのだ。",
-    "chatFrom": "them",
-    "chatMsg": "うん、別のとこにいたのだ",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "09_zundamon.wav",
+    "voiceFile": "07_zundamon.wav",
     "durationInFrames": 82
   },
   {
-    "id": 10,
-    "character": "metan",
-    "text": "別のとこって、どこよ。",
-    "chatFrom": "me",
-    "chatMsg": "別のとこって、どこよ",
-    "chatTyping": true,
+    "id": 8,
+    "character": "zundamon",
+    "text": "フルティガー・エアロ、っていうのだ。",
+    "displayText": "「Frutiger Aero」っていうのだ",
+    "aeroHeadline": "Frutiger Aero",
+    "aeroSub": "2004 → 2013",
     "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 9,
+    "character": "metan",
+    "text": "名前あったの！？",
+    "displayText": "名前あったの！？",
+    "aeroDesktop": true,
+    "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "決定ボタンを押す23.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 37
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "未来はキラキラしてるって、みんなが信じてた時代のデザインなのだ。",
+    "displayText": "「未来はキラキラしてる」と信じてた時代のデザイン",
+    "aeroDesktop": true,
+    "aeroTip": "自然 × ガラス × 未来 ＝ 2000年代のUI",
+    "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "data_analysis.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 154
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "……で、今のアプリって。",
+    "displayText": "今のアプリって",
+    "aeroDesktop": true,
+    "aeroFlat": true,
+    "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 64
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "まっ白で、まっ平らなのだ。",
+    "displayText": "まっ白で、まっ平ら",
+    "aeroDesktop": true,
+    "aeroFlat": true,
+    "scene": 1,
+    "pauseAfter": -3,
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 74
+  },
+  {
+    "id": 14,
+    "character": "metan",
+    "text": "あのキラキラした世界、もう無いのかしら。",
+    "displayText": "あのキラキラした世界、もう無いの？",
+    "aeroDesktop": true,
+    "aeroFlat": true,
+    "scene": 1,
+    "pauseAfter": -3,
+    "voiceFile": "14_metan.wav",
+    "durationInFrames": 82
+  },
+  {
+    "id": 15,
+    "character": "zundamon",
+    "text": "……それが、まだ残ってる場所があるのだ。",
+    "displayText": "それが、まだ残ってる場所があるのだ",
+    "aeroFlare": true,
+    "scene": 2,
+    "pauseAfter": -3,
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 16,
+    "character": "metan",
+    "text": "え、どこよ。",
+    "displayText": "え、どこよ",
+    "aeroDesktop": true,
+    "scene": 2,
+    "pauseAfter": -3,
+    "se": {
+      "src": "決定ボタンを押す31.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 53
+  },
+  {
+    "id": 17,
+    "character": "zundamon",
+    "text": "ここなのだ。",
+    "displayText": "ここなのだ",
+    "aeroWindow": "よもぎサーバー ─ 生活サーバー",
+    "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "spotlight.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_metan.wav",
-    "durationInFrames": 57
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "ここなのだ。",
-    "chatFrom": "them",
-    "chatMsg": "ここなのだ",
-    "chatImg": "生活サーバー/街並みのスクリーンショット.png",
-    "chatTime": "2:44",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す32.mp3",
-      "volume": 0.7
+      "volume": 0.6
     },
-    "voiceFile": "11_zundamon.wav",
+    "voiceFile": "17_zundamon.wav",
     "durationInFrames": 32
   },
   {
-    "id": 12,
+    "id": 18,
     "character": "metan",
-    "text": "……なにこれ。マイクラだよね？　街ができてるんだけど。",
-    "chatFrom": "me",
-    "chatMsg": "なにこれ、マイクラだよね？街ができてるんだけど",
-    "scene": 1,
+    "text": "マイクラじゃない。全然エアロじゃないわよ。",
+    "displayText": "マイクラじゃない。全然エアロじゃないわよ",
+    "aeroWindow": "よもぎサーバー ─ 生活サーバー",
+    "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す42.mp3",
       "volume": 0.5
     },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 110
+    "voiceFile": "18_metan.wav",
+    "durationInFrames": 93
   },
   {
-    "id": 13,
+    "id": 19,
     "character": "zundamon",
-    "text": "この街の、まん中の家。あれ、僕が建てたのだ。",
-    "displayText": "この街の真ん中の家、僕が建てたのだ",
-    "chatFrom": "them",
-    "chatMsg": "この街の真ん中の家、あれ僕が建てたのだ",
-    "chatBreak": true,
+    "text": "見てから言うのだ。",
+    "displayText": "見てから言うのだ",
+    "aeroWindow": "よもぎサーバー ─ 生活サーバー",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -385,39 +362,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "boom.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 143
-  },
-  {
-    "id": 14,
-    "character": "zundamon",
-    "text": "よもぎサーバーの、生活サーバーなのだ。",
-    "displayText": "3週間、ここにいたのだ",
-    "stamp": "よもぎサーバー",
-    "stampSub": "ここにいた",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "spotlight.mp3",
       "volume": 0.6
     },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 103
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 42
   },
   {
-    "id": 15,
+    "id": 20,
     "character": "zundamon",
     "text": "土地を買って、自分の家も、お店も、好きに建てられるのだ。",
-    "displayText": "土地を買って好きに建てられる",
-    "chip": "土地・建築",
-    "combo": 1,
+    "displayText": "土地を買って、好きに建てられる",
+    "aeroBadge": "土地・建築",
+    "aeroCounter": 1,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -427,16 +383,16 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す1.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "15_zundamon.wav",
+    "voiceFile": "20_zundamon.wav",
     "durationInFrames": 159
   },
   {
-    "id": 16,
+    "id": 21,
     "character": "metan",
     "text": "え、この街ぜんぶ、プレイヤーが建てたの？",
-    "displayText": "この街ぜんぶプレイヤーが建てたの？",
+    "displayText": "この街ぜんぶ、プレイヤーが建てたの？",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -446,18 +402,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "16_metan.wav",
+    "voiceFile": "21_metan.wav",
     "durationInFrames": 120
   },
   {
-    "id": 17,
+    "id": 22,
     "character": "zundamon",
     "text": "そうなのだ。しかも、会社まで作れるのだ。",
-    "displayText": "しかも会社まで作れる",
-    "chip": "会社経営",
-    "combo": 2,
+    "displayText": "しかも、会社まで作れる",
+    "aeroBadge": "会社経営",
+    "aeroCounter": 2,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -467,17 +423,17 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す22.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "17_zundamon.wav",
+    "voiceFile": "22_zundamon.wav",
     "durationInFrames": 112
   },
   {
-    "id": 18,
+    "id": 23,
     "character": "zundamon",
     "text": "社長になって、社員をやとって、帳簿までつけられるのだ。",
-    "displayText": "社長・課長・社員、帳簿もある",
-    "combo": 2,
+    "displayText": "社長になって、社員をやとって、帳簿もつく",
+    "aeroCounter": 2,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -487,16 +443,16 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "data_analysis.mp3",
-      "volume": 0.45
+      "volume": 0.4
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "23_zundamon.wav",
     "durationInFrames": 145
   },
   {
-    "id": 19,
+    "id": 24,
     "character": "metan",
-    "text": "帳簿？　マイクラで？",
-    "displayText": "帳簿？ マイクラで？",
+    "text": "帳簿！？　マイクラで？",
+    "displayText": "帳簿！？ マイクラで？",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -506,18 +462,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "19_metan.wav",
+    "voiceFile": "24_metan.wav",
     "durationInFrames": 56
   },
   {
-    "id": 20,
+    "id": 25,
     "character": "zundamon",
     "text": "車にも乗れるし、",
     "displayText": "車にも乗れるし",
-    "chip": "移動",
-    "combo": 3,
+    "aeroBadge": "移動",
+    "aeroCounter": 3,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -527,18 +483,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "20_zundamon.wav",
+    "voiceFile": "25_zundamon.wav",
     "durationInFrames": 49
   },
   {
-    "id": 21,
+    "id": 26,
     "character": "zundamon",
     "text": "釣れる魚は、275種類なのだ。",
     "displayText": "釣れる魚は275種類",
-    "chip": "釣り",
-    "combo": 4,
+    "aeroBadge": "釣り",
+    "aeroCounter": 4,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -548,18 +504,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す5.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "21_zundamon.wav",
+    "voiceFile": "26_zundamon.wav",
     "durationInFrames": 109
   },
   {
-    "id": 22,
+    "id": 27,
     "character": "zundamon",
     "text": "自分の店を出して、かせぐこともできるのだ。",
-    "displayText": "自分の店を出して稼げる",
-    "chip": "チェストショップ",
-    "combo": 5,
+    "displayText": "自分の店を出して、かせげる",
+    "aeroBadge": "チェストショップ",
+    "aeroCounter": 5,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -569,18 +525,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す23.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "22_zundamon.wav",
+    "voiceFile": "27_zundamon.wav",
     "durationInFrames": 108
   },
   {
-    "id": 23,
+    "id": 28,
     "character": "zundamon",
     "text": "ガチャも引けるし、自分だけの島だって作れるのだ。",
     "displayText": "ガチャも、自分だけの島も",
-    "chip": "ガチャ・島",
-    "combo": 6,
+    "aeroBadge": "ガチャ・島",
+    "aeroCounter": 6,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -590,18 +546,18 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す31.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "23_zundamon.wav",
+    "voiceFile": "28_zundamon.wav",
     "durationInFrames": 125
   },
   {
-    "id": 24,
+    "id": 29,
     "character": "zundamon",
     "text": "それに、近くにいる人とは、声でしゃべれるのだ。",
-    "displayText": "近くの人と声で話せる（近距離VC）",
-    "chip": "近距離VC",
-    "combo": 7,
+    "displayText": "近くの人とは、声でしゃべれる",
+    "aeroBadge": "近距離VC",
+    "aeroCounter": 7,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -611,118 +567,17 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す32.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "29_zundamon.wav",
     "durationInFrames": 126
   },
   {
-    "id": 25,
-    "character": "metan",
-    "text": "ちょっと待って。それ全部で、いくらかかるの？",
-    "displayText": "待って。それ全部でいくらかかるの？",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す42.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "25_metan.wav",
-    "durationInFrames": 103
-  },
-  {
-    "id": 26,
-    "character": "zundamon",
-    "text": "ゼロ円なのだ。",
-    "displayText": "0円なのだ",
-    "stamp": "参加費 0円",
-    "stampSub": "ぜんぶ込みで",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "boom.mp3",
-      "volume": 0.7
-    },
-    "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 40
-  },
-  {
-    "id": 27,
-    "character": "zundamon",
-    "text": "統合版だから、スマホでもスイッチでも入れるのだ。",
-    "displayText": "統合版だからスマホでも入れる",
-    "chip": "統合版",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/人工資源で原木を掘っている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "27_zundamon.wav",
-    "durationInFrames": 121
-  },
-  {
-    "id": 28,
-    "character": "zundamon",
-    "text": "ネットで「よもぎサーバー」って調べれば、入り方が全部出てくるのだ。",
-    "displayText": "調べれば入り方が全部わかる",
-    "stamp": "よもぎサーバー",
-    "stampSub": "ネットで検索",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "image",
-      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
-      "animation": "zoomIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "28_zundamon.wav",
-    "durationInFrames": 183
-  },
-  {
-    "id": 29,
-    "character": "metan",
-    "text": "……なるほどね。3週間も帰ってこないわけだわ。",
-    "displayText": "3週間帰ってこないわけだわ",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "fadeIn"
-    },
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "29_metan.wav",
-    "durationInFrames": 101
-  },
-  {
     "id": 30,
-    "character": "zundamon",
-    "text": "めたんも来るのだ。待ってるのだ。",
-    "displayText": "めたんも来るのだ",
-    "stamp": "待ってるのだ",
-    "scene": 3,
+    "character": "metan",
+    "text": "……たしかに、キラキラしてるわね。",
+    "displayText": "たしかに、キラキラしてるわね",
+    "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
@@ -731,33 +586,134 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "spotlight.mp3",
-      "volume": 0.6
+      "volume": 0.5
     },
-    "voiceFile": "30_zundamon.wav",
-    "durationInFrames": 80
+    "voiceFile": "30_metan.wav",
+    "durationInFrames": 66
   },
   {
     "id": 31,
+    "character": "zundamon",
+    "text": "みんなで作った街が、毎日ふえていくのだ。これが今の、あの未来なのだ。",
+    "displayText": "みんなで作った街が、毎日ふえていく",
+    "aeroTip": "作りかけの街が、毎日すこしずつ完成していく",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "31_zundamon.wav",
+    "durationInFrames": 189
+  },
+  {
+    "id": 32,
     "character": "metan",
-    "text": "最近ログインしてこない友達、いない？　たぶん、ここにいるわよ。",
-    "displayText": "最近来ない友達、ここにいるかも",
-    "bait": "心当たりある人、コメントで教えて",
+    "text": "これ、いくらするの？",
+    "displayText": "これ、いくらするの？",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す42.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "32_metan.wav",
+    "durationInFrames": 52
+  },
+  {
+    "id": 33,
+    "character": "zundamon",
+    "text": "ゼロ円なのだ。",
+    "displayText": "0円なのだ",
+    "aeroHeadline": "参加費 0円",
+    "aeroSub": "ぜんぶ込みで",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "fadeIn",
+      "startFrom": 240
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.65
+    },
+    "voiceFile": "33_zundamon.wav",
+    "durationInFrames": 40
+  },
+  {
+    "id": 34,
+    "character": "zundamon",
+    "text": "統合版だから、スマホでもスイッチでも入れるのだ。",
+    "displayText": "統合版だから、スマホでもスイッチでも",
+    "aeroBadge": "統合版",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/人工資源で原木を掘っている動画.mp4",
+      "animation": "fadeIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "34_zundamon.wav",
+    "durationInFrames": 121
+  },
+  {
+    "id": 35,
+    "character": "zundamon",
+    "text": "ネットで、よもぎサーバーって調べるのだ。入り方が全部出てくるのだ。",
+    "displayText": "調べれば、入り方が全部わかる",
+    "aeroCta": "よもぎサーバー",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "image",
+      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
+      "animation": "zoomIn"
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "35_zundamon.wav",
+    "durationInFrames": 168
+  },
+  {
+    "id": 36,
+    "character": "metan",
+    "text": "この壁紙、懐かしいと思った人。コメントで教えてちょうだい。",
+    "displayText": "この壁紙、懐かしいと思った人？",
+    "aeroBait": "懐かしいと思った人、コメントで",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
       "animation": "fadeIn"
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
-      "volume": 0.5
+      "volume": 0.45
     },
-    "voiceFile": "31_metan.wav",
-    "durationInFrames": 161
+    "voiceFile": "36_metan.wav",
+    "durationInFrames": 137
   },
   {
-    "id": 32,
+    "id": 37,
     "character": "metan",
     "text": "じゃあね、バイバイ〜！",
     "displayText": "じゃあね、バイバイ〜！",
@@ -768,11 +724,11 @@ export const scriptData: ScriptLine[] = [
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "fadeIn"
     },
-    "voiceFile": "32_metan.wav",
+    "voiceFile": "37_metan.wav",
     "durationInFrames": 48
   },
   {
-    "id": 33,
+    "id": 38,
     "character": "zundamon",
     "text": "バイバイなのだ〜！",
     "displayText": "バイバイなのだ〜！",
@@ -783,7 +739,7 @@ export const scriptData: ScriptLine[] = [
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "fadeIn"
     },
-    "voiceFile": "33_zundamon.wav",
+    "voiceFile": "38_zundamon.wav",
     "durationInFrames": 38
   }
 ];

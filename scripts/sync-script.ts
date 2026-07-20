@@ -21,52 +21,19 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  headline?: string;
-  rank?: string;
-  kicker?: string;
-  stamp?: string;
-  stampSub?: string;
-  combo?: number;
-  chip?: string;
-  bait?: string;
-  day?: string;
-  phrase?: string;
-  phraseSub?: string;
-  quizNo?: string;
-  quizQ?: string;
-  choiceA?: string;
-  choiceB?: string;
-  answer?: "A" | "B";
-  verdict?: string;
-  verdictSub?: string;
-  score?: number;
-  commentBait?: string;
-  legendFile?: string;
-  legendRumor?: string;
-  legendCred?: number;
-  legendEvidence?: string;
-  legendStamp?: string;
-  legendStampSub?: string;
-  legendBait?: string;
-  diagBadge?: string;
-  diagQ?: string;
-  diagA?: string;
-  diagB?: string;
-  diagStep?: number;
-  diagResult?: string;
-  diagResultSub?: string;
-  diagResultTag?: string;
-  diagBait?: string;
-  chatTitle?: string;
-  chatSub?: string;
-  chatFrom?: "me" | "them";
-  chatMsg?: string;
-  chatImg?: string;
-  chatTime?: string;
-  chatDivider?: string;
-  chatTyping?: boolean;
-  chatRead?: string;
-  chatBreak?: boolean;
+  aeroBoot?: string;
+  aeroBootSub?: string;
+  aeroDesktop?: boolean;
+  aeroWindow?: string;
+  aeroBadge?: string;
+  aeroSub?: string;
+  aeroHeadline?: string;
+  aeroTip?: string;
+  aeroCounter?: number;
+  aeroFlat?: boolean;
+  aeroFlare?: boolean;
+  aeroCta?: string;
+  aeroBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -77,6 +44,9 @@ interface ScriptLine {
     fontSize?: number;
     color?: string;
     animation?: string;
+    startFrom?: number;
+    backgroundSrc?: string;
+    backgroundStartFrom?: number;
   };
   se?: {
     src: string;
@@ -222,52 +192,19 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  headline?: string;        // 画面上部のデカ文字見出し（キャッチコピー）
-  rank?: string;            // ランキングの番号バッジ（例 "No.1"）
-  kicker?: string;          // 見出し上の小ラベル
-  stamp?: string;           // 中央に叩き込むデカ文字スタンプ
-  stampSub?: string;        // スタンプ上の小ラベル
-  combo?: number;           // 「できること」カウンター
-  chip?: string;            // 左上のカテゴリチップ
-  bait?: string;            // 下部のコメント誘発リボン
-  day?: string;          // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
-  phrase?: string;          // 移住ストーリー型: 中央のエモ・パンチライン
-  phraseSub?: string;       // 移住ストーリー型: パンチライン上の小ラベル
-  quizNo?: string;          // 参加型クイズ型: 上部の問題番号バッジ（"Q1"/"最終問題"）
-  quizQ?: string;           // 参加型クイズ型: 大きな設問（またはCTA見出し）
-  choiceA?: string;         // 参加型クイズ型: 選択肢A（"○ できる"）
-  choiceB?: string;         // 参加型クイズ型: 選択肢B（"× ムリ"）
-  answer?: "A" | "B";       // 参加型クイズ型: リビール時の正解
-  verdict?: string;         // 参加型クイズ型: 中央の判定スタンプ（"できる！"）
-  verdictSub?: string;      // 参加型クイズ型: 判定スタンプ上の小ラベル（"正解"）
-  score?: number;           // 参加型クイズ型: 右上の連続できるカウンター
-  commentBait?: string;     // 参加型クイズ型: 下部のコメント誘発リボン
-  legendFile?: string;      // 都市伝説検証型: 左上のファイルバッジ（"FILE No.013"）
-  legendRumor?: string;     // 都市伝説検証型: 上部のウワサ見出し（明朝体）
-  legendCred?: number;      // 都市伝説検証型: ウワサ信憑性ゲージ（0〜100、100でゴールド化）
-  legendEvidence?: string;  // 都市伝説検証型: 目撃情報タグ（危険テープ風）
-  legendStamp?: string;     // 都市伝説検証型: 中央の検証スタンプ（"実在確認"）
-  legendStampSub?: string;  // 都市伝説検証型: スタンプ上の小ラベル
-  legendBait?: string;      // 都市伝説検証型: 下部のコメント誘発リボン
-  diagBadge?: string;       // タイプ診断型: 上部のグラデーションピルバッジ（"Q1"/"結果発表"）
-  diagQ?: string;           // タイプ診断型: 白カードの設問・見出し
-  diagA?: string;           // タイプ診断型: 選択肢カードA
-  diagB?: string;           // タイプ診断型: 選択肢カードB
-  diagStep?: number;        // タイプ診断型: 進行ドット（1〜3）
-  diagResult?: string;      // タイプ診断型: 結果カードのタイプ名（紙吹雪つき）
-  diagResultSub?: string;   // タイプ診断型: 結果カード上の条件ラベル
-  diagResultTag?: string;   // タイプ診断型: 結果カード下の天職チップ
-  diagBait?: string;        // タイプ診断型: 下部のコメント誘発リボン
-  chatTitle?: string;       // チャットストーリー型: ヘッダーのトーク相手名
-  chatSub?: string;         // チャットストーリー型: ヘッダーの状態表示（"最終ログイン 21日前"）
-  chatFrom?: "me" | "them"; // チャットストーリー型: 吹き出しの左右（me=右 / them=左）
-  chatMsg?: string;         // チャットストーリー型: 吹き出し本文（指定時は字幕を出さない）
-  chatImg?: string;         // チャットストーリー型: 吹き出し内に貼る画像
-  chatTime?: string;        // チャットストーリー型: 吹き出し脇のタイムスタンプ
-  chatDivider?: string;     // チャットストーリー型: 直前に挟む未読区切り線
-  chatTyping?: boolean;     // チャットストーリー型: 相手が入力中（…）
-  chatRead?: string;        // チャットストーリー型: 自分の最新吹き出し下のラベル（"既読"/"未読"）
-  chatBreak?: boolean;      // チャットストーリー型: UIを吹き飛ばして全画面映像へ移行
+  aeroBoot?: string;        // Frutiger Aero型: 起動スプラッシュの大文字ロゴ
+  aeroBootSub?: string;     // Frutiger Aero型: 起動スプラッシュの小文字（"2007"など）
+  aeroDesktop?: boolean;    // Frutiger Aero型: ツヤツヤアイコンとドックのデスクトップを表示
+  aeroWindow?: string;      // Frutiger Aero型: ウィンドウ枠のタイトル（映像が枠内に嵌まる）
+  aeroBadge?: string;       // Frutiger Aero型: 左上のグロッシーなカテゴリピル
+  aeroSub?: string;         // Frutiger Aero型: 見出し上の小ラベル
+  aeroHeadline?: string;    // Frutiger Aero型: 中央の光沢見出し
+  aeroTip?: string;         // Frutiger Aero型: 下部の情報バー（豆知識）
+  aeroCounter?: number;     // Frutiger Aero型: 右上の「できること」カウンターオーブ
+  aeroFlat?: boolean;       // Frutiger Aero型: ツヤと彩度を奪ってフラットUI化する
+  aeroFlare?: boolean;      // Frutiger Aero型: リビールの光と泡の弾け
+  aeroCta?: string;         // Frutiger Aero型: 検索バー風CTA（文字がタイプされる）
+  aeroBait?: string;        // Frutiger Aero型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;

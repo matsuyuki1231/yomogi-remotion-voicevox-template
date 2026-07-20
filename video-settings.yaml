@@ -32,7 +32,9 @@ font:
   # アウトラインの色
   # "character": キャラクターごとの色（colors.zundamon / colors.metan）を使用
   # または直接色コードを指定
-  outlineColor: "character"
+  # Frutiger Aero型では画面全体の統一感を優先し、深い青で固定している
+  # （空の壁紙・マイクラ映像のどちらに乗っても白文字が読める色）
+  outlineColor: "#0b4f88"
   innerOutlineColor: "none"
 
 # -------------------------------------------
@@ -100,10 +102,10 @@ video:
   playbackRate: 1.5
 
 # -------------------------------------------
-# カラー設定（黒板風デザイン）
+# カラー設定（Frutiger Aero）
 # -------------------------------------------
 colors:
-  background: "#000000"    # 黒背景
+  background: "#7fcdf5"    # 空の水色（実際の壁紙は AeroOS.tsx が描画する）
   text: "#ffffff"          # 白文字
   zundamon: "#228B22"      # フォレストグリーン（暗め）
   metan: "#FF1493"         # ディープピンク
