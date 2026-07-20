@@ -31,6 +31,15 @@ interface ScriptLine {
   day?: string;
   phrase?: string;
   phraseSub?: string;
+  quizNo?: string;
+  quizQ?: string;
+  choiceA?: string;
+  choiceB?: string;
+  answer?: "A" | "B";
+  verdict?: string;
+  verdictSub?: string;
+  score?: number;
+  commentBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -179,6 +188,15 @@ export interface ScriptLine {
   day?: string;             // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
   phrase?: string;          // 移住ストーリー型: 中央のエモ・パンチライン
   phraseSub?: string;       // 移住ストーリー型: パンチライン上の小ラベル
+  quizNo?: string;          // 参加型クイズ型: 上部の問題番号バッジ（"Q1"/"最終問題"）
+  quizQ?: string;           // 参加型クイズ型: 大きな設問（またはCTA見出し）
+  choiceA?: string;         // 参加型クイズ型: 選択肢A（"○ できる"）
+  choiceB?: string;         // 参加型クイズ型: 選択肢B（"× ムリ"）
+  answer?: "A" | "B";       // 参加型クイズ型: リビール時の正解
+  verdict?: string;         // 参加型クイズ型: 中央の判定スタンプ（"できる！"）
+  verdictSub?: string;      // 参加型クイズ型: 判定スタンプ上の小ラベル（"正解"）
+  score?: number;           // 参加型クイズ型: 右上の連続できるカウンター
+  commentBait?: string;     // 参加型クイズ型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;

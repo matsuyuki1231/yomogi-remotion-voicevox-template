@@ -7,6 +7,7 @@ import { SceneVisuals } from "./components/SceneVisuals";
 import { HeadlineOverlay } from "./components/HeadlineOverlay";
 import { ImpactOverlay } from "./components/ImpactOverlay";
 import { StoryOverlay } from "./components/StoryOverlay";
+import { QuizOverlay } from "./components/QuizOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -124,6 +125,37 @@ export const Main: React.FC = () => {
           </Sequence>
         );
       })}
+
+      {/* 参加型・○✕クイズ型フォーマット（設問・選択肢・判定・スコア・コメント誘発） */}
+      {currentLine &&
+        (currentLine.quizNo ||
+          currentLine.quizQ ||
+          currentLine.choiceA ||
+          currentLine.choiceB ||
+          currentLine.answer ||
+          currentLine.verdict ||
+          currentLine.score ||
+          currentLine.commentBait) && (
+          <Sequence
+            key={`quiz-${currentLine.id}`}
+            from={currentLineStartFrame}
+            durationInFrames={getLineDuration(currentLine)}
+          >
+            <QuizOverlay
+              quizNo={currentLine.quizNo}
+              quizQ={currentLine.quizQ}
+              choiceA={currentLine.choiceA}
+              choiceB={currentLine.choiceB}
+              answer={currentLine.answer}
+              verdict={currentLine.verdict}
+              verdictSub={currentLine.verdictSub}
+              score={currentLine.score}
+              commentBait={currentLine.commentBait}
+              character={currentLine.character}
+              durationInFrames={getLineDuration(currentLine)}
+            />
+          </Sequence>
+        )}
 
       {/* DAYバッジ・エモ大字（移住ストーリー型フォーマット） */}
       {currentLine && (currentLine.day || currentLine.phrase) && (

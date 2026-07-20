@@ -1,27 +1,38 @@
-# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 移住ストーリー型フォーマット）
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 参加型・○✕クイズ型フォーマット）
 # セリフを編集後、npm run sync-script → npm run voices の順で反映
 #
-# ■ フォーマット: 「移住ストーリー型」ナラティブ・ショート
-#   2026年のバズるショート傾向（ストーリー主導 / Hook→Problem→Solution→CTA / 開いたループ /
-#   14〜15秒地点の二次フック / 無音前提の字幕）に合わせて設計。
-#   ずんだもんが「生活サーバーに休日を“乗っ取られた”移住体験」を語り、めたんが聞き役。
-#   DAYカウンターが 1→今 へ進むほど沼にハマる感情のアーク。冒頭の伏線を最後に回収してCTAループ。
+# ■ フォーマット: 「参加型・○✕クイズ型」インタラクティブ・ショート
+#   2026年のバズるショート傾向（コメント誘発の設計 / 二択タップ参加 / 直接視聴者へ問いかけ /
+#   代弁者がわざと外して「いや違うw」を誘発 / 冒頭3秒フック / 完走率重視）に合わせて設計。
+#   ずんだもんが「マイクラでここまでできる？」を出題し、視聴者に○/×で当てさせる。
+#   めたんは視聴者代弁の“外し役”。正解リビールで「できる！」を叩き込み、連続正解カウンターが伸びる。
+#   最終問題「遊ぶのにお金は必要？」→「参加は無料」でCTAへ着地。
 #
-# ■ 新フィールド（StoryOverlay 用）:
-#   day       : 左上のDAYバッジ（"1"/"3"/"7"/"14"/"30"/"今"）。経過プログレスバーが伸びる
-#   phrase    : 画面中央のエモ・パンチライン（ナレーションの一言・引用風）
-#   phraseSub : パンチライン上の小ラベル（省略可）
-#   ※ day/phrase の無い行（めたんの相槌）は字幕のみ＝会話のテンポを作る
+# ■ 新フィールド（QuizOverlay 用）:
+#   quizNo      : 上部の問題番号バッジ（"Q1"/"最終問題" など）
+#   quizQ       : 大きな設問（CTA行では見出しとして使用）
+#   choiceA     : 選択肢A（"○ できる" など）
+#   choiceB     : 選択肢B（"× ムリ" など）
+#   answer      : リビール時の正解（"A" / "B"）→ 正解チップが緑に光る
+#   verdict     : 中央に叩き込む判定スタンプ（"できる！"）
+#   verdictSub  : 判定スタンプ上の小ラベル（"正解"）
+#   score       : 右上の「連続できる」カウンター（1→4）
+#   commentBait : 下部のコメント誘発リボン
+#   ※ 設問行→（めたんの外し）→リビール行 の2〜3行で1問。設問文脈は各行に引き継ぐ
 #
-# 情報ソース: docs/yomogi/living 配下（土地保護/チェストショップ/会社/バフ/釣り/農業 等）
+# 情報ソース: docs/yomogi/living 配下（車/チェストショップ/会社/バフ/参加は無料 等）
 # 素材: public/content/生活サーバー 配下
 
-# ===== プロローグ（0-4秒：開いたループを張る） =====
+# ===== フック（0-3秒：ルール提示＝○か×で参加させる） =====
 - id: 1
   character: zundamon
-  text: 正直に言うのだ。ボクの休日は、あるマイクラサーバーに乗っ取られたのだ。
-  phraseSub: ある休日の記録
-  phrase: 休日、乗っ取られた
+  text: マイクラでここまでできるか、当ててみてほしいのだ。できると思ったら○、ムリだと思ったら×、なのだ！
+  displayText: "マイクラでどこまでできる？○か×で当てて！"
+  quizNo: 参加型クイズ
+  quizQ: できる？ できない？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  commentBait: 答えは○か×でコメント！
   scene: 1
   pauseAfter: -3
   visual:
@@ -32,41 +43,55 @@
     src: "決定ボタンを押す1.mp3"
     volume: 0.6
 
+# ===== Q1：車で街を走れる？ =====
 - id: 2
-  character: metan
-  text: 乗っ取られたって…どういうことなの、ずんだもん？
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す31.mp3"
-    volume: 0.6
-
-# ===== DAY 1：出会い =====
-- id: 3
   character: zundamon
-  text: 始まりは、生活ワールドに買った、たった1軒の家だったのだ。
-  day: "1"
-  phrase: 1軒の家から
+  text: 第1問。マイクラの世界で、車に乗って街を走れるのだ？
+  displayText: "Q1 車で街を走れる？"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す2.mp3"
     volume: 0.7
 
-# ===== DAY 3：ここは普通じゃない（二次フック） =====
+- id: 3
+  character: metan
+  text: さすがにそれはムリでしょ…だってマイクラだもの。
+  displayText: "いや、さすがにムリでしょ…"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.6
+
 - id: 4
   character: zundamon
-  text: でも、街を車で走った瞬間、ここは普通じゃないと気づいたのだ。
-  day: "3"
-  phrase: ここ、普通じゃない
+  text: 正解は…できる、なのだ！ブーンって街を走れるのだ！
+  displayText: "正解は…できる！"
+  quizNo: Q1
+  quizQ: 車で街を走れる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 1
   scene: 1
   pauseAfter: -3
   visual:
@@ -77,25 +102,16 @@
     src: "boom.mp3"
     volume: 0.55
 
+# ===== Q2：お店に常連がつく？ =====
 - id: 5
-  character: metan
-  text: マイクラで、車を…！？
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
-    animation: fadeIn
-  se:
-    src: "決定ボタンを押す3.mp3"
-    volume: 0.6
-
-# ===== DAY 7：のめり込む =====
-- id: 6
   character: zundamon
-  text: 自分だけのお店を開いたら、なんと常連さんまでできたのだ。
-  day: "7"
-  phrase: 自分の店に、常連さん
+  text: 第2問。自分のお店を開いて、常連さんまで作れるのだ？
+  displayText: "Q2 お店に常連がつく？"
+  quizNo: Q2
+  quizQ: お店に常連がつく？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 1
   scene: 1
   pauseAfter: -3
   visual:
@@ -103,14 +119,41 @@
     src: "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4"
     animation: fadeIn
   se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.6
+
+- id: 6
+  character: zundamon
+  text: これも…できる！チェストショップで、りっぱなお店屋さんなのだ！
+  displayText: "これもできる！"
+  quizNo: Q2
+  quizQ: お店に常連がつく？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
     src: "決定ボタンを押す4.mp3"
     volume: 0.7
 
+# ===== Q3：社長になって会社経営？（14〜15秒地点の二次フック） =====
 - id: 7
   character: zundamon
-  text: 気づけば、本格的な会社の経営まで始めていたのだ。
-  day: "7"
-  phrase: 会社まで、経営
+  text: 第3問。社長になって、本物みたいに会社を経営できるのだ？
+  displayText: "Q3 会社を経営できる？"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 2
   scene: 1
   pauseAfter: -3
   visual:
@@ -121,12 +164,57 @@
     src: "決定ボタンを押す5.mp3"
     volume: 0.7
 
-# ===== DAY 14：日常になる =====
 - id: 8
+  character: metan
+  text: 会社!? もう、それマイクラの範囲を超えてるわ…！
+  displayText: "会社!? もう範囲を超えてる…！"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す32.mp3"
+    volume: 0.6
+
+- id: 9
   character: zundamon
-  text: バフを盛って採掘すれば、作業はもう快感でしかないのだ。
-  day: "14"
-  phrase: 作業が、快感
+  text: できる、なのだ！社員を雇って、みんなで大きくもできるのだ。
+  displayText: "できる！社員も雇えるのだ"
+  quizNo: Q3
+  quizQ: 社長になって会社経営？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.7
+
+# ===== Q4：採掘が爆速になる？ =====
+- id: 10
+  character: zundamon
+  text: 第4問。バフを盛れば、採掘スピードが爆速になるのだ？
+  displayText: "Q4 採掘が爆速になる？"
+  quizNo: Q4
+  quizQ: 採掘が爆速になる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  score: 3
   scene: 1
   pauseAfter: -3
   visual:
@@ -137,25 +225,35 @@
     src: "決定ボタンを押す22.mp3"
     volume: 0.7
 
-- id: 9
+- id: 11
   character: zundamon
-  text: 疲れた夜は、ただ釣り糸を垂らすだけでよかったのだ。
-  day: "14"
-  phrase: 何もしない贅沢
+  text: できる！暗視も付ければ、洞窟がもう作業ゲーなのだ！
+  displayText: "できる！洞窟が作業ゲーに"
+  quizNo: Q4
+  quizQ: 採掘が爆速になる？
+  choiceA: ○ できる
+  choiceB: × ムリ
+  answer: A
+  verdict: できる！
+  verdictSub: 正解
+  score: 4
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "生活サーバー/釣りをしている動画.mp4"
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
     animation: fadeIn
   se:
     src: "決定ボタンを押す23.mp3"
     volume: 0.6
 
-# ===== DAY 30：居場所になる =====
-- id: 10
+# ===== 中間フック：ここまで全部できる → 参加を煽る =====
+- id: 12
   character: metan
-  text: …なんだか、本当にそこで暮らしてるみたいなのね。
+  text: 車に、お店に、会社に、採掘…もう、これひとつの街じゃない。
+  displayText: "もう、ひとつの街だわ…"
+  score: 4
+  commentBait: ここまで全部できる！何問わかった？
   scene: 1
   pauseAfter: -3
   visual:
@@ -163,30 +261,40 @@
     src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
     animation: fadeIn
   se:
-    src: "決定ボタンを押す32.mp3"
+    src: "決定ボタンを押す42.mp3"
     volume: 0.6
 
-- id: 11
+# ===== 最終問題：遊ぶのにお金は必要？（答え＝参加は無料） =====
+- id: 13
   character: zundamon
-  text: そう。ここには、荒らしに怯えなくていい、自分だけの土地があるのだ。
-  day: "30"
-  phrase: 怯えなくていい場所
+  text: 最終問題。ここまで全部できるこの世界、遊ぶのにお金は必要なのだ？
+  displayText: "最終問題 遊ぶのにお金は必要？"
+  quizNo: 最終問題
+  quizQ: 遊ぶのにお金は必要？
+  choiceA: ○ 必要
+  choiceB: × いらない
+  score: 4
   scene: 1
   pauseAfter: -3
   visual:
     type: video
-    src: "生活サーバー/新しい土地を土地保護している動画.mp4"
+    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
     animation: fadeIn
   se:
-    src: "spotlight.mp3"
+    src: "決定ボタンを押す5.mp3"
     volume: 0.7
 
-# ===== 「今」：伏線回収 → CTA =====
-- id: 12
+- id: 14
   character: zundamon
-  text: 気づけば毎週、ここがボクの第二の生活になっていたのだ。
-  day: "今"
-  phrase: 第二の生活
+  text: 答えは…参加は無料。誰でも今日から、この生活を始められるのだ！
+  displayText: "答えは…参加は無料！"
+  quizNo: 最終問題
+  quizQ: 遊ぶのにお金は必要？
+  choiceA: ○ 必要
+  choiceB: × いらない
+  answer: B
+  verdict: 参加は無料！
+  verdictSub: 正解
   scene: 1
   pauseAfter: -3
   visual:
@@ -194,30 +302,16 @@
     src: "生活サーバー/生活サーバーの建築風景.mp4"
     animation: fadeIn
   se:
-    src: "boom.mp3"
-    volume: 0.55
-
-- id: 13
-  character: zundamon
-  text: これが、休日を乗っ取られたの正体。最高の意味で、なのだ。
-  day: "今"
-  phraseSub: 伏線回収
-  phrase: 最高の意味で
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
-    animation: fadeIn
-  se:
     src: "spotlight.mp3"
     volume: 0.8
 
-- id: 14
+# ===== CTA：検索誘導＋コメント誘発 → 冒頭にループ =====
+- id: 15
   character: zundamon
-  text: 気になったら、ネットで「よもぎサーバー」って検索してみてほしいのだ。
-  phraseSub: ネットで検索
-  phrase: よもぎサーバー
+  text: 何問できたのだ？ネットで「よもぎサーバー」って検索して、続きは自分の目で確かめてほしいのだ！
+  displayText: "「よもぎサーバー」で検索！"
+  quizQ: 「よもぎサーバー」で検索！
+  commentBait: 何問正解できた？コメントで教えて！
   scene: 1
   pauseAfter: -3
   visual:
@@ -228,10 +322,10 @@
     src: "決定ボタンを押す42.mp3"
     volume: 0.7
 
-- id: 15
+- id: 16
   character: metan
-  text: 参加は無料。あなたの第二の生活も、きっとここから始まるわ。
-  phrase: 君の第二の生活を、ここで
+  text: あなたの「できる」を、ここで試してみて。待ってるわ。
+  displayText: "あなたの「できる」を、ここで"
   scene: 1
   pauseAfter: 50
   visual:
