@@ -108,6 +108,7 @@ async function uploadVideo(options: {
   tags: string[];
   privacyStatus: "private" | "unlisted" | "public";
   categoryId: string;
+  publishAt?: string;
 }) {
   if (!fs.existsSync(VIDEO_PATH)) {
     throw new Error(`動画ファイルが見つかりません: ${VIDEO_PATH}\n先に npm run build を実行してください。`);
@@ -123,6 +124,9 @@ async function uploadVideo(options: {
 
   console.log(`\nアップロード開始: "${options.title}"`);
   console.log(`公開設定: ${options.privacyStatus}`);
+  if (options.publishAt) {
+    console.log(`公開予定日時: ${options.publishAt}`);
+  }
 
   let lastProgress = -1;
 
@@ -141,6 +145,8 @@ async function uploadVideo(options: {
         status: {
           privacyStatus: options.privacyStatus,
           selfDeclaredMadeForKids: false,
+          // 予約投稿: publishAt 指定時は private + 公開予定日時（ISO 8601）
+          ...(options.publishAt ? { publishAt: options.publishAt } : {}),
         },
       },
       media: {
@@ -193,7 +199,11 @@ function parseArgs() {
 async function main() {
   const args = parseArgs();
 
-  const privacyStatus = (args.privacy as "private" | "unlisted" | "public") ?? "public";
+  // 予約投稿時は YouTube の仕様により private 必須（公開予定時刻に自動で public になる）
+  const publishAt = args.publishAt;
+  const privacyStatus = publishAt
+    ? "private"
+    : ((args.privacy as "private" | "unlisted" | "public") ?? "public");
   const tags = args.tags ? args.tags.split(",").map((t) => t.trim()) : ["ずんだもん", "めたん", "VOICEVOX"];
   const categoryId = args.category ?? "22"; // 22 = People & Blogs
 
@@ -202,7 +212,7 @@ async function main() {
 
   console.log("=== YouTube アップロード ===");
 
-  await uploadVideo({ title, description, tags, privacyStatus, categoryId });
+  await uploadVideo({ title, description, tags, privacyStatus, categoryId, publishAt });
 }
 
 main().catch((err) => {
