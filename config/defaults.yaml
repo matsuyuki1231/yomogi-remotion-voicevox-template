@@ -15,6 +15,17 @@ automation:
 
 bgm:
   # 甘茶の音楽工房「ピコピコディスコ」（フリーBGM・商用可・クレジット任意）
+  # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
   src: "amacha_picopicodisco.mp3"
   volume: 0.15
   loop: true
+  # チャットストーリー型: 前半のミステリーは不穏な曲、リビール以降は明るい曲に切り替える
+  segments:
+    - src: "BGM_-_135_-_Melancholic_New_York.mp3"
+      volume: 0.13
+      loop: true
+      fromLineId: 1
+    - src: "amacha_picopicodisco.mp3"
+      volume: 0.15
+      loop: true
+      fromLineId: 14

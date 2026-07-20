@@ -11,6 +11,7 @@ interface ImpactOverlayProps {
   stampSub?: string;     // スタンプ上の小ラベル
   combo?: number;        // 「できること」カウンター（1〜）
   chip?: string;         // 画面左上のカテゴリチップ
+  bait?: string;         // 画面下部のコメント誘発リボン
   character: CharacterId;
   durationInFrames: number;
 }
@@ -37,6 +38,7 @@ export const ImpactOverlay: React.FC<ImpactOverlayProps> = ({
   stampSub,
   combo,
   chip,
+  bait,
   character,
   durationInFrames,
 }) => {
@@ -44,7 +46,7 @@ export const ImpactOverlay: React.FC<ImpactOverlayProps> = ({
   const { fps } = useVideoConfig();
   const { colors } = SETTINGS;
 
-  if (!stamp && !combo && !chip) return null;
+  if (!stamp && !combo && !chip && !bait) return null;
 
   const characterColor =
     (
@@ -200,6 +202,43 @@ export const ImpactOverlay: React.FC<ImpactOverlayProps> = ({
             >
               {combo}
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* コメント誘発リボン（字幕の上・画面下部） */}
+      {bait && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 640,
+            left: 0,
+            right: 0,
+            display: "flex",
+            justifyContent: "center",
+            transform: `scale(${badgeScale})`,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              background: ACCENT,
+              color: "#0b0b0b",
+              fontFamily: "'M PLUS Rounded 1c', sans-serif",
+              fontWeight: 900,
+              fontSize: 38,
+              padding: "12px 34px",
+              borderRadius: 16,
+              border: "5px solid #ffffff",
+              boxShadow: "0 8px 0 rgba(0,0,0,0.4)",
+              transform: "rotate(-2deg)",
+              maxWidth: "88%",
+              textAlign: "center",
+              lineHeight: 1.3,
+              wordBreak: "keep-all",
+            }}
+          >
+            <WrappedText text={bait} />
           </div>
         </div>
       )}

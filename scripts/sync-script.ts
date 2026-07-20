@@ -28,6 +28,7 @@ interface ScriptLine {
   stampSub?: string;
   combo?: number;
   chip?: string;
+  bait?: string;
   day?: string;
   phrase?: string;
   phraseSub?: string;
@@ -56,6 +57,16 @@ interface ScriptLine {
   diagResultSub?: string;
   diagResultTag?: string;
   diagBait?: string;
+  chatTitle?: string;
+  chatSub?: string;
+  chatFrom?: "me" | "them";
+  chatMsg?: string;
+  chatImg?: string;
+  chatTime?: string;
+  chatDivider?: string;
+  chatTyping?: boolean;
+  chatRead?: string;
+  chatBreak?: boolean;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -94,9 +105,10 @@ interface Defaults {
     autoVoiceFileName: boolean;
   };
   bgm?: {
-    src: string;
+    src?: string;
     volume?: number;
     loop?: boolean;
+    segments?: { src: string; volume?: number; loop?: boolean; fromLineId: number }[];
   };
 }
 
@@ -181,10 +193,26 @@ export interface BGMConfig {
   loop?: boolean;
 }
 
-// BGM設定（動画全体で使用）
+// BGM区間（fromLineId のセリフからこの曲に切り替わる）
+export interface BGMSegment extends BGMConfig {
+  fromLineId: number;
+}
+
+// BGM設定（動画全体で1曲）
 export const bgmConfig: BGMConfig | null = ${
-  defaults.bgm
-    ? JSON.stringify(defaults.bgm)
+  defaults.bgm && defaults.bgm.src
+    ? JSON.stringify({
+        src: defaults.bgm.src,
+        volume: defaults.bgm.volume,
+        loop: defaults.bgm.loop,
+      })
+    : "null"
+};
+
+// BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
+export const bgmSegments: BGMSegment[] | null = ${
+  defaults.bgm && defaults.bgm.segments && defaults.bgm.segments.length > 0
+    ? JSON.stringify(defaults.bgm.segments)
     : "null"
 };
 
@@ -201,7 +229,8 @@ export interface ScriptLine {
   stampSub?: string;        // スタンプ上の小ラベル
   combo?: number;           // 「できること」カウンター
   chip?: string;            // 左上のカテゴリチップ
-  day?: string;             // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
+  bait?: string;            // 下部のコメント誘発リボン
+  day?: string;          // 移住ストーリー型: 左上のDAYバッジ（"1"/"30"/"今"）
   phrase?: string;          // 移住ストーリー型: 中央のエモ・パンチライン
   phraseSub?: string;       // 移住ストーリー型: パンチライン上の小ラベル
   quizNo?: string;          // 参加型クイズ型: 上部の問題番号バッジ（"Q1"/"最終問題"）
@@ -229,6 +258,16 @@ export interface ScriptLine {
   diagResultSub?: string;   // タイプ診断型: 結果カード上の条件ラベル
   diagResultTag?: string;   // タイプ診断型: 結果カード下の天職チップ
   diagBait?: string;        // タイプ診断型: 下部のコメント誘発リボン
+  chatTitle?: string;       // チャットストーリー型: ヘッダーのトーク相手名
+  chatSub?: string;         // チャットストーリー型: ヘッダーの状態表示（"最終ログイン 21日前"）
+  chatFrom?: "me" | "them"; // チャットストーリー型: 吹き出しの左右（me=右 / them=左）
+  chatMsg?: string;         // チャットストーリー型: 吹き出し本文（指定時は字幕を出さない）
+  chatImg?: string;         // チャットストーリー型: 吹き出し内に貼る画像
+  chatTime?: string;        // チャットストーリー型: 吹き出し脇のタイムスタンプ
+  chatDivider?: string;     // チャットストーリー型: 直前に挟む未読区切り線
+  chatTyping?: boolean;     // チャットストーリー型: 相手が入力中（…）
+  chatRead?: string;        // チャットストーリー型: 自分の最新吹き出し下のラベル（"既読"/"未読"）
+  chatBreak?: boolean;      // チャットストーリー型: UIを吹き飛ばして全画面映像へ移行
   scene: number;
   voiceFile: string;
   durationInFrames: number;

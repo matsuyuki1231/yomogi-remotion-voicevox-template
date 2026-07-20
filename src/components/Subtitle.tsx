@@ -11,6 +11,8 @@ interface SubtitleProps {
   text: string;
   character: CharacterId;
   durationInFrames: number;
+  // チャット画面の上では吹き出しに重なるため、画面上部の空きスペースへ逃がす
+  position?: "bottom" | "top";
 }
 
 // BudouXで分割したテキストをレンダリングするコンポーネント
@@ -42,7 +44,12 @@ const BudouXText = ({ text }: { text: string }) => {
   );
 };
 
-export const Subtitle: React.FC<SubtitleProps> = ({ text, character, durationInFrames }) => {
+export const Subtitle: React.FC<SubtitleProps> = ({
+  text,
+  character,
+  durationInFrames,
+  position = "bottom",
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -96,7 +103,7 @@ export const Subtitle: React.FC<SubtitleProps> = ({ text, character, durationInF
     <div
       style={{
         position: "absolute",
-        bottom: subtitle.bottomOffset,
+        ...(position === "top" ? { top: 300 } : { bottom: subtitle.bottomOffset }),
         left: "50%",
         transform: `translateX(-50%) translateY(${translateY}px)`,
         opacity,

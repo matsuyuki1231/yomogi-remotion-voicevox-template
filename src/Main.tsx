@@ -1,6 +1,6 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, Audio, Sequence, staticFile, Loop } from "remotion";
 import { loadFont } from "@remotion/google-fonts/MPLUSRounded1c";
-import { scriptData, scenes, ScriptLine, bgmConfig } from "./data/script";
+import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/script";
 import { COLORS, VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
@@ -10,6 +10,7 @@ import { StoryOverlay } from "./components/StoryOverlay";
 import { QuizOverlay } from "./components/QuizOverlay";
 import { LegendOverlay } from "./components/LegendOverlay";
 import { DiagnosisOverlay } from "./components/DiagnosisOverlay";
+import { ChatOverlay, ChatMessage } from "./components/ChatOverlay";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -26,10 +27,11 @@ export const Main: React.FC = () => {
   let accumulatedFrames = 0;
   let currentLine: ScriptLine | null = null;
   let currentLineStartFrame = 0;
+  let currentLineIndex = -1;
   let currentScene = 1;
   let isSpeaking = false;
 
-  for (const line of scriptData) {
+  for (const [index, line] of scriptData.entries()) {
     const adjustedDuration = getAdjustedFrames(line.durationInFrames);
     const adjustedPause = getAdjustedFrames(line.pauseAfter);
     const lineEndFrame = accumulatedFrames + adjustedDuration + adjustedPause;
@@ -37,6 +39,7 @@ export const Main: React.FC = () => {
     if (frame >= accumulatedFrames && frame < lineEndFrame) {
       currentLine = line;
       currentLineStartFrame = accumulatedFrames;
+      currentLineIndex = index;
       currentScene = line.scene;
       // 音声再生中は adjustedDuration の間だけ
       isSpeaking = frame < accumulatedFrames + adjustedDuration;
@@ -70,6 +73,51 @@ export const Main: React.FC = () => {
   const getLineDuration = (line: ScriptLine): number =>
     getAdjustedFrames(line.durationInFrames);
 
+  // ---- チャットストーリー型: 現在行までの吹き出しを積み上げる ----
+  const chatHistory: ChatMessage[] =
+    currentLineIndex >= 0
+      ? scriptData.slice(0, currentLineIndex + 1).flatMap((line) =>
+          line.chatMsg
+            ? [
+                {
+                  id: line.id,
+                  from: line.chatFrom ?? "them",
+                  msg: line.chatMsg,
+                  img: line.chatImg,
+                  time: line.chatTime,
+                  divider: line.chatDivider,
+                },
+              ]
+            : []
+        )
+      : [];
+
+  // ヘッダーは直近で指定された値を引き継ぐ（毎行書かなくてよい）
+  const findLatest = (key: "chatTitle" | "chatSub"): string | undefined => {
+    for (let i = currentLineIndex; i >= 0; i--) {
+      const value = scriptData[i][key];
+      if (value) return value;
+    }
+    return undefined;
+  };
+
+  const isChatLine =
+    !!currentLine && (!!currentLine.chatMsg || !!currentLine.chatTyping || !!currentLine.chatBreak);
+
+  // BGM区間の開始フレームと長さを算出
+  const bgmTrack = bgmSegments
+    ? bgmSegments.map((segment, i) => {
+        const startIndex = scriptData.findIndex((line) => line.id === segment.fromLineId);
+        const from = getLineStartFrame(startIndex < 0 ? 0 : startIndex);
+        const nextSegment = bgmSegments[i + 1];
+        const nextIndex = nextSegment
+          ? scriptData.findIndex((line) => line.id === nextSegment.fromLineId)
+          : -1;
+        const until = nextIndex >= 0 ? getLineStartFrame(nextIndex) : bgmTotalFrames;
+        return { ...segment, from, durationInFrames: Math.max(1, until - from) };
+      })
+    : null;
+
   return (
     <AbsoluteFill
       style={{
@@ -78,15 +126,29 @@ export const Main: React.FC = () => {
       }}
     >
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
-      {bgmConfig && (
-        <Sequence durationInFrames={bgmTotalFrames}>
-          <Audio
-            src={staticFile(`bgm/${bgmConfig.src}`)}
-            volume={bgmConfig.volume ?? 0.3}
-            loop={bgmConfig.loop ?? true}
-          />
-        </Sequence>
-      )}
+      {bgmTrack
+        ? bgmTrack.map((segment, i) => (
+            <Sequence
+              key={`bgm-${i}`}
+              from={segment.from}
+              durationInFrames={segment.durationInFrames}
+            >
+              <Audio
+                src={staticFile(`bgm/${segment.src}`)}
+                volume={segment.volume ?? 0.3}
+                loop={segment.loop ?? true}
+              />
+            </Sequence>
+          ))
+        : bgmConfig && (
+            <Sequence durationInFrames={bgmTotalFrames}>
+              <Audio
+                src={staticFile(`bgm/${bgmConfig.src}`)}
+                volume={bgmConfig.volume ?? 0.3}
+                loop={bgmConfig.loop ?? true}
+              />
+            </Sequence>
+          )}
 
       {/* 音声再生 */}
       {scriptData.map((line, index) => {
@@ -127,6 +189,25 @@ export const Main: React.FC = () => {
           </Sequence>
         );
       })}
+
+      {/* チャットストーリー型フォーマット（スマホのトーク画面・入力中・既読・リビール） */}
+      {currentLine && isChatLine && (
+        <Sequence
+          key={`chat-${currentLine.id}`}
+          from={currentLineStartFrame}
+          durationInFrames={getLineDuration(currentLine)}
+        >
+          <ChatOverlay
+            history={chatHistory}
+            title={findLatest("chatTitle") ?? ""}
+            sub={findLatest("chatSub")}
+            typing={currentLine.chatTyping}
+            read={currentLine.chatRead}
+            breakout={currentLine.chatBreak}
+            durationInFrames={getLineDuration(currentLine)}
+          />
+        </Sequence>
+      )}
 
       {/* タイプ診断型フォーマット（バッジ・設問カード・A/B選択肢・結果カード・コメント誘発） */}
       {currentLine &&
@@ -236,7 +317,7 @@ export const Main: React.FC = () => {
       {currentLine &&
         !currentLine.day &&
         !currentLine.phrase &&
-        (currentLine.stamp || currentLine.combo || currentLine.chip) && (
+        (currentLine.stamp || currentLine.combo || currentLine.chip || currentLine.bait) && (
         <Sequence
           key={`impact-${currentLine.id}`}
           from={currentLineStartFrame}
@@ -247,6 +328,7 @@ export const Main: React.FC = () => {
             stampSub={currentLine.stampSub}
             combo={currentLine.combo}
             chip={currentLine.chip}
+            bait={currentLine.bait}
             character={currentLine.character}
             durationInFrames={getLineDuration(currentLine)}
           />
@@ -274,8 +356,8 @@ export const Main: React.FC = () => {
           </Sequence>
         )}
 
-      {/* 字幕（画面下部） */}
-      {currentLine && (
+      {/* 字幕（画面下部・チャット中は吹き出しが字幕を兼ねるので出さない） */}
+      {currentLine && !currentLine.chatMsg && (
         <Sequence
           key={`subtitle-${currentLine.id}`}
           from={currentLineStartFrame}
@@ -285,6 +367,7 @@ export const Main: React.FC = () => {
             text={currentLine.displayText ?? currentLine.text}
             character={currentLine.character}
             durationInFrames={getLineDuration(currentLine)}
+            position={isChatLine ? "top" : "bottom"}
           />
         </Sequence>
       )}
