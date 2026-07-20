@@ -1,0 +1,289 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / タイプ診断型フォーマット）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「タイプ診断型」心理テスト風フェイクアウト・ショート
+#   TikTok/YouTubeで強い「診断系（あなたは何タイプ？）」コンテンツに擬態する設計。
+#   前半は宣伝色ゼロの「マイクラタイプ診断」3問で視聴者を巻き込み（心の中で回答させる）、
+#   結果発表4連発（職人/まったり/商人/社長）→ めたんの「その遊び、どこでできるの？」を
+#   きっかけに「4タイプ全員の楽園＝よもぎ生活サーバー」をリビール。
+#   無料→検索CTA→「あなたは何タイプだった？コメントで教えて」で
+#   診断系最大の武器＝結果シェアのコメント誘発で締める。
+#
+# ■ 新フィールド（DiagnosisOverlay 用）:
+#   diagBadge     : 上部のグラデーションピルバッジ（"マイクラタイプ診断"/"Q1"/"結果発表"）
+#   diagQ         : 白カードの設問・見出し
+#   diagA / diagB : 選択肢カード（正解リビールなし＝診断なので視聴者が自分で選ぶ）
+#   diagStep      : 進行ドット（1〜3）
+#   diagResult    : 結果カードのタイプ名（"もくもく職人タイプ"）※紙吹雪演出つき
+#   diagResultSub : 結果カード上の条件ラベル（"全部Aのあなた"）
+#   diagResultTag : 結果カード下の天職チップ（"天職：建築・土地づくり"）
+#   diagBait      : 下部のコメント誘発リボン
+#
+# 情報ソース: docs/yomogi/living 配下（土地保護/農業/釣り/チェストショップ/会社/参加費無料/統合版）
+# 素材: public/content 配下、BGM: 甘茶の音楽工房「ピコピコディスコ」（フリー・商用可）
+
+# ===== フック（0-3秒：純粋な診断コンテンツとして釣る） =====
+- id: 1
+  character: zundamon
+  text: たった3問で、キミのマイクラタイプがガチでわかる診断なのだ。最後の結果、けっこう当たるのだ…！
+  displayText: "3問でわかる！マイクラタイプ診断"
+  diagBadge: マイクラタイプ診断
+  diagQ: あなたは何タイプ？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "その他のマイクラ素材/Minecraft for Windows 2026-03-22 04-10-14.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す1.mp3"
+    volume: 0.6
+
+# ===== Q1 =====
+- id: 2
+  character: zundamon
+  text: 第1問。新しいワールドに降り立った。最初にやることは、どっちなのだ？
+  displayText: "Q1 新ワールドで最初にやるのは？"
+  diagBadge: Q1
+  diagQ: 新ワールドで最初にやるのは？
+  diagA: A 拠点づくり
+  diagB: B とにかく探検
+  diagStep: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/自然資源で採掘をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.7
+
+- id: 3
+  character: metan
+  text: わたしは断然、拠点づくりね。安全第一だもの。
+  displayText: "わたしは断然、拠点づくりね"
+  diagBadge: Q1
+  diagQ: 新ワールドで最初にやるのは？
+  diagA: A 拠点づくり
+  diagB: B とにかく探検
+  diagStep: 1
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/自然資源で採掘をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す31.mp3"
+    volume: 0.55
+
+# ===== Q2 =====
+- id: 4
+  character: zundamon
+  text: 第2問。ダイヤを掘り当てた！どうするのだ？
+  displayText: "Q2 ダイヤを掘り当てた。どうする？"
+  diagBadge: Q2
+  diagQ: ダイヤを掘り当てた。どうする？
+  diagA: A 自分の装備にする
+  diagB: B 売ってお金にする
+  diagStep: 2
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.7
+
+# ===== Q3 =====
+- id: 5
+  character: zundamon
+  text: 最終問題。理想の休日は、どっちなのだ？
+  displayText: "Q3 理想の休日は？"
+  diagBadge: Q3
+  diagQ: 理想の休日は？
+  diagA: A 一人でコツコツ
+  diagB: B みんなでワイワイ
+  diagStep: 3
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/釣りをしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.7
+
+# ===== 結果発表への溜め =====
+- id: 6
+  character: metan
+  text: 答えは決まった？それじゃあ、結果発表よ。
+  displayText: "それじゃあ、結果発表よ"
+  diagBadge: 結果発表
+  diagQ: あなたはどのタイプ…？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活ワールドの街並みを散策している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "data_analysis.mp3"
+    volume: 0.6
+
+# ===== 結果発表4連発 =====
+- id: 7
+  character: zundamon
+  text: Aばっかりだったキミは、もくもく職人タイプ！自分の土地で、理想の家をコツコツ作ると幸せなのだ。
+  displayText: "全部A→もくもく職人タイプ"
+  diagResult: もくもく職人タイプ
+  diagResultSub: 全部Aのあなた
+  diagResultTag: 天職：建築・土地づくり
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/土地保護をした土地で建築している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す2.mp3"
+    volume: 0.65
+
+- id: 8
+  character: zundamon
+  text: Aが多めだったキミは、まったり生活タイプ。畑を耕して、釣りをして、スローライフが似合うのだ。
+  displayText: "A多め→まったり生活タイプ"
+  diagResult: まったり生活タイプ
+  diagResultSub: Aが2つのあなた
+  diagResultTag: 天職：農業・釣り
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内で農業をしている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す3.mp3"
+    volume: 0.65
+
+- id: 9
+  character: zundamon
+  text: Bが多めだったキミは、やり手商人タイプ！自分のお店を開いたら、あっという間に大金持ちなのだ。
+  displayText: "B多め→やり手商人タイプ"
+  diagResult: やり手商人タイプ
+  diagResultSub: Bが2つのあなた
+  diagResultTag: 天職：お店の経営
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/チェストショップでオーブを購入している動画.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す4.mp3"
+    volume: 0.65
+
+- id: 10
+  character: zundamon
+  text: そして全部Bのキミは…カリスマ社長タイプ！仲間を集めて、会社を作って、世界を動かす器なのだ！
+  displayText: "全部B→カリスマ社長タイプ"
+  diagResult: カリスマ社長タイプ
+  diagResultSub: 全部Bのあなた
+  diagResultTag: 天職：会社の経営
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4"
+    startFrom: 1200
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.55
+
+# ===== リビール（診断→実はぜんぶ生活サーバーでできる） =====
+- id: 11
+  character: metan
+  text: ちょっと待って。この診断、マイクラの話よね？お店とか会社とか、どこでやるのよ。
+  displayText: "その遊び、どこでできるのよ？"
+  diagBadge: "？？？"
+  diagQ: その遊び、どこでできるの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーの建築風景.mp4"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す22.mp3"
+    volume: 0.6
+
+- id: 12
+  character: zundamon
+  text: 実はぜんぶ、実在するのだ！統合版マイクラの、よもぎ生活サーバーなら、この4タイプ全員が本気で遊べるのだ！
+  displayText: "実在する。『よもぎ生活サーバー』"
+  diagResult: よもぎ生活サーバー
+  diagResultSub: 4タイプ全員の楽園
+  diagResultTag: 統合版マイクラで遊べる
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバーで車に乗っている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.8
+
+- id: 13
+  character: zundamon
+  text: しかも参加は無料！今日からキミの天職、始められるのだ！
+  displayText: "しかも参加は無料"
+  diagResult: 参加は無料
+  diagResultSub: しかも
+  diagResultTag: 今日から天職を始めよう
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "boom.mp3"
+    volume: 0.6
+
+# ===== CTA（検索誘導＋コメント誘発ループ） =====
+- id: 14
+  character: zundamon
+  text: ネットで、よもぎサーバー、と検索！キミのタイプに合う暮らしが、きっと見つかるのだ！
+  displayText: "「よもぎサーバー」で検索！"
+  diagBait: 「よもぎサーバー」で検索！
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png"
+    animation: fadeIn
+  se:
+    src: "決定ボタンを押す42.mp3"
+    volume: 0.7
+
+- id: 15
+  character: metan
+  text: それで、あなたは何タイプだった？コメントで教えてね。
+  displayText: "あなたは何タイプだった？"
+  diagBadge: マイクラタイプ診断
+  diagBait: 診断結果をコメントで教えて！
+  scene: 1
+  pauseAfter: 60
+  visual:
+    type: video
+    src: "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4"
+    animation: fadeIn
+  se:
+    src: "spotlight.mp3"
+    volume: 0.4

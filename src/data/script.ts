@@ -101,10 +101,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "たった3問で、キミのマイクラタイプがガチでわかる診断なのだ。最後の結果、けっこう当たるのだ…！",
-    "displayText": "3問でわかる！マイクラタイプ診断",
-    "diagBadge": "マイクラタイプ診断",
-    "diagQ": "あなたは何タイプ？",
+    "text": "たった3問で、キミが人狼に向いてるか、ガチでわかる診断なのだ。ウソつきほど、高得点なのだ…！",
+    "displayText": "3問でわかる！人狼適性診断",
+    "diagBadge": "人狼適性診断",
+    "diagQ": "キミは人狼に向いてる？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -117,23 +117,23 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 246
+    "durationInFrames": 264
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "第1問。新しいワールドに降り立った。最初にやることは、どっちなのだ？",
-    "displayText": "Q1 新ワールドで最初にやるのは？",
+    "text": "第1問。友達のウソ、すぐ見抜けるほうなのだ？",
+    "displayText": "Q1 友達のウソ、見抜ける？",
     "diagBadge": "Q1",
-    "diagQ": "新ワールドで最初にやるのは？",
-    "diagA": "A 拠点づくり",
-    "diagB": "B とにかく探検",
+    "diagQ": "友達のウソ、見抜ける？",
+    "diagA": "A すぐ見抜く",
+    "diagB": "B よくだまされる",
     "diagStep": 1,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -141,23 +141,23 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 201
+    "durationInFrames": 140
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "わたしは断然、拠点づくりね。安全第一だもの。",
-    "displayText": "わたしは断然、拠点づくりね",
+    "text": "わたしは絶対だまされないわよ。…たぶんね。",
+    "displayText": "わたしは絶対だまされないわ。…たぶん",
     "diagBadge": "Q1",
-    "diagQ": "新ワールドで最初にやるのは？",
-    "diagA": "A 拠点づくり",
-    "diagB": "B とにかく探検",
+    "diagQ": "友達のウソ、見抜ける？",
+    "diagA": "A すぐ見抜く",
+    "diagB": "B よくだまされる",
     "diagStep": 1,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -165,23 +165,23 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.55
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 124
+    "durationInFrames": 93
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "第2問。ダイヤを掘り当てた！どうするのだ？",
-    "displayText": "Q2 ダイヤを掘り当てた。どうする？",
+    "text": "第2問。自分がウソをつくのは、得意なのだ？",
+    "displayText": "Q2 ウソをつくのは得意？",
     "diagBadge": "Q2",
-    "diagQ": "ダイヤを掘り当てた。どうする？",
-    "diagA": "A 自分の装備にする",
-    "diagB": "B 売ってお金にする",
+    "diagQ": "ウソをつくのは得意？",
+    "diagA": "A わりと得意",
+    "diagB": "B 顔に出ちゃう",
     "diagStep": 2,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -189,23 +189,23 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 121
+    "durationInFrames": 129
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "最終問題。理想の休日は、どっちなのだ？",
-    "displayText": "Q3 理想の休日は？",
+    "text": "最終問題。ピンチのときは、どう切り抜けるのだ？",
+    "displayText": "Q3 ピンチの切り抜け方は？",
     "diagBadge": "Q3",
-    "diagQ": "理想の休日は？",
-    "diagA": "A 一人でコツコツ",
-    "diagB": "B みんなでワイワイ",
+    "diagQ": "ピンチの切り抜け方は？",
+    "diagA": "A 頭脳と話術",
+    "diagB": "B 力でゴリ押し",
     "diagStep": 3,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -213,20 +213,20 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 136
+    "durationInFrames": 141
   },
   {
     "id": 6,
     "character": "metan",
-    "text": "答えは決まった？それじゃあ、結果発表よ。",
-    "displayText": "それじゃあ、結果発表よ",
+    "text": "答えは決まった？それじゃあ、適性発表よ。",
+    "displayText": "それじゃあ、適性発表よ",
     "diagBadge": "結果発表",
-    "diagQ": "あなたはどのタイプ…？",
+    "diagQ": "キミの人狼適性は…？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -234,21 +234,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "06_metan.wav",
-    "durationInFrames": 112
+    "durationInFrames": 113
   },
   {
     "id": 7,
     "character": "zundamon",
-    "text": "Aばっかりだったキミは、もくもく職人タイプ！自分の土地で、理想の家をコツコツ作ると幸せなのだ。",
-    "displayText": "全部A→もくもく職人タイプ",
-    "diagResult": "もくもく職人タイプ",
+    "text": "全部Aのキミは、化けの狼タイプ！死んだ人に化けて村をあざむく、ウソの天才なのだ。",
+    "displayText": "全部A→化けの狼タイプ",
+    "diagResult": "化けの狼タイプ",
     "diagResultSub": "全部Aのあなた",
-    "diagResultTag": "天職：建築・土地づくり",
+    "diagResultTag": "適性：人狼陣営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -256,21 +256,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.65
     },
     "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 260
+    "durationInFrames": 230
   },
   {
     "id": 8,
     "character": "zundamon",
-    "text": "Aが多めだったキミは、まったり生活タイプ。畑を耕して、釣りをして、スローライフが似合うのだ。",
-    "displayText": "A多め→まったり生活タイプ",
-    "diagResult": "まったり生活タイプ",
+    "text": "Aが多めのキミは、占い師タイプ。ウソを見抜く、村の頭脳なのだ。",
+    "displayText": "A多め→占い師タイプ",
+    "diagResult": "占い師タイプ",
     "diagResultSub": "Aが2つのあなた",
-    "diagResultTag": "天職：農業・釣り",
+    "diagResultTag": "適性：市民陣営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -278,21 +278,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.65
     },
     "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 256
+    "durationInFrames": 183
   },
   {
     "id": 9,
     "character": "zundamon",
-    "text": "Bが多めだったキミは、やり手商人タイプ！自分のお店を開いたら、あっという間に大金持ちなのだ。",
-    "displayText": "B多め→やり手商人タイプ",
-    "diagResult": "やり手商人タイプ",
+    "text": "Bが多めのキミは、騎士タイプ！身を挺して仲間を守る、村のヒーローなのだ。",
+    "displayText": "B多め→騎士タイプ",
+    "diagResult": "騎士タイプ",
     "diagResultSub": "Bが2つのあなた",
-    "diagResultTag": "天職：お店の経営",
+    "diagResultTag": "適性：市民陣営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -300,22 +300,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.65
     },
     "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 253
+    "durationInFrames": 200
   },
   {
     "id": 10,
     "character": "zundamon",
-    "text": "そして全部Bのキミは…カリスマ社長タイプ！仲間を集めて、会社を作って、世界を動かす器なのだ！",
-    "displayText": "全部B→カリスマ社長タイプ",
-    "diagResult": "カリスマ社長タイプ",
+    "text": "そして全部Bのキミは…殺人鬼タイプ！何度でも使える一撃斧で、村を恐怖に染めるのだ！",
+    "displayText": "全部B→殺人鬼タイプ",
+    "diagResult": "殺人鬼タイプ",
     "diagResultSub": "全部Bのあなた",
-    "diagResultTag": "天職：会社の経営",
+    "diagResultTag": "適性：人狼陣営",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "startFrom": 1200,
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -323,20 +322,20 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.55
     },
     "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 277
+    "durationInFrames": 252
   },
   {
     "id": 11,
     "character": "metan",
-    "text": "ちょっと待って。この診断、マイクラの話よね？お店とか会社とか、どこでやるのよ。",
-    "displayText": "その遊び、どこでできるのよ？",
+    "text": "ちょっと待って。この適性、どこで確かめればいいのよ？",
+    "displayText": "その適性、どこで試すのよ？",
     "diagBadge": "？？？",
-    "diagQ": "その遊び、どこでできるの？",
+    "diagQ": "その適性、どこで試すの？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -344,21 +343,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "11_metan.wav",
-    "durationInFrames": 199
+    "durationInFrames": 123
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "実はぜんぶ、実在するのだ！統合版マイクラの、よもぎ生活サーバーなら、この4タイプ全員が本気で遊べるのだ！",
-    "displayText": "実在する。『よもぎ生活サーバー』",
-    "diagResult": "よもぎ生活サーバー",
-    "diagResultSub": "4タイプ全員の楽園",
-    "diagResultTag": "統合版マイクラで遊べる",
+    "text": "毎週土曜のよる9時半、統合版マイクラの、よもぎサーバーで、マイクラ人狼が遊べるのだ！役職は、なんと47種類なのだ！",
+    "displayText": "毎週土曜21:30 マイクラ人狼開催中",
+    "diagResult": "マイクラ人狼 開催中",
+    "diagResultSub": "毎週土曜 よる9時半",
+    "diagResultTag": "役職はなんと47種類",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -366,21 +365,21 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.8
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 302
+    "durationInFrames": 355
   },
   {
     "id": 13,
     "character": "zundamon",
-    "text": "しかも参加は無料！今日からキミの天職、始められるのだ！",
-    "displayText": "しかも参加は無料",
+    "text": "参加は無料！初めてでも、サポートがあるから安心なのだ！",
+    "displayText": "参加は無料・初心者サポートあり",
     "diagResult": "参加は無料",
     "diagResultSub": "しかも",
-    "diagResultTag": "今日から天職を始めよう",
+    "diagResultTag": "初心者サポートあり",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "fadeIn"
     },
     "se": {
@@ -388,12 +387,12 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.6
     },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 155
+    "durationInFrames": 154
   },
   {
     "id": 14,
     "character": "zundamon",
-    "text": "ネットで、よもぎサーバー、と検索！キミのタイプに合う暮らしが、きっと見つかるのだ！",
+    "text": "ネットで、よもぎサーバー、と検索！今週の土曜日、キミの適性を見せてほしいのだ！",
     "displayText": "「よもぎサーバー」で検索！",
     "diagBait": "「よもぎサーバー」で検索！",
     "scene": 1,
@@ -408,20 +407,20 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.7
     },
     "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 215
+    "durationInFrames": 229
   },
   {
     "id": 15,
     "character": "metan",
-    "text": "それで、あなたは何タイプだった？コメントで教えてね。",
-    "displayText": "あなたは何タイプだった？",
-    "diagBadge": "マイクラタイプ診断",
+    "text": "それで、あなたはどのタイプだった？コメントで教えてね。",
+    "displayText": "あなたはどのタイプだった？",
+    "diagBadge": "人狼適性診断",
     "diagBait": "診断結果をコメントで教えて！",
     "scene": 1,
     "pauseAfter": 60,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "fadeIn"
     },
     "se": {
