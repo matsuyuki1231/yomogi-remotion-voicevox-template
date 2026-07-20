@@ -35,6 +35,13 @@ const UI_FONT = `${chatFontFamily}, 'Hiragino Sans', 'Yu Gothic', sans-serif`;
 // 画面に残す最大件数（これより古いものは上に流れて消える）
 const VISIBLE = 5;
 
+// YouTubeショートは画面下部およそ2割にタイトルが重なるため、その帯には吹き出しを置かない
+const BOTTOM_SAFE = 384; // 1920 の 20%
+// 入力欄の高さ（上下パディング込み）。この分は安全域の内側に収まってよい飾りとして残す
+const INPUT_BAR_HEIGHT = 142;
+// 縦長のiPhoneでは左右が切り取られるため、通常より20px内側に寄せる
+const SIDE_PADDING = 64;
+
 const WrappedText: React.FC<{ text: string }> = ({ text }) => {
   const segments = useMemo(() => parser.parse(text), [text]);
   return (
@@ -88,7 +95,7 @@ const StatusBar: React.FC = () => (
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "0 54px",
+      padding: `0 ${SIDE_PADDING + 10}px`,
       height: 74,
       color: "#ffffff",
       fontFamily: UI_FONT,
@@ -209,7 +216,7 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
             display: "flex",
             alignItems: "center",
             gap: 24,
-            padding: "18px 44px 26px",
+            padding: `18px ${SIDE_PADDING}px 26px`,
             borderBottom: "2px solid rgba(255,255,255,0.10)",
           }}
         >
@@ -258,7 +265,8 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
             flexDirection: "column",
             justifyContent: "flex-end",
             gap: 24,
-            padding: "0 44px 24px",
+            // 最新の吹き出しがタイトル帯にかからないよう、安全域から入力欄の高さを差し引いた分だけ底上げする
+            padding: `0 ${SIDE_PADDING}px ${BOTTOM_SAFE - INPUT_BAR_HEIGHT}px`,
             overflow: "hidden",
           }}
         >
@@ -397,7 +405,7 @@ export const ChatOverlay: React.FC<ChatOverlayProps> = ({
             display: "flex",
             alignItems: "center",
             gap: 20,
-            padding: "20px 44px 40px",
+            padding: `20px ${SIDE_PADDING}px 40px`,
             borderTop: "2px solid rgba(255,255,255,0.10)",
           }}
         >
