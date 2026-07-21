@@ -21,17 +21,20 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  triviaNo?: string;
-  trivia?: string;
-  triviaEmoji?: string;
-  triviaAnswer?: string;
-  triviaAnswerSub?: string;
-  triviaSource?: string;
-  triviaStep?: number;
-  triviaFinal?: boolean;
-  triviaClear?: boolean;
-  triviaCta?: string;
-  triviaBait?: string;
+  runHook?: string;
+  runHookSub?: string;
+  runTimerStart?: boolean;
+  runTimerSeconds?: number;
+  runTimerStop?: boolean;
+  runItem?: string;
+  runItemSub?: string;
+  runResult?: string;
+  runResultSub?: string;
+  runReveal?: string;
+  runRevealSub?: string;
+  runCta?: string;
+  runBait?: string;
+  runClear?: boolean;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -190,17 +193,20 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  triviaNo?: string;        // 雑学連発型: 上部の番号バッジ（"その1"）
-  trivia?: string;          // 雑学連発型: 中央の問い（蛍光ペン下線つきの大見出し）
-  triviaEmoji?: string;     // 雑学連発型: 円の中に置く絵文字アイコン
-  triviaAnswer?: string;    // 雑学連発型: 白い答えカードの本文
-  triviaAnswerSub?: string; // 雑学連発型: 答えカードの補足行
-  triviaSource?: string;    // 雑学連発型: 下部の出典ラベル
-  triviaStep?: number;      // 雑学連発型: 進行ドットと画面のアクセント色（1〜5）
-  triviaFinal?: boolean;    // 雑学連発型: 番号バッジを「最後の雑学」表記にする
-  triviaClear?: boolean;    // 雑学連発型: 問いと絵文字の持ち越しを打ち切る（番号バッジは残す）
-  triviaCta?: string;       // 雑学連発型: 検索バー風CTA（文字がタイプされる）
-  triviaBait?: string;      // 雑学連発型: 下部のコメント誘発リボン
+  runHook?: string;         // 冒頭のフック（巨大文字）
+  runHookSub?: string;      // フックの上に出す小さいバッジ
+  runTimerStart?: boolean;  // この行からカウントダウンタイマーを走らせる
+  runTimerSeconds?: number; // タイマーの宣言秒数（runTimerStart の行に書く）
+  runTimerStop?: boolean;   // この行の終わりでタイマーを止める
+  runItem?: string;         // カウント対象の項目名。Main側で自動採番される
+  runItemSub?: string;      // 項目名の補足（小さく水色で出る）
+  runResult?: string;       // 結果発表の巨大数字
+  runResultSub?: string;    // 結果発表の補足バッジ
+  runReveal?: string;       // リビール帯（宣伝への転換点）
+  runRevealSub?: string;    // リビール帯の補足行
+  runCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  runBait?: string;         // コメント誘発リボン
+  runClear?: boolean;       // チップの山の持ち越しを打ち切り、映像を大きく見せる
   scene: number;
   voiceFile: string;
   durationInFrames: number;

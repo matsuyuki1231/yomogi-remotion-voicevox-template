@@ -16,19 +16,19 @@ automation:
 bgm:
   # 甘茶の音楽工房（フリーBGM・商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_sanjinooyatsu.mp3"
+  src: "amacha_picopicodisco.mp3"
   volume: 0.16
   loop: true
-  # 雑学連発型: 雑学パートは軽快でコミカルな曲、
-  # 最後の宣伝パート（その5）でおしゃれめの曲に切り替えて空気を変える
+  # カウントアップ・チャレンジ型:
+  # 18連発パートは速いピコピコ、リビール（id:26）でテクノに切り替えて空気を変える
   segments:
-    # 「3時のおやつ」— コミカルで軽い
-    - src: "amacha_sanjinooyatsu.mp3"
+    # 「ピコピコディスコ」— 速くて煽られる。連打のテンポと合う
+    - src: "amacha_picopicodisco.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「マーブルテクノI」— おしゃれで軽快なテクノ
+    # 「マーブルテクノI」— おしゃれで軽快。宣伝パートの空気に切り替える
     - src: "amacha_marbletechno1.mp3"
-      volume: 0.17
+      volume: 0.18
       loop: true
-      fromLineId: 19
+      fromLineId: 27

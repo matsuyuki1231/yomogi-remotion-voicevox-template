@@ -1,452 +1,548 @@
-# スクリプトデータ（よもぎマイクラ人狼 宣伝ショート / 雑学連発型フォーマット）
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / カウントアップ・チャレンジ型）
 # セリフを編集後、npm run sync-script → npm run voices の順で反映
 #
-# ■ フォーマット: 「雑学5連発」型（最後の1本だけが宣伝）
-#   生活サーバー版と同じ TriviaCard を使うが、雑学の中身を差し替えている。
+# ■ フォーマット: 「20秒で何個言える？」型
+#   冒頭で「マイクラでできること、20秒で何個言える？」と投げ、
+#   カウントダウンタイマーを走らせながら、できることを約1秒1個で20連発する。
+#   数え終わってから初めて「ぜんぶ よもぎサーバーの生活サーバー」と明かす。
 #
-#   その1〜その4は「だます側」と「見抜く側」の雑学で統一してある：
-#     托卵（他人の巣にまぎれこむ）／擬態（別のものになりすます）／
-#     人は嘘を54%しか見抜けない／「ウソ」という名前の鳥。
-#   宣伝と無関係な雑学として単体で成立しつつ、そのまま人狼の前ふりになっている。
+#   前半18秒はサーバー名を一切出さない。一般のマイクラ視聴者への釣りとして機能し、
+#   宣伝が来る頃には離脱ポイントを通り過ぎている。
 #
-#   その5で「毎週土曜の夜、マイクラで人狼ができる」に着地。
-#   めたんの「これ、嘘を見抜けないと負けるやつじゃない」で
-#   その3の雑学を回収し、ずんだもんが「ぜんぶ前ふりなのだ」と明かす。
+#   「20秒チャレンジ」で「20個」出るように項目数を合わせてある。
+#   項目を増減したら runResult の数字も必ず合わせること（数が合わないと嘘になる）。
 #
-# ■ 情報ソース: docs/yomogi/wolf 配下
-#   - 毎週土曜21:30から定期開催（event-administer.md）
-#   - 統合版マイクラを持っていれば誰でも無料（event-administer.md）
-#   - 役職は2026年7月19日時点で47種類（supplement/all_roles.md）
-#   - 近距離VC：ゲーム中は近くの人としか会話できない（faq/unreachable-lvc.md）
-#   - サボタージュ：人狼陣営が発動し、制限時間内に解除できないと市民陣営が敗北（sabotage.md）
-#   - 開始時にルール説明があるので、21:30から参加するならルール未学習でも可（how-to-join/index.md）
+#   締めの「あなたは何個言えた？」が冒頭の「何個言える？」に戻るのでループする。
+#   （2025年3月末からループ再生も再生回数に加算されるため、末尾は必ず冒頭に接続する。
+#     最後の行の映像は1行目とまったく同じ src / startFrom にしてある）
 #
-# 素材: public/content/マイクラ人狼 配下（mp4の4本を startFrom を変えて使い分けている）
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 土地保護で土地を購入し、家や店を建てられる（commands/land-protection.md）
+#   - チェスト保護でチェストを守れる（commands/chest-protection.md）
+#   - チェストショップで自分のアイテムを販売できる（intro.md, commands/chest-shop.md）
+#   - 釣れる魚は275種類（intro.md）
+#   - 役職は木こり・採掘者・農家・エンチャンター。変更は無料で何度でも（commands/role.md）
+#   - /buffで暗視や採掘速度上昇を秒単位でレンタルできる（commands/buff.md）
+#   - ガチャ、称号（5000YGで自作）、車（commands/gacha.md, rank.md, intro.md）
+#   - 会社プラグイン: 社長/課長/社員、設立無料（審査あり）、銀行と帳簿（commands/company.md）
+#
+# 素材: public/content/生活サーバー 配下（1項目1カットで割り当て）
 
-# ===== 導入 =====
+# ===== フック（0〜2秒）=====
 - id: 1
   character: metan
-  text: 知ってると得する雑学、5連発いくわよ。
-  displayText: 知ってると得する雑学、5連発
-  triviaNo: 5連発
-  triviaStep: 1
-  triviaEmoji: 💡
-  trivia: 知ってると得する雑学
+  text: マイクラでできること、20秒で何個言える？
+  displayText: マイクラでできること、20秒で何個言える？
+  runHook: "20秒で\n何個言える？"
+  runHookSub: マイクラでできること
   scene: 1
   pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
   se:
-    src: 決定ボタンを押す1.mp3
+    src: spotlight.mp3
     volume: 0.5
 
-# ===== その1: 托卵 =====
 - id: 2
   character: zundamon
-  text: その1。カッコウは、自分で子育てをしないのだ。
-  displayText: カッコウは子育てをしない
-  triviaNo: その1
-  triviaStep: 1
-  triviaEmoji: 🥚
-  trivia: カッコウは子育てをしない
+  text: いくのだ！
+  displayText: いくのだ！
+  runTimerStart: true
+  runTimerSeconds: 20
   scene: 1
-  pauseAfter: -3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.55
+
+# ===== 20連発（タイマー 20 → 0）=====
+- id: 3
+  character: zundamon
+  text: 家を建てる。
+  displayText: 家を建てる
+  runItem: 家を建てる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 120
   se:
     src: 決定ボタンを押す22.mp3
-    volume: 0.5
+    volume: 0.45
 
 - id: 4
   character: zundamon
-  text: 他の鳥の巣に、こっそり卵を産んで、育てさせるのだ。
-  displayText: 他の鳥の巣にこっそり卵を産む
-  triviaStep: 1
-  triviaAnswer: 他の鳥に育てさせる
-  triviaAnswerSub: 「托卵」。気づかれないまま、育てられる
-  triviaSource: 鳥類の托卵より
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: boom.mp3
-    volume: 0.5
-
-- id: 5
-  character: metan
-  text: しれっと、まぎれこんでるじゃない。
-  displayText: しれっと、まぎれこんでる
-  triviaStep: 1
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: 決定ボタンを押す3.mp3
-    volume: 0.45
-
-# ===== その2: 擬態 =====
-- id: 6
-  character: zundamon
-  text: その2。花のふりをするカマキリがいるのだ。
-  displayText: 花のふりをするカマキリがいる
-  triviaNo: その2
-  triviaStep: 2
-  triviaEmoji: 🌸
-  trivia: 花のふりをするカマキリ
-  scene: 1
-  pauseAfter: -3
+  text: 土地を買う。
+  displayText: 土地を買う
+  runItem: 土地を買う
+  runItemSub: 買った土地は自分だけが編集できる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 150
   se:
     src: 決定ボタンを押す23.mp3
-    volume: 0.5
-
-- id: 8
-  character: zundamon
-  text: 花そっくりの姿で待ち伏せして、寄ってきた虫をつかまえるのだ。
-  displayText: 花そっくりの姿で待ち伏せする
-  triviaStep: 2
-  triviaAnswer: 花に擬態して待ち伏せる
-  triviaAnswerSub: ハナカマキリ。獲物のほうから寄ってくる
-  triviaSource: 昆虫の擬態より
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: data_analysis.mp3
     volume: 0.45
 
-- id: 10
+- id: 5
   character: zundamon
-  text: その3。人は、嘘をほとんど見抜けないのだ。
-  displayText: 人は嘘をほとんど見抜けない
-  triviaNo: その3
-  triviaStep: 3
-  triviaEmoji: 🤥
-  trivia: 人は嘘を見抜けない
-  scene: 1
-  pauseAfter: -3
+  text: チェストを守る。
+  displayText: チェストを守る
+  runItem: チェストを守る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェスト保護をしている動画.mp4
+    animation: none
+    startFrom: 100
   se:
     src: 決定ボタンを押す31.mp3
-    volume: 0.5
+    volume: 0.45
 
-- id: 11
-  character: metan
-  text: え、私はわかるほうだと思うけど。
-  displayText: 私はわかるほうだと思うけど
-  triviaStep: 3
-  scene: 1
-  pauseAfter: -3
+- id: 6
+  character: zundamon
+  text: お店を開く。
+  displayText: お店を開く
+  runItem: お店を開く
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 260
   se:
     src: 決定ボタンを押す32.mp3
     volume: 0.45
 
-- id: 12
+- id: 7
   character: zundamon
-  text: たくさんの研究をまとめると、正解率はだいたい54パーセント。コイン投げと、ほぼ同じなのだ。
-  displayText: 正解率は約54％。コイン投げとほぼ同じ
-  triviaStep: 3
-  triviaAnswer: 正解率は約54％
-  triviaAnswerSub: コイン投げとほとんど変わらない
-  triviaSource: 嘘の看破に関するメタ分析より
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: boom.mp3
-    volume: 0.5
-
-- id: 13
-  character: metan
-  text: 急に自信なくなってきたわ。
-  displayText: 急に自信なくなってきたわ
-  triviaStep: 3
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: anxiety_piano.mp3
-    volume: 0.4
-
-# ===== その4: ウソという鳥 =====
-- id: 14
-  character: zundamon
-  text: その4。ウソ、っていう名前の鳥が、本当にいるのだ。
-  displayText: 「ウソ」という名前の鳥がいる
-  triviaNo: その4
-  triviaStep: 4
-  triviaEmoji: 🐦
-  trivia: 「ウソ」という鳥がいる
-  scene: 1
-  pauseAfter: -3
+  text: 値段をつける。
+  displayText: 値段をつける
+  runItem: 値段をつける
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 150
   se:
     src: 決定ボタンを押す42.mp3
-    volume: 0.5
-
-- id: 15
-  character: metan
-  text: うそでしょ。
-  displayText: うそでしょ
-  triviaStep: 4
-  scene: 1
-  pauseAfter: -3
-  se:
-    src: 決定ボタンを押す1.mp3
     volume: 0.45
 
-- id: 16
+- id: 8
   character: zundamon
-  text: ウソじゃないのだ。スズメの仲間で、漢字だと、鳥へんに學ぶで、鷽なのだ。
-  displayText: ウソじゃないのだ。スズメの仲間
-  triviaStep: 4
-  triviaAnswer: スズメ目アトリ科の「鷽（ウソ）」
-  triviaAnswerSub: 天神さまの「鷽替え」神事でも知られる鳥
-  triviaSource: 日本の野鳥より
-  scene: 1
-  pauseAfter: -3
+  text: 商店街をめぐる。
+  displayText: 商店街をめぐる
+  runItem: 商店街をめぐる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/商店街で帽子を購入している動画.mp4
+    animation: none
+    startFrom: 90
   se:
     src: 決定ボタンを押す2.mp3
-    volume: 0.5
-
-- id: 18
-  character: metan
-  text: ……ねぇ。さっきから、だます話ばっかりじゃない？
-  displayText: さっきから、だます話ばっかりじゃない？
-  triviaStep: 4
-  scene: 2
-  pauseAfter: -3
-  se:
-    src: 決定ボタンを押す4.mp3
     volume: 0.45
 
-- id: 19
+- id: 9
   character: zundamon
-  text: そうなのだ。だから最後は、これなのだ。
-  displayText: だから最後は、これなのだ
-  triviaNo: その5
-  triviaStep: 5
-  triviaFinal: true
-  triviaEmoji: 🐺
+  text: 釣りをする。
+  displayText: 釣りをする
+  runItem: 釣りをする
+  runItemSub: 釣れる魚は275種類
   scene: 2
-  pauseAfter: -3
-  se:
-    src: spotlight.mp3
-    volume: 0.55
-
-# ===== その5: マイクラ人狼（宣伝） =====
-- id: 20
-  character: zundamon
-  text: 毎週土曜の夜、マイクラで人狼ができるのだ。
-  displayText: 毎週土曜の夜、マイクラで人狼ができる
-  triviaNo: その5
-  triviaStep: 5
-  triviaFinal: true
-  trivia: マイクラで人狼ができる
-  scene: 2
-  pauseAfter: -3
+  pauseAfter: -4
   visual:
     type: video
-    src: マイクラ人狼/会議中の風景.mp4
-    animation: fadeIn
-    startFrom: 0
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 700
   se:
-    src: 決定ボタンを押す22.mp3
-    volume: 0.5
+    src: 決定ボタンを押す3.mp3
+    volume: 0.45
 
-- id: 21
+- id: 10
   character: zundamon
-  text: よもぎサーバーの、マイクラ人狼イベントなのだ。
-  displayText: よもぎサーバーのマイクラ人狼イベント
-  triviaStep: 5
-  triviaAnswer: よもぎサーバー マイクラ人狼
-  triviaAnswerSub: 毎週土曜 よる9時半から
+  text: 畑をたがやす。
+  displayText: 畑をたがやす
+  runItem: 畑をたがやす
   scene: 2
-  pauseAfter: -3
+  pauseAfter: -4
   visual:
     type: video
-    src: マイクラ人狼/会議中の風景2.mp4
-    animation: fadeIn
-    startFrom: 0
-  se:
-    src: 決定ボタンを押す23.mp3
-    volume: 0.5
-
-- id: 22
-  character: zundamon
-  text: 役職は、ぜんぶで47種類あるのだ。
-  displayText: 役職はぜんぶで47種類
-  triviaStep: 5
-  # ここから先は映像を大きく見せたいので、問いと絵文字の持ち越しを打ち切る
-  triviaClear: true
-  scene: 2
-  pauseAfter: -3
-  visual:
-    type: video
-    src: マイクラ人狼/霊媒師で市民勝利.mp4
-    animation: fadeIn
-    startFrom: 0
+    src: 生活サーバー/生活サーバー内で農業をしている動画.mp4
+    animation: none
+    startFrom: 100
   se:
     src: 決定ボタンを押す5.mp3
     volume: 0.45
 
-- id: 23
+- id: 11
   character: zundamon
-  text: 占い師も、霊媒師も、騎士も、殺し屋もいるのだ。
-  displayText: 占い師、霊媒師、騎士、殺し屋……
-  triviaStep: 5
+  text: 木こりになる。
+  displayText: 木こりになる
+  runItem: 木こりになる
   scene: 2
-  pauseAfter: -3
+  pauseAfter: -4
   visual:
     type: video
-    src: マイクラ人狼/殺し屋が霊媒師のフリ.mp4
-    animation: fadeIn
-    startFrom: 0
+    src: 生活サーバー/人工資源で原木を掘っている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.45
+
+# ---- 合いの手1（タイマーは走り続ける）----
+- id: 12
+  character: metan
+  text: ちょっと待って、多くない？
+  displayText: ちょっと待って、多くない？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 13
+  character: zundamon
+  text: 鉱石を掘る。
+  displayText: 鉱石を掘る
+  runItem: 鉱石を掘る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自然資源で採掘をしている動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.45
+
+- id: 14
+  character: zundamon
+  text: バフを借りる。
+  displayText: バフを借りる
+  runItem: バフを借りる
+  runItemSub: 暗視や採掘速度上昇を秒単位でレンタル
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4
+    animation: none
+    startFrom: 150
   se:
     src: 決定ボタンを押す31.mp3
     volume: 0.45
 
-- id: 25
+- id: 15
   character: zundamon
-  text: しかも近距離VCだから、近くにいる人としか声が届かないのだ。
-  displayText: 近距離VC。近くの人としか声が届かない
-  triviaStep: 5
+  text: 職業を変える。
+  displayText: 職業を変える
+  runItem: 職業を変える
+  runItemSub: 何度でも無料で変更できる
   scene: 2
-  pauseAfter: -3
+  pauseAfter: -4
   visual:
     type: video
-    src: マイクラ人狼/会議中の風景2.mp4
-    animation: fadeIn
-    startFrom: 160
+    src: 生活サーバー/roleコマンドで役職を変更している動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.45
+
+- id: 16
+  character: zundamon
+  text: スキルを上げる。
+  displayText: スキルを上げる
+  runItem: スキルを上げる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4
+    animation: none
+    startFrom: 350
   se:
     src: 決定ボタンを押す42.mp3
     volume: 0.45
 
-- id: 26
+- id: 17
   character: zundamon
-  text: 人狼はサボタージュも起こせるのだ。時間内に解除できないと、市民の負けなのだ。
-  displayText: サボタージュを時間内に解除できないと市民の負け
-  triviaStep: 5
+  text: ガチャを回す。
+  displayText: ガチャを回す
+  runItem: ガチャを回す
   scene: 2
-  pauseAfter: -3
+  pauseAfter: -4
   visual:
     type: video
-    src: マイクラ人狼/殺し屋が霊媒師のフリ.mp4
-    animation: fadeIn
-    startFrom: 160
-  se:
-    src: data_analysis.mp3
-    volume: 0.4
-
-- id: 28
-  character: metan
-  text: ……待って。これ、嘘を見抜けないと負けるやつじゃない。
-  displayText: これ、嘘を見抜けないと負けるやつじゃない
-  triviaStep: 5
-  scene: 2
-  pauseAfter: -3
-  visual:
-    type: video
-    src: マイクラ人狼/霊媒師で市民勝利.mp4
-    animation: fadeIn
-    startFrom: 300
-  se:
-    src: spotlight.mp3
-    volume: 0.55
-
-- id: 29
-  character: zundamon
-  text: その1から その4まで、ぜんぶ前ふりなのだ。
-  displayText: その1〜その4は、ぜんぶ前ふりなのだ
-  triviaStep: 5
-  scene: 2
-  pauseAfter: -3
-  visual:
-    type: video
-    src: マイクラ人狼/殺し屋が霊媒師のフリ.mp4
-    animation: fadeIn
-    startFrom: 300
-  se:
-    src: boom.mp3
-    volume: 0.55
-
-- id: 30
-  character: metan
-  text: はかったわね。
-  displayText: はかったわね
-  triviaStep: 5
-  scene: 2
-  pauseAfter: -3
-  visual:
-    type: video
-    src: マイクラ人狼/会議中の風景2.mp4
-    animation: fadeIn
-    startFrom: 320
+    src: 生活サーバー/ガチャを引いている動画.mp4
+    animation: none
+    startFrom: 150
   se:
     src: 決定ボタンを押す2.mp3
     volume: 0.45
 
-- id: 31
+- id: 18
   character: zundamon
-  text: 参加は無料なのだ。最初にルール説明もあるから、初めてでも大丈夫なのだ。
-  displayText: 参加は無料。最初にルール説明もある
-  triviaStep: 5
-  triviaAnswer: 参加費 0円
-  triviaAnswerSub: 統合版マイクラを持っていれば誰でも
+  text: 称号を作る。
+  displayText: 称号を作る
+  runItem: 称号を作る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/称号を購入して変更している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.45
+
+- id: 19
+  character: zundamon
+  text: 車に乗る。
+  displayText: 車に乗る
+  runItem: 車に乗る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.45
+
+# ---- 合いの手2 ----
+- id: 20
+  character: metan
+  text: まだあるの！？
+  displayText: まだあるの！？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/土地保護をした土地で建築している動画.mp4
+    animation: none
+    startFrom: 180
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.4
+
+- id: 21
+  character: zundamon
+  text: 会社を作る。
+  displayText: 会社を作る
+  runItem: 会社を作る
+  runItemSub: 設立は無料（審査あり）
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインを使用して会社を検索している動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 22
+  character: zundamon
+  text: 社員を雇う。
+  displayText: 社員を雇う
+  runItem: 社員を雇う
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 400
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.5
+
+- id: 23
+  character: zundamon
+  text: 帳簿をつける。
+  displayText: 帳簿をつける
+  runItem: 帳簿をつける
+  runItemSub: 会社の銀行と取引履歴が見られる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 24
+  character: zundamon
+  text: 社長になる。
+  displayText: 社長になる
+  runItem: 社長になる
+  runItemSub: 社長は1社に1人だけ
+  runTimerStop: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 900
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+# ===== 結果発表 =====
+- id: 25
+  character: zundamon
+  text: 20個なのだ。
+  displayText: 20個なのだ
+  runResult: "20"
+  runResultSub: ぜんぶ マイクラでできる
   scene: 3
   pauseAfter: -3
   visual:
     type: video
-    src: マイクラ人狼/会議中の風景.mp4
-    animation: fadeIn
-    startFrom: 100
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1500
   se:
-    src: 決定ボタンを押す3.mp3
+    src: spotlight.mp3
+    volume: 0.55
+
+- id: 26
+  character: metan
+  text: 多すぎでしょ。
+  displayText: 多すぎでしょ
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+# ===== リビール（ここで初めてサーバー名が出る。BGMもここで切り替わる）=====
+- id: 27
+  character: zundamon
+  text: ぜんぶ、よもぎサーバーの生活サーバーなのだ。
+  displayText: ぜんぶ、よもぎサーバーの生活サーバー
+  runReveal: ぜんぶ よもぎサーバー
+  runRevealSub: 24時間あそべる 生活・経済サーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2200
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 28
+  character: metan
+  text: これ全部、ひとつのサーバーで？
+  displayText: これ全部、ひとつのサーバーで？
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 420
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.4
+
+- id: 29
+  character: zundamon
+  text: しかも、参加は無料なのだ。
+  displayText: しかも、参加は無料
+  runReveal: 参加費 0円
+  runRevealSub: 統合版マイクラがあれば誰でも
+  runClear: true
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2800
+  se:
+    src: 決定ボタンを押す5.mp3
     volume: 0.5
 
-- id: 32
+# ===== CTA =====
+- id: 30
   character: zundamon
-  text: ネットで、よもぎサーバーって調べれば、入り方が全部出てくるのだ。
-  displayText: 調べれば、入り方が全部わかる
-  triviaStep: 5
-  triviaCta: よもぎサーバー
+  text: よもぎサーバーで検索すれば、入り方が全部わかるのだ。
+  displayText: 検索すれば 入り方がわかる
+  runCta: よもぎサーバー
   scene: 3
   pauseAfter: -3
   visual:
     type: image
     src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
     animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
   se:
     src: 決定ボタンを押す4.mp3
-    volume: 0.55
+    volume: 0.5
 
-- id: 33
+# ===== ループ（冒頭の問いに戻る。映像も1行目とまったく同じ位置）=====
+- id: 31
   character: metan
-  text: 一番へぇってなった雑学、コメントで教えてちょうだい。
-  displayText: 一番へぇってなった雑学は？
-  triviaStep: 5
-  triviaBait: 何番が一番へぇだった？
+  text: で、あなたは何個言えた？
+  displayText: で、あなたは何個言えた？
+  runBait: あなたは何個言えた？
   scene: 3
-  pauseAfter: -3
-  visual:
-    type: video
-    src: マイクラ人狼/霊媒師で市民勝利.mp4
-    animation: fadeIn
-    startFrom: 80
-  se:
-    src: 決定ボタンを押す5.mp3
-    volume: 0.45
-
-- id: 34
-  character: metan
-  text: じゃあね、バイバイ〜！
-  displayText: じゃあね、バイバイ〜！
-  triviaStep: 5
-  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ1行目に戻るのでループが締まる
   pauseAfter: 0
   visual:
     type: video
-    src: マイクラ人狼/会議中の風景2.mp4
-    animation: fadeIn
-    startFrom: 240
-
-- id: 35
-  character: zundamon
-  text: バイバイなのだ〜！
-  displayText: バイバイなのだ〜！
-  triviaStep: 5
-  scene: 3
-  pauseAfter: 60
-  visual:
-    type: video
-    src: マイクラ人狼/会議中の風景2.mp4
-    animation: fadeIn
-    startFrom: 260
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45

@@ -9,11 +9,11 @@ export const SETTINGS = {
     "size": 70,
     "weight": "900",
     "color": "#ffffff",
-    "outlineColor": "#080d24",
+    "outlineColor": "#070c1a",
     "innerOutlineColor": "none"
   },
   "subtitle": {
-    "bottomOffset": 300,
+    "bottomOffset": 150,
     "maxWidthPercent": 80,
     "maxWidthPixels": 1000,
     "outlineWidth": 14,
@@ -36,7 +36,7 @@ export const SETTINGS = {
     "playbackRate": 1.5
   },
   "colors": {
-    "background": "#0b1330",
+    "background": "#08122a",
     "text": "#ffffff",
     "zundamon": "#228B22",
     "metan": "#FF1493",

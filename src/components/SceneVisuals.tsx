@@ -113,10 +113,12 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
           src={staticFile(`content/${visual.src}`)}
           style={{
             position: "absolute",
-            top: 0,
+            // 素材にはマイクラの座標表示（上端）と体力ゲージ・ホットバー（下端）が
+            // 写り込んでいるので、縦に引き伸ばして上下を画面外へ逃がす
+            top: "-9%",
             left: "50%",
             width: `${SCALE * 100}%`,
-            height: "100%",
+            height: "125%",
             objectFit: "cover",
             transform: `translateX(calc(-50% + ${panX}px)) scale(${punch})`,
           }}
@@ -128,17 +130,66 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
   }
 
   if (visual.type === "image" && visual.src) {
+    // 横長のスクリーンショットを 9:16 にそのまま置くと上下が真っ黒に余る。
+    // backgroundSrc があれば背景に動画を敷き、画像はカードとして浮かせる
+    const bgSrc = visual.backgroundSrc;
+    const bgStartFrom = bgSrc
+      ? (visual.backgroundStartFrom ?? seededStartFrom(lineId, bgSrc))
+      : 0;
+    const { width } = useVideoConfig();
+    const SCALE = 1.6;
+    const overhang = (width * SCALE - width) / 2;
+    const panX = interpolate(
+      frame,
+      [0, 600],
+      lineId % 2 === 0 ? [overhang, -overhang] : [-overhang, overhang],
+      { extrapolateRight: "clamp" }
+    );
+
     return (
-      <div style={{ ...fullScreen, ...animationStyle }}>
-        <Img
-          src={staticFile(`content/${visual.src}`)}
-          style={{
-            maxWidth: "100%",
-            maxHeight: "100%",
-            objectFit: "contain",
-            borderRadius: 8,
-          }}
-        />
+      <div style={fullScreen}>
+        {bgSrc && (
+          <div style={{ ...fullScreen, overflow: "hidden" }}>
+            <OffthreadVideo
+              src={staticFile(`content/${bgSrc}`)}
+              style={{
+                position: "absolute",
+                top: "-9%",
+                left: "50%",
+                width: `${SCALE * 100}%`,
+                height: "125%",
+                objectFit: "cover",
+                transform: `translateX(calc(-50% + ${panX}px))`,
+              }}
+              startFrom={bgStartFrom}
+              muted
+            />
+          </div>
+        )}
+        <div style={{ ...fullScreen, ...animationStyle }}>
+          <Img
+            src={staticFile(`content/${visual.src}`)}
+            style={
+              bgSrc
+                ? {
+                    width: "94%",
+                    maxHeight: "62%",
+                    objectFit: "contain",
+                    borderRadius: 24,
+                    border: "5px solid rgba(255,255,255,0.92)",
+                    boxShadow: "0 30px 70px rgba(0,0,0,0.72)",
+                    // 下に検索CTAを置くぶん、カードを上へ寄せる
+                    marginBottom: 320,
+                  }
+                : {
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 8,
+                  }
+            }
+          />
+        </div>
       </div>
     );
   }
@@ -167,10 +218,10 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
               src={staticFile(`content/${bgSrc}`)}
               style={{
                 position: "absolute",
-                top: 0,
+                top: "-9%",
                 left: "50%",
                 width: `${SCALE * 100}%`,
-                height: "100%",
+                height: "125%",
                 objectFit: "cover",
                 transform: `translateX(calc(-50% + ${panX}px))`,
               }}

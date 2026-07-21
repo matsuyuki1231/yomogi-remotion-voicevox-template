@@ -11,7 +11,13 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { TriviaBackground, TriviaCard } from "./components/TriviaCard";
+import {
+  RunBackdrop,
+  RunScrim,
+  RunTimer,
+  RunDangerEdge,
+  RunHud,
+} from "./components/SpeedrunHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -23,47 +29,6 @@ const getAdjustedFrames = (frames: number): number =>
 export const Main: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  // 現在のセリフを計算
-  let accumulatedFrames = 0;
-  let currentLine: ScriptLine | null = null;
-  let currentLineStartFrame = 0;
-  let currentScene = 1;
-
-  for (const line of scriptData) {
-    const adjustedDuration = getAdjustedFrames(line.durationInFrames);
-    const adjustedPause = getAdjustedFrames(line.pauseAfter);
-    const lineEndFrame = accumulatedFrames + adjustedDuration + adjustedPause;
-
-    if (frame >= accumulatedFrames && frame < lineEndFrame) {
-      currentLine = line;
-      currentLineStartFrame = accumulatedFrames;
-      currentScene = line.scene;
-      break;
-    }
-    accumulatedFrames = lineEndFrame;
-    currentScene = line.scene;
-  }
-
-  // シーン情報（背景の切り替えに使う予約）
-  void (scenes.find((s) => s.id === currentScene) || scenes[0]);
-
-  // 背景色は「直近で指定された雑学番号」を引き継ぐ（毎行書かなくてよい）
-  const currentStep = (() => {
-    let step: number | undefined;
-    for (const line of scriptData) {
-      if (line === currentLine) break;
-      if (line.triviaStep !== undefined) step = line.triviaStep;
-    }
-    return currentLine?.triviaStep ?? step;
-  })();
-
-  // BGM の長さを動画本体と揃える
-  const bgmTotalFrames = scriptData.reduce(
-    (acc, line) =>
-      acc + getAdjustedFrames(line.durationInFrames) + getAdjustedFrames(line.pauseAfter),
-    0
-  );
 
   // 各セリフの開始フレームを計算
   const getLineStartFrame = (index: number): number => {
@@ -80,65 +45,128 @@ export const Main: React.FC = () => {
   const getLineDuration = (line: ScriptLine): number =>
     getAdjustedFrames(line.durationInFrames);
 
-  // 番号バッジ・絵文字・問いは同じ雑学の間ずっと出しっぱなしにする。
-  // （毎行YAMLに書かなくてよくなるうえ、答えだけの行で画面上半分が空くのを防ぐ）
+  // 映像とHUDが画面に出ている長さ。pauseAfter が正の行で映像まで切れて
+  // 素の背景が数フレーム覗くのを防ぐため、間の分も引き延ばす
+  const getLineSpan = (line: ScriptLine): number =>
+    getLineDuration(line) + Math.max(0, getAdjustedFrames(line.pauseAfter));
+
+  // 現在のセリフを計算
+  let accumulatedFrames = 0;
+  let currentLine: ScriptLine | null = null;
+  let currentIndex = -1;
+  let currentLineStartFrame = 0;
+  let currentScene = 1;
+
+  for (let i = 0; i < scriptData.length; i++) {
+    const line = scriptData[i];
+    const lineEndFrame =
+      accumulatedFrames +
+      getLineDuration(line) +
+      getAdjustedFrames(line.pauseAfter);
+
+    if (frame >= accumulatedFrames && frame < lineEndFrame) {
+      currentLine = line;
+      currentIndex = i;
+      currentLineStartFrame = accumulatedFrames;
+      currentScene = line.scene;
+      break;
+    }
+    accumulatedFrames = lineEndFrame;
+    currentScene = line.scene;
+  }
+
+  // シーン情報（背景の切り替えに使う予約）
+  void (scenes.find((s) => s.id === currentScene) || scenes[0]);
+
+  // 動画全体の長さ（BGMとタイマーの終端に使う）
+  const totalFrames = scriptData.reduce(
+    (acc, line) =>
+      acc + getLineDuration(line) + getAdjustedFrames(line.pauseAfter),
+    0
+  );
+
+  // ---- カウンターとチップの山 ----
+  // runItem を持つ行に通し番号を振り、そこまでに言えた項目を積み上げていく。
+  // 項目のない行（めたんの合いの手や結果発表）でも山は持ち越すので、
+  // 「ここまでで何個積んだか」が画面から消えない。runClear で打ち切る。
   const resolved = (() => {
-    let no: string | undefined;
-    let trivia: string | undefined;
-    let emoji: string | undefined;
-    let step: number | undefined;
+    let count = 0;
+    let pile: string[] = [];
 
     return scriptData.map((line) => {
-      // 雑学が切り替わったら持ち越しをリセットする
-      if (line.triviaStep !== undefined && line.triviaStep !== step) {
-        step = line.triviaStep;
-        no = undefined;
-        trivia = undefined;
-        emoji = undefined;
+      if (line.runClear) pile = [];
+      if (line.runItem) {
+        count += 1;
+        pile = [...pile, line.runItem];
+        return { count, item: line.runItem, chips: pile };
       }
-      // triviaClear で問いと絵文字の持ち越しを打ち切る（番号バッジは残す）。
-      // 宣伝パートのように映像を長く見せたい区間で、上半分を空けるために使う
-      if (line.triviaClear) {
-        trivia = undefined;
-        emoji = undefined;
-      }
-      if (line.triviaNo) no = line.triviaNo;
-      if (line.trivia) trivia = line.trivia;
-      if (line.triviaEmoji) emoji = line.triviaEmoji;
-      return { no, trivia, emoji };
+      return { count: undefined, item: undefined, chips: pile };
     });
   })();
 
-  // TriviaCardのUIパーツが1つでも出るか
-  const hasTriviaUI = (line: ScriptLine, index: number): boolean =>
+  // ---- カウントダウンタイマーの区間 ----
+  // 宣言した秒数（runTimerSeconds）を区間の実フレーム数に線形マッピングするので、
+  // セリフの長さが多少ぶれても必ず「20 → 0」で着地する。
+  const timerSection = (() => {
+    const startIndex = scriptData.findIndex((l) => l.runTimerStart);
+    if (startIndex < 0) return null;
+    const stopIndex = scriptData.findIndex((l) => l.runTimerStop);
+    const from = getLineStartFrame(startIndex);
+    const until =
+      stopIndex >= 0
+        ? getLineStartFrame(stopIndex) +
+          getLineDuration(scriptData[stopIndex]) +
+          getAdjustedFrames(scriptData[stopIndex].pauseAfter)
+        : totalFrames;
+    return {
+      from,
+      duration: Math.max(1, until - from),
+      until,
+      seconds: scriptData[startIndex].runTimerSeconds ?? 20,
+    };
+  })();
+
+  const timerVisible =
+    timerSection !== null && frame >= timerSection.from && frame < timerSection.until;
+  const timerProgress = timerSection
+    ? (frame - timerSection.from) / timerSection.duration
+    : 0;
+
+  // HUDのパーツが1つでも出るか
+  const hasHud = (line: ScriptLine, index: number): boolean =>
     !!(
-      resolved[index].no ||
-      resolved[index].trivia ||
-      resolved[index].emoji ||
-      line.triviaAnswer ||
-      line.triviaSource ||
-      line.triviaCta ||
-      line.triviaBait
+      line.runHook ||
+      line.runItem ||
+      line.runResult ||
+      line.runReveal ||
+      line.runCta ||
+      line.runBait ||
+      resolved[index].chips.length > 0
     );
 
+  // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
+  const hidesSubtitle = (line: ScriptLine): boolean =>
+    !!(line.runHook || line.runItem || line.runResult || line.runReveal || line.runBait);
+
   // BGM区間の開始フレームと長さを算出
-  const bgmTrack = bgmSegments
-    ? bgmSegments.map((segment, i) => {
+  const segments = bgmSegments;
+  const bgmTrack = segments
+    ? segments.map((segment, i) => {
         const startIndex = scriptData.findIndex((line) => line.id === segment.fromLineId);
         const from = getLineStartFrame(startIndex < 0 ? 0 : startIndex);
-        const nextSegment = bgmSegments[i + 1];
+        const nextSegment = segments[i + 1];
         const nextIndex = nextSegment
           ? scriptData.findIndex((line) => line.id === nextSegment.fromLineId)
           : -1;
-        const until = nextIndex >= 0 ? getLineStartFrame(nextIndex) : bgmTotalFrames;
+        const until = nextIndex >= 0 ? getLineStartFrame(nextIndex) : totalFrames;
         return { ...segment, from, durationInFrames: Math.max(1, until - from) };
       })
     : null;
 
   return (
     <AbsoluteFill style={{ fontFamily }}>
-      {/* 背景。Sequenceの外に置き、セリフをまたいでも光の玉が途切れないようにする */}
-      <TriviaBackground step={currentStep} />
+      {/* 映像素材がない行のためのフォールバック背景 */}
+      <RunBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -156,7 +184,7 @@ export const Main: React.FC = () => {
             </Sequence>
           ))
         : bgmConfig && (
-            <Sequence durationInFrames={bgmTotalFrames}>
+            <Sequence durationInFrames={totalFrames}>
               <Audio
                 src={staticFile(`bgm/${bgmConfig.src}`)}
                 volume={bgmConfig.volume ?? 0.3}
@@ -166,92 +194,84 @@ export const Main: React.FC = () => {
           )}
 
       {/* 音声再生 */}
-      {scriptData.map((line, index) => {
-        const startFrame = getLineStartFrame(index);
-        return (
-          <Sequence
-            key={`audio-${line.id}`}
-            from={startFrame}
-            durationInFrames={getLineDuration(line)}
-            premountFor={fps}
-          >
-            <Audio
-              src={staticFile(`voices/${line.voiceFile}`)}
-              playbackRate={VIDEO_CONFIG.playbackRate}
-            />
-            {/* 効果音再生 */}
-            {line.se && (
-              <Audio
-                src={staticFile(`se/${line.se.src}`)}
-                volume={line.se.volume ?? 1}
-              />
-            )}
-          </Sequence>
-        );
-      })}
+      {scriptData.map((line, index) => (
+        <Sequence
+          key={`audio-${line.id}`}
+          from={getLineStartFrame(index)}
+          durationInFrames={getLineDuration(line)}
+          premountFor={fps}
+        >
+          <Audio
+            src={staticFile(`voices/${line.voiceFile}`)}
+            playbackRate={VIDEO_CONFIG.playbackRate}
+          />
+          {line.se && (
+            <Audio src={staticFile(`se/${line.se.src}`)} volume={line.se.volume ?? 1} />
+          )}
+        </Sequence>
+      ))}
 
-      {/* 各セリフのビジュアル（宣伝パートのみ）。テロップを読ませるため暗幕を重ねる */}
+      {/* 各セリフの映像。1秒ごとにカットが変わるので premount しておかないと
+          デコードが間に合わず頭が黒コマになる */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
-        const startFrame = getLineStartFrame(index);
         return (
           <Sequence
             key={`visual-${line.id}`}
-            from={startFrame}
-            durationInFrames={getLineDuration(line)}
+            from={getLineStartFrame(index)}
+            durationInFrames={getLineSpan(line)}
+            premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(180deg, rgba(8,14,38,0.74) 0%, rgba(8,14,38,0.12) 30%, rgba(8,14,38,0.14) 62%, rgba(8,14,38,0.82) 100%)",
-              }}
-            />
+            <RunScrim />
           </Sequence>
         );
       })}
 
-      {/* 雑学カード（番号バッジ・絵文字・問い・答え・CTA） */}
-      {scriptData.map((line, index) => {
-        if (!hasTriviaUI(line, index)) return null;
-        const startFrame = getLineStartFrame(index);
-        return (
-          <Sequence
-            key={`trivia-${line.id}`}
-            from={startFrame}
-            durationInFrames={getLineDuration(line)}
-          >
-            <TriviaCard
-              no={resolved[index].no}
-              headline={resolved[index].trivia}
-              emoji={resolved[index].emoji}
-              answer={line.triviaAnswer}
-              answerSub={line.triviaAnswerSub}
-              source={line.triviaSource}
-              step={line.triviaStep}
-              final={line.triviaFinal}
-              cta={line.triviaCta}
-              bait={line.triviaBait}
-              durationInFrames={getLineDuration(line)}
-            />
-          </Sequence>
-        );
-      })}
+      {/* 残り時間タイマー。Sequenceの外に置き、セリフをまたいでも連続して減らす */}
+      {timerVisible && (
+        <>
+          <RunTimer progress={timerProgress} seconds={timerSection!.seconds} />
+          <RunDangerEdge progress={timerProgress} seconds={timerSection!.seconds} />
+        </>
+      )}
 
-      {/* 字幕（画面下部）。
-          問い・答えを出した行はデカ文字テロップが同じことを言っているので字幕を出さない */}
-      {currentLine && !currentLine.trivia && !currentLine.triviaAnswer && (
+      {/* セリフごとのHUD（カウンター・項目名・チップの山・結果・リビール・CTA） */}
+      {currentLine && hasHud(currentLine, currentIndex) && (
+        <Sequence
+          key={`hud-${currentLine.id}`}
+          from={currentLineStartFrame}
+          durationInFrames={getLineSpan(currentLine)}
+        >
+          <RunHud
+            hook={currentLine.runHook}
+            hookSub={currentLine.runHookSub}
+            item={resolved[currentIndex].item}
+            itemSub={currentLine.runItemSub}
+            count={resolved[currentIndex].count}
+            chips={resolved[currentIndex].chips}
+            result={currentLine.runResult}
+            resultSub={currentLine.runResultSub}
+            reveal={currentLine.runReveal}
+            revealSub={currentLine.runRevealSub}
+            cta={currentLine.runCta}
+            bait={currentLine.runBait}
+            durationInFrames={getLineSpan(currentLine)}
+          />
+        </Sequence>
+      )}
+
+      {/* 字幕（画面下部） */}
+      {currentLine && !hidesSubtitle(currentLine) && (
         <Sequence
           key={`subtitle-${currentLine.id}`}
           from={currentLineStartFrame}
-          durationInFrames={getLineDuration(currentLine)}
+          durationInFrames={getLineSpan(currentLine)}
         >
           <Subtitle
             text={currentLine.displayText ?? currentLine.text}
             character={currentLine.character}
-            durationInFrames={getLineDuration(currentLine)}
+            durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>
       )}
