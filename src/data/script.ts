@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_marbletechno1.mp3","volume":0.18,"loop":true,"fromLineId":27}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_marbletechno1.mp3","volume":0.18,"loop":true,"fromLineId":29}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -174,6 +174,46 @@ export const scriptData: ScriptLine[] = [
   },
   {
     "id": 5,
+    "character": "metan",
+    "text": "あれ、普通のマイクラだとできなくない？",
+    "displayText": "あれ、普通のマイクラだとできなくない？",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "最後まで見ればわかるのだ！",
+    "displayText": "最後まで見ればわかるのだ！",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 65
+  },
+  {
+    "id": 7,
     "character": "zundamon",
     "text": "チェストを守る。",
     "displayText": "チェストを守る",
@@ -190,11 +230,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す31.mp3",
       "volume": 0.45
     },
-    "voiceFile": "05_zundamon.wav",
+    "voiceFile": "07_zundamon.wav",
     "durationInFrames": 39
   },
   {
-    "id": 6,
+    "id": 8,
     "character": "zundamon",
     "text": "お店を開く。",
     "displayText": "お店を開く",
@@ -211,11 +251,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す32.mp3",
       "volume": 0.45
     },
-    "voiceFile": "06_zundamon.wav",
+    "voiceFile": "08_zundamon.wav",
     "durationInFrames": 40
   },
   {
-    "id": 7,
+    "id": 9,
     "character": "zundamon",
     "text": "値段をつける。",
     "displayText": "値段をつける",
@@ -232,11 +272,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す42.mp3",
       "volume": 0.45
     },
-    "voiceFile": "07_zundamon.wav",
+    "voiceFile": "09_zundamon.wav",
     "durationInFrames": 39
   },
   {
-    "id": 8,
+    "id": 10,
     "character": "zundamon",
     "text": "商店街をめぐる。",
     "displayText": "商店街をめぐる",
@@ -253,11 +293,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "08_zundamon.wav",
+    "voiceFile": "10_zundamon.wav",
     "durationInFrames": 52
   },
   {
-    "id": 9,
+    "id": 11,
     "character": "zundamon",
     "text": "釣りをする。",
     "displayText": "釣りをする",
@@ -275,11 +315,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "09_zundamon.wav",
+    "voiceFile": "11_zundamon.wav",
     "durationInFrames": 32
   },
   {
-    "id": 10,
+    "id": 12,
     "character": "zundamon",
     "text": "畑をたがやす。",
     "displayText": "畑をたがやす",
@@ -296,11 +336,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.45
     },
-    "voiceFile": "10_zundamon.wav",
+    "voiceFile": "12_zundamon.wav",
     "durationInFrames": 45
   },
   {
-    "id": 11,
+    "id": 13,
     "character": "zundamon",
     "text": "木こりになる。",
     "displayText": "木こりになる",
@@ -317,11 +357,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す22.mp3",
       "volume": 0.45
     },
-    "voiceFile": "11_zundamon.wav",
+    "voiceFile": "13_zundamon.wav",
     "durationInFrames": 34
   },
   {
-    "id": 12,
+    "id": 14,
     "character": "metan",
     "text": "ちょっと待って、多くない？",
     "displayText": "ちょっと待って、多くない？",
@@ -337,11 +377,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.4
     },
-    "voiceFile": "12_metan.wav",
+    "voiceFile": "14_metan.wav",
     "durationInFrames": 59
   },
   {
-    "id": 13,
+    "id": 15,
     "character": "zundamon",
     "text": "鉱石を掘る。",
     "displayText": "鉱石を掘る",
@@ -358,11 +398,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す23.mp3",
       "volume": 0.45
     },
-    "voiceFile": "13_zundamon.wav",
+    "voiceFile": "15_zundamon.wav",
     "durationInFrames": 39
   },
   {
-    "id": 14,
+    "id": 16,
     "character": "zundamon",
     "text": "バフを借りる。",
     "displayText": "バフを借りる",
@@ -380,11 +420,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す31.mp3",
       "volume": 0.45
     },
-    "voiceFile": "14_zundamon.wav",
+    "voiceFile": "16_zundamon.wav",
     "durationInFrames": 36
   },
   {
-    "id": 15,
+    "id": 17,
     "character": "zundamon",
     "text": "職業を変える。",
     "displayText": "職業を変える",
@@ -402,11 +442,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す32.mp3",
       "volume": 0.45
     },
-    "voiceFile": "15_zundamon.wav",
+    "voiceFile": "17_zundamon.wav",
     "durationInFrames": 44
   },
   {
-    "id": 16,
+    "id": 18,
     "character": "zundamon",
     "text": "スキルを上げる。",
     "displayText": "スキルを上げる",
@@ -423,11 +463,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す42.mp3",
       "volume": 0.45
     },
-    "voiceFile": "16_zundamon.wav",
+    "voiceFile": "18_zundamon.wav",
     "durationInFrames": 37
   },
   {
-    "id": 17,
+    "id": 19,
     "character": "zundamon",
     "text": "ガチャを回す。",
     "displayText": "ガチャを回す",
@@ -444,11 +484,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "17_zundamon.wav",
+    "voiceFile": "19_zundamon.wav",
     "durationInFrames": 38
   },
   {
-    "id": 18,
+    "id": 20,
     "character": "zundamon",
     "text": "称号を作る。",
     "displayText": "称号を作る",
@@ -465,11 +505,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "20_zundamon.wav",
     "durationInFrames": 43
   },
   {
-    "id": 19,
+    "id": 21,
     "character": "zundamon",
     "text": "車に乗る。",
     "displayText": "車に乗る",
@@ -486,11 +526,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.45
     },
-    "voiceFile": "19_zundamon.wav",
+    "voiceFile": "21_zundamon.wav",
     "durationInFrames": 36
   },
   {
-    "id": 20,
+    "id": 22,
     "character": "metan",
     "text": "まだあるの！？",
     "displayText": "まだあるの！？",
@@ -506,11 +546,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "20_metan.wav",
+    "voiceFile": "22_metan.wav",
     "durationInFrames": 30
   },
   {
-    "id": 21,
+    "id": 23,
     "character": "zundamon",
     "text": "会社を作る。",
     "displayText": "会社を作る",
@@ -528,11 +568,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す22.mp3",
       "volume": 0.5
     },
-    "voiceFile": "21_zundamon.wav",
+    "voiceFile": "23_zundamon.wav",
     "durationInFrames": 40
   },
   {
-    "id": 22,
+    "id": 24,
     "character": "zundamon",
     "text": "社員を雇う。",
     "displayText": "社員を雇う",
@@ -549,11 +589,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す23.mp3",
       "volume": 0.5
     },
-    "voiceFile": "22_zundamon.wav",
+    "voiceFile": "24_zundamon.wav",
     "durationInFrames": 40
   },
   {
-    "id": 23,
+    "id": 25,
     "character": "zundamon",
     "text": "帳簿をつける。",
     "displayText": "帳簿をつける",
@@ -571,11 +611,11 @@ export const scriptData: ScriptLine[] = [
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
-    "voiceFile": "23_zundamon.wav",
+    "voiceFile": "25_zundamon.wav",
     "durationInFrames": 38
   },
   {
-    "id": 24,
+    "id": 26,
     "character": "zundamon",
     "text": "社長になる。",
     "displayText": "社長になる",
@@ -594,11 +634,11 @@ export const scriptData: ScriptLine[] = [
       "src": "boom.mp3",
       "volume": 0.55
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "26_zundamon.wav",
     "durationInFrames": 36
   },
   {
-    "id": 25,
+    "id": 27,
     "character": "zundamon",
     "text": "20個なのだ。",
     "displayText": "20個なのだ",
@@ -616,11 +656,11 @@ export const scriptData: ScriptLine[] = [
       "src": "spotlight.mp3",
       "volume": 0.55
     },
-    "voiceFile": "25_zundamon.wav",
+    "voiceFile": "27_zundamon.wav",
     "durationInFrames": 39
   },
   {
-    "id": 26,
+    "id": 28,
     "character": "metan",
     "text": "多すぎでしょ。",
     "displayText": "多すぎでしょ",
@@ -636,11 +676,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.4
     },
-    "voiceFile": "26_metan.wav",
+    "voiceFile": "28_metan.wav",
     "durationInFrames": 31
   },
   {
-    "id": 27,
+    "id": 29,
     "character": "zundamon",
     "text": "ぜんぶ、よもぎサーバーの生活サーバーなのだ。",
     "displayText": "ぜんぶ、よもぎサーバーの生活サーバー",
@@ -658,11 +698,11 @@ export const scriptData: ScriptLine[] = [
       "src": "boom.mp3",
       "volume": 0.55
     },
-    "voiceFile": "27_zundamon.wav",
+    "voiceFile": "29_zundamon.wav",
     "durationInFrames": 119
   },
   {
-    "id": 28,
+    "id": 30,
     "character": "metan",
     "text": "これ全部、ひとつのサーバーで？",
     "displayText": "これ全部、ひとつのサーバーで？",
@@ -678,11 +718,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す32.mp3",
       "volume": 0.4
     },
-    "voiceFile": "28_metan.wav",
+    "voiceFile": "30_metan.wav",
     "durationInFrames": 75
   },
   {
-    "id": 29,
+    "id": 31,
     "character": "zundamon",
     "text": "しかも、参加は無料なのだ。",
     "displayText": "しかも、参加は無料",
@@ -701,11 +741,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
-    "voiceFile": "29_zundamon.wav",
+    "voiceFile": "31_zundamon.wav",
     "durationInFrames": 76
   },
   {
-    "id": 30,
+    "id": 32,
     "character": "zundamon",
     "text": "よもぎサーバーで検索すれば、入り方が全部わかるのだ。",
     "displayText": "検索すれば 入り方がわかる",
@@ -723,11 +763,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "30_zundamon.wav",
+    "voiceFile": "32_zundamon.wav",
     "durationInFrames": 139
   },
   {
-    "id": 31,
+    "id": 33,
     "character": "metan",
     "text": "で、あなたは何個言えた？",
     "displayText": "で、あなたは何個言えた？",
@@ -744,7 +784,7 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "31_metan.wav",
+    "voiceFile": "33_metan.wav",
     "durationInFrames": 73
   }
 ];

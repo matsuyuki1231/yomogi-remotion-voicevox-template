@@ -35,3 +35,6 @@ youtube-client-secret.json
 /public/bgm/
 /public/se/
 /public/voices/
+
+# 制作・投稿の個人的な控え（リポジトリには載せない）
+/制作履歴.md

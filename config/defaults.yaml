@@ -20,7 +20,7 @@ bgm:
   volume: 0.16
   loop: true
   # カウントアップ・チャレンジ型:
-  # 18連発パートは速いピコピコ、リビール（id:26）でテクノに切り替えて空気を変える
+  # 20連発パートは速いピコピコ、リビール（id:29）でテクノに切り替えて空気を変える
   segments:
     # 「ピコピコディスコ」— 速くて煽られる。連打のテンポと合う
     - src: "amacha_picopicodisco.mp3"
@@ -31,4 +31,4 @@ bgm:
     - src: "amacha_marbletechno1.mp3"
       volume: 0.18
       loop: true
-      fromLineId: 27
+      fromLineId: 29
