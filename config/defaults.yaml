@@ -16,14 +16,14 @@ automation:
 bgm:
   # 甘茶の音楽工房（フリーBGM・商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_solarisnoame.mp3"
+  src: "amacha_sanjinooyatsu.mp3"
   volume: 0.16
   loop: true
-  # Frutiger Aero型: 前半の懐かしパートは水と透明感のある曲、
-  # リビール以降は明るいテクノに切り替えてテンポを上げる
+  # 雑学連発型: 雑学パートは軽快でコミカルな曲、
+  # 最後の宣伝パート（その5）でおしゃれめの曲に切り替えて空気を変える
   segments:
-    # 「ソラリスの雨」— 異世界的で透明感のある水のイメージ
-    - src: "amacha_solarisnoame.mp3"
+    # 「3時のおやつ」— コミカルで軽い
+    - src: "amacha_sanjinooyatsu.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
@@ -31,4 +31,4 @@ bgm:
     - src: "amacha_marbletechno1.mp3"
       volume: 0.17
       loop: true
-      fromLineId: 15
+      fromLineId: 19

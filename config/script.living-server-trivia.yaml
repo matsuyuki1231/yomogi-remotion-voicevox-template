@@ -1,0 +1,522 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 雑学連発型フォーマット）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「雑学5連発」型（最後の1本だけが宣伝）
+#   「知ってると得する雑学5選」の顔で始め、その1〜その4は生活サーバーと
+#   まったく無関係な雑学を畳みかける。視聴者はリストの完走目的で残るので、
+#   宣伝が来る頃には離脱ポイントを通り過ぎている。
+#
+#   その5で「今のマイクラは会社を作って社長になれる」という“雑学の顔をした宣伝”に着地。
+#   めたんに「それ雑学じゃなくて宣伝じゃない？」とツッコませ、ずんだもんが
+#   「バレたのだ」と認めることで、隠すのではなくネタとして成立させている。
+#
+#   雑学ごとにアクセント色が変わる（黄→水→橙→桃→緑）ので、
+#   映像素材のない前半でも画面が単調にならない。
+#
+# ■ 新フィールド（TriviaCard 用）:
+#   triviaNo        : 上部の番号バッジ（"その1"）
+#   trivia          : 中央の問い（蛍光ペン下線つきの大見出し）
+#   triviaEmoji     : 円の中に置く絵文字アイコン
+#   triviaAnswer    : 白い答えカードの本文
+#   triviaAnswerSub : 答えカードの補足行
+#   triviaSource    : 下部の出典ラベル
+#   triviaStep      : 進行ドットと画面のアクセント色（1〜5）
+#   triviaFinal     : 番号バッジを「最後の雑学」表記にする
+#   triviaCta       : 検索バー風CTA
+#   triviaBait      : コメント誘発リボン
+#
+# 前半の画面は外部画像を使わず TriviaCard.tsx がCSSと絵文字で描画している。
+# 映像素材（public/content）を使うのは、その5の宣伝パートだけ。
+#
+# 情報ソース（宣伝パート）: docs/yomogi 配下
+# 素材: public/content 配下
+
+# ===== 導入 =====
+- id: 1
+  character: metan
+  text: 知ってると、ちょっと得する雑学。5つ持ってきたわ。
+  displayText: 知ってると得する雑学、5つ
+  triviaNo: 5連発
+  triviaStep: 1
+  triviaEmoji: 💡
+  trivia: 知ってると得する雑学
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+# ===== その1: バナナ =====
+- id: 2
+  character: zundamon
+  text: その1。バナナは、果物じゃないのだ。
+  displayText: バナナは果物じゃない
+  triviaNo: その1
+  triviaStep: 1
+  triviaEmoji: 🍌
+  trivia: バナナは果物じゃない
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 3
+  character: metan
+  text: え、果物でしょ。
+  displayText: え、果物でしょ
+  triviaStep: 1
+  triviaEmoji: 🍌
+  trivia: バナナは果物じゃない
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.45
+
+- id: 4
+  character: zundamon
+  text: 植物学だと、バナナは「ベリー」に分類されるのだ。
+  displayText: 植物学だと「ベリー」に分類される
+  triviaStep: 1
+  triviaAnswer: 植物学上はベリー（液果）
+  triviaAnswerSub: ひとつの子房からできる果実＝ベリー
+  triviaSource: 植物学の果実分類より
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.5
+
+- id: 5
+  character: zundamon
+  text: しかもイチゴは、ベリーじゃないのだ。
+  displayText: しかもイチゴはベリーじゃない
+  triviaStep: 1
+  triviaAnswer: そしてイチゴはベリーではない
+  triviaAnswerSub: 食べてる部分は花托がふくらんだもの
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: boom.mp3
+    volume: 0.5
+
+- id: 6
+  character: metan
+  text: 逆じゃない！？
+  displayText: 逆じゃない！？
+  triviaStep: 1
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.45
+
+# ===== その2: タコ =====
+- id: 7
+  character: zundamon
+  text: その2。タコの心臓は、3つあるのだ。
+  displayText: タコの心臓は3つある
+  triviaNo: その2
+  triviaStep: 2
+  triviaEmoji: 🐙
+  trivia: タコの心臓は3つある
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.5
+
+- id: 8
+  character: metan
+  text: 3つ！？　多くない？
+  displayText: 3つ！？ 多くない？
+  triviaStep: 2
+  triviaEmoji: 🐙
+  trivia: タコの心臓は3つある
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.45
+
+- id: 9
+  character: zundamon
+  text: しかも血の色は、赤じゃなくて青いのだ。
+  displayText: しかも血の色は青い
+  triviaStep: 2
+  triviaAnswer: 血は青い
+  triviaAnswerSub: 酸素を運ぶのがヘモシアニン（銅）だから
+  triviaSource: 頭足類の循環器のしくみ
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: data_analysis.mp3
+    volume: 0.45
+
+- id: 10
+  character: metan
+  text: そんなことある？
+  displayText: そんなことある？
+  triviaStep: 2
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.45
+
+# ===== その3: エッフェル塔 =====
+- id: 11
+  character: zundamon
+  text: その3。エッフェル塔は、夏になると背が伸びるのだ。
+  displayText: エッフェル塔は夏に背が伸びる
+  triviaNo: その3
+  triviaStep: 3
+  triviaEmoji: 🗼
+  trivia: エッフェル塔は夏に伸びる
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.5
+
+- id: 12
+  character: metan
+  text: 建物が伸びるの？
+  displayText: 建物が伸びるの？
+  triviaStep: 3
+  triviaEmoji: 🗼
+  trivia: エッフェル塔は夏に伸びる
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す42.mp3
+    volume: 0.45
+
+- id: 13
+  character: zundamon
+  text: 鉄が熱でふくらむから、15センチくらい高くなるのだ。
+  displayText: 鉄が熱でふくらんで約15cm高くなる
+  triviaStep: 3
+  triviaAnswer: 夏は約15cm高くなる
+  triviaAnswerSub: 鉄の熱膨張。冬になると元に戻る
+  triviaSource: 金属の熱膨張より
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+# ===== その4: ハチミツ =====
+- id: 14
+  character: zundamon
+  text: その4。ハチミツは、腐らないのだ。
+  displayText: ハチミツは腐らない
+  triviaNo: その4
+  triviaStep: 4
+  triviaEmoji: 🍯
+  trivia: ハチミツは腐らない
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.5
+
+- id: 15
+  character: metan
+  text: 賞味期限は？
+  displayText: 賞味期限は？
+  triviaStep: 4
+  triviaEmoji: 🍯
+  trivia: ハチミツは腐らない
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.45
+
+- id: 16
+  character: zundamon
+  text: 水分が少なくて酸性だから、菌が増えられないのだ。
+  displayText: 水分が少なく酸性なので菌が増えない
+  triviaStep: 4
+  triviaAnswer: 3000年前のものも食べられた
+  triviaAnswerSub: 古代エジプトの墓から未変質のハチミツが出土
+  triviaSource: ハチミツの低水分・酸性という性質より
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 17
+  character: metan
+  text: こわ……。
+  displayText: こわ……
+  triviaStep: 4
+  scene: 1
+  pauseAfter: -3
+  se:
+    src: anxiety_piano.mp3
+    volume: 0.4
+
+# ===== その5: 宣伝（雑学の顔をしたまま着地する） =====
+- id: 18
+  character: zundamon
+  text: そして最後、その5なのだ。
+  displayText: そして最後、その5
+  triviaNo: その5
+  triviaStep: 5
+  triviaFinal: true
+  triviaEmoji: ⛏️
+  scene: 2
+  pauseAfter: -3
+  se:
+    src: spotlight.mp3
+    volume: 0.55
+
+- id: 19
+  character: zundamon
+  text: 今のマイクラは、会社を作って社長になれるのだ。
+  displayText: 今のマイクラは、会社を作って社長になれる
+  triviaNo: その5
+  triviaStep: 5
+  triviaFinal: true
+  trivia: マイクラで社長になれる
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインを使用して会社を検索している動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 20
+  character: metan
+  text: 急にゲームの話になったわね。
+  displayText: 急にゲームの話になったわね
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.45
+
+- id: 21
+  character: zundamon
+  text: よもぎサーバーの、生活サーバーってところなのだ。
+  displayText: よもぎサーバーの「生活サーバー」
+  triviaStep: 5
+  triviaAnswer: よもぎサーバー 生活サーバー
+  triviaAnswerSub: 統合版マイクラの、暮らすためのサーバー
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+- id: 22
+  character: zundamon
+  text: 土地を買って、自分の家もお店も、好きに建てられるのだ。
+  displayText: 土地を買って、好きに建てられる
+  triviaStep: 5
+  # ここから先は映像を大きく見せたいので、問いと絵文字の持ち越しを打ち切る
+  triviaClear: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.45
+
+- id: 23
+  character: metan
+  text: え、この街ぜんぶプレイヤーが建てたの？
+  displayText: この街ぜんぶプレイヤーが建てたの？
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.45
+
+- id: 24
+  character: zundamon
+  text: 社員をやとって、帳簿までつけられるのだ。
+  displayText: 社員をやとって、帳簿もつけられる
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4
+    animation: fadeIn
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 25
+  character: zundamon
+  text: 車にも乗れるし、釣れる魚は275種類なのだ。
+  displayText: 車にも乗れて、釣れる魚は275種類
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.45
+
+- id: 26
+  character: zundamon
+  text: 自分の店を出して、かせぐこともできるのだ。
+  displayText: 自分の店を出して、かせげる
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す42.mp3
+    volume: 0.45
+
+- id: 27
+  character: metan
+  text: ちょっと待って。それ雑学じゃなくて、宣伝じゃない？
+  displayText: それ雑学じゃなくて、宣伝じゃない？
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45
+
+- id: 28
+  character: zundamon
+  text: バレたのだ。
+  displayText: バレたのだ
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/ガチャを引いている動画.mp4
+    animation: fadeIn
+  se:
+    src: boom.mp3
+    volume: 0.5
+
+- id: 29
+  character: metan
+  text: でも……ちょっと気になるわね。いくらするの？
+  displayText: でも、ちょっと気になるわね。いくらするの？
+  triviaStep: 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/公式ショップで商品を買っている動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.45
+
+- id: 30
+  character: zundamon
+  text: ゼロ円なのだ。
+  displayText: 0円なのだ
+  triviaStep: 5
+  triviaAnswer: 参加費 0円
+  triviaAnswerSub: 統合版だからスマホでもスイッチでも入れる
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: fadeIn
+    startFrom: 240
+  se:
+    src: spotlight.mp3
+    volume: 0.6
+
+- id: 31
+  character: zundamon
+  text: ネットで、よもぎサーバーって調べれば、入り方が全部出てくるのだ。
+  displayText: 調べれば、入り方が全部わかる
+  triviaStep: 5
+  triviaCta: よもぎサーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.55
+
+- id: 32
+  character: metan
+  text: 一番へぇってなった雑学、コメントで教えてちょうだい。
+  displayText: 一番へぇってなった雑学は？
+  triviaStep: 5
+  triviaBait: 何番が一番へぇだった？
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバー内で農業をしている動画.mp4
+    animation: fadeIn
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.45
+
+- id: 33
+  character: metan
+  text: じゃあね、バイバイ〜！
+  displayText: じゃあね、バイバイ〜！
+  triviaStep: 5
+  scene: 3
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: fadeIn
+
+- id: 34
+  character: zundamon
+  text: バイバイなのだ〜！
+  displayText: バイバイなのだ〜！
+  triviaStep: 5
+  scene: 3
+  pauseAfter: 60
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: fadeIn

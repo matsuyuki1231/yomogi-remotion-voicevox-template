@@ -56,7 +56,9 @@ export const Subtitle: React.FC<SubtitleProps> = ({
   // 設定から値を取得
   const { font, subtitle, colors } = SETTINGS;
 
-  const fadeFrames = fps * 0.2; // フェードの長さ（0.2秒）
+  // フェードの長さ（0.2秒）。ごく短いセリフではフェードイン・アウトが重なって
+  // interpolate の inputRange が単調増加でなくなるため、尺の1/3までに抑える
+  const fadeFrames = Math.max(1, Math.min(fps * 0.2, durationInFrames / 3));
   const fadeOutStart = durationInFrames - fadeFrames;
 
   // フェードイン：下から上へ / フェードアウト：上へ抜ける

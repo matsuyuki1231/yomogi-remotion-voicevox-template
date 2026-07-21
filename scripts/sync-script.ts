@@ -21,19 +21,17 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  aeroBoot?: string;
-  aeroBootSub?: string;
-  aeroDesktop?: boolean;
-  aeroWindow?: string;
-  aeroBadge?: string;
-  aeroSub?: string;
-  aeroHeadline?: string;
-  aeroTip?: string;
-  aeroCounter?: number;
-  aeroFlat?: boolean;
-  aeroFlare?: boolean;
-  aeroCta?: string;
-  aeroBait?: string;
+  triviaNo?: string;
+  trivia?: string;
+  triviaEmoji?: string;
+  triviaAnswer?: string;
+  triviaAnswerSub?: string;
+  triviaSource?: string;
+  triviaStep?: number;
+  triviaFinal?: boolean;
+  triviaClear?: boolean;
+  triviaCta?: string;
+  triviaBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -192,19 +190,17 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  aeroBoot?: string;        // Frutiger Aero型: 起動スプラッシュの大文字ロゴ
-  aeroBootSub?: string;     // Frutiger Aero型: 起動スプラッシュの小文字（"2007"など）
-  aeroDesktop?: boolean;    // Frutiger Aero型: ツヤツヤアイコンとドックのデスクトップを表示
-  aeroWindow?: string;      // Frutiger Aero型: ウィンドウ枠のタイトル（映像が枠内に嵌まる）
-  aeroBadge?: string;       // Frutiger Aero型: 左上のグロッシーなカテゴリピル
-  aeroSub?: string;         // Frutiger Aero型: 見出し上の小ラベル
-  aeroHeadline?: string;    // Frutiger Aero型: 中央の光沢見出し
-  aeroTip?: string;         // Frutiger Aero型: 下部の情報バー（豆知識）
-  aeroCounter?: number;     // Frutiger Aero型: 右上の「できること」カウンターオーブ
-  aeroFlat?: boolean;       // Frutiger Aero型: ツヤと彩度を奪ってフラットUI化する
-  aeroFlare?: boolean;      // Frutiger Aero型: リビールの光と泡の弾け
-  aeroCta?: string;         // Frutiger Aero型: 検索バー風CTA（文字がタイプされる）
-  aeroBait?: string;        // Frutiger Aero型: 下部のコメント誘発リボン
+  triviaNo?: string;        // 雑学連発型: 上部の番号バッジ（"その1"）
+  trivia?: string;          // 雑学連発型: 中央の問い（蛍光ペン下線つきの大見出し）
+  triviaEmoji?: string;     // 雑学連発型: 円の中に置く絵文字アイコン
+  triviaAnswer?: string;    // 雑学連発型: 白い答えカードの本文
+  triviaAnswerSub?: string; // 雑学連発型: 答えカードの補足行
+  triviaSource?: string;    // 雑学連発型: 下部の出典ラベル
+  triviaStep?: number;      // 雑学連発型: 進行ドットと画面のアクセント色（1〜5）
+  triviaFinal?: boolean;    // 雑学連発型: 番号バッジを「最後の雑学」表記にする
+  triviaClear?: boolean;    // 雑学連発型: 問いと絵文字の持ち越しを打ち切る（番号バッジは残す）
+  triviaCta?: string;       // 雑学連発型: 検索バー風CTA（文字がタイプされる）
+  triviaBait?: string;      // 雑学連発型: 下部のコメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;

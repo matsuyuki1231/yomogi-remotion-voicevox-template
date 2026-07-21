@@ -5,14 +5,13 @@ import {
   Audio,
   Sequence,
   staticFile,
-  interpolate,
 } from "remotion";
 import { loadFont } from "@remotion/google-fonts/MPLUSRounded1c";
 import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/script";
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { AeroBackground, AeroOS, AERO_WINDOW } from "./components/AeroOS";
+import { TriviaBackground, TriviaCard } from "./components/TriviaCard";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -49,6 +48,16 @@ export const Main: React.FC = () => {
   // シーン情報（背景の切り替えに使う予約）
   void (scenes.find((s) => s.id === currentScene) || scenes[0]);
 
+  // 背景色は「直近で指定された雑学番号」を引き継ぐ（毎行書かなくてよい）
+  const currentStep = (() => {
+    let step: number | undefined;
+    for (const line of scriptData) {
+      if (line === currentLine) break;
+      if (line.triviaStep !== undefined) step = line.triviaStep;
+    }
+    return currentLine?.triviaStep ?? step;
+  })();
+
   // BGM の長さを動画本体と揃える
   const bgmTotalFrames = scriptData.reduce(
     (acc, line) =>
@@ -71,28 +80,45 @@ export const Main: React.FC = () => {
   const getLineDuration = (line: ScriptLine): number =>
     getAdjustedFrames(line.durationInFrames);
 
-  // フラットUI化の進行度：該当セリフに入ってから0.4秒かけてツヤが消える
-  const flatness = currentLine?.aeroFlat
-    ? interpolate(frame - currentLineStartFrame, [0, fps * 0.4], [0, 1], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      })
-    : 0;
+  // 番号バッジ・絵文字・問いは同じ雑学の間ずっと出しっぱなしにする。
+  // （毎行YAMLに書かなくてよくなるうえ、答えだけの行で画面上半分が空くのを防ぐ）
+  const resolved = (() => {
+    let no: string | undefined;
+    let trivia: string | undefined;
+    let emoji: string | undefined;
+    let step: number | undefined;
 
-  // AeroOSのUIパーツが1つでも指定されているか
-  const hasAeroUI = (line: ScriptLine): boolean =>
+    return scriptData.map((line) => {
+      // 雑学が切り替わったら持ち越しをリセットする
+      if (line.triviaStep !== undefined && line.triviaStep !== step) {
+        step = line.triviaStep;
+        no = undefined;
+        trivia = undefined;
+        emoji = undefined;
+      }
+      // triviaClear で問いと絵文字の持ち越しを打ち切る（番号バッジは残す）。
+      // 宣伝パートのように映像を長く見せたい区間で、上半分を空けるために使う
+      if (line.triviaClear) {
+        trivia = undefined;
+        emoji = undefined;
+      }
+      if (line.triviaNo) no = line.triviaNo;
+      if (line.trivia) trivia = line.trivia;
+      if (line.triviaEmoji) emoji = line.triviaEmoji;
+      return { no, trivia, emoji };
+    });
+  })();
+
+  // TriviaCardのUIパーツが1つでも出るか
+  const hasTriviaUI = (line: ScriptLine, index: number): boolean =>
     !!(
-      line.aeroBoot ||
-      line.aeroDesktop ||
-      line.aeroWindow ||
-      line.aeroBadge ||
-      line.aeroHeadline ||
-      line.aeroTip ||
-      line.aeroCounter !== undefined ||
-      line.aeroFlat ||
-      line.aeroFlare ||
-      line.aeroCta ||
-      line.aeroBait
+      resolved[index].no ||
+      resolved[index].trivia ||
+      resolved[index].emoji ||
+      line.triviaAnswer ||
+      line.triviaSource ||
+      line.triviaCta ||
+      line.triviaBait
     );
 
   // BGM区間の開始フレームと長さを算出
@@ -111,8 +137,8 @@ export const Main: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ fontFamily }}>
-      {/* 壁紙（空・草原・泡）。Sequenceの外に置き、セリフをまたいでも泡が途切れないようにする */}
-      <AeroBackground flatness={flatness} />
+      {/* 背景。Sequenceの外に置き、セリフをまたいでも光の玉が途切れないようにする */}
+      <TriviaBackground step={currentStep} />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -164,71 +190,59 @@ export const Main: React.FC = () => {
         );
       })}
 
-      {/* 各セリフのビジュアル。aeroWindow 指定時はウィンドウの画面部分に嵌め込む */}
+      {/* 各セリフのビジュアル（宣伝パートのみ）。テロップを読ませるため暗幕を重ねる */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
         const startFrame = getLineStartFrame(index);
-        const windowed = !!line.aeroWindow;
         return (
           <Sequence
             key={`visual-${line.id}`}
             from={startFrame}
             durationInFrames={getLineDuration(line)}
           >
+            <SceneVisuals visual={line.visual} lineId={line.id} />
             <div
-              style={
-                windowed
-                  ? {
-                      position: "absolute",
-                      left: AERO_WINDOW.left,
-                      top: AERO_WINDOW.screenTop,
-                      width: AERO_WINDOW.width,
-                      height: AERO_WINDOW.screenHeight,
-                      borderRadius: `0 0 ${AERO_WINDOW.radius}px ${AERO_WINDOW.radius}px`,
-                      overflow: "hidden",
-                    }
-                  : { position: "absolute", inset: 0 }
-              }
-            >
-              <SceneVisuals visual={line.visual} lineId={line.id} />
-            </div>
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(180deg, rgba(8,14,38,0.74) 0%, rgba(8,14,38,0.12) 30%, rgba(8,14,38,0.14) 62%, rgba(8,14,38,0.82) 100%)",
+              }}
+            />
           </Sequence>
         );
       })}
 
-      {/* Frutiger Aero のUIパーツ（起動画面・デスクトップ・ウィンドウ枠・見出し・CTA） */}
+      {/* 雑学カード（番号バッジ・絵文字・問い・答え・CTA） */}
       {scriptData.map((line, index) => {
-        if (!hasAeroUI(line)) return null;
+        if (!hasTriviaUI(line, index)) return null;
         const startFrame = getLineStartFrame(index);
         return (
           <Sequence
-            key={`aero-${line.id}`}
+            key={`trivia-${line.id}`}
             from={startFrame}
             durationInFrames={getLineDuration(line)}
           >
-            <AeroOS
-              boot={line.aeroBoot}
-              bootSub={line.aeroBootSub}
-              desktop={line.aeroDesktop}
-              windowTitle={line.aeroWindow}
-              badge={line.aeroBadge}
-              sub={line.aeroSub}
-              headline={line.aeroHeadline}
-              tip={line.aeroTip}
-              counter={line.aeroCounter}
-              flat={line.aeroFlat}
-              flare={line.aeroFlare}
-              cta={line.aeroCta}
-              bait={line.aeroBait}
-              character={line.character}
+            <TriviaCard
+              no={resolved[index].no}
+              headline={resolved[index].trivia}
+              emoji={resolved[index].emoji}
+              answer={line.triviaAnswer}
+              answerSub={line.triviaAnswerSub}
+              source={line.triviaSource}
+              step={line.triviaStep}
+              final={line.triviaFinal}
+              cta={line.triviaCta}
+              bait={line.triviaBait}
               durationInFrames={getLineDuration(line)}
             />
           </Sequence>
         );
       })}
 
-      {/* 字幕（画面下部） */}
-      {currentLine && (
+      {/* 字幕（画面下部）。
+          問い・答えを出した行はデカ文字テロップが同じことを言っているので字幕を出さない */}
+      {currentLine && !currentLine.trivia && !currentLine.triviaAnswer && (
         <Sequence
           key={`subtitle-${currentLine.id}`}
           from={currentLineStartFrame}

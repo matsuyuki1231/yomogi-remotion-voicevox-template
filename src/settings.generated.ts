@@ -9,7 +9,7 @@ export const SETTINGS = {
     "size": 70,
     "weight": "900",
     "color": "#ffffff",
-    "outlineColor": "#0b4f88",
+    "outlineColor": "#080d24",
     "innerOutlineColor": "none"
   },
   "subtitle": {
@@ -36,7 +36,7 @@ export const SETTINGS = {
     "playbackRate": 1.5
   },
   "colors": {
-    "background": "#7fcdf5",
+    "background": "#0b1330",
     "text": "#ffffff",
     "zundamon": "#228B22",
     "metan": "#FF1493",
