@@ -5,12 +5,8 @@ export type AnimationType = "none" | "fadeIn" | "slideUp" | "slideLeft" | "zoomI
 
 // ビジュアルの型定義
 export interface VisualContent {
-  type: "image" | "text" | "none" | "video" | "split";
+  type: "image" | "text" | "none" | "video";
   src?: string;
-  srcA?: string;                // split: 上パネル（選択肢A）の映像
-  srcB?: string;                // split: 下パネル（選択肢B）の映像
-  startFromA?: number;          // split: 上パネルの開始フレーム
-  startFromB?: number;          // split: 下パネルの開始フレーム
   text?: string;
   fontSize?: number;
   color?: string;
@@ -39,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"retrogamecenter.mp3","volume":0.16,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"retrogamecenter.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_marbletechno1.mp3","volume":0.18,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":14}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -50,16 +46,21 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  duelHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  duelHookSub?: string;     // フックの上に出す小さいバッジ
-  duelA?: string;           // 選択肢A（上パネル）のラベル
-  duelB?: string;           // 選択肢B（下パネル）のラベル
-  duelPick?: "a" | "b" | "both"; // 決着。この行では番号を据え置き、スタンプを出す
-  duelPickSub?: string;     // 決着の補足（docs/yomogi で裏を取った事実）
-  duelReveal?: string;      // リビール帯（宣伝への転換点）
-  duelRevealSub?: string;   // リビール帯の補足行
-  duelCta?: string;         // 検索バー風CTA（文字がタイプされる）
-  duelBait?: string;        // コメント誘発リボン
+  priceHook?: string;       // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  priceHookSub?: string;    // フックの上に出す小さいバッジ
+  priceStart?: boolean;     // 「査定スタート」。メーターが ¥0 で出現する行
+  priceItem?: string;       // 査定項目（値札スタンプの本文）
+  priceTag?: string;        // 値札の金額表示（例: 約250万円）
+  priceAdd?: number;        // メーターへの加算額（円）
+  priceDrum?: boolean;      // ドラムロール行。メーターを震わせて結果発表を溜める
+  priceTotal?: string;      // 総額発表の巨大数字（例: 5,785万円）
+  priceTotalSub?: string;   // 総額発表のバッジ（省略時は「査定結果」）
+  priceZero?: string;       // 0円スタンプ
+  priceZeroStrike?: string; // 0円スタンプで打ち消す金額
+  priceReveal?: string;     // リビール帯（宣伝への転換点）
+  priceRevealSub?: string;  // リビール帯の補足行
+  priceCta?: string;        // 検索バー風CTA（文字がタイプされる）
+  priceBait?: string;       // コメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -88,10 +89,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "マイクラの究極の二択、いくよ。",
-    "displayText": "マイクラの究極の二択、いくよ。",
-    "duelHook": "究極の\n二択",
-    "duelHookSub": "マイクラ勢は全員答えて",
+    "text": "この生活、ぜんぶでいくらだと思う？",
+    "displayText": "この生活、ぜんぶでいくらだと思う？",
+    "priceHook": "この生活\nいくら？",
+    "priceHookSub": "現実のお金で査定してみた",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -105,13 +106,14 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 77
+    "durationInFrames": 88
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "秒で答えるのだ。",
-    "displayText": "秒で答えるのだ！",
+    "text": "いまから査定するのだ。",
+    "displayText": "いまから査定するのだ！",
+    "priceStart": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -125,38 +127,79 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.55
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 47
+    "durationInFrames": 54
   },
   {
     "id": 3,
-    "character": "metan",
-    "text": "建築か、探検か。",
-    "duelA": "建築",
-    "duelB": "探検",
+    "character": "zundamon",
+    "text": "車を買う。",
+    "priceItem": "車を買う",
+    "priceTag": "約250万円",
+    "priceAdd": 2500000,
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/生活サーバーの建築風景.mp4",
-      "startFromA": 120,
-      "srcB": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "startFromB": 300,
-      "animation": "none"
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "none",
+      "startFrom": 120
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.45
+      "src": "item-get1.mp3",
+      "volume": 0.55
     },
-    "voiceFile": "03_metan.wav",
-    "durationInFrames": 58
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 34
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "建築なのだ。",
-    "duelA": "建築",
-    "duelB": "探検",
-    "duelPick": "a",
+    "text": "土地も買う。",
+    "priceItem": "土地も買う",
+    "priceTag": "約1,500万円",
+    "priceAdd": 15000000,
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 32
+  },
+  {
+    "id": 5,
+    "character": "metan",
+    "text": "え、土地？",
+    "displayText": "え、土地？",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 57
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "家を建てる。",
+    "priceItem": "家を建てる",
+    "priceTag": "約3,000万円",
+    "priceAdd": 30000000,
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -166,177 +209,39 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 190
     },
     "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 40
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "畑か、釣りか。",
-    "duelA": "畑",
-    "duelB": "釣り",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "startFromA": 100,
-      "srcB": "生活サーバー/釣りをしている動画.mp4",
-      "startFromB": 700,
-      "animation": "none"
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 48
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "釣りなのだ。",
-    "duelA": "畑",
-    "duelB": "釣り",
-    "duelPick": "b",
-    "duelPickSub": "釣れる魚は275種類",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 780
-    },
-    "se": {
-      "src": "決定ボタンを押す23.mp3",
-      "volume": 0.5
+      "src": "item-get1.mp3",
+      "volume": 0.55
     },
     "voiceFile": "06_zundamon.wav",
     "durationInFrames": 33
   },
   {
     "id": 7,
-    "character": "metan",
-    "text": "歩きか、車か。",
-    "duelA": "歩き",
-    "duelB": "車",
+    "character": "zundamon",
+    "text": "店も開く。",
+    "priceItem": "店も開く",
+    "priceTag": "約1,000万円",
+    "priceAdd": 10000000,
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "startFromA": 300,
-      "srcB": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "startFromB": 120,
-      "animation": "none"
+      "type": "video",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "animation": "none",
+      "startFrom": 420
     },
     "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.45
+      "src": "item-get1.mp3",
+      "volume": 0.55
     },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 51
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 37
   },
   {
     "id": 8,
-    "character": "zundamon",
-    "text": "車なのだ。",
-    "duelA": "歩き",
-    "duelB": "車",
-    "duelPick": "b",
-    "duelPickSub": "生活ワールドを車で走れる",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "none",
-      "startFrom": 190
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 36
-  },
-  {
-    "id": 9,
     "character": "metan",
-    "text": "え、車あるの？",
-    "displayText": "え、車あるの？",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 68
-  },
-  {
-    "id": 10,
-    "character": "metan",
-    "text": "家を建てるか、店を開くか。",
-    "duelA": "家を建てる",
-    "duelB": "店を開く",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/生活サーバーの建築風景.mp4",
-      "startFromA": 320,
-      "srcB": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "startFromB": 420,
-      "animation": "none"
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_metan.wav",
-    "durationInFrames": 70
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "どっちもなのだ。",
-    "duelA": "家を建てる",
-    "duelB": "店を開く",
-    "duelPick": "both",
-    "duelPickSub": "買った土地に家も店も建てられる",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/生活サーバーの建築風景.mp4",
-      "startFromA": 355,
-      "srcB": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "startFromB": 455,
-      "animation": "none"
-    },
-    "se": {
-      "src": "boom.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 40
-  },
-  {
-    "id": 12,
-    "character": "metan",
-    "text": "二択だよ？",
-    "displayText": "二択だよ？",
+    "text": "もう五千万超えてない？",
+    "displayText": "もう5,000万超えてない？",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -349,108 +254,16 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.4
     },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 31
+    "voiceFile": "08_metan.wav",
+    "durationInFrames": 54
   },
   {
-    "id": 13,
-    "character": "metan",
-    "text": "木こりか、採掘者か。",
-    "duelA": "木こり",
-    "duelB": "採掘者",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/人工資源で原木を掘っている動画.mp4",
-      "startFromA": 200,
-      "srcB": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "startFromB": 90,
-      "animation": "none"
-    },
-    "se": {
-      "src": "決定ボタンを押す42.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 59
-  },
-  {
-    "id": 14,
+    "id": 9,
     "character": "zundamon",
-    "text": "その日の気分で変えるのだ。",
-    "duelA": "木こり",
-    "duelB": "採掘者",
-    "duelPick": "both",
-    "duelPickSub": "役職の変更は無料・何度でも",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/人工資源で原木を掘っている動画.mp4",
-      "startFromA": 245,
-      "srcB": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "startFromB": 135,
-      "animation": "none"
-    },
-    "se": {
-      "src": "boom.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 65
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "変えられるの！？",
-    "displayText": "変えられるの！？",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/roleコマンドで役職を変更している動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 34
-  },
-  {
-    "id": 16,
-    "character": "metan",
-    "text": "社長か、社員か。",
-    "duelA": "社長",
-    "duelB": "社員",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "split",
-      "srcA": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "startFromA": 1450,
-      "srcB": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
-      "startFromB": 200,
-      "animation": "none"
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 53
-  },
-  {
-    "id": 17,
-    "character": "zundamon",
-    "text": "社長なのだ。",
-    "duelA": "社長",
-    "duelB": "社員",
-    "duelPick": "a",
-    "duelPickSub": "会社の設立は無料（審査あり）",
+    "text": "社長になる。",
+    "priceItem": "社長になる",
+    "priceTag": "会社設立 約25万円",
+    "priceAdd": 250000,
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -460,39 +273,143 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 1500
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
-      "volume": 0.5
+      "src": "item-get1.mp3",
+      "volume": 0.55
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 37
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 36
   },
   {
-    "id": 18,
+    "id": 10,
+    "character": "zundamon",
+    "text": "毎日、釣り三昧。",
+    "priceItem": "毎日釣り三昧",
+    "priceTag": "道具一式 約10万円",
+    "priceAdd": 100000,
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 780
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 68
+  },
+  {
+    "id": 11,
     "character": "metan",
-    "text": "マイクラの話だよね！？",
-    "displayText": "マイクラの話だよね！？",
+    "text": "で、査定結果は？",
+    "displayText": "で、査定結果は？",
+    "priceDrum": true,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
+      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
+      "animation": "none",
+      "startFrom": 350
+    },
+    "se": {
+      "src": "drum-roll1.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 64
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "総額、五千七百八十五万円なのだ。",
+    "priceTotal": "5,785万円",
+    "priceTotalSub": "査定結果",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
       "animation": "none",
       "startFrom": 150
+    },
+    "se": {
+      "src": "amount-display1.mp3",
+      "volume": 0.6
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 117
+  },
+  {
+    "id": 13,
+    "character": "metan",
+    "text": "誰が払えるのよ。",
+    "displayText": "誰が払えるのよ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 480
+    },
+    "se": {
+      "src": "決定ボタンを押す32.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 41
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "それが、ぜんぶタダなのだ。",
+    "priceZero": "0円",
+    "priceZeroStrike": "5,785万円",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 360
+    },
+    "se": {
+      "src": "jajean1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 71
+  },
+  {
+    "id": 15,
+    "character": "metan",
+    "text": "はい？",
+    "displayText": "はい？",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 200
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.4
     },
-    "voiceFile": "18_metan.wav",
-    "durationInFrames": 51
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 20
   },
   {
-    "id": 19,
+    "id": 16,
     "character": "zundamon",
-    "text": "ぜんぶ、よもぎサーバーの生活サーバーなのだ。",
-    "displayText": "ぜんぶ、よもぎサーバーの生活サーバー",
-    "duelReveal": "ぜんぶ よもぎサーバー",
-    "duelRevealSub": "24時間あそべる 生活・経済サーバー",
+    "text": "ぜんぶ、よもぎサーバーの生活サーバーの話なのだ。",
+    "priceReveal": "ぜんぶ よもぎサーバー",
+    "priceRevealSub": "24時間あそべる 生活・経済サーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -505,36 +422,15 @@ export const scriptData: ScriptLine[] = [
       "src": "boom.mp3",
       "volume": 0.55
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 119
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 135
   },
   {
-    "id": 20,
-    "character": "metan",
-    "text": "もう二択になってないじゃない。",
-    "displayText": "もう二択になってないじゃない",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
-      "animation": "none",
-      "startFrom": 350
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "20_metan.wav",
-    "durationInFrames": 54
-  },
-  {
-    "id": 21,
+    "id": 17,
     "character": "zundamon",
-    "text": "ぜんぶ選べて、参加も無料。来てほしいのだ。",
-    "displayText": "ぜんぶ選べて 参加も無料",
-    "duelReveal": "参加費 0円",
-    "duelRevealSub": "統合版マイクラがあれば誰でも",
+    "text": "参加費も0円。来てほしいのだ。",
+    "priceReveal": "参加費 0円",
+    "priceRevealSub": "統合版マイクラがあれば誰でも",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -547,15 +443,15 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 125
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 93
   },
   {
-    "id": 22,
+    "id": 18,
     "character": "zundamon",
-    "text": "よもぎサーバーで検索すれば、入り方がわかるのだ。",
+    "text": "よもぎサーバーで検索してほしいのだ。",
     "displayText": "検索すれば 入り方がわかる",
-    "duelCta": "よもぎサーバー",
+    "priceCta": "よもぎサーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -569,15 +465,14 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 127
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 88
   },
   {
-    "id": 23,
+    "id": 19,
     "character": "metan",
-    "text": "で、あなたはどっち？",
-    "displayText": "で、あなたはどっち？",
-    "duelBait": "あなたはどっち？",
+    "text": "あなたの査定額、コメントで教えて。",
+    "priceBait": "いくらだと思った？",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -590,8 +485,8 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "23_metan.wav",
-    "durationInFrames": 62
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 84
   }
 ];
 

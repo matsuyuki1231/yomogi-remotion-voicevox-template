@@ -16,19 +16,19 @@ automation:
 bgm:
   # フリーBGM（商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "retrogamecenter.mp3"
+  src: "amacha_picopicodisco.mp3"
   volume: 0.16
   loop: true
-  # 究極の2択（VS）型:
-  # 二択パートはゲームセンター風、リビール（id:19）でテクノに切り替えて空気を変える
+  # お会計・査定型:
+  # 査定パートはゲームショー風に速い曲、0円落とし（id:14）で切り替えて空気を変える
   segments:
-    # 「レトロゲームセンター」— 対戦画面の空気に合う。二択の連打と相性がいい
-    - src: "retrogamecenter.mp3"
+    # 「ピコピコディスコ」— 軽快でコミカル。査定の連打と相性がいい
+    - src: "amacha_picopicodisco.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「マーブルテクノI」— おしゃれで軽快。宣伝パートの空気に切り替える
-    - src: "amacha_marbletechno1.mp3"
+    # 「シンプルスタイル」— 明るく爽やか。0円落とし〜宣伝パートの空気に切り替える
+    - src: "amacha_simplestyle.mp3"
       volume: 0.18
       loop: true
-      fromLineId: 19
+      fromLineId: 14

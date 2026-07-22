@@ -11,7 +11,7 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { DuelBackdrop, DuelScrim, DuelHud } from "./components/DuelHud";
+import { PriceBackdrop, PriceScrim, PriceHud } from "./components/PriceHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -79,35 +79,49 @@ export const Main: React.FC = () => {
     0
   );
 
-  // ---- 問題番号の自動採番 ----
-  // 「問い」の行（duelA があって duelPick がない）が1問。
-  // 決着の行は選択肢ラベルを再掲するので duelA を持つが、番号は据え置いて
-  // 「Q3」の表示が問い→決着の2行にまたがって出っぱなしになるようにする。
-  const isQuestionLine = (l: ScriptLine): boolean => !!l.duelA && !l.duelPick;
-  const duelTotal = scriptData.filter(isQuestionLine).length;
-  const duelNumbers = (() => {
-    let no = 0;
+  // ---- 金額メーターの累計計算 ----
+  // priceAdd を持つ行で加算する。メーターは「査定スタート」（priceStart）の行から
+  // 総額発表（priceTotal）の直前まで、合いの手の行でも出しっぱなしにする
+  const meterTotals = (() => {
+    let cum = 0;
     return scriptData.map((line) => {
-      if (isQuestionLine(line)) no += 1;
-      // 問いと決着の行だけ番号を出す（合いの手やリビールでは消す）
-      return line.duelA || line.duelPick ? no : undefined;
+      const from = cum;
+      cum += line.priceAdd ?? 0;
+      return { from, to: cum };
     });
   })();
+  const meterStartIndex = scriptData.findIndex((l) => l.priceStart);
+  const meterEndIndex = scriptData.findIndex((l) => l.priceTotal);
+  const showsMeter = (index: number): boolean =>
+    meterStartIndex >= 0 &&
+    index >= meterStartIndex &&
+    (meterEndIndex < 0 || index < meterEndIndex);
 
-  // HUDのパーツが1つでも出るか
-  const hasHud = (line: ScriptLine): boolean =>
+  // HUDのパーツが1つでも出るか（メーターだけの合いの手行も含む）
+  const hasHud = (line: ScriptLine, index: number): boolean =>
     !!(
-      line.duelHook ||
-      line.duelA ||
-      line.duelPick ||
-      line.duelReveal ||
-      line.duelCta ||
-      line.duelBait
+      line.priceHook ||
+      line.priceStart ||
+      line.priceItem ||
+      line.priceDrum ||
+      line.priceTotal ||
+      line.priceZero ||
+      line.priceReveal ||
+      line.priceCta ||
+      line.priceBait ||
+      showsMeter(index)
     );
 
   // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(line.duelHook || line.duelA || line.duelPick || line.duelReveal || line.duelBait);
+    !!(
+      line.priceHook ||
+      line.priceItem ||
+      line.priceTotal ||
+      line.priceZero ||
+      line.priceReveal ||
+      line.priceBait
+    );
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -127,7 +141,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <DuelBackdrop />
+      <PriceBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -184,31 +198,36 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <DuelScrim />
+            <PriceScrim />
           </Sequence>
         );
       })}
 
-      {/* セリフごとのHUD（選択肢ラベル・VS・決着スタンプ・リビール・CTA） */}
-      {currentLine && hasHud(currentLine) && (
+      {/* セリフごとのHUD（金額メーター・値札スタンプ・総額発表・0円・リビール・CTA） */}
+      {currentLine && hasHud(currentLine, currentIndex) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <DuelHud
-            hook={currentLine.duelHook}
-            hookSub={currentLine.duelHookSub}
-            no={duelNumbers[currentIndex]}
-            total={duelNumbers[currentIndex] !== undefined ? duelTotal : undefined}
-            a={currentLine.duelA}
-            b={currentLine.duelB}
-            pick={currentLine.duelPick}
-            pickSub={currentLine.duelPickSub}
-            reveal={currentLine.duelReveal}
-            revealSub={currentLine.duelRevealSub}
-            cta={currentLine.duelCta}
-            bait={currentLine.duelBait}
+          <PriceHud
+            hook={currentLine.priceHook}
+            hookSub={currentLine.priceHookSub}
+            start={currentLine.priceStart}
+            item={currentLine.priceItem}
+            tag={currentLine.priceTag}
+            showMeter={showsMeter(currentIndex)}
+            meterFrom={meterTotals[currentIndex].from}
+            meterTo={meterTotals[currentIndex].to}
+            drum={currentLine.priceDrum}
+            total={currentLine.priceTotal}
+            totalSub={currentLine.priceTotalSub}
+            zero={currentLine.priceZero}
+            zeroStrike={currentLine.priceZeroStrike}
+            reveal={currentLine.priceReveal}
+            revealSub={currentLine.priceRevealSub}
+            cta={currentLine.priceCta}
+            bait={currentLine.priceBait}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>

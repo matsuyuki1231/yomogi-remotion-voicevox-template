@@ -21,26 +21,27 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  duelHook?: string;
-  duelHookSub?: string;
-  duelA?: string;
-  duelB?: string;
-  duelPick?: string;
-  duelPickSub?: string;
-  duelReveal?: string;
-  duelRevealSub?: string;
-  duelCta?: string;
-  duelBait?: string;
+  priceHook?: string;
+  priceHookSub?: string;
+  priceStart?: boolean;
+  priceItem?: string;
+  priceTag?: string;
+  priceAdd?: number;
+  priceDrum?: boolean;
+  priceTotal?: string;
+  priceTotalSub?: string;
+  priceZero?: string;
+  priceZeroStrike?: string;
+  priceReveal?: string;
+  priceRevealSub?: string;
+  priceCta?: string;
+  priceBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
   visual?: {
     type: string;
     src?: string;
-    srcA?: string;
-    srcB?: string;
-    startFromA?: number;
-    startFromB?: number;
     text?: string;
     fontSize?: number;
     color?: string;
@@ -140,12 +141,8 @@ export type AnimationType = "none" | "fadeIn" | "slideUp" | "slideLeft" | "zoomI
 
 // ビジュアルの型定義
 export interface VisualContent {
-  type: "image" | "text" | "none" | "video" | "split";
+  type: "image" | "text" | "none" | "video";
   src?: string;
-  srcA?: string;                // split: 上パネル（選択肢A）の映像
-  srcB?: string;                // split: 下パネル（選択肢B）の映像
-  startFromA?: number;          // split: 上パネルの開始フレーム
-  startFromB?: number;          // split: 下パネルの開始フレーム
   text?: string;
   fontSize?: number;
   color?: string;
@@ -197,16 +194,21 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  duelHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  duelHookSub?: string;     // フックの上に出す小さいバッジ
-  duelA?: string;           // 選択肢A（上パネル）のラベル
-  duelB?: string;           // 選択肢B（下パネル）のラベル
-  duelPick?: "a" | "b" | "both"; // 決着。この行では番号を据え置き、スタンプを出す
-  duelPickSub?: string;     // 決着の補足（docs/yomogi で裏を取った事実）
-  duelReveal?: string;      // リビール帯（宣伝への転換点）
-  duelRevealSub?: string;   // リビール帯の補足行
-  duelCta?: string;         // 検索バー風CTA（文字がタイプされる）
-  duelBait?: string;        // コメント誘発リボン
+  priceHook?: string;       // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  priceHookSub?: string;    // フックの上に出す小さいバッジ
+  priceStart?: boolean;     // 「査定スタート」。メーターが ¥0 で出現する行
+  priceItem?: string;       // 査定項目（値札スタンプの本文）
+  priceTag?: string;        // 値札の金額表示（例: 約250万円）
+  priceAdd?: number;        // メーターへの加算額（円）
+  priceDrum?: boolean;      // ドラムロール行。メーターを震わせて結果発表を溜める
+  priceTotal?: string;      // 総額発表の巨大数字（例: 5,785万円）
+  priceTotalSub?: string;   // 総額発表のバッジ（省略時は「査定結果」）
+  priceZero?: string;       // 0円スタンプ
+  priceZeroStrike?: string; // 0円スタンプで打ち消す金額
+  priceReveal?: string;     // リビール帯（宣伝への転換点）
+  priceRevealSub?: string;  // リビール帯の補足行
+  priceCta?: string;        // 検索バー風CTA（文字がタイプされる）
+  priceBait?: string;       // コメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;
