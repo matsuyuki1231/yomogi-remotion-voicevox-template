@@ -21,26 +21,26 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  runHook?: string;
-  runHookSub?: string;
-  runTimerStart?: boolean;
-  runTimerSeconds?: number;
-  runTimerStop?: boolean;
-  runItem?: string;
-  runItemSub?: string;
-  runResult?: string;
-  runResultSub?: string;
-  runReveal?: string;
-  runRevealSub?: string;
-  runCta?: string;
-  runBait?: string;
-  runClear?: boolean;
+  duelHook?: string;
+  duelHookSub?: string;
+  duelA?: string;
+  duelB?: string;
+  duelPick?: string;
+  duelPickSub?: string;
+  duelReveal?: string;
+  duelRevealSub?: string;
+  duelCta?: string;
+  duelBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
   visual?: {
     type: string;
     src?: string;
+    srcA?: string;
+    srcB?: string;
+    startFromA?: number;
+    startFromB?: number;
     text?: string;
     fontSize?: number;
     color?: string;
@@ -140,8 +140,12 @@ export type AnimationType = "none" | "fadeIn" | "slideUp" | "slideLeft" | "zoomI
 
 // ビジュアルの型定義
 export interface VisualContent {
-  type: "image" | "text" | "none" | "video";
+  type: "image" | "text" | "none" | "video" | "split";
   src?: string;
+  srcA?: string;                // split: 上パネル（選択肢A）の映像
+  srcB?: string;                // split: 下パネル（選択肢B）の映像
+  startFromA?: number;          // split: 上パネルの開始フレーム
+  startFromB?: number;          // split: 下パネルの開始フレーム
   text?: string;
   fontSize?: number;
   color?: string;
@@ -193,20 +197,16 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  runHook?: string;         // 冒頭のフック（巨大文字）
-  runHookSub?: string;      // フックの上に出す小さいバッジ
-  runTimerStart?: boolean;  // この行からカウントダウンタイマーを走らせる
-  runTimerSeconds?: number; // タイマーの宣言秒数（runTimerStart の行に書く）
-  runTimerStop?: boolean;   // この行の終わりでタイマーを止める
-  runItem?: string;         // カウント対象の項目名。Main側で自動採番される
-  runItemSub?: string;      // 項目名の補足（小さく水色で出る）
-  runResult?: string;       // 結果発表の巨大数字
-  runResultSub?: string;    // 結果発表の補足バッジ
-  runReveal?: string;       // リビール帯（宣伝への転換点）
-  runRevealSub?: string;    // リビール帯の補足行
-  runCta?: string;          // 検索バー風CTA（文字がタイプされる）
-  runBait?: string;         // コメント誘発リボン
-  runClear?: boolean;       // チップの山の持ち越しを打ち切り、映像を大きく見せる
+  duelHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  duelHookSub?: string;     // フックの上に出す小さいバッジ
+  duelA?: string;           // 選択肢A（上パネル）のラベル
+  duelB?: string;           // 選択肢B（下パネル）のラベル
+  duelPick?: "a" | "b" | "both"; // 決着。この行では番号を据え置き、スタンプを出す
+  duelPickSub?: string;     // 決着の補足（docs/yomogi で裏を取った事実）
+  duelReveal?: string;      // リビール帯（宣伝への転換点）
+  duelRevealSub?: string;   // リビール帯の補足行
+  duelCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  duelBait?: string;        // コメント誘発リボン
   scene: number;
   voiceFile: string;
   durationInFrames: number;

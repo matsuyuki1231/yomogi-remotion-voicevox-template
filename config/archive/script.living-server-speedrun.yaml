@@ -1,0 +1,580 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / カウントアップ・チャレンジ型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「20秒で何個言える？」型
+#   冒頭で「マイクラでできること、20秒で何個言える？」と投げ、
+#   カウントダウンタイマーを走らせながら、できることを約1秒1個で20連発する。
+#   数え終わってから初めて「ぜんぶ よもぎサーバーの生活サーバー」と明かす。
+#
+#   前半18秒はサーバー名を一切出さない。一般のマイクラ視聴者への釣りとして機能し、
+#   宣伝が来る頃には離脱ポイントを通り過ぎている。
+#
+#   「20秒チャレンジ」で「20個」出るように項目数を合わせてある。
+#   項目を増減したら runResult の数字も必ず合わせること（数が合わないと嘘になる）。
+#
+#   締めの「あなたは何個言えた？」が冒頭の「何個言える？」に戻るのでループする。
+#   （2025年3月末からループ再生も再生回数に加算されるため、末尾は必ず冒頭に接続する。
+#     最後の行の映像は1行目とまったく同じ src / startFrom にしてある）
+#
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 土地保護で土地を購入し、家や店を建てられる（commands/land-protection.md）
+#   - チェスト保護でチェストを守れる（commands/chest-protection.md）
+#   - チェストショップで自分のアイテムを販売できる（intro.md, commands/chest-shop.md）
+#   - 釣れる魚は275種類（intro.md）
+#   - 役職は木こり・採掘者・農家・エンチャンター。変更は無料で何度でも（commands/role.md）
+#   - /buffで暗視や採掘速度上昇を秒単位でレンタルできる（commands/buff.md）
+#   - ガチャ、称号（5000YGで自作）、車（commands/gacha.md, rank.md, intro.md）
+#   - 会社プラグイン: 社長/課長/社員、設立無料（審査あり）、銀行と帳簿（commands/company.md）
+#
+# 素材: public/content/生活サーバー 配下（1項目1カットで割り当て）
+
+# ===== フック（0〜2秒）=====
+- id: 1
+  character: metan
+  text: マイクラでできること、20秒で何個言える？
+  displayText: マイクラでできること、20秒で何個言える？
+  runHook: "20秒で\n何個言える？"
+  runHookSub: マイクラでできること
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
+  se:
+    src: spotlight.mp3
+    volume: 0.5
+
+- id: 2
+  character: zundamon
+  text: いくのだ！
+  displayText: いくのだ！
+  runTimerStart: true
+  runTimerSeconds: 20
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.55
+
+# ===== 20連発（タイマー 20 → 0）=====
+- id: 3
+  character: zundamon
+  text: 家を建てる。
+  displayText: 家を建てる
+  runItem: 家を建てる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.45
+
+- id: 4
+  character: zundamon
+  text: 土地を買う。
+  displayText: 土地を買う
+  runItem: 土地を買う
+  runItemSub: 買った土地は自分だけが編集できる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.45
+
+# ---- 引っかかり（「普通のマイクラじゃない」と気づかせて、答えは最後まで引っぱる）----
+# ここで一度「え？」を作っておくと、リビールまでの視聴継続の理由になる
+- id: 5
+  character: metan
+  text: あれ、普通のマイクラだとできなくない？
+  displayText: あれ、普通のマイクラだとできなくない？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 6
+  character: zundamon
+  text: 最後まで見ればわかるのだ！
+  displayText: 最後まで見ればわかるのだ！
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/土地保護をした土地で建築している動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+- id: 7
+  character: zundamon
+  text: チェストを守る。
+  displayText: チェストを守る
+  runItem: チェストを守る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェスト保護をしている動画.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.45
+
+- id: 8
+  character: zundamon
+  text: お店を開く。
+  displayText: お店を開く
+  runItem: お店を開く
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 260
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.45
+
+- id: 9
+  character: zundamon
+  text: 値段をつける。
+  displayText: 値段をつける
+  runItem: 値段をつける
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す42.mp3
+    volume: 0.45
+
+- id: 10
+  character: zundamon
+  text: 商店街をめぐる。
+  displayText: 商店街をめぐる
+  runItem: 商店街をめぐる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/商店街で帽子を購入している動画.mp4
+    animation: none
+    startFrom: 90
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.45
+
+- id: 11
+  character: zundamon
+  text: 釣りをする。
+  displayText: 釣りをする
+  runItem: 釣りをする
+  runItemSub: 釣れる魚は275種類
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 700
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.45
+
+- id: 12
+  character: zundamon
+  text: 畑をたがやす。
+  displayText: 畑をたがやす
+  runItem: 畑をたがやす
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバー内で農業をしている動画.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.45
+
+- id: 13
+  character: zundamon
+  text: 木こりになる。
+  displayText: 木こりになる
+  runItem: 木こりになる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/人工資源で原木を掘っている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.45
+
+# ---- 合いの手1（タイマーは走り続ける）----
+- id: 14
+  character: metan
+  text: ちょっと待って、多くない？
+  displayText: ちょっと待って、多くない？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 15
+  character: zundamon
+  text: 鉱石を掘る。
+  displayText: 鉱石を掘る
+  runItem: 鉱石を掘る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自然資源で採掘をしている動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.45
+
+- id: 16
+  character: zundamon
+  text: バフを借りる。
+  displayText: バフを借りる
+  runItem: バフを借りる
+  runItemSub: 暗視や採掘速度上昇を秒単位でレンタル
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.45
+
+- id: 17
+  character: zundamon
+  text: 職業を変える。
+  displayText: 職業を変える
+  runItem: 職業を変える
+  runItemSub: 何度でも無料で変更できる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/roleコマンドで役職を変更している動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.45
+
+- id: 18
+  character: zundamon
+  text: スキルを上げる。
+  displayText: スキルを上げる
+  runItem: スキルを上げる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4
+    animation: none
+    startFrom: 350
+  se:
+    src: 決定ボタンを押す42.mp3
+    volume: 0.45
+
+- id: 19
+  character: zundamon
+  text: ガチャを回す。
+  displayText: ガチャを回す
+  runItem: ガチャを回す
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/ガチャを引いている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.45
+
+- id: 20
+  character: zundamon
+  text: 称号を作る。
+  displayText: 称号を作る
+  runItem: 称号を作る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/称号を購入して変更している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.45
+
+- id: 21
+  character: zundamon
+  text: 車に乗る。
+  displayText: 車に乗る
+  runItem: 車に乗る
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.45
+
+# ---- 合いの手2 ----
+- id: 22
+  character: metan
+  text: まだあるの！？
+  displayText: まだあるの！？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/土地保護をした土地で建築している動画.mp4
+    animation: none
+    startFrom: 180
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.4
+
+- id: 23
+  character: zundamon
+  text: 会社を作る。
+  displayText: 会社を作る
+  runItem: 会社を作る
+  runItemSub: 設立は無料（審査あり）
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインを使用して会社を検索している動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 24
+  character: zundamon
+  text: 社員を雇う。
+  displayText: 社員を雇う
+  runItem: 社員を雇う
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 400
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.5
+
+- id: 25
+  character: zundamon
+  text: 帳簿をつける。
+  displayText: 帳簿をつける
+  runItem: 帳簿をつける
+  runItemSub: 会社の銀行と取引履歴が見られる
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 26
+  character: zundamon
+  text: 社長になる。
+  displayText: 社長になる
+  runItem: 社長になる
+  runItemSub: 社長は1社に1人だけ
+  runTimerStop: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 900
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+# ===== 結果発表 =====
+- id: 27
+  character: zundamon
+  text: 20個なのだ。
+  displayText: 20個なのだ
+  runResult: "20"
+  runResultSub: ぜんぶ マイクラでできる
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1500
+  se:
+    src: spotlight.mp3
+    volume: 0.55
+
+- id: 28
+  character: metan
+  text: 多すぎでしょ。
+  displayText: 多すぎでしょ
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+# ===== リビール（ここで初めてサーバー名が出る。BGMもここで切り替わる）=====
+- id: 29
+  character: zundamon
+  text: ぜんぶ、よもぎサーバーの生活サーバーなのだ。
+  displayText: ぜんぶ、よもぎサーバーの生活サーバー
+  runReveal: ぜんぶ よもぎサーバー
+  runRevealSub: 24時間あそべる 生活・経済サーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2200
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 30
+  character: metan
+  text: これ全部、ひとつのサーバーで？
+  displayText: これ全部、ひとつのサーバーで？
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 420
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.4
+
+- id: 31
+  character: zundamon
+  text: しかも、参加は無料なのだ。
+  displayText: しかも、参加は無料
+  runReveal: 参加費 0円
+  runRevealSub: 統合版マイクラがあれば誰でも
+  runClear: true
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2800
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+# ===== CTA =====
+- id: 32
+  character: zundamon
+  text: よもぎサーバーで検索すれば、入り方が全部わかるのだ。
+  displayText: 検索すれば 入り方がわかる
+  runCta: よもぎサーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+# ===== ループ（冒頭の問いに戻る。映像も1行目とまったく同じ位置）=====
+- id: 33
+  character: metan
+  text: で、あなたは何個言えた？
+  displayText: で、あなたは何個言えた？
+  runBait: あなたは何個言えた？
+  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ1行目に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45

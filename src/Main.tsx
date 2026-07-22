@@ -11,13 +11,7 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import {
-  RunBackdrop,
-  RunScrim,
-  RunTimer,
-  RunDangerEdge,
-  RunHud,
-} from "./components/SpeedrunHud";
+import { DuelBackdrop, DuelScrim, DuelHud } from "./components/DuelHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -78,75 +72,42 @@ export const Main: React.FC = () => {
   // シーン情報（背景の切り替えに使う予約）
   void (scenes.find((s) => s.id === currentScene) || scenes[0]);
 
-  // 動画全体の長さ（BGMとタイマーの終端に使う）
+  // 動画全体の長さ（BGMの終端に使う）
   const totalFrames = scriptData.reduce(
     (acc, line) =>
       acc + getLineDuration(line) + getAdjustedFrames(line.pauseAfter),
     0
   );
 
-  // ---- カウンターとチップの山 ----
-  // runItem を持つ行に通し番号を振り、そこまでに言えた項目を積み上げていく。
-  // 項目のない行（めたんの合いの手や結果発表）でも山は持ち越すので、
-  // 「ここまでで何個積んだか」が画面から消えない。runClear で打ち切る。
-  const resolved = (() => {
-    let count = 0;
-    let pile: string[] = [];
-
+  // ---- 問題番号の自動採番 ----
+  // 「問い」の行（duelA があって duelPick がない）が1問。
+  // 決着の行は選択肢ラベルを再掲するので duelA を持つが、番号は据え置いて
+  // 「Q3」の表示が問い→決着の2行にまたがって出っぱなしになるようにする。
+  const isQuestionLine = (l: ScriptLine): boolean => !!l.duelA && !l.duelPick;
+  const duelTotal = scriptData.filter(isQuestionLine).length;
+  const duelNumbers = (() => {
+    let no = 0;
     return scriptData.map((line) => {
-      if (line.runClear) pile = [];
-      if (line.runItem) {
-        count += 1;
-        pile = [...pile, line.runItem];
-        return { count, item: line.runItem, chips: pile };
-      }
-      return { count: undefined, item: undefined, chips: pile };
+      if (isQuestionLine(line)) no += 1;
+      // 問いと決着の行だけ番号を出す（合いの手やリビールでは消す）
+      return line.duelA || line.duelPick ? no : undefined;
     });
   })();
 
-  // ---- カウントダウンタイマーの区間 ----
-  // 宣言した秒数（runTimerSeconds）を区間の実フレーム数に線形マッピングするので、
-  // セリフの長さが多少ぶれても必ず「20 → 0」で着地する。
-  const timerSection = (() => {
-    const startIndex = scriptData.findIndex((l) => l.runTimerStart);
-    if (startIndex < 0) return null;
-    const stopIndex = scriptData.findIndex((l) => l.runTimerStop);
-    const from = getLineStartFrame(startIndex);
-    const until =
-      stopIndex >= 0
-        ? getLineStartFrame(stopIndex) +
-          getLineDuration(scriptData[stopIndex]) +
-          getAdjustedFrames(scriptData[stopIndex].pauseAfter)
-        : totalFrames;
-    return {
-      from,
-      duration: Math.max(1, until - from),
-      until,
-      seconds: scriptData[startIndex].runTimerSeconds ?? 20,
-    };
-  })();
-
-  const timerVisible =
-    timerSection !== null && frame >= timerSection.from && frame < timerSection.until;
-  const timerProgress = timerSection
-    ? (frame - timerSection.from) / timerSection.duration
-    : 0;
-
   // HUDのパーツが1つでも出るか
-  const hasHud = (line: ScriptLine, index: number): boolean =>
+  const hasHud = (line: ScriptLine): boolean =>
     !!(
-      line.runHook ||
-      line.runItem ||
-      line.runResult ||
-      line.runReveal ||
-      line.runCta ||
-      line.runBait ||
-      resolved[index].chips.length > 0
+      line.duelHook ||
+      line.duelA ||
+      line.duelPick ||
+      line.duelReveal ||
+      line.duelCta ||
+      line.duelBait
     );
 
   // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(line.runHook || line.runItem || line.runResult || line.runReveal || line.runBait);
+    !!(line.duelHook || line.duelA || line.duelPick || line.duelReveal || line.duelBait);
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -166,7 +127,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <RunBackdrop />
+      <DuelBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -211,7 +172,7 @@ export const Main: React.FC = () => {
         </Sequence>
       ))}
 
-      {/* 各セリフの映像。1秒ごとにカットが変わるので premount しておかないと
+      {/* 各セリフの映像。分割⇔全画面が1.5秒ごとに切り替わるので premount しておかないと
           デコードが間に合わず頭が黒コマになる */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
@@ -223,39 +184,31 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <RunScrim />
+            <DuelScrim />
           </Sequence>
         );
       })}
 
-      {/* 残り時間タイマー。Sequenceの外に置き、セリフをまたいでも連続して減らす */}
-      {timerVisible && (
-        <>
-          <RunTimer progress={timerProgress} seconds={timerSection!.seconds} />
-          <RunDangerEdge progress={timerProgress} seconds={timerSection!.seconds} />
-        </>
-      )}
-
-      {/* セリフごとのHUD（カウンター・項目名・チップの山・結果・リビール・CTA） */}
-      {currentLine && hasHud(currentLine, currentIndex) && (
+      {/* セリフごとのHUD（選択肢ラベル・VS・決着スタンプ・リビール・CTA） */}
+      {currentLine && hasHud(currentLine) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <RunHud
-            hook={currentLine.runHook}
-            hookSub={currentLine.runHookSub}
-            item={resolved[currentIndex].item}
-            itemSub={currentLine.runItemSub}
-            count={resolved[currentIndex].count}
-            chips={resolved[currentIndex].chips}
-            result={currentLine.runResult}
-            resultSub={currentLine.runResultSub}
-            reveal={currentLine.runReveal}
-            revealSub={currentLine.runRevealSub}
-            cta={currentLine.runCta}
-            bait={currentLine.runBait}
+          <DuelHud
+            hook={currentLine.duelHook}
+            hookSub={currentLine.duelHookSub}
+            no={duelNumbers[currentIndex]}
+            total={duelNumbers[currentIndex] !== undefined ? duelTotal : undefined}
+            a={currentLine.duelA}
+            b={currentLine.duelB}
+            pick={currentLine.duelPick}
+            pickSub={currentLine.duelPickSub}
+            reveal={currentLine.duelReveal}
+            revealSub={currentLine.duelRevealSub}
+            cta={currentLine.duelCta}
+            bait={currentLine.duelBait}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>

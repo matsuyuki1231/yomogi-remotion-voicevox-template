@@ -36,7 +36,7 @@ export const SETTINGS = {
     "playbackRate": 1.5
   },
   "colors": {
-    "background": "#08122a",
+    "background": "#071a33",
     "text": "#ffffff",
     "zundamon": "#228B22",
     "metan": "#FF1493",

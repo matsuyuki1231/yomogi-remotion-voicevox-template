@@ -14,16 +14,16 @@ automation:
   autoVoiceFileName: true
 
 bgm:
-  # 甘茶の音楽工房（フリーBGM・商用可・クレジット任意・コンテンツID登録不可）
+  # フリーBGM（商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_picopicodisco.mp3"
+  src: "retrogamecenter.mp3"
   volume: 0.16
   loop: true
-  # カウントアップ・チャレンジ型:
-  # 20連発パートは速いピコピコ、リビール（id:29）でテクノに切り替えて空気を変える
+  # 究極の2択（VS）型:
+  # 二択パートはゲームセンター風、リビール（id:19）でテクノに切り替えて空気を変える
   segments:
-    # 「ピコピコディスコ」— 速くて煽られる。連打のテンポと合う
-    - src: "amacha_picopicodisco.mp3"
+    # 「レトロゲームセンター」— 対戦画面の空気に合う。二択の連打と相性がいい
+    - src: "retrogamecenter.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
@@ -31,4 +31,4 @@ bgm:
     - src: "amacha_marbletechno1.mp3"
       volume: 0.18
       loop: true
-      fromLineId: 29
+      fromLineId: 19
