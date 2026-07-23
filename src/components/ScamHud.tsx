@@ -94,6 +94,8 @@ export interface ScamHudProps {
   verdictSub?: string;
   /** 検索CTA */
   cta?: string;
+  /** CTA下の小さな注記（※ボランティア運営です 等の但し書き） */
+  note?: string;
   /** 結果＝コメント誘発リボン */
   result?: string;
   durationInFrames: number;
@@ -110,6 +112,7 @@ export const ScamHud: React.FC<ScamHudProps> = ({
   verdict,
   verdictSub,
   cta,
+  note,
   result,
   durationInFrames,
 }) => {
@@ -156,6 +159,8 @@ export const ScamHud: React.FC<ScamHudProps> = ({
       {verdict && <VerdictBanner text={verdict} sub={verdictSub} pop={pop} />}
 
       {cta && <SearchCta text={cta} pop={pop} frame={frame} fps={fps} />}
+
+      {note && <FinePrint text={note} pop={pop} />}
 
       {result && <ResultRibbon text={result} pop={pop} />}
     </div>
@@ -684,6 +689,43 @@ const SearchCta: React.FC<{
     </div>
   );
 };
+
+// ---- CTA下の小さな注記（但し書き） ----
+// 「詐欺じゃない」と言い切る動画なので、勧誘に見えないよう運営形態を小さく明示する
+const FinePrint: React.FC<{ text: string; pop: number }> = ({ text, pop }) => (
+  <div
+    style={{
+      position: "absolute",
+      top: 1362,
+      left: 60,
+      right: 60,
+      display: "flex",
+      justifyContent: "center",
+      opacity: interpolate(pop, [0, 0.6], [0, 1], { extrapolateRight: "clamp" }),
+    }}
+  >
+    <div
+      style={{
+        padding: "10px 26px",
+        borderRadius: 999,
+        background: "rgba(6,11,26,0.78)",
+        border: "2px solid rgba(255,255,255,0.28)",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: JP_FONT,
+          fontSize: 32,
+          fontWeight: 900,
+          color: "rgba(255,255,255,0.92)",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {text}
+      </span>
+    </div>
+  </div>
+);
 
 // ---- 結果＝コメント誘発リボン（冒頭に戻してループ） ----
 const ResultRibbon: React.FC<{ text: string; pop: number }> = ({ text, pop }) => (

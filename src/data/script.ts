@@ -55,6 +55,7 @@ export interface ScriptLine {
   scamVerdict?: string;      // リビール帯（詐欺じゃなかった→正体明かし。宣伝への転換点）
   scamVerdictSub?: string;   // リビール帯の補足行
   scamCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  scamNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   scamResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
   scene: number;
   voiceFile: string;
@@ -327,6 +328,7 @@ export const scriptData: ScriptLine[] = [
     "text": "気になったら、よもぎサーバーで検索なのだ。",
     "displayText": "検索で 入り方がわかる",
     "scamCta": "よもぎサーバー",
+    "scamNote": "※ボランティアで運営されているサーバーです",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {

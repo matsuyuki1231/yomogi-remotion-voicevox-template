@@ -227,6 +227,9 @@
   text: 気になったら、よもぎサーバーで検索なのだ。
   displayText: 検索で 入り方がわかる
   scamCta: よもぎサーバー
+  # 「詐欺じゃない」と言い切る動画なので、勧誘に見えないよう運営形態を小さく明示する
+  # （docs/yomogi/intro.md: 運営形態はボランティア）
+  scamNote: ※ボランティアで運営されているサーバーです
   scene: 3
   pauseAfter: -3
   visual:

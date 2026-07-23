@@ -103,6 +103,7 @@ export const Main: React.FC = () => {
       line.scamProof ||
       line.scamVerdict ||
       line.scamCta ||
+      line.scamNote ||
       line.scamResult ||
       typeof line.scamMeter === "number"
     );
@@ -211,6 +212,7 @@ export const Main: React.FC = () => {
             verdict={currentLine.scamVerdict}
             verdictSub={currentLine.scamVerdictSub}
             cta={currentLine.scamCta}
+            note={currentLine.scamNote}
             result={currentLine.scamResult}
             durationInFrames={getLineSpan(currentLine)}
           />
