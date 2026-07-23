@@ -35,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_technophobia.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":10}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"旅仲間.mp3","volume":0.2,"loop":true,"fromLineId":7}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -46,18 +46,16 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  quizHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  quizHookSub?: string;      // フックの上に出す小さいバッジ
-  quizNo?: string;           // 問題番号バッジ（例: Q1）
-  quizQ?: string;            // 設問文
-  quizChoices?: string[];    // 3択の選択肢（A/B/C）
-  quizAnswer?: number;       // 正解の選択肢インデックス（0始まり）
-  quizTimer?: boolean;       // 出題フェーズ。カウントダウンリングを回す
-  quizAnswerReveal?: boolean;// 解答フェーズ。正解を緑に光らせて「正解」スタンプ＋スコア加算
-  quizReveal?: string;       // リビール帯（宣伝への転換点）
-  quizRevealSub?: string;    // リビール帯の補足行
-  quizCta?: string;          // 検索バー風CTA（文字がタイプされる）
-  quizResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
+  scamHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  scamHookSub?: string;      // フックの上に出す小さいバッジ
+  scamPitch?: string;        // "うまい話"カード（めたんの勧誘。金色の怪しいオファー）
+  scamAlert?: string;        // 赤い詐欺警告スタンプ（ずんだもんの「詐欺なのだ！」ツッコミ）
+  scamMeter?: number;        // 詐欺メーター（0〜100。前半で上昇、証拠で下降）
+  scamProof?: string;        // 緑の「本当でした」検証スタンプ（証拠フェーズ）
+  scamVerdict?: string;      // リビール帯（詐欺じゃなかった→正体明かし。宣伝への転換点）
+  scamVerdictSub?: string;   // リビール帯の補足行
+  scamCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  scamResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -86,10 +84,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "このゲーム、何問わかる？",
-    "displayText": "このゲーム、何問わかる？",
-    "quizHook": "何問\nわかる？",
-    "quizHookSub": "全4問・3択クイズ",
+    "text": "ねぇ、無料で始めて、稼げる場所があるんだけど。",
+    "scamHook": "無料で始めて\n稼げるらしい",
+    "scamHookSub": "って誘われた",
+    "scamMeter": 25,
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -99,284 +97,236 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "spotlight.mp3",
-      "volume": 0.5
+      "src": "anxiety_piano.mp3",
+      "volume": 0.4
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 65
+    "durationInFrames": 120
   },
   {
     "id": 2,
-    "character": "metan",
-    "text": "第1問。この街、何でできてる？",
-    "quizNo": "Q1",
-    "quizQ": "この街、何でできてる？",
-    "quizChoices": [
-      "ドット絵アプリ",
-      "マイクラ",
-      "VR空間"
-    ],
-    "quizAnswer": 1,
-    "quizTimer": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 600
-    },
-    "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 95
-  },
-  {
-    "id": 3,
     "character": "zundamon",
-    "text": "正解は、マイクラなのだ！",
-    "quizNo": "Q1",
-    "quizQ": "この街、何でできてる？",
-    "quizChoices": [
-      "ドット絵アプリ",
-      "マイクラ",
-      "VR空間"
-    ],
-    "quizAnswer": 1,
-    "quizAnswerReveal": true,
+    "text": "うわっ、絶対詐欺なのだ！お金取られるのだ！",
+    "displayText": "絶対詐欺なのだ！\nお金取られるのだ",
+    "scamAlert": "典型的な「うまい話」",
+    "scamMeter": 55,
     "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1800
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 73
-  },
-  {
-    "id": 4,
-    "character": "metan",
-    "text": "第2問。釣れる魚は何種類？",
-    "quizNo": "Q2",
-    "quizQ": "釣れる魚は何種類？",
-    "quizChoices": [
-      "50種類",
-      "120種類",
-      "275種類"
-    ],
-    "quizAnswer": 2,
-    "quizTimer": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 780
-    },
-    "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "04_metan.wav",
-    "durationInFrames": 99
-  },
-  {
-    "id": 5,
-    "character": "zundamon",
-    "text": "正解は、275種類。バニラにない魚だらけなのだ！",
-    "quizNo": "Q2",
-    "quizQ": "釣れる魚は何種類？",
-    "quizChoices": [
-      "50種類",
-      "120種類",
-      "275種類"
-    ],
-    "quizAnswer": 2,
-    "quizAnswerReveal": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 1100
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 118
-  },
-  {
-    "id": 6,
-    "character": "metan",
-    "text": "第3問。この店、経営してるのは？",
-    "quizNo": "Q3",
-    "quizQ": "この店、経営してるのは？",
-    "quizChoices": [
-      "プレイヤー",
-      "自動ボット",
-      "お店の妖精"
-    ],
-    "quizAnswer": 0,
-    "quizTimer": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 380
-    },
-    "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 110
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "正解はプレイヤー！自分の店が持てるのだ。",
-    "quizNo": "Q3",
-    "quizQ": "この店、経営してるのは？",
-    "quizChoices": [
-      "プレイヤー",
-      "自動ボット",
-      "お店の妖精"
-    ],
-    "quizAnswer": 0,
-    "quizAnswerReveal": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 116
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "最終問題。ここで暮らす参加費は？",
-    "quizNo": "Q4",
-    "quizQ": "ここで暮らす参加費は？",
-    "quizChoices": [
-      "招待制",
-      "基本無料",
-      "月額課金"
-    ],
-    "quizAnswer": 1,
-    "quizTimer": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 90
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "正解は、基本無料。ぜんぶ0円なのだ！",
-    "quizNo": "Q4",
-    "quizQ": "ここで暮らす参加費は？",
-    "quizChoices": [
-      "招待制",
-      "基本無料",
-      "月額課金"
-    ],
-    "quizAnswer": 1,
-    "quizAnswerReveal": true,
-    "scene": 2,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
       "animation": "none",
-      "startFrom": 250
+      "startFrom": 200
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.55
+      "src": "決定ボタンを押す22.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 123
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 126
   },
   {
-    "id": 10,
-    "character": "zundamon",
-    "text": "ここは、よもぎサーバーの生活サーバーなのだ。",
-    "quizReveal": "よもぎサーバー",
-    "quizRevealSub": "24時間あそべる 生活・経済サーバー",
-    "scene": 3,
-    "pauseAfter": -3,
+    "id": 3,
+    "character": "metan",
+    "text": "参加費は0円。1円もいらないの。",
+    "scamPitch": "参加費\n0円",
+    "scamMeter": 68,
+    "scene": 2,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 2750
+      "startFrom": 120
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.55
+      "src": "決定ボタンを押す31.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 113
+    "voiceFile": "03_metan.wav",
+    "durationInFrames": 92
   },
   {
-    "id": 11,
+    "id": 4,
     "character": "zundamon",
-    "text": "統合版マイクラがあれば、参加費0円なのだ。",
-    "quizReveal": "参加費 0円",
-    "quizRevealSub": "統合版マイクラがあれば誰でも",
+    "text": "0円が一番あやしいのだ！裏があるのだ！",
+    "displayText": "0円が一番あやしい！\n裏があるのだ",
+    "scamAlert": "「0円」が一番あやしい",
+    "scamMeter": 80,
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 112
+  },
+  {
+    "id": 5,
+    "character": "metan",
+    "text": "なのに自分の店を持って、稼げるのよ。",
+    "scamPitch": "自分の店で\n稼げる",
+    "scamMeter": 88,
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "決定ボタンを押す32.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 89
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "出た副業詐欺なのだ！勧誘させられるのだ！",
+    "displayText": "出た副業詐欺なのだ！\n勧誘させられるのだ",
+    "scamAlert": "「稼げる」は副業詐欺の常套句",
+    "scamMeter": 95,
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 114
+  },
+  {
+    "id": 7,
+    "character": "metan",
+    "text": "疑うよね。じゃあ証拠。参加費は本当に0円。",
+    "displayText": "じゃあ証拠。\n参加費は本当に0円。",
+    "scamProof": "参加費0円は本当",
+    "scamMeter": 60,
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 380
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
+      "src": "data_analysis.mp3",
       "volume": 0.5
     },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 124
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 129
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "この店ぜんぶ自分のもの。本当に稼げるのだ…！",
+    "displayText": "この店ぜんぶ自分のもの。\n本当に稼げるのだ",
+    "scamProof": "自分の店、本物",
+    "scamMeter": 32,
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 120
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "会社も作れる。釣りは275種類。全部本当なのだ。",
+    "displayText": "会社も作れる 釣りは275種類\n全部本当なのだ",
+    "scamProof": "会社も釣り275種も本物",
+    "scamMeter": 8,
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 500
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 180
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "詐欺じゃなかった。よもぎサーバーの生活サーバーなのだ。",
+    "scamVerdict": "詐欺じゃなかった",
+    "scamVerdictSub": "正体は よもぎの生活サーバー",
+    "scamMeter": 0,
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 800
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 132
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "参加費0円で、24時間あそべる。全部本当。",
+    "displayText": "参加費0円で24時間あそべる\n全部本当だったの",
+    "scamProof": "0円・24時間 本当でした",
+    "scamMeter": 0,
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "jajean1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 136
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "よもぎサーバーで検索してほしいのだ。",
-    "displayText": "検索すれば 入り方がわかる",
-    "quizCta": "よもぎサーバー",
+    "text": "気になったら、よもぎサーバーで検索なのだ。",
+    "displayText": "検索で 入り方がわかる",
+    "scamCta": "よもぎサーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -391,13 +341,13 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 88
+    "durationInFrames": 108
   },
   {
     "id": 13,
     "character": "metan",
-    "text": "全4問、何問正解した？コメントで教えて。",
-    "quizResult": "何問正解した？",
+    "text": "詐欺だと思った人、正直にコメントで教えて。",
+    "scamResult": "「詐欺だ」と思った人 コメントで",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -411,7 +361,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.45
     },
     "voiceFile": "13_metan.wav",
-    "durationInFrames": 125
+    "durationInFrames": 104
   }
 ];
 

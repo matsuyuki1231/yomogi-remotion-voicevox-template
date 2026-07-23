@@ -1,0 +1,301 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 3択・制限時間クイズ型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「3択・制限時間クイズ」型（視聴者参加型フェイクアウト）
+#   「このゲーム、何問わかる？」と参加を促し、3択＋カウントダウンリング（3→2→1）で
+#   視聴者に答えさせる。正解が積み上がるほど生活サーバーの機能が明かされ
+#   （マイクラ→自分の土地→自分の店→参加費0円）、最終問題のあと「よもぎサーバーの
+#   生活サーバー」と正体を明かす。締めは「何問正解した？コメントで」でループ＆コメント誘発。
+#
+#   前半（Q1〜Q3）はサーバー名を出さず「この街／この家／この店は何？」の当てものとして
+#   釣る。Q1で「正解はマイクラ」のギャップを一発置き、以降で暮らしの機能を積む。
+#
+# ■ 視聴維持・参加の装置
+#   1. カウントダウンリング（CountdownRing）… 出題ごとに時間が減る＝視聴者が答える強制力
+#   2. 3択カードの点灯リビール（ChoiceList）… 1問1カットで切り替わり正解が緑に光る
+#   3. スコアカウンター（ScoreBadge）… 「ここまで◯問」で達成感、締めで自分の点数を問う
+#
+# ■ 構造上のルール（1問＝出題行＋解答行の2行構成）
+#   - 出題行: quizNo / quizQ / quizChoices / quizAnswer / quizTimer:true（リングが回る）
+#   - 解答行: quizNo / quizQ / quizChoices / quizAnswer / quizAnswerReveal:true（正解が光る＋スコア加算）
+#   - quizChoices は出題行・解答行の両方に同じ内容を書く（カードを2カットにわたって見せるため）
+#   - quizAnswer の正解位置はなるべく散らす（毎回同じ位置だと当てずっぽうで当たる）
+#   - サーバー側の事実（無料・24時間・土地/家/店/会社/釣り/車）だけを docs/yomogi で裏取り
+#   - BGMの切替（fromLineId）はリビール行（id10）に合わせる
+#
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 生活ワールドに土地を購入して自分だけの家や店を建てられる（intro.md）
+#   - チェストショップで自分のアイテムを販売できる（intro.md）
+#   - 車に乗って生活ワールドを駆け回れる（intro.md）
+#
+# 素材: public/content/生活サーバー 配下
+# 効果音: drum-roll1 / item-get1 / jajean1 / boom は効果音ラボ等（商用可・クレジット不要）
+
+# ===== フック（0〜3秒。参加を促して手を止める）=====
+- id: 1
+  character: metan
+  text: このゲーム、何問わかる？
+  displayText: このゲーム、何問わかる？
+  quizHook: "何問\nわかる？"
+  quizHookSub: 全4問・3択クイズ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行 id13 と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
+  se:
+    src: spotlight.mp3
+    volume: 0.5
+
+# ===== 第1問：この街は何？（正解=マイクラ でギャップ一発）=====
+- id: 2
+  character: metan
+  text: 第1問。この街、何でできてる？
+  quizNo: Q1
+  quizQ: この街、何でできてる？
+  quizChoices:
+    - ドット絵アプリ
+    - マイクラ
+    - VR空間
+  quizAnswer: 1
+  quizTimer: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 600
+  se:
+    src: drum-roll1.mp3
+    volume: 0.5
+
+- id: 3
+  character: zundamon
+  text: 正解は、マイクラなのだ！
+  quizNo: Q1
+  quizQ: この街、何でできてる？
+  quizChoices:
+    - ドット絵アプリ
+    - マイクラ
+    - VR空間
+  quizAnswer: 1
+  quizAnswerReveal: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1800
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+# ===== 第2問：釣れる魚は何種類？（正解=275種類。数字当て＋意外な事実）=====
+- id: 4
+  character: metan
+  text: 第2問。釣れる魚は何種類？
+  quizNo: Q2
+  quizQ: 釣れる魚は何種類？
+  quizChoices:
+    - 50種類
+    - 120種類
+    - 275種類
+  quizAnswer: 2
+  quizTimer: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 780
+  se:
+    src: drum-roll1.mp3
+    volume: 0.5
+
+- id: 5
+  character: zundamon
+  text: 正解は、275種類。バニラにない魚だらけなのだ！
+  quizNo: Q2
+  quizQ: 釣れる魚は何種類？
+  quizChoices:
+    - 50種類
+    - 120種類
+    - 275種類
+  quizAnswer: 2
+  quizAnswerReveal: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 1100
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+# ===== 第3問：この店、経営してるのは？（正解=プレイヤー）=====
+- id: 6
+  character: metan
+  text: 第3問。この店、経営してるのは？
+  quizNo: Q3
+  quizQ: この店、経営してるのは？
+  quizChoices:
+    - プレイヤー
+    - 自動ボット
+    - お店の妖精
+  quizAnswer: 0
+  quizTimer: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 380
+  se:
+    src: drum-roll1.mp3
+    volume: 0.5
+
+- id: 7
+  character: zundamon
+  text: 正解はプレイヤー！自分の店が持てるのだ。
+  quizNo: Q3
+  quizQ: この店、経営してるのは？
+  quizChoices:
+    - プレイヤー
+    - 自動ボット
+    - お店の妖精
+  quizAnswer: 0
+  quizAnswerReveal: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+# ===== 最終問題：参加費は？（正解=基本無料 でオチ）=====
+- id: 8
+  character: metan
+  text: 最終問題。ここで暮らす参加費は？
+  quizNo: Q4
+  quizQ: ここで暮らす参加費は？
+  quizChoices:
+    - 招待制
+    - 基本無料
+    - 月額課金
+  quizAnswer: 1
+  quizTimer: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: drum-roll1.mp3
+    volume: 0.5
+
+- id: 9
+  character: zundamon
+  text: 正解は、基本無料。ぜんぶ0円なのだ！
+  quizNo: Q4
+  quizQ: ここで暮らす参加費は？
+  quizChoices:
+    - 招待制
+    - 基本無料
+    - 月額課金
+  quizAnswer: 1
+  quizAnswerReveal: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 250
+  se:
+    src: jajean1.mp3
+    volume: 0.55
+
+# ===== リビール（ここで初めてサーバー名）=====
+- id: 10
+  character: zundamon
+  text: ここは、よもぎサーバーの生活サーバーなのだ。
+  quizReveal: よもぎサーバー
+  quizRevealSub: 24時間あそべる 生活・経済サーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2750
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 11
+  character: zundamon
+  text: 統合版マイクラがあれば、参加費0円なのだ。
+  quizReveal: 参加費 0円
+  quizRevealSub: 統合版マイクラがあれば誰でも
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+# ===== CTA =====
+- id: 12
+  character: zundamon
+  text: よもぎサーバーで検索してほしいのだ。
+  displayText: 検索すれば 入り方がわかる
+  quizCta: よもぎサーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+# ===== 結果＝ループ（冒頭の「何問わかる？」に戻る。映像も id1 と同じ位置）=====
+- id: 13
+  character: metan
+  text: 全4問、何問正解した？コメントで教えて。
+  quizResult: 何問正解した？
+  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ id1 に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45

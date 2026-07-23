@@ -21,18 +21,16 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  quizHook?: string;
-  quizHookSub?: string;
-  quizNo?: string;
-  quizQ?: string;
-  quizChoices?: string[];
-  quizAnswer?: number;
-  quizTimer?: boolean;
-  quizAnswerReveal?: boolean;
-  quizReveal?: string;
-  quizRevealSub?: string;
-  quizCta?: string;
-  quizResult?: string;
+  scamHook?: string;
+  scamHookSub?: string;
+  scamPitch?: string;
+  scamAlert?: string;
+  scamMeter?: number;
+  scamProof?: string;
+  scamVerdict?: string;
+  scamVerdictSub?: string;
+  scamCta?: string;
+  scamResult?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -191,18 +189,16 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  quizHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  quizHookSub?: string;      // フックの上に出す小さいバッジ
-  quizNo?: string;           // 問題番号バッジ（例: Q1）
-  quizQ?: string;            // 設問文
-  quizChoices?: string[];    // 3択の選択肢（A/B/C）
-  quizAnswer?: number;       // 正解の選択肢インデックス（0始まり）
-  quizTimer?: boolean;       // 出題フェーズ。カウントダウンリングを回す
-  quizAnswerReveal?: boolean;// 解答フェーズ。正解を緑に光らせて「正解」スタンプ＋スコア加算
-  quizReveal?: string;       // リビール帯（宣伝への転換点）
-  quizRevealSub?: string;    // リビール帯の補足行
-  quizCta?: string;          // 検索バー風CTA（文字がタイプされる）
-  quizResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
+  scamHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  scamHookSub?: string;      // フックの上に出す小さいバッジ
+  scamPitch?: string;        // "うまい話"カード（めたんの勧誘。金色の怪しいオファー）
+  scamAlert?: string;        // 赤い詐欺警告スタンプ（ずんだもんの「詐欺なのだ！」ツッコミ）
+  scamMeter?: number;        // 詐欺メーター（0〜100。前半で上昇、証拠で下降）
+  scamProof?: string;        // 緑の「本当でした」検証スタンプ（証拠フェーズ）
+  scamVerdict?: string;      // リビール帯（詐欺じゃなかった→正体明かし。宣伝への転換点）
+  scamVerdictSub?: string;   // リビール帯の補足行
+  scamCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  scamResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

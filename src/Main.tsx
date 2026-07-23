@@ -11,7 +11,7 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { QuizBackdrop, QuizScrim, QuizHud } from "./components/QuizHud";
+import { ScamBackdrop, ScamScrim, ScamHud } from "./components/ScamHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -79,42 +79,39 @@ export const Main: React.FC = () => {
     0
   );
 
-  // ---- クイズの進行・スコア計算 ----
-  // totalQuestions = 出題フェーズ（quizTimer）の行数
-  const totalQuestions = scriptData.filter((l) => l.quizTimer).length;
-  // 各行の問題番号（quizTimer で加算し、次の出題まで同じ番号を引き継ぐ）
-  const questionNums: number[] = (() => {
-    let qn = 0;
+  // ---- 詐欺メーターの値と「直前の値」を解決 ----
+  // 各行の scamMeter を、直前に指定された値（アニメの起点）とセットで持つ。
+  // メーター未指定の行は null（メーター非表示）。
+  const meterResolved: ({ v: number; prev: number } | null)[] = (() => {
+    let last = 0;
     return scriptData.map((line) => {
-      if (line.quizTimer) qn++;
-      return qn;
-    });
-  })();
-  // 各行のスコア（解答フェーズ＝quizAnswerReveal を累積）
-  const scoreNums: number[] = (() => {
-    let sc = 0;
-    return scriptData.map((line) => {
-      if (line.quizAnswerReveal) sc++;
-      return sc;
+      if (typeof line.scamMeter === "number") {
+        const prev = last;
+        last = line.scamMeter;
+        return { v: line.scamMeter, prev };
+      }
+      return null;
     });
   })();
 
   // HUDのパーツが1つでも出るか
   const hasHud = (line: ScriptLine): boolean =>
     !!(
-      line.quizHook ||
-      line.quizQ ||
-      (line.quizChoices && line.quizChoices.length > 0) ||
-      line.quizReveal ||
-      line.quizCta ||
-      line.quizResult ||
-      line.quizNo
+      line.scamHook ||
+      line.scamPitch ||
+      line.scamAlert ||
+      line.scamProof ||
+      line.scamVerdict ||
+      line.scamCta ||
+      line.scamResult ||
+      typeof line.scamMeter === "number"
     );
 
-  // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
-  // 設問文・選択肢・各バナーが画面に出るので、字幕は検索CTAの行だけ出す
+  // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
+  // "うまい話"カード・リビール帯・結果リボンは画面テロップを兼ねるので字幕を抑止。
+  // 警告スタンプ／検証スタンプ／CTAの行は掛け合いを読ませるため字幕を残す。
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(line.quizHook || line.quizQ || line.quizReveal || line.quizResult);
+    !!(line.scamHook || line.scamPitch || line.scamVerdict || line.scamResult);
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -134,7 +131,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <QuizBackdrop />
+      <ScamBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -191,38 +188,30 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <QuizScrim />
+            <ScamScrim />
           </Sequence>
         );
       })}
 
-      {/* セリフごとのHUD（フック・問題ヘッダ・カウントダウン・3択・正解・リビール・CTA） */}
+      {/* セリフごとのHUD（詐欺メーター・フック・うまい話カード・警告/検証スタンプ・リビール・CTA） */}
       {currentLine && hasHud(currentLine) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <QuizHud
-            hook={currentLine.quizHook}
-            hookSub={currentLine.quizHookSub}
-            no={currentLine.quizNo}
-            progress={
-              currentLine.quizNo
-                ? `${questionNums[currentIndex]}/${totalQuestions}`
-                : undefined
-            }
-            q={currentLine.quizQ}
-            choices={currentLine.quizChoices}
-            answer={currentLine.quizAnswer}
-            timer={currentLine.quizTimer}
-            reveal={currentLine.quizAnswerReveal}
-            score={scoreNums[currentIndex]}
-            scoreTotal={totalQuestions}
-            serverReveal={currentLine.quizReveal}
-            serverRevealSub={currentLine.quizRevealSub}
-            cta={currentLine.quizCta}
-            result={currentLine.quizResult}
+          <ScamHud
+            hook={currentLine.scamHook}
+            hookSub={currentLine.scamHookSub}
+            pitch={currentLine.scamPitch}
+            alert={currentLine.scamAlert}
+            meter={meterResolved[currentIndex]?.v}
+            meterPrev={meterResolved[currentIndex]?.prev}
+            proof={currentLine.scamProof}
+            verdict={currentLine.scamVerdict}
+            verdictSub={currentLine.scamVerdictSub}
+            cta={currentLine.scamCta}
+            result={currentLine.scamResult}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>
