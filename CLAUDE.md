@@ -545,10 +545,23 @@ public/
 
 #### 現在のフォーマット: 緊急速報・報道型（【速報】マイクラに謎の巨大都市）
 
-`config/script.yaml` が生活サーバー版。過去のフォーマットは `config/archive/` に
-文言のみ残してあり、対応コンポーネントは削除済み（復元する場合は `format-*-v1` タグを参照。
-怪しい勧誘・詐欺疑い型＝`config/archive/script.living-server-scam.yaml` / `format-scam-v1`、
-3択クイズ型＝`config/archive/script.living-server-quiz3.yaml` / `format-quiz3-v1`）。
+**同じ NewsHud を生活サーバー版と人狼版の2本で使い回している。**
+
+| ファイル | 中身 |
+|----------|------|
+| `config/script.living-server-news.yaml` | 生活サーバー版（謎の巨大都市） |
+| `config/script.werewolf.yaml` | マイクラ人狼版（住民が消える村） |
+| `config/script.yaml` | **ビルド対象**。上のどちらかをコピーして使う |
+
+ビルド手順: `cp config/script.<版>.yaml config/script.yaml` → `npm run sync-script` →
+`npm run voices` → `npm run build`。**版を切り替えたら必ず `npm run voices` をやり直す**
+（音声ファイル名 `01_metan.wav` … は版をまたいで共通なので、前の版の音声が残っていると尺がズレる）。
+`概要欄.txt` も版ごとに差し替える。
+
+過去のフォーマットは `config/archive/` に文言のみ残してあり、対応コンポーネントは削除済み
+（復元する場合は `format-*-v1` タグを参照。怪しい勧誘・詐欺疑い型＝
+`config/archive/script.living-server-scam.yaml` / `format-scam-v1`、3択クイズ型＝
+`config/archive/script.living-server-quiz3.yaml` / `format-quiz3-v1`）。
 
 **前半で緊張 → 後半でトーンダウンして宣伝**の勝ちパターン。ニュース速報として始め、
 スタジオのキャスター（めたん）と現場リポーター（ずんだもん）が「マイクラの中に謎の巨大都市が
@@ -556,6 +569,12 @@ public/
 「住民の正体が判明」で引っぱったあと、**住民は全員プレイヤー＝よもぎサーバーの生活サーバー**
 だったと判明。速報トーンを解除して穏やかな機能紹介＋検索CTAへ着地する（`NewsHud.tsx`）。
 締めは「次の住民は、あなた」で冒頭の速報に戻してループ。
+
+**人狼版**は同じ骨格で事件を差し替えたもの。「【速報】毎週土曜の夜、住民が消える村がある」で釣り、
+全員が弓を所持 → 突然の会議 → 生存者が減少 と事件性を積み、`newsCorrection` で
+「事件ではありませんでした／全員マイクラで遊んでいるだけ」→ よもぎサーバーのマイクラ人狼イベント
+だったとリビール。締めは「次に消えるのは、あなた」でループ。報道UIの時計（21:47始まり）が
+人狼イベントの開催時間帯（毎週土曜21:30〜）とそのまま噛み合う。
 
 離脱防止の装置：
 
