@@ -1,0 +1,382 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 偽ライブ配信・バズ中継型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「偽ライブ配信・バズ中継」型（今バズってる深夜配信を装うフェイクアウト）
+#   マイクラ実映像の上に「ライブ配信のUI」を丸ごと被せる。冒頭「同接17万人の配信、何これ？」で
+#   釣り、暮らし（家・土地・店・車・社長・釣り）が次々映るたびにコメントが沸き、同時接続カウンターが
+#   伸び続ける。「これ何の配信？」→「マイクラなのだ」でコメント爆発、そこで初めて
+#   「よもぎサーバーの生活サーバー」と明かす。オチは同接の正体回収＝
+#   「これ"配信"じゃない。全員が自分でプレイしてる人たち」。参加費0円で締める。
+#
+#   前半（id1〜id9）はサーバー名もマイクラも一切出さない。一般のショート視聴者を
+#   「新作ゲーム？メタバース？」と釣り、宣伝が来る頃には離脱ポイントを通り過ぎている。
+#
+#   締めの「同接、何人だと思った？」が冒頭の「同接17万人」に戻るのでループする。
+#   （末尾 id16 の映像は id1 とまったく同じ src / startFrom にしてある）
+#
+# ■ 視聴維持の装置（余白を作らせない3点セット）
+#   1. 同接カウンター（LiveBar）… liveViewers を持つ行の間だけ出て、カット頭14フレームで回る。
+#      数字が伸びる快感＋社会的証明。リビール（id11）で値を持つ行が切れてカウンターが消える
+#   2. 流れるコメント（LiveCommentLayer）… 各行の comments を行頭からずらして投入。
+#      行境界をまたいで下から上へ流れ続けるので画面が常に動く。視聴者の疑問を先回りで代弁する
+#   3. スーパーチャット（superChat）… 1カット1回、右から飛び込んでテンポを刻む
+#
+# ■ 構造上のルール
+#   - 前半 id1〜id9 でサーバー名・マイクラを出さない（フェイクアウトの生命線）
+#   - id6 のコメントに「え、マイクラ？」の伏線を1つだけ置く（id10 の爆発の前フリ）
+#   - 同接の数字は「配信の演出」というギャグ装置。id13 で「実は配信じゃない」と正体を回収する。
+#     サーバー側の事実（無料・24時間・土地/家/店/会社/釣り/車）だけを docs/yomogi で裏取り
+#   - BGMは id1 から速い曲、リビール（id11）で切り替えて空気を変える（defaults.yaml）
+#
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 生活ワールドに土地を購入して自分だけの家や店を建てられる（intro.md）
+#   - チェストショップで自分のアイテムを販売できる（intro.md）
+#   - 会社制度で会社経営が楽しめる（intro.md）
+#   - 釣りで釣れる魚は275種類（intro.md）
+#   - 車に乗って生活ワールドを駆け回れる（intro.md）
+#
+# 素材: public/content/生活サーバー 配下
+# 効果音: item-get1 / drum-roll1 / amount-display1 / roll-finish1 / jajean1 / boom は効果音ラボ等
+# （商用可・クレジット不要 https://soundeffect-lab.info/）
+
+# ===== フック（0〜3秒。ありえない同接＋ピン留めコメントで手を止める）=====
+- id: 1
+  character: metan
+  text: この配信、同時接続やばいことになってる。
+  displayText: この配信、同接やばくない？
+  liveHook: "同接\n17万人。"
+  liveHookSub: 深夜にバズってる配信がある
+  liveViewers: 172000
+  pinned: え、これ無料なの！？
+  comments:
+    - なにこれ
+    - 同接バグってる
+    - 深夜に開いちゃった
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行 id16 と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
+  se:
+    src: spotlight.mp3
+    volume: 0.5
+
+- id: 2
+  character: zundamon
+  text: なにが起きてるのか、見てみるのだ。
+  displayText: 何が起きてるのだ？
+  liveViewers: 186000
+  comments:
+    - 通知で来た
+    - 何が始まるの
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+# ===== 沸くパート（3〜16秒。1項目1カット、コメント沸騰、同接が伸び続ける）=====
+- id: 3
+  character: zundamon
+  text: この人、家を建ててるのだ。
+  displayText: 家、建ててる
+  liveViewers: 207000
+  comments:
+    - 家でかっ
+    - 一軒家じゃん
+    - 建築うますぎ
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 190
+  se:
+    src: item-get1.mp3
+    volume: 0.5
+
+- id: 4
+  character: metan
+  text: しかも、自分の土地なんだって。
+  displayText: しかも自分の土地
+  liveViewers: 229000
+  comments:
+    - 土地買えるの！？
+    - 自分の土地とか
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 5
+  character: zundamon
+  text: 店まで開いて、商売してるのだ。
+  displayText: 店まで開いてる
+  liveViewers: 253000
+  comments:
+    - 店持てるの
+    - 接客してる
+    - 商売人だ
+  superChat:
+    name: 通りすがり
+    amount: 1000
+    text: これ何のゲーム？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 420
+  se:
+    src: amount-display1.mp3
+    volume: 0.5
+
+- id: 6
+  character: metan
+  text: え、車で走ってるんだけど。
+  displayText: 車で走ってる！
+  liveViewers: 276000
+  comments:
+    - 車www
+    - え、マイクラ？
+    - いや違うよね
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.45
+
+- id: 7
+  character: zundamon
+  text: 会社の社長にも、なれるのだ。
+  displayText: 社長にもなれる
+  liveViewers: 300000
+  comments:
+    - 社長で草
+    - 転職したい
+    - 会社作れるの
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    # 会社名（＝サーバー名）が映り込む手前は使わない。メニューが開いている位置から
+    startFrom: 1500
+  se:
+    src: item-get1.mp3
+    volume: 0.5
+
+- id: 8
+  character: metan
+  text: 釣りだけで暮らしてる人もいるわ。
+  displayText: 釣りだけで暮らす人も
+  liveViewers: 324000
+  comments:
+    - 勝ち組すぎ
+    - 働きたくない
+    - 羨ましい
+  superChat:
+    name: 社畜
+    amount: 5000
+    text: もう会社辞めたい
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 780
+  se:
+    src: amount-display1.mp3
+    volume: 0.55
+
+# ===== 同接ピーク→問い（16〜19秒。まだサーバー名は出さない）=====
+- id: 9
+  character: metan
+  text: ねえ、これ結局なんの配信なの？
+  displayText: これ、なんの配信なの？
+  liveViewers: 358000
+  comments:
+    - 結局なに
+    - 誰か教えて
+    - 気になりすぎ
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4
+    animation: none
+    startFrom: 350
+  se:
+    src: drum-roll1.mp3
+    volume: 0.5
+
+# ===== 中盤オチ（マイクラ!? のコメント爆発。同接がさらに跳ねる）=====
+- id: 10
+  character: zundamon
+  text: マイクラなのだ。
+  displayText: マイクラなのだ。
+  liveReaction: マイクラ!?
+  liveViewers: 412000
+  comments:
+    - 嘘だろ
+    - 全部マイクラ!?
+    - まさかの
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: boom.mp3
+    volume: 0.6
+
+# ===== リビール（ここで初めてサーバー名。同接カウンターは消える）=====
+- id: 11
+  character: zundamon
+  text: 正確には、よもぎサーバーの生活サーバーなのだ。
+  liveReveal: よもぎサーバー
+  liveRevealSub: 24時間あそべる 生活・経済サーバー
+  comments:
+    - よもぎサーバー！
+    - 知らなかった
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2750
+  se:
+    src: jajean1.mp3
+    volume: 0.5
+
+- id: 12
+  character: metan
+  text: え、これ配信を見てるんじゃないの？
+  displayText: これ、配信じゃないの？
+  comments:
+    - どういうこと
+    - 配信じゃない？
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 480
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+# ===== 同接の正体回収（社会的証明の payoff）=====
+- id: 13
+  character: zundamon
+  text: 違うのだ。全員、自分でプレイしてる人たちなのだ。
+  liveReveal: 全員、プレイヤー
+  liveRevealSub: 配信じゃない。あなたも入れる
+  comments:
+    - つまり自分もできる
+    - 神かよ
+    - 入りたい
+  superChat:
+    name: 新規勢
+    amount: 2000
+    text: 今から始めます！
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    # id13 は最長行（約5秒）。建築風景は全422フレームなので末尾を超えないよう早めに開始
+    startFrom: 300
+  se:
+    src: roll-finish1.mp3
+    volume: 0.5
+
+- id: 14
+  character: zundamon
+  text: 統合版マイクラがあれば、参加費は0円なのだ。
+  liveReveal: 参加費 0円
+  liveRevealSub: 統合版マイクラがあれば誰でも
+  comments:
+    - 無料は強い
+    - 今から入る
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+# ===== CTA =====
+- id: 15
+  character: zundamon
+  text: よもぎサーバーで検索してほしいのだ。
+  displayText: 検索すれば 入り方がわかる
+  liveCta: よもぎサーバー
+  comments:
+    - 検索した
+    - 入り方これか
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+# ===== ループ（冒頭の「同接17万人」に戻る。映像も id1 とまったく同じ位置）=====
+- id: 16
+  character: metan
+  text: あなたも、配信される側になれるわ。
+  liveBait: 同接、何人だと思った？
+  comments:
+    - またバズってる
+    - 同接エグい
+  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ id1 に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45

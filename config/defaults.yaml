@@ -19,10 +19,10 @@ bgm:
   src: "amacha_picopicodisco.mp3"
   volume: 0.16
   loop: true
-  # 偽ライブ配信・バズ中継型:
-  # 沸くパートは速い曲、リビール（id:11）で切り替えて空気を変える
+  # 3択・制限時間クイズ型:
+  # 出題パートはゲームショー風に速い曲、リビール（id:10）で切り替えて空気を変える
   segments:
-    # 「ピコピコディスコ」— 軽快でコミカル。深夜バズ配信の高揚と相性がいい
+    # 「ピコピコディスコ」— 軽快でコミカル。クイズの出題テンポと相性がいい
     - src: "amacha_picopicodisco.mp3"
       volume: 0.16
       loop: true
@@ -31,4 +31,4 @@ bgm:
     - src: "amacha_simplestyle.mp3"
       volume: 0.18
       loop: true
-      fromLineId: 11
+      fromLineId: 10

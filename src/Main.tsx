@@ -11,15 +11,7 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import {
-  LiveBackdrop,
-  LiveScrim,
-  LiveHud,
-  LiveCommentLayer,
-  CommentEvent,
-  SuperChatEvent,
-  PinnedComment,
-} from "./components/LiveHud";
+import { QuizBackdrop, QuizScrim, QuizHud } from "./components/QuizHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -87,56 +79,42 @@ export const Main: React.FC = () => {
     0
   );
 
-  // ---- 同時接続カウンターの累計計算 ----
-  // liveViewers を持つ行で目標値を更新する。カウンターは値のある行の間だけ出す
-  // （リビール＝id11以降で "配信" の建前が崩れるので消える）
-  const viewerTotals = (() => {
-    let last = 0;
+  // ---- クイズの進行・スコア計算 ----
+  // totalQuestions = 出題フェーズ（quizTimer）の行数
+  const totalQuestions = scriptData.filter((l) => l.quizTimer).length;
+  // 各行の問題番号（quizTimer で加算し、次の出題まで同じ番号を引き継ぐ）
+  const questionNums: number[] = (() => {
+    let qn = 0;
     return scriptData.map((line) => {
-      const from = last;
-      const to = line.liveViewers ?? last;
-      last = to;
-      return { from, to };
+      if (line.quizTimer) qn++;
+      return qn;
     });
   })();
-  const showsViewers = (index: number): boolean =>
-    scriptData[index].liveViewers != null;
-
-  // ---- 流れるコメント／スパチャの通しタイムライン ----
-  // 各行の comments を行頭から少しずつずらして投入する。行境界をまたいで
-  // 流れ続けるように、Sequence の外で1本のタイムラインとして描く
-  const commentSchedule: CommentEvent[] = [];
-  const superChatSchedule: SuperChatEvent[] = [];
-  let pinned: PinnedComment | null = null;
-  scriptData.forEach((line, index) => {
-    const start = getLineStartFrame(index);
-    (line.comments ?? []).forEach((text, k) => {
-      commentSchedule.push({ frame: start + 3 + k * 9, text });
+  // 各行のスコア（解答フェーズ＝quizAnswerReveal を累積）
+  const scoreNums: number[] = (() => {
+    let sc = 0;
+    return scriptData.map((line) => {
+      if (line.quizAnswerReveal) sc++;
+      return sc;
     });
-    if (line.superChat) {
-      superChatSchedule.push({ frame: start + 4, ...line.superChat });
-    }
-    if (line.pinned) {
-      // ピン留めは冒頭フックの補強。3行ぶん出しっぱなしにする
-      const until = getLineStartFrame(Math.min(index + 3, scriptData.length));
-      pinned = { from: start, until, text: line.pinned };
-    }
-  });
+  })();
 
   // HUDのパーツが1つでも出るか
-  const hasHud = (line: ScriptLine, index: number): boolean =>
+  const hasHud = (line: ScriptLine): boolean =>
     !!(
-      line.liveHook ||
-      line.liveReaction ||
-      line.liveReveal ||
-      line.liveCta ||
-      line.liveBait ||
-      showsViewers(index)
+      line.quizHook ||
+      line.quizQ ||
+      (line.quizChoices && line.quizChoices.length > 0) ||
+      line.quizReveal ||
+      line.quizCta ||
+      line.quizResult ||
+      line.quizNo
     );
 
   // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
+  // 設問文・選択肢・各バナーが画面に出るので、字幕は検索CTAの行だけ出す
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(line.liveHook || line.liveReveal || line.liveBait);
+    !!(line.quizHook || line.quizQ || line.quizReveal || line.quizResult);
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -156,7 +134,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <LiveBackdrop />
+      <QuizBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -201,8 +179,8 @@ export const Main: React.FC = () => {
         </Sequence>
       ))}
 
-      {/* 各セリフの映像。1秒ごとにカットが変わるので premount しておかないと
-          デコードが間に合わず頭が黒コマになる */}
+      {/* 各セリフの映像。1問1カットで切り替わるので premount しておかないと
+          デコードが間に合わずカット頭が黒コマになる */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
         return (
@@ -213,37 +191,38 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <LiveScrim />
+            <QuizScrim />
           </Sequence>
         );
       })}
 
-      {/* ライブチャット層（全体を1本のタイムラインで流す＝行をまたいで途切れない） */}
-      <LiveCommentLayer
-        comments={commentSchedule}
-        superChats={superChatSchedule}
-        pinned={pinned}
-      />
-
-      {/* セリフごとのHUD（LIVEバー・同接カウンター・フック・爆発・リビール・CTA） */}
-      {currentLine && hasHud(currentLine, currentIndex) && (
+      {/* セリフごとのHUD（フック・問題ヘッダ・カウントダウン・3択・正解・リビール・CTA） */}
+      {currentLine && hasHud(currentLine) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <LiveHud
-            hook={currentLine.liveHook}
-            hookSub={currentLine.liveHookSub}
-            showViewers={showsViewers(currentIndex)}
-            viewersFrom={viewerTotals[currentIndex].from}
-            viewersTo={viewerTotals[currentIndex].to}
-            title={currentLine.liveTitle}
-            reaction={currentLine.liveReaction}
-            reveal={currentLine.liveReveal}
-            revealSub={currentLine.liveRevealSub}
-            cta={currentLine.liveCta}
-            bait={currentLine.liveBait}
+          <QuizHud
+            hook={currentLine.quizHook}
+            hookSub={currentLine.quizHookSub}
+            no={currentLine.quizNo}
+            progress={
+              currentLine.quizNo
+                ? `${questionNums[currentIndex]}/${totalQuestions}`
+                : undefined
+            }
+            q={currentLine.quizQ}
+            choices={currentLine.quizChoices}
+            answer={currentLine.quizAnswer}
+            timer={currentLine.quizTimer}
+            reveal={currentLine.quizAnswerReveal}
+            score={scoreNums[currentIndex]}
+            scoreTotal={totalQuestions}
+            serverReveal={currentLine.quizReveal}
+            serverRevealSub={currentLine.quizRevealSub}
+            cta={currentLine.quizCta}
+            result={currentLine.quizResult}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>

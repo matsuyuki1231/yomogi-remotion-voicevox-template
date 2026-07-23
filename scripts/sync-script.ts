@@ -21,18 +21,18 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  liveHook?: string;
-  liveHookSub?: string;
-  liveTitle?: string;
-  liveViewers?: number;
-  comments?: string[];
-  pinned?: string;
-  superChat?: { name: string; amount: number; text: string };
-  liveReaction?: string;
-  liveReveal?: string;
-  liveRevealSub?: string;
-  liveCta?: string;
-  liveBait?: string;
+  quizHook?: string;
+  quizHookSub?: string;
+  quizNo?: string;
+  quizQ?: string;
+  quizChoices?: string[];
+  quizAnswer?: number;
+  quizTimer?: boolean;
+  quizAnswerReveal?: boolean;
+  quizReveal?: string;
+  quizRevealSub?: string;
+  quizCta?: string;
+  quizResult?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -191,18 +191,18 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  liveHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  liveHookSub?: string;     // フックの上に出す小さいバッジ
-  liveTitle?: string;       // LIVEバーの配信タイトル（省略時はデフォルト）
-  liveViewers?: number;     // 同時接続の目標値。値がある行の間だけカウンターを出す
-  comments?: string[];      // この行で投入する流れるコメント（弾幕）
-  pinned?: string;          // ピン留めコメント（冒頭フックの補強。3行ぶん出す）
-  superChat?: { name: string; amount: number; text: string }; // スパチャ（投げ銭）
-  liveReaction?: string;    // コメント爆発の一撃（例: マイクラ!?）
-  liveReveal?: string;      // リビール帯（宣伝への転換点）
-  liveRevealSub?: string;   // リビール帯の補足行
-  liveCta?: string;         // 検索バー風CTA（文字がタイプされる）
-  liveBait?: string;        // コメント誘発リボン（冒頭の同接に戻してループ）
+  quizHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  quizHookSub?: string;      // フックの上に出す小さいバッジ
+  quizNo?: string;           // 問題番号バッジ（例: Q1）
+  quizQ?: string;            // 設問文
+  quizChoices?: string[];    // 3択の選択肢（A/B/C）
+  quizAnswer?: number;       // 正解の選択肢インデックス（0始まり）
+  quizTimer?: boolean;       // 出題フェーズ。カウントダウンリングを回す
+  quizAnswerReveal?: boolean;// 解答フェーズ。正解を緑に光らせて「正解」スタンプ＋スコア加算
+  quizReveal?: string;       // リビール帯（宣伝への転換点）
+  quizRevealSub?: string;    // リビール帯の補足行
+  quizCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  quizResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

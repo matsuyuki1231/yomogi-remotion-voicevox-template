@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":11}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":10}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -46,18 +46,18 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  liveHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  liveHookSub?: string;     // フックの上に出す小さいバッジ
-  liveTitle?: string;       // LIVEバーの配信タイトル（省略時はデフォルト）
-  liveViewers?: number;     // 同時接続の目標値。値がある行の間だけカウンターを出す
-  comments?: string[];      // この行で投入する流れるコメント（弾幕）
-  pinned?: string;          // ピン留めコメント（冒頭フックの補強。3行ぶん出す）
-  superChat?: { name: string; amount: number; text: string }; // スパチャ（投げ銭）
-  liveReaction?: string;    // コメント爆発の一撃（例: マイクラ!?）
-  liveReveal?: string;      // リビール帯（宣伝への転換点）
-  liveRevealSub?: string;   // リビール帯の補足行
-  liveCta?: string;         // 検索バー風CTA（文字がタイプされる）
-  liveBait?: string;        // コメント誘発リボン（冒頭の同接に戻してループ）
+  quizHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  quizHookSub?: string;      // フックの上に出す小さいバッジ
+  quizNo?: string;           // 問題番号バッジ（例: Q1）
+  quizQ?: string;            // 設問文
+  quizChoices?: string[];    // 3択の選択肢（A/B/C）
+  quizAnswer?: number;       // 正解の選択肢インデックス（0始まり）
+  quizTimer?: boolean;       // 出題フェーズ。カウントダウンリングを回す
+  quizAnswerReveal?: boolean;// 解答フェーズ。正解を緑に光らせて「正解」スタンプ＋スコア加算
+  quizReveal?: string;       // リビール帯（宣伝への転換点）
+  quizRevealSub?: string;    // リビール帯の補足行
+  quizCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  quizResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -86,17 +86,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "この配信、同時接続やばいことになってる。",
-    "displayText": "この配信、同接やばくない？",
-    "liveHook": "同接\n17万人。",
-    "liveHookSub": "深夜にバズってる配信がある",
-    "liveViewers": 172000,
-    "pinned": "え、これ無料なの！？",
-    "comments": [
-      "なにこれ",
-      "同接バグってる",
-      "深夜に開いちゃった"
-    ],
+    "text": "このゲーム、何問わかる？",
+    "displayText": "このゲーム、何問わかる？",
+    "quizHook": "何問\nわかる？",
+    "quizHookSub": "全4問・3択クイズ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -110,185 +103,79 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 99
+    "durationInFrames": 65
   },
   {
     "id": 2,
-    "character": "zundamon",
-    "text": "なにが起きてるのか、見てみるのだ。",
-    "displayText": "何が起きてるのだ？",
-    "liveViewers": 186000,
-    "comments": [
-      "通知で来た",
-      "何が始まるの"
+    "character": "metan",
+    "text": "第1問。この街、何でできてる？",
+    "quizNo": "Q1",
+    "quizQ": "この街、何でできてる？",
+    "quizChoices": [
+      "ドット絵アプリ",
+      "マイクラ",
+      "VR空間"
     ],
-    "scene": 1,
-    "pauseAfter": -4,
+    "quizAnswer": 1,
+    "quizTimer": true,
+    "scene": 2,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 600
     },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "drum-roll1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 87
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 95
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "この人、家を建ててるのだ。",
-    "displayText": "家、建ててる",
-    "liveViewers": 207000,
-    "comments": [
-      "家でかっ",
-      "一軒家じゃん",
-      "建築うますぎ"
+    "text": "正解は、マイクラなのだ！",
+    "quizNo": "Q1",
+    "quizQ": "この街、何でできてる？",
+    "quizChoices": [
+      "ドット絵アプリ",
+      "マイクラ",
+      "VR空間"
     ],
+    "quizAnswer": 1,
+    "quizAnswerReveal": true,
     "scene": 2,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 190
+      "startFrom": 1800
     },
     "se": {
       "src": "item-get1.mp3",
-      "volume": 0.5
+      "volume": 0.55
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 76
+    "durationInFrames": 73
   },
   {
     "id": 4,
     "character": "metan",
-    "text": "しかも、自分の土地なんだって。",
-    "displayText": "しかも自分の土地",
-    "liveViewers": 229000,
-    "comments": [
-      "土地買えるの！？",
-      "自分の土地とか"
+    "text": "第2問。釣れる魚は何種類？",
+    "quizNo": "Q2",
+    "quizQ": "釣れる魚は何種類？",
+    "quizChoices": [
+      "50種類",
+      "120種類",
+      "275種類"
     ],
+    "quizAnswer": 2,
+    "quizTimer": true,
     "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
-      "animation": "none",
-      "startFrom": 150
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "04_metan.wav",
-    "durationInFrames": 69
-  },
-  {
-    "id": 5,
-    "character": "zundamon",
-    "text": "店まで開いて、商売してるのだ。",
-    "displayText": "店まで開いてる",
-    "liveViewers": 253000,
-    "comments": [
-      "店持てるの",
-      "接客してる",
-      "商売人だ"
-    ],
-    "superChat": {
-      "name": "通りすがり",
-      "amount": 1000,
-      "text": "これ何のゲーム？"
-    },
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 420
-    },
-    "se": {
-      "src": "amount-display1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 88
-  },
-  {
-    "id": 6,
-    "character": "metan",
-    "text": "え、車で走ってるんだけど。",
-    "displayText": "車で走ってる！",
-    "liveViewers": 276000,
-    "comments": [
-      "車www",
-      "え、マイクラ？",
-      "いや違うよね"
-    ],
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 86
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "会社の社長にも、なれるのだ。",
-    "displayText": "社長にもなれる",
-    "liveViewers": 300000,
-    "comments": [
-      "社長で草",
-      "転職したい",
-      "会社作れるの"
-    ],
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 1500
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 82
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "釣りだけで暮らしてる人もいるわ。",
-    "displayText": "釣りだけで暮らす人も",
-    "liveViewers": 324000,
-    "comments": [
-      "勝ち組すぎ",
-      "働きたくない",
-      "羨ましい"
-    ],
-    "superChat": {
-      "name": "社畜",
-      "amount": 5000,
-      "text": "もう会社辞めたい"
-    },
-    "scene": 2,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/釣りをしている動画.mp4",
@@ -296,75 +183,158 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 780
     },
     "se": {
-      "src": "amount-display1.mp3",
-      "volume": 0.55
+      "src": "drum-roll1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 62
+    "voiceFile": "04_metan.wav",
+    "durationInFrames": 99
   },
   {
-    "id": 9,
-    "character": "metan",
-    "text": "ねえ、これ結局なんの配信なの？",
-    "displayText": "これ、なんの配信なの？",
-    "liveViewers": 358000,
-    "comments": [
-      "結局なに",
-      "誰か教えて",
-      "気になりすぎ"
+    "id": 5,
+    "character": "zundamon",
+    "text": "正解は、275種類。バニラにない魚だらけなのだ！",
+    "quizNo": "Q2",
+    "quizQ": "釣れる魚は何種類？",
+    "quizChoices": [
+      "50種類",
+      "120種類",
+      "275種類"
     ],
+    "quizAnswer": 2,
+    "quizAnswerReveal": true,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 350
+      "startFrom": 1100
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 118
+  },
+  {
+    "id": 6,
+    "character": "metan",
+    "text": "第3問。この店、経営してるのは？",
+    "quizNo": "Q3",
+    "quizQ": "この店、経営してるのは？",
+    "quizChoices": [
+      "プレイヤー",
+      "自動ボット",
+      "お店の妖精"
+    ],
+    "quizAnswer": 0,
+    "quizTimer": true,
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "animation": "none",
+      "startFrom": 380
     },
     "se": {
       "src": "drum-roll1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 91
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 110
   },
   {
-    "id": 10,
+    "id": 7,
     "character": "zundamon",
-    "text": "マイクラなのだ。",
-    "displayText": "マイクラなのだ。",
-    "liveReaction": "マイクラ!?",
-    "liveViewers": 412000,
-    "comments": [
-      "嘘だろ",
-      "全部マイクラ!?",
-      "まさかの"
+    "text": "正解はプレイヤー！自分の店が持てるのだ。",
+    "quizNo": "Q3",
+    "quizQ": "この店、経営してるのは？",
+    "quizChoices": [
+      "プレイヤー",
+      "自動ボット",
+      "お店の妖精"
     ],
+    "quizAnswer": 0,
+    "quizAnswerReveal": true,
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.55
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 116
+  },
+  {
+    "id": 8,
+    "character": "metan",
+    "text": "最終問題。ここで暮らす参加費は？",
+    "quizNo": "Q4",
+    "quizQ": "ここで暮らす参加費は？",
+    "quizChoices": [
+      "招待制",
+      "基本無料",
+      "月額課金"
+    ],
+    "quizAnswer": 1,
+    "quizTimer": true,
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "drum-roll1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "08_metan.wav",
+    "durationInFrames": 90
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "正解は、基本無料。ぜんぶ0円なのだ！",
+    "quizNo": "Q4",
+    "quizQ": "ここで暮らす参加費は？",
+    "quizChoices": [
+      "招待制",
+      "基本無料",
+      "月額課金"
+    ],
+    "quizAnswer": 1,
+    "quizAnswerReveal": true,
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 250
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.6
+      "src": "jajean1.mp3",
+      "volume": 0.55
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 39
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 123
   },
   {
-    "id": 11,
+    "id": 10,
     "character": "zundamon",
-    "text": "正確には、よもぎサーバーの生活サーバーなのだ。",
-    "liveReveal": "よもぎサーバー",
-    "liveRevealSub": "24時間あそべる 生活・経済サーバー",
-    "comments": [
-      "よもぎサーバー！",
-      "知らなかった"
-    ],
+    "text": "ここは、よもぎサーバーの生活サーバーなのだ。",
+    "quizReveal": "よもぎサーバー",
+    "quizRevealSub": "24時間あそべる 生活・経済サーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -374,82 +344,23 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 2750
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.5
+      "src": "boom.mp3",
+      "volume": 0.55
     },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 128
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 113
   },
   {
-    "id": 12,
-    "character": "metan",
-    "text": "え、これ配信を見てるんじゃないの？",
-    "displayText": "これ、配信じゃないの？",
-    "comments": [
-      "どういうこと",
-      "配信じゃない？"
-    ],
+    "id": 11,
+    "character": "zundamon",
+    "text": "統合版マイクラがあれば、参加費0円なのだ。",
+    "quizReveal": "参加費 0円",
+    "quizRevealSub": "統合版マイクラがあれば誰でも",
     "scene": 3,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 480
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 97
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "違うのだ。全員、自分でプレイしてる人たちなのだ。",
-    "liveReveal": "全員、プレイヤー",
-    "liveRevealSub": "配信じゃない。あなたも入れる",
-    "comments": [
-      "つまり自分もできる",
-      "神かよ",
-      "入りたい"
-    ],
-    "superChat": {
-      "name": "新規勢",
-      "amount": 2000,
-      "text": "今から始めます！"
-    },
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "roll-finish1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 147
-  },
-  {
-    "id": 14,
-    "character": "zundamon",
-    "text": "統合版マイクラがあれば、参加費は0円なのだ。",
-    "liveReveal": "参加費 0円",
-    "liveRevealSub": "統合版マイクラがあれば誰でも",
-    "comments": [
-      "無料は強い",
-      "今から入る"
-    ],
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
       "animation": "none",
       "startFrom": 300
     },
@@ -457,19 +368,15 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 128
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 124
   },
   {
-    "id": 15,
+    "id": 12,
     "character": "zundamon",
     "text": "よもぎサーバーで検索してほしいのだ。",
     "displayText": "検索すれば 入り方がわかる",
-    "liveCta": "よもぎサーバー",
-    "comments": [
-      "検索した",
-      "入り方これか"
-    ],
+    "quizCta": "よもぎサーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -483,18 +390,14 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "15_zundamon.wav",
+    "voiceFile": "12_zundamon.wav",
     "durationInFrames": 88
   },
   {
-    "id": 16,
+    "id": 13,
     "character": "metan",
-    "text": "あなたも、配信される側になれるわ。",
-    "liveBait": "同接、何人だと思った？",
-    "comments": [
-      "またバズってる",
-      "同接エグい"
-    ],
+    "text": "全4問、何問正解した？コメントで教えて。",
+    "quizResult": "何問正解した？",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -507,8 +410,8 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 82
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 125
   }
 ];
 
