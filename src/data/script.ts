@@ -104,10 +104,6 @@ export const scriptData: ScriptLine[] = [
       "animation": "none",
       "startFrom": 3000
     },
-    "se": {
-      "src": "emergency-alert1.mp3",
-      "volume": 0.45
-    },
     "voiceFile": "01_metan.wav",
     "durationInFrames": 125
   },
