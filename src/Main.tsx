@@ -11,7 +11,13 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { ScamBackdrop, ScamScrim, ScamHud } from "./components/ScamHud";
+import {
+  NewsBackdrop,
+  NewsScrim,
+  NewsChrome,
+  NewsHud,
+  NewsTone,
+} from "./components/NewsHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -79,40 +85,51 @@ export const Main: React.FC = () => {
     0
   );
 
-  // ---- 詐欺メーターの値と「直前の値」を解決 ----
-  // 各行の scamMeter を、直前に指定された値（アニメの起点）とセットで持つ。
-  // メーター未指定の行は null（メーター非表示）。
-  const meterResolved: ({ v: number; prev: number } | null)[] = (() => {
-    let last = 0;
+  // ---- 報道トーン（速報 / お知らせ）を解決 ----
+  // newsTone を指定した行から後ろは、次の指定まで同じトーンを引き継ぐ。
+  // リビール（id8）で breaking → calm に切り替わり、ヘッダ帯・ティッカー・走査線が一斉に変わる。
+  const toneResolved: NewsTone[] = (() => {
+    let current: NewsTone = "breaking";
     return scriptData.map((line) => {
-      if (typeof line.scamMeter === "number") {
-        const prev = last;
-        last = line.scamMeter;
-        return { v: line.scamMeter, prev };
+      if (line.newsTone === "breaking" || line.newsTone === "calm") {
+        current = line.newsTone;
       }
-      return null;
+      return current;
     });
   })();
+
+  // ティッカーは全行ぶんの newsTicker を1本に連結し、動画を通して途切れず流し続ける
+  const tickerText = scriptData
+    .map((line) => line.newsTicker)
+    .filter((t): t is string => !!t)
+    .join("　／　");
 
   // HUDのパーツが1つでも出るか
   const hasHud = (line: ScriptLine): boolean =>
     !!(
-      line.scamHook ||
-      line.scamPitch ||
-      line.scamAlert ||
-      line.scamProof ||
-      line.scamVerdict ||
-      line.scamCta ||
-      line.scamNote ||
-      line.scamResult ||
-      typeof line.scamMeter === "number"
+      line.newsLive ||
+      line.newsFlash ||
+      line.newsLower ||
+      line.newsExpert ||
+      line.newsUpdate ||
+      line.newsCorrection ||
+      line.newsReveal ||
+      line.newsCta ||
+      line.newsNote ||
+      line.newsResult
     );
 
-  // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
-  // "うまい話"カード・リビール帯・結果リボンは画面テロップを兼ねるので字幕を抑止。
-  // 警告スタンプ／検証スタンプ／CTAの行は掛け合いを読ませるため字幕を残す。
+  // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
+  // 報道型ではニューススーパー・ヘッドライン・リビール帯がテロップを兼ねるので、
+  // 字幕を出すのは検索CTAの行だけになる。
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(line.scamHook || line.scamPitch || line.scamVerdict || line.scamResult);
+    !!(
+      line.newsFlash ||
+      line.newsLower ||
+      line.newsCorrection ||
+      line.newsReveal ||
+      line.newsResult
+    );
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -132,7 +149,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <ScamBackdrop />
+      <NewsBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -189,31 +206,43 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <ScamScrim />
+            <NewsScrim />
           </Sequence>
         );
       })}
 
-      {/* セリフごとのHUD（詐欺メーター・フック・うまい話カード・警告/検証スタンプ・リビール・CTA） */}
+      {/* 常設の報道UI（速報ヘッダ帯・ティッカー・走査線）。
+          Sequence の外に置いてグローバルなフレームで動かすので、
+          カットが変わってもティッカーと時計が途切れない */}
+      <NewsChrome
+        tone={currentIndex >= 0 ? toneResolved[currentIndex] : "breaking"}
+        ticker={tickerText}
+      />
+
+      {/* セリフごとのHUD（LIVEバッジ・ヘッドライン・ニューススーパー・訂正・リビール・CTA） */}
       {currentLine && hasHud(currentLine) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <ScamHud
-            hook={currentLine.scamHook}
-            hookSub={currentLine.scamHookSub}
-            pitch={currentLine.scamPitch}
-            alert={currentLine.scamAlert}
-            meter={meterResolved[currentIndex]?.v}
-            meterPrev={meterResolved[currentIndex]?.prev}
-            proof={currentLine.scamProof}
-            verdict={currentLine.scamVerdict}
-            verdictSub={currentLine.scamVerdictSub}
-            cta={currentLine.scamCta}
-            note={currentLine.scamNote}
-            result={currentLine.scamResult}
+          <NewsHud
+            tone={toneResolved[currentIndex]}
+            live={currentLine.newsLive}
+            flash={currentLine.newsFlash}
+            flashSub={currentLine.newsFlashSub}
+            lower={currentLine.newsLower}
+            lowerLabel={currentLine.newsLowerLabel}
+            expert={currentLine.newsExpert}
+            expertRole={currentLine.newsExpertRole}
+            update={currentLine.newsUpdate}
+            correction={currentLine.newsCorrection}
+            correctionSub={currentLine.newsCorrectionSub}
+            reveal={currentLine.newsReveal}
+            revealSub={currentLine.newsRevealSub}
+            cta={currentLine.newsCta}
+            note={currentLine.newsNote}
+            result={currentLine.newsResult}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>

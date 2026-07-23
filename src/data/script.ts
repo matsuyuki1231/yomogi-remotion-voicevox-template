@@ -35,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_technophobia.mp3","volume":0.16,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_metropolis.mp3","volume":0.17,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"旅仲間.mp3","volume":0.2,"loop":true,"fromLineId":7}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_metropolis.mp3","volume":0.17,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.22,"loop":true,"fromLineId":8}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -46,17 +46,23 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  scamHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  scamHookSub?: string;      // フックの上に出す小さいバッジ
-  scamPitch?: string;        // "うまい話"カード（めたんの勧誘。金色の怪しいオファー）
-  scamAlert?: string;        // 赤い詐欺警告スタンプ（ずんだもんの「詐欺なのだ！」ツッコミ）
-  scamMeter?: number;        // 詐欺メーター（0〜100。前半で上昇、証拠で下降）
-  scamProof?: string;        // 緑の「本当でした」検証スタンプ（証拠フェーズ）
-  scamVerdict?: string;      // リビール帯（詐欺じゃなかった→正体明かし。宣伝への転換点）
-  scamVerdictSub?: string;   // リビール帯の補足行
-  scamCta?: string;          // 検索バー風CTA（文字がタイプされる）
-  scamNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
-  scamResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
+  newsTone?: "breaking" | "calm"; // 報道トーン。指定行から後ろに引き継がれる（速報＝赤 / お知らせ＝緑）
+  newsTicker?: string;       // 画面最下部のティッカー文（全行ぶんを連結して常時流す）
+  newsLive?: string;         // LIVE中継バッジの文言（例: 現場から中継）
+  newsFlash?: string;        // 巨大ヘッドライン（改行はYAML側で明示する）
+  newsFlashSub?: string;     // ヘッドラインの上に出す赤い小バッジ（例: 速報）
+  newsLower?: string;        // 下部ニューススーパー本文（1カット1本。字幕の代わりに読ませる）
+  newsLowerLabel?: string;   // ニューススーパー左のラベル（中継 / 独自 / 続報 / お知らせ など）
+  newsExpert?: string;       // 専門家プレートの名前
+  newsExpertRole?: string;   // 専門家プレートの肩書き
+  newsUpdate?: string;       // 黄色い「続報」スタンプ
+  newsCorrection?: string;   // 訂正スラム（速報トーンを解除する転換点）
+  newsCorrectionSub?: string; // 訂正スラムの補足行
+  newsReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  newsRevealSub?: string;    // リビール帯の補足行
+  newsCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  newsNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  newsResult?: string;       // 結果＝ループ用リボン（冒頭の速報に戻す）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -85,10 +91,11 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "ねぇ、無料で始めて、稼げる場所があるんだけど。",
-    "scamHook": "無料で始めて\n稼げるらしい",
-    "scamHookSub": "って誘われた",
-    "scamMeter": 25,
+    "text": "速報です。マイクラの中に、謎の巨大都市が出現。",
+    "newsFlash": "マイクラに\n謎の巨大都市",
+    "newsFlashSub": "速報",
+    "newsTone": "breaking",
+    "newsTicker": "【速報】マイクラ内に謎の巨大都市が出現",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -98,105 +105,89 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.4
+      "src": "emergency-alert1.mp3",
+      "volume": 0.45
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 120
+    "durationInFrames": 125
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "うわっ、絶対詐欺なのだ！お金取られるのだ！",
-    "displayText": "絶対詐欺なのだ！\nお金取られるのだ",
-    "scamAlert": "典型的な「うまい話」",
-    "scamMeter": 55,
+    "text": "現場なのだ！道路を、車が走ってるのだ！",
+    "newsLive": "現場から中継",
+    "newsLowerLabel": "中継",
+    "newsLower": "道路を「車」が走行",
+    "newsTicker": "現場では舗装された道路と走行中の車を確認",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 126
-  },
-  {
-    "id": 3,
-    "character": "metan",
-    "text": "参加費は0円。1円もいらないの。",
-    "scamPitch": "参加費\n0円",
-    "scamMeter": 68,
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
       "animation": "none",
       "startFrom": 120
     },
     "se": {
-      "src": "決定ボタンを押す31.mp3",
+      "src": "news-title2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 116
+  },
+  {
+    "id": 3,
+    "character": "metan",
+    "text": "商店街のお店は、営業中です。",
+    "newsLowerLabel": "独自",
+    "newsLower": "商店街の店は「営業中」",
+    "newsTicker": "商店街には営業中の店舗 経営者の存在が濃厚",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 30
+    },
+    "se": {
+      "src": "news-title3.mp3",
       "volume": 0.45
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 92
+    "durationInFrames": 90
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "0円が一番あやしいのだ！裏があるのだ！",
-    "displayText": "0円が一番あやしい！\n裏があるのだ",
-    "scamAlert": "「0円」が一番あやしい",
-    "scamMeter": 80,
+    "text": "畑もあるのだ！ここで誰かが暮らしてるのだ！",
+    "newsUpdate": "生活の痕跡",
+    "newsLowerLabel": "続報",
+    "newsLower": "畑・家・店 生活の痕跡",
+    "newsTicker": "畑や住宅も見つかり生活の痕跡が多数",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
       "animation": "none",
       "startFrom": 60
     },
     "se": {
-      "src": "anxiety_piano.mp3",
+      "src": "text-impact1.mp3",
       "volume": 0.4
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 112
+    "durationInFrames": 109
   },
   {
     "id": 5,
     "character": "metan",
-    "text": "なのに自分の店を持って、稼げるのよ。",
-    "scamPitch": "自分の店で\n稼げる",
-    "scamMeter": 88,
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 150
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 89
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "出た副業詐欺なのだ！勧誘させられるのだ！",
-    "displayText": "出た副業詐欺なのだ！\n勧誘させられるのだ",
-    "scamAlert": "「稼げる」は副業詐欺の常套句",
-    "scamMeter": 95,
+    "text": "専門家によると、会社まで存在するそうです。",
+    "newsExpertRole": "専門家",
+    "newsExpert": "マイクラ研究家 四国めたん",
+    "newsLowerLabel": "解説",
+    "newsLower": "街には「会社」まで存在",
+    "newsTicker": "専門家「街には会社組織まで存在する」",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -206,129 +197,175 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 300
     },
     "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.45
+      "src": "news-title1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 114
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 106
   },
   {
-    "id": 7,
-    "character": "metan",
-    "text": "疑うよね。じゃあ証拠。参加費は本当に0円。",
-    "displayText": "じゃあ証拠。\n参加費は本当に0円。",
-    "scamProof": "参加費0円は本当",
-    "scamMeter": 60,
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 380
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 129
-  },
-  {
-    "id": 8,
+    "id": 6,
     "character": "zundamon",
-    "text": "この店ぜんぶ自分のもの。本当に稼げるのだ…！",
-    "displayText": "この店ぜんぶ自分のもの。\n本当に稼げるのだ",
-    "scamProof": "自分の店、本物",
-    "scamMeter": 32,
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 120
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "会社も作れる。釣りは275種類。全部本当なのだ。",
-    "displayText": "会社も作れる 釣りは275種類\n全部本当なのだ",
-    "scamProof": "会社も釣り275種も本物",
-    "scamMeter": 8,
-    "scene": 3,
-    "pauseAfter": -3,
+    "text": "街の真ん中で、釣りをしてる人がいるのだ！",
+    "newsLowerLabel": "速報",
+    "newsLower": "中心部で釣りをする人物",
+    "newsTicker": "中心部では釣りをする人物の姿も",
+    "scene": 2,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 500
+      "startFrom": 900
     },
     "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.5
+      "src": "text-impact1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 180
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 106
   },
   {
-    "id": 10,
+    "id": 7,
+    "character": "metan",
+    "text": "そして今、住民の正体が判明しました。",
+    "newsFlash": "住民の正体\n判明",
+    "newsFlashSub": "速報",
+    "newsTicker": "住民の正体が判明 詳細は間もなく",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1200
+    },
+    "se": {
+      "src": "drum-roll1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 101
+  },
+  {
+    "id": 8,
     "character": "zundamon",
-    "text": "詐欺じゃなかった。よもぎサーバーの生活サーバーなのだ。",
-    "scamVerdict": "詐欺じゃなかった",
-    "scamVerdictSub": "正体は よもぎの生活サーバー",
-    "scamMeter": 0,
+    "text": "住民は、全員プレイヤーだったのだ！",
+    "newsCorrection": "事件ではありませんでした",
+    "newsCorrectionSub": "住民は全員プレイヤー",
+    "newsTone": "calm",
+    "newsTicker": "住民は全員プレイヤー 事件性はなし",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 9,
+    "character": "metan",
+    "text": "この街の正体は、よもぎサーバーの生活サーバーなの。",
+    "newsReveal": "よもぎサーバーの生活サーバー",
+    "newsRevealSub": "統合版マイクラの 生活・経済サーバー",
+    "newsTicker": "正体はよもぎサーバーの生活・経済サーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 800
+      "startFrom": 500
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.55
+      "src": "jajean1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 132
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 122
   },
   {
-    "id": 11,
-    "character": "metan",
-    "text": "参加費0円で、24時間あそべる。全部本当。",
-    "displayText": "参加費0円で24時間あそべる\n全部本当だったの",
-    "scamProof": "0円・24時間 本当でした",
-    "scamMeter": 0,
+    "id": 10,
+    "character": "zundamon",
+    "text": "土地を買って、家も店も建てられるのだ。",
+    "newsLowerLabel": "お知らせ",
+    "newsLower": "家も店も 自分で建てられる",
+    "newsTicker": "生活ワールドに土地を買って家や店を建築できる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 250
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.55
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 105
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "釣れる魚は275種類。会社も作れるわ。",
+    "newsLowerLabel": "お知らせ",
+    "newsLower": "釣れる魚275種類 会社の設立も",
+    "newsTicker": "釣れる魚は275種類 会社を設立して社長にもなれる",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 400
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
     },
     "voiceFile": "11_metan.wav",
-    "durationInFrames": 136
+    "durationInFrames": 122
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "気になったら、よもぎサーバーで検索なのだ。",
-    "displayText": "検索で 入り方がわかる",
-    "scamCta": "よもぎサーバー",
-    "scamNote": "※ボランティアで運営されているサーバーです",
+    "text": "参加費は0円。24時間あいてるのだ。",
+    "newsLowerLabel": "お知らせ",
+    "newsLower": "参加費0円 24時間あそべる",
+    "newsTicker": "参加費は0円 24時間あそべる 統合版マイクラで参加可能",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "決定ボタンを押す31.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 115
+  },
+  {
+    "id": 13,
+    "character": "metan",
+    "text": "気になったら、よもぎサーバーで検索してみて。",
+    "displayText": "検索すると 入り方がわかる",
+    "newsCta": "よもぎサーバー",
+    "newsNote": "※ボランティアで運営されているサーバーです",
+    "newsTicker": "詳細はネットで「よもぎサーバー」と検索",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -336,20 +373,21 @@ export const scriptData: ScriptLine[] = [
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "zoomIn",
       "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "backgroundStartFrom": 3000
+      "backgroundStartFrom": 2400
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 108
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 97
   },
   {
-    "id": 13,
-    "character": "metan",
-    "text": "詐欺だと思った人、正直にコメントで教えて。",
-    "scamResult": "「詐欺だ」と思った人 コメントで",
+    "id": 14,
+    "character": "zundamon",
+    "text": "次の住民は、あなたなのだ。",
+    "newsResult": "次の住民は あなた",
+    "newsTicker": "次の住民はあなた よもぎサーバーで検索",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -359,11 +397,11 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "news-title2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 104
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 83
   }
 ];
 

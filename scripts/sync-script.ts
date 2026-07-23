@@ -21,17 +21,23 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  scamHook?: string;
-  scamHookSub?: string;
-  scamPitch?: string;
-  scamAlert?: string;
-  scamMeter?: number;
-  scamProof?: string;
-  scamVerdict?: string;
-  scamVerdictSub?: string;
-  scamCta?: string;
-  scamNote?: string;
-  scamResult?: string;
+  newsTone?: string;
+  newsTicker?: string;
+  newsLive?: string;
+  newsFlash?: string;
+  newsFlashSub?: string;
+  newsLower?: string;
+  newsLowerLabel?: string;
+  newsExpert?: string;
+  newsExpertRole?: string;
+  newsUpdate?: string;
+  newsCorrection?: string;
+  newsCorrectionSub?: string;
+  newsReveal?: string;
+  newsRevealSub?: string;
+  newsCta?: string;
+  newsNote?: string;
+  newsResult?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -190,17 +196,23 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  scamHook?: string;         // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  scamHookSub?: string;      // フックの上に出す小さいバッジ
-  scamPitch?: string;        // "うまい話"カード（めたんの勧誘。金色の怪しいオファー）
-  scamAlert?: string;        // 赤い詐欺警告スタンプ（ずんだもんの「詐欺なのだ！」ツッコミ）
-  scamMeter?: number;        // 詐欺メーター（0〜100。前半で上昇、証拠で下降）
-  scamProof?: string;        // 緑の「本当でした」検証スタンプ（証拠フェーズ）
-  scamVerdict?: string;      // リビール帯（詐欺じゃなかった→正体明かし。宣伝への転換点）
-  scamVerdictSub?: string;   // リビール帯の補足行
-  scamCta?: string;          // 検索バー風CTA（文字がタイプされる）
-  scamNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
-  scamResult?: string;       // 結果＝コメント誘発リボン（冒頭に戻してループ）
+  newsTone?: "breaking" | "calm"; // 報道トーン。指定行から後ろに引き継がれる（速報＝赤 / お知らせ＝緑）
+  newsTicker?: string;       // 画面最下部のティッカー文（全行ぶんを連結して常時流す）
+  newsLive?: string;         // LIVE中継バッジの文言（例: 現場から中継）
+  newsFlash?: string;        // 巨大ヘッドライン（改行はYAML側で明示する）
+  newsFlashSub?: string;     // ヘッドラインの上に出す赤い小バッジ（例: 速報）
+  newsLower?: string;        // 下部ニューススーパー本文（1カット1本。字幕の代わりに読ませる）
+  newsLowerLabel?: string;   // ニューススーパー左のラベル（中継 / 独自 / 続報 / お知らせ など）
+  newsExpert?: string;       // 専門家プレートの名前
+  newsExpertRole?: string;   // 専門家プレートの肩書き
+  newsUpdate?: string;       // 黄色い「続報」スタンプ
+  newsCorrection?: string;   // 訂正スラム（速報トーンを解除する転換点）
+  newsCorrectionSub?: string; // 訂正スラムの補足行
+  newsReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  newsRevealSub?: string;    // リビール帯の補足行
+  newsCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  newsNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  newsResult?: string;       // 結果＝ループ用リボン（冒頭の速報に戻す）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

@@ -16,20 +16,20 @@ automation:
 bgm:
   # フリーBGM（商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_technophobia.mp3"
-  volume: 0.16
+  src: "amacha_metropolis.mp3"
+  volume: 0.17
   loop: true
-  # 怪しい勧誘・詐欺疑い型:
-  # 前半（勧誘〜詐欺疑い）は不穏なテクノで緊張、証拠フェーズ（id:7）で温かい曲に切り替えて
-  # 「後半は雰囲気を落ち着かせて宣伝」の転換を音でも作る
+  # 緊急速報・報道型:
+  # 前半（速報〜現場中継）は暗く緊迫したダークテクノで報道の緊張を作り、
+  # リビール（id:8）で温かい曲に切り替えて「後半は落ち着かせて宣伝」の転換を音でも作る
   segments:
-    # 「テクノフォビア」— やや不穏で怪しい。詐欺を疑う緊張パートに合わせる
-    - src: "amacha_technophobia.mp3"
-      volume: 0.16
+    # 「メトロポリス」— 暗く緊迫したダークテクノ。謎の巨大都市＝速報パートに合わせる
+    - src: "amacha_metropolis.mp3"
+      volume: 0.17
       loop: true
       fromLineId: 1
-    # 「旅仲間」— 温かくほのぼの。証拠で疑いが晴れる〜宣伝パートの安堵に切り替える
-    - src: "旅仲間.mp3"
-      volume: 0.2
+    # 「緩やかな朝焼け」— 穏やかでほのぼの。事件じゃなかったと分かる〜宣伝パートの安堵に切り替える
+    - src: "amacha_yuruyakanaasayake.mp3"
+      volume: 0.22
       loop: true
-      fromLineId: 7
+      fromLineId: 8

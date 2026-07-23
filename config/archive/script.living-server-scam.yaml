@@ -1,0 +1,261 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 怪しい勧誘・詐欺疑い型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「怪しい勧誘・詐欺疑い」型（前半で緊張→後半で落ち着かせて宣伝）
+#   めたんが「無料で始めて自分の店で稼げる場所がある」とずんだもんを勧誘 →
+#   ずんだもんが「絶対詐欺なのだ！」と全力で警戒し、詐欺メーターが赤く上昇（前半＝緊張・茶番）。
+#   後半、めたんが実映像で証拠を出すと "うまい話" が一つずつ「本当でした」と証明され、
+#   詐欺メーターが0まで下降 → 正体は「よもぎサーバーの生活サーバー」だったとリビール
+#   （後半＝落ち着き・宣伝）。締めは「"詐欺だと思った"人コメントで」でループ＆コメント誘発。
+#
+# ■ 視聴維持の装置
+#   1. 詐欺メーター（ScamMeter）… 前半で赤く上昇＝「もう詐欺確定寸前」の緊張。証拠で緑に下降し安堵
+#   2. うまい話カード / 詐欺警告スタンプ … めたんの勧誘とずんだの警戒が1カットずつ殴り合う茶番
+#   3. 「本当でした」検証スタンプ … 疑いが実映像で覆る快感。ギャップが宣伝への転換を自然にする
+#
+# ■ 構造上のルール
+#   - 前半（id1〜6）: pitch（うまい話カード）とalert（詐欺警告）を交互に。メーターを 25→95 まで上げる
+#   - 転換（id7）: BGMを不穏→温かいに切替。ここから証拠フェーズ。メーターが急降下する
+#   - 後半（id7〜11）: proof（本当でした）で各うまい話を実映像で証明。メーターを 60→0 へ
+#   - リビール（id10）で初めてサーバー名。id11で「参加費0円・24時間」を念押し
+#   - CTA（id12）→ 結果リボン（id13, pauseAfter:0）で冒頭にループ
+#   - サーバー側の事実（無料・24時間・土地/家/店/会社/釣り275種/車）だけを docs/yomogi で裏取り
+#   - メーターの色は 50%超で赤・50%以下で緑。ScamHud が直前の値からアニメで動かす
+#
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 生活ワールドに土地を購入して自分だけの家や店を建てられる（intro.md）
+#   - チェストショップで自分のアイテムを販売できる／会社経営ができる（intro.md, company.md）
+#   - 釣りで釣れる魚は275種類／車に乗って生活ワールドを駆け回れる（intro.md）
+#
+# 素材: public/content/生活サーバー 配下
+# 効果音: anxiety_piano / data_analysis / item-get1 / boom / jajean1 は効果音ラボ等（商用可・クレジット不要）
+
+# ===== フック（0〜3秒。怪しい勧誘で手を止める）=====
+- id: 1
+  character: metan
+  text: ねぇ、無料で始めて、稼げる場所があるんだけど。
+  scamHook: "無料で始めて\n稼げるらしい"
+  scamHookSub: って誘われた
+  scamMeter: 25
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行 id13 と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
+  se:
+    src: anxiety_piano.mp3
+    volume: 0.4
+
+# ===== 詐欺疑い連発（pitch と alert を交互に。メーター上昇）=====
+- id: 2
+  character: zundamon
+  text: うわっ、絶対詐欺なのだ！お金取られるのだ！
+  displayText: "絶対詐欺なのだ！\nお金取られるのだ"
+  scamAlert: 典型的な「うまい話」
+  scamMeter: 55
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 3
+  character: metan
+  text: 参加費は0円。1円もいらないの。
+  scamPitch: "参加費\n0円"
+  scamMeter: 68
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.45
+
+- id: 4
+  character: zundamon
+  text: 0円が一番あやしいのだ！裏があるのだ！
+  displayText: "0円が一番あやしい！\n裏があるのだ"
+  scamAlert: 「0円」が一番あやしい
+  scamMeter: 80
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/ガチャを引いている動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: anxiety_piano.mp3
+    volume: 0.4
+
+- id: 5
+  character: metan
+  text: なのに自分の店を持って、稼げるのよ。
+  scamPitch: "自分の店で\n稼げる"
+  scamMeter: 88
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.45
+
+- id: 6
+  character: zundamon
+  text: 出た副業詐欺なのだ！勧誘させられるのだ！
+  displayText: "出た副業詐欺なのだ！\n勧誘させられるのだ"
+  scamAlert: 「稼げる」は副業詐欺の常套句
+  scamMeter: 95
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: anxiety_piano.mp3
+    volume: 0.45
+
+# ===== 転換：証拠フェーズ開始（BGMを温かい曲に切替。メーター急降下）=====
+- id: 7
+  character: metan
+  text: 疑うよね。じゃあ証拠。参加費は本当に0円。
+  displayText: "じゃあ証拠。\n参加費は本当に0円。"
+  scamProof: 参加費0円は本当
+  scamMeter: 60
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 380
+  se:
+    src: data_analysis.mp3
+    volume: 0.5
+
+- id: 8
+  character: zundamon
+  text: この店ぜんぶ自分のもの。本当に稼げるのだ…！
+  displayText: "この店ぜんぶ自分のもの。\n本当に稼げるのだ"
+  scamProof: 自分の店、本物
+  scamMeter: 32
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: item-get1.mp3
+    volume: 0.5
+
+- id: 9
+  character: zundamon
+  text: 会社も作れる。釣りは275種類。全部本当なのだ。
+  displayText: "会社も作れる 釣りは275種類\n全部本当なのだ"
+  scamProof: 会社も釣り275種も本物
+  scamMeter: 8
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 500
+  se:
+    src: item-get1.mp3
+    volume: 0.5
+
+# ===== リビール（ここで初めてサーバー名）=====
+- id: 10
+  character: zundamon
+  text: 詐欺じゃなかった。よもぎサーバーの生活サーバーなのだ。
+  scamVerdict: 詐欺じゃなかった
+  scamVerdictSub: 正体は よもぎの生活サーバー
+  scamMeter: 0
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 800
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 11
+  character: metan
+  text: 参加費0円で、24時間あそべる。全部本当。
+  displayText: "参加費0円で24時間あそべる\n全部本当だったの"
+  scamProof: 0円・24時間 本当でした
+  scamMeter: 0
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: jajean1.mp3
+    volume: 0.55
+
+# ===== CTA =====
+- id: 12
+  character: zundamon
+  text: 気になったら、よもぎサーバーで検索なのだ。
+  displayText: 検索で 入り方がわかる
+  scamCta: よもぎサーバー
+  # 「詐欺じゃない」と言い切る動画なので、勧誘に見えないよう運営形態を小さく明示する
+  # （docs/yomogi/intro.md: 運営形態はボランティア）
+  scamNote: ※ボランティアで運営されているサーバーです
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+# ===== 結果＝ループ（冒頭の勧誘に戻る。映像も id1 と同じ位置）=====
+- id: 13
+  character: metan
+  text: 詐欺だと思った人、正直にコメントで教えて。
+  scamResult: 「詐欺だ」と思った人 コメントで
+  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ id1 に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45
