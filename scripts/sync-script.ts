@@ -38,6 +38,25 @@ interface ScriptLine {
   newsCta?: string;
   newsNote?: string;
   newsResult?: string;
+  courtTone?: string;
+  courtTicker?: string;
+  courtGuilt?: number;
+  courtRole?: string;
+  courtFlash?: string;
+  courtFlashSub?: string;
+  courtCharge?: string;
+  courtChargeSub?: string;
+  courtObjection?: string;
+  courtLower?: string;
+  courtLowerLabel?: string;
+  courtStamp?: string;
+  courtJudgment?: string;
+  courtJudgmentSub?: string;
+  courtReveal?: string;
+  courtRevealSub?: string;
+  courtCta?: string;
+  courtNote?: string;
+  courtResult?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -213,6 +232,26 @@ export interface ScriptLine {
   newsCta?: string;          // 検索バー風CTA（文字がタイプされる）
   newsNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   newsResult?: string;       // 結果＝ループ用リボン（冒頭の速報に戻す）
+  // ---- 裁判・尋問型（CourtHud）----
+  courtTone?: "trial" | "verdict"; // 法廷トーン。指定行から後ろに引き継がれる（公判中＝臙脂 / 閉廷＝緑）
+  courtTicker?: string;      // 画面最下部の速記録（全行ぶんを連結して常時流す）
+  courtGuilt?: number;       // 有罪の心証（0〜100）。指定がない行は直前の値を引き継ぐ
+  courtRole?: string;        // 発言者プレートの肩書き（裁判長 / 検察官 / 被告人）
+  courtFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  courtFlashSub?: string;    // テロップの上に出す赤い小バッジ（例: 被告の証言）
+  courtCharge?: string;      // 起訴状ボードの罪名
+  courtChargeSub?: string;   // 起訴状ボードの補足行
+  courtObjection?: string;   // 「異議あり！」スラム（集中線つき）
+  courtLower?: string;       // 下部の証拠プレート本文（1カット1本。字幕の代わりに読ませる）
+  courtLowerLabel?: string;  // 証拠プレート左のラベル（証拠1 / 尋問 / お知らせ など）
+  courtStamp?: string;       // 赤い丸印の認定スタンプ（事実 など）
+  courtJudgment?: string;    // 判決スラム（法廷トーンを解除する転換点）
+  courtJudgmentSub?: string; // 判決スラムの補足行
+  courtReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  courtRevealSub?: string;   // リビール帯の補足行
+  courtCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  courtNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  courtResult?: string;      // 結果＝ループ用リボン（冒頭の開廷に戻す）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

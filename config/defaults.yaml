@@ -16,20 +16,20 @@ automation:
 bgm:
   # フリーBGM（商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_metropolis.mp3"
+  src: "amacha_spadenoheitai.mp3"
   volume: 0.17
   loop: true
-  # 緊急速報・報道型:
-  # 前半（速報〜現場中継）は暗く緊迫したダークテクノで報道の緊張を作り、
-  # リビール（id:8）で温かい曲に切り替えて「後半は落ち着かせて宣伝」の転換を音でも作る
+  # 裁判・尋問型:
+  # 前半（開廷〜証拠フェーズ）は緊迫した行進曲で法廷の張りつめた空気を作り、
+  # 判決（id:11）で明るい曲に切り替えて「後半は落ち着かせて宣伝」の転換を音でも作る
   segments:
-    # 「メトロポリス」— 暗く緊迫したダークテクノ。謎の巨大都市＝速報パートに合わせる
-    - src: "amacha_metropolis.mp3"
+    # 「スペードの兵隊」— 激しい行進曲。開廷〜尋問の緊張に合わせる
+    - src: "amacha_spadenoheitai.mp3"
       volume: 0.17
       loop: true
       fromLineId: 1
-    # 「緩やかな朝焼け」— 穏やかでほのぼの。事件じゃなかったと分かる〜宣伝パートの安堵に切り替える
-    - src: "amacha_yuruyakanaasayake.mp3"
-      volume: 0.22
+    # 「ハッピータイム」— 明るいアンサンブル。無罪判決の解放感〜宣伝パートに切り替える
+    - src: "amacha_happytime.mp3"
+      volume: 0.2
       loop: true
-      fromLineId: 8
+      fromLineId: 11

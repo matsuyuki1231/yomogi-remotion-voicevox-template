@@ -35,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_metropolis.mp3","volume":0.17,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_spadenoheitai.mp3","volume":0.17,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_metropolis.mp3","volume":0.17,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.22,"loop":true,"fromLineId":8}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_spadenoheitai.mp3","volume":0.17,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":11}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -63,6 +63,26 @@ export interface ScriptLine {
   newsCta?: string;          // 検索バー風CTA（文字がタイプされる）
   newsNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   newsResult?: string;       // 結果＝ループ用リボン（冒頭の速報に戻す）
+  // ---- 裁判・尋問型（CourtHud）----
+  courtTone?: "trial" | "verdict"; // 法廷トーン。指定行から後ろに引き継がれる（公判中＝臙脂 / 閉廷＝緑）
+  courtTicker?: string;      // 画面最下部の速記録（全行ぶんを連結して常時流す）
+  courtGuilt?: number;       // 有罪の心証（0〜100）。指定がない行は直前の値を引き継ぐ
+  courtRole?: string;        // 発言者プレートの肩書き（裁判長 / 検察官 / 被告人）
+  courtFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  courtFlashSub?: string;    // テロップの上に出す赤い小バッジ（例: 被告の証言）
+  courtCharge?: string;      // 起訴状ボードの罪名
+  courtChargeSub?: string;   // 起訴状ボードの補足行
+  courtObjection?: string;   // 「異議あり！」スラム（集中線つき）
+  courtLower?: string;       // 下部の証拠プレート本文（1カット1本。字幕の代わりに読ませる）
+  courtLowerLabel?: string;  // 証拠プレート左のラベル（証拠1 / 尋問 / お知らせ など）
+  courtStamp?: string;       // 赤い丸印の認定スタンプ（事実 など）
+  courtJudgment?: string;    // 判決スラム（法廷トーンを解除する転換点）
+  courtJudgmentSub?: string; // 判決スラムの補足行
+  courtReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  courtRevealSub?: string;   // リビール帯の補足行
+  courtCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  courtNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  courtResult?: string;      // 結果＝ループ用リボン（冒頭の開廷に戻す）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -91,329 +111,359 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "速報です。毎週土曜の夜、住民が消える村があります。",
-    "newsFlash": "毎週土曜の夜\n住民が消える村",
-    "newsFlashSub": "速報",
-    "newsTone": "breaking",
-    "newsTicker": "【速報】毎週土曜の夜 住民が次々と消える村",
+    "text": "開廷します。被告人の証言が、こちらです。",
+    "courtRole": "裁判長",
+    "courtFlash": "マイクラの中で\n会社を経営してる",
+    "courtFlashSub": "被告の証言",
+    "courtTone": "trial",
+    "courtTicker": "開廷 被告人は「マイクラの中で会社を経営している」と証言",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 40
+      "startFrom": 3000
+    },
+    "se": {
+      "src": "hyoushigi1.mp3",
+      "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 141
+    "durationInFrames": 109
   },
   {
     "id": 2,
-    "character": "zundamon",
-    "text": "現場なのだ！全員、弓を持って歩いてるのだ！",
-    "newsLive": "現場から中継",
-    "newsLowerLabel": "中継",
-    "newsLower": "住民全員が「弓」を所持",
-    "newsTicker": "現場では住民全員が弓を所持",
+    "character": "metan",
+    "text": "そんなわけ、ないでしょう。ホラ吹きの疑いで起訴します。",
+    "courtRole": "検察官",
+    "courtCharge": "ホラ吹きの疑い",
+    "courtChargeSub": "マイクラでそこまでできるわけがない",
+    "courtGuilt": 98,
+    "courtTicker": "検察官「そんな話があるわけがない」ホラ吹きの疑いで起訴",
     "scene": 2,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 30
+      "startFrom": 200
     },
     "se": {
-      "src": "news-title2.mp3",
-      "volume": 0.45
+      "src": "ban1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 136
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 118
   },
   {
     "id": 3,
-    "character": "metan",
-    "text": "当たれば一撃で倒れる弓だそうです。",
-    "newsLowerLabel": "独自",
-    "newsLower": "当たれば一撃「一撃弓」",
-    "newsTicker": "配布されているのは当たれば一撃の弓",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 40
-    },
-    "se": {
-      "src": "news-title3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "03_metan.wav",
-    "durationInFrames": 75
-  },
-  {
-    "id": 4,
     "character": "zundamon",
-    "text": "全員が、一か所に集められたのだ！",
-    "newsUpdate": "緊急招集",
-    "newsLowerLabel": "続報",
-    "newsLower": "突然の「会議」が招集",
-    "newsTicker": "突然の会議が招集され全員が一か所に",
+    "text": "異議ありなのだ！全部本当なのだ！",
+    "courtRole": "被告人",
+    "courtObjection": "異議あり！",
+    "courtGuilt": 98,
+    "courtTicker": "被告人「異議あり ぜんぶ本当だ」と全面的に争う姿勢",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
       "startFrom": 60
     },
     "se": {
-      "src": "text-impact1.mp3",
+      "src": "shock1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 94
+  },
+  {
+    "id": 4,
+    "character": "zundamon",
+    "text": "証拠その1。これが会社の一覧なのだ。",
+    "courtRole": "被告人",
+    "courtLowerLabel": "証拠1",
+    "courtLower": "会社が実在している",
+    "courtStamp": "事実",
+    "courtGuilt": 80,
+    "courtTicker": "証拠第1号 生活ワールドに実在する会社の一覧を提出 事実と認定",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1690
+    },
+    "se": {
+      "src": "correct1.mp3",
       "volume": 0.4
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 99
+    "durationInFrames": 109
   },
   {
     "id": 5,
     "character": "metan",
-    "text": "専門家によると、この中に人狼が紛れているとか。",
-    "newsExpertRole": "専門家",
-    "newsExpert": "人狼事件担当 四国めたん",
-    "newsLowerLabel": "解説",
-    "newsLower": "この中に「人狼」が潜伏か",
-    "newsTicker": "専門家「この中に人狼が紛れている」",
+    "text": "では、お店は？持てるわけ、ないでしょう。",
+    "courtRole": "検察官",
+    "courtLowerLabel": "尋問",
+    "courtLower": "自分の店を持っている？",
+    "courtGuilt": 80,
+    "courtTicker": "検察官が尋問「自分の店を持っているというのは本当か」",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 180
+      "startFrom": 170
     },
     "se": {
-      "src": "news-title1.mp3",
-      "volume": 0.4
+      "src": "question1.mp3",
+      "volume": 0.45
     },
     "voiceFile": "05_metan.wav",
-    "durationInFrames": 116
+    "durationInFrames": 104
   },
   {
     "id": 6,
     "character": "zundamon",
-    "text": "また1人減ったのだ！誰が嘘をついてるのだ！",
-    "newsLowerLabel": "速報",
-    "newsLower": "生存者が次々に減少",
-    "newsTicker": "生存者は次々に減少 犯人はこの中に",
+    "text": "証拠その2。無人の店を持ってるのだ。",
+    "courtRole": "被告人",
+    "courtLowerLabel": "証拠2",
+    "courtLower": "寝てる間も売れる無人店",
+    "courtStamp": "事実",
+    "courtGuilt": 58,
+    "courtTicker": "証拠第2号 チェストショップによる無人販売店の経営を確認",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 260
     },
     "se": {
-      "src": "anxiety_piano.mp3",
+      "src": "correct1.mp3",
       "volume": 0.4
     },
     "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 111
+    "durationInFrames": 103
   },
   {
     "id": 7,
-    "character": "metan",
-    "text": "そして今、事件の全容が判明しました。",
-    "newsFlash": "事件の全容\n判明",
-    "newsFlashSub": "速報",
-    "newsTicker": "事件の全容が判明 詳細は間もなく",
+    "character": "zundamon",
+    "text": "証拠その3。車で移動してるのだ。",
+    "courtRole": "被告人",
+    "courtLowerLabel": "証拠3",
+    "courtLower": "車を運転して移動",
+    "courtStamp": "事実",
+    "courtGuilt": 36,
+    "courtTicker": "証拠第3号 生活ワールドを車で走行していることを確認",
     "scene": 2,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 120
     },
     "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.45
+      "src": "people-shout-oo2.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 96
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 99
   },
   {
     "id": 8,
     "character": "zundamon",
-    "text": "全員、ゲームで遊んでるだけだったのだ！",
-    "newsCorrection": "事件ではありませんでした",
-    "newsCorrectionSub": "全員マイクラで遊んでいるだけ",
-    "newsTone": "calm",
-    "newsTicker": "全員がマイクラで遊んでいるだけ 事件性はなし",
-    "scene": 3,
-    "pauseAfter": -3,
+    "text": "証拠その4。魚は275種類なのだ。",
+    "courtRole": "被告人",
+    "courtLowerLabel": "証拠4",
+    "courtLower": "釣れる魚は275種類",
+    "courtStamp": "事実",
+    "courtGuilt": 18,
+    "courtTicker": "証拠第4号 釣り上げた魚は275種類にのぼる",
+    "scene": 2,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 330
+      "startFrom": 900
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.5
+      "src": "correct1.mp3",
+      "volume": 0.4
     },
     "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 111
+    "durationInFrames": 130
   },
   {
     "id": 9,
     "character": "metan",
-    "text": "正体は、よもぎサーバーのマイクラ人狼イベント。",
-    "newsReveal": "よもぎサーバーのマイクラ人狼",
-    "newsRevealSub": "統合版マイクラで 毎週開催",
-    "newsTicker": "正体はよもぎサーバーのマイクラ人狼イベント",
+    "text": "では最後に。参加費は、いくらなの？",
+    "courtRole": "検察官",
+    "courtLowerLabel": "最終尋問",
+    "courtLower": "参加費はいくら？",
+    "courtGuilt": 18,
+    "courtTicker": "最終尋問 検察官「参加費はいくらなのか」",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1200
+    },
+    "se": {
+      "src": "tympani-roll1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 94
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "ゼロ円なのだ。参加は無料なのだ。",
+    "courtRole": "被告人",
+    "courtFlash": "参加費は\n0円",
+    "courtFlashSub": "被告人の回答",
+    "courtStamp": "事実",
+    "courtGuilt": 0,
+    "courtTicker": "被告人「参加費は0円」 事実と認定され心証はゼロパーセントに",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 93
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "判決。被告人は、無罪。",
+    "courtRole": "裁判長",
+    "courtJudgment": "無罪",
+    "courtJudgmentSub": "証言はすべて事実と認められる",
+    "courtTone": "verdict",
+    "courtTicker": "判決 被告人は無罪 証言はすべて事実と認められる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 170
+      "startFrom": 800
+    },
+    "se": {
+      "src": "people-performance-cheer1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 78
+  },
+  {
+    "id": 12,
+    "character": "metan",
+    "text": "この街の正体は、よもぎサーバーの生活サーバー。",
+    "courtReveal": "よもぎサーバーの生活サーバー",
+    "courtRevealSub": "統合版マイクラの 生活・経済サーバー",
+    "courtTicker": "被告人が暮らしていたのはよもぎサーバーの生活サーバー",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 420
     },
     "se": {
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 117
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "遊べる役職は、41種類もあるのだ。",
-    "newsLowerLabel": "お知らせ",
-    "newsLower": "遊べる役職は41種類",
-    "newsTicker": "遊べる役職は41種類 毎回ちがう展開に",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 330
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 114
-  },
-  {
-    "id": 11,
-    "character": "metan",
-    "text": "開催は毎週土曜の夜9時半。参加費は0円よ。",
-    "newsLowerLabel": "お知らせ",
-    "newsLower": "毎週土曜21:30〜 参加費0円",
-    "newsTicker": "開催は毎週土曜21時30分から 参加費は0円",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 330
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 129
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "初めてでも、みんなが教えてくれるのだ。",
-    "newsLowerLabel": "お知らせ",
-    "newsLower": "初参加でもサポートあり",
-    "newsTicker": "主催者や参加者のサポートがあり初参加でも安心",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 260
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 100
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 115
   },
   {
     "id": 13,
+    "character": "zundamon",
+    "text": "24時間いつでも、家も店も建てられるのだ。",
+    "courtLowerLabel": "お知らせ",
+    "courtLower": "24時間 家も店も建てられる",
+    "courtTicker": "生活ワールドに土地を買って家や店を建築できる 24時間あそべる",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 250
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 124
+  },
+  {
+    "id": 14,
     "character": "metan",
     "text": "気になったら、よもぎサーバーで検索してみて。",
-    "displayText": "検索すると 参加方法がわかる",
-    "newsCta": "よもぎサーバー",
-    "newsNote": "※ボランティアで運営されているサーバーです",
-    "newsTicker": "詳細はネットで「よもぎサーバー」と検索",
+    "displayText": "検索すると 入り方がわかる",
+    "courtCta": "よもぎサーバー",
+    "courtNote": "※ボランティアで運営されているサーバーです",
+    "courtTicker": "詳細はネットで「よもぎサーバー」と検索",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "zoomIn",
-      "backgroundSrc": "マイクラ人狼/会議中の風景.mp4",
-      "backgroundStartFrom": 200
+      "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "backgroundStartFrom": 2400
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "13_metan.wav",
+    "voiceFile": "14_metan.wav",
     "durationInFrames": 97
   },
   {
-    "id": 14,
+    "id": 15,
     "character": "zundamon",
-    "text": "次に消えるのは、あなたなのだ。",
-    "newsResult": "次に消えるのは あなた",
-    "newsTicker": "次に消えるのはあなた よもぎサーバーで検索",
+    "text": "次の被告人は、あなたなのだ。",
+    "courtResult": "次の被告人は あなた",
+    "courtTicker": "次の被告人はあなた よもぎサーバーで検索",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 40
+      "startFrom": 3000
     },
     "se": {
-      "src": "news-title2.mp3",
-      "volume": 0.45
+      "src": "hyoushigi1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 82
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "えっ？",
-    "displayText": "えっ？",
-    "scene": 3,
-    "pauseAfter": 12,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 95
-    },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 16
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 88
   }
 ];
 

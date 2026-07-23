@@ -18,9 +18,31 @@ import {
   NewsHud,
   NewsTone,
 } from "./components/NewsHud";
+import {
+  CourtBackdrop,
+  CourtScrim,
+  CourtChrome,
+  CourtHud,
+  CourtTone,
+} from "./components/CourtHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
+
+// 使っているフォーマットをスクリプトの中身から判定する。
+// court* のフィールドが1つでもあれば裁判・尋問型、なければ緊急速報・報道型。
+const FORMAT: "news" | "court" = scriptData.some((line) =>
+  Object.keys(line).some((key) => key.startsWith("court"))
+)
+  ? "court"
+  : "news";
+
+// 発言者プレートの氏名（裁判・尋問型で使う）
+const SPEAKER_NAMES: Record<string, string> = {
+  zundamon: "ずんだもん",
+  metan: "四国めたん",
+  tsumugi: "春日部つむぎ",
+};
 
 // 再生速度を考慮したフレーム数を計算
 const getAdjustedFrames = (frames: number): number =>
@@ -98,9 +120,31 @@ export const Main: React.FC = () => {
     });
   })();
 
-  // ティッカーは全行ぶんの newsTicker を1本に連結し、動画を通して途切れず流し続ける
+  // ---- 法廷トーン（公判中 / 閉廷）を解決。判決の行から後ろに引き継がれる ----
+  const courtToneResolved: CourtTone[] = (() => {
+    let current: CourtTone = "trial";
+    return scriptData.map((line) => {
+      if (line.courtTone === "trial" || line.courtTone === "verdict") {
+        current = line.courtTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 有罪の心証（0〜100）を解決。指定がない行は直前の値を引き継ぐ ----
+  const guiltResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.courtGuilt === "number") {
+        current = line.courtGuilt;
+      }
+      return current;
+    });
+  })();
+
+  // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
   const tickerText = scriptData
-    .map((line) => line.newsTicker)
+    .map((line) => (FORMAT === "court" ? line.courtTicker : line.newsTicker))
     .filter((t): t is string => !!t)
     .join("　／　");
 
@@ -119,17 +163,44 @@ export const Main: React.FC = () => {
       line.newsResult
     );
 
-  // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
-  // 報道型ではニューススーパー・ヘッドライン・リビール帯がテロップを兼ねるので、
-  // 字幕を出すのは検索CTAの行だけになる。
-  const hidesSubtitle = (line: ScriptLine): boolean =>
+  // 法廷HUDのパーツが1つでも出るか
+  const hasCourtHud = (line: ScriptLine): boolean =>
     !!(
-      line.newsFlash ||
-      line.newsLower ||
-      line.newsCorrection ||
-      line.newsReveal ||
-      line.newsResult
+      line.courtRole ||
+      line.courtFlash ||
+      line.courtCharge ||
+      line.courtObjection ||
+      line.courtLower ||
+      line.courtStamp ||
+      line.courtJudgment ||
+      line.courtReveal ||
+      line.courtCta ||
+      line.courtNote ||
+      line.courtResult
     );
+
+  // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
+  // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
+  // 裁判型では証拠プレート・起訴状・判決スラムがテロップを兼ねるので、
+  // どちらも字幕を出すのは検索CTAの行だけになる。
+  const hidesSubtitle = (line: ScriptLine): boolean =>
+    FORMAT === "court"
+      ? !!(
+          line.courtFlash ||
+          line.courtCharge ||
+          line.courtObjection ||
+          line.courtLower ||
+          line.courtJudgment ||
+          line.courtReveal ||
+          line.courtResult
+        )
+      : !!(
+          line.newsFlash ||
+          line.newsLower ||
+          line.newsCorrection ||
+          line.newsReveal ||
+          line.newsResult
+        );
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -149,7 +220,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <NewsBackdrop />
+      {FORMAT === "court" ? <CourtBackdrop /> : <NewsBackdrop />}
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -206,47 +277,89 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <NewsScrim />
+            {FORMAT === "court" ? <CourtScrim /> : <NewsScrim />}
           </Sequence>
         );
       })}
 
-      {/* 常設の報道UI（速報ヘッダ帯・ティッカー・走査線）。
+      {/* 常設のUI（ヘッダ帯・ティッカー・心証メーター等）。
           Sequence の外に置いてグローバルなフレームで動かすので、
-          カットが変わってもティッカーと時計が途切れない */}
-      <NewsChrome
-        tone={currentIndex >= 0 ? toneResolved[currentIndex] : "breaking"}
-        ticker={tickerText}
-      />
-
-      {/* セリフごとのHUD（LIVEバッジ・ヘッドライン・ニューススーパー・訂正・リビール・CTA） */}
-      {currentLine && hasHud(currentLine) && (
-        <Sequence
-          key={`hud-${currentLine.id}`}
-          from={currentLineStartFrame}
-          durationInFrames={getLineSpan(currentLine)}
-        >
-          <NewsHud
-            tone={toneResolved[currentIndex]}
-            live={currentLine.newsLive}
-            flash={currentLine.newsFlash}
-            flashSub={currentLine.newsFlashSub}
-            lower={currentLine.newsLower}
-            lowerLabel={currentLine.newsLowerLabel}
-            expert={currentLine.newsExpert}
-            expertRole={currentLine.newsExpertRole}
-            update={currentLine.newsUpdate}
-            correction={currentLine.newsCorrection}
-            correctionSub={currentLine.newsCorrectionSub}
-            reveal={currentLine.newsReveal}
-            revealSub={currentLine.newsRevealSub}
-            cta={currentLine.newsCta}
-            note={currentLine.newsNote}
-            result={currentLine.newsResult}
-            durationInFrames={getLineSpan(currentLine)}
-          />
-        </Sequence>
+          カットが変わってもティッカーやメーターが途切れない */}
+      {FORMAT === "court" ? (
+        <CourtChrome
+          tone={currentIndex >= 0 ? courtToneResolved[currentIndex] : "trial"}
+          ticker={tickerText}
+          guilt={currentIndex >= 0 ? guiltResolved[currentIndex] : null}
+          guiltPrev={currentIndex > 0 ? guiltResolved[currentIndex - 1] : null}
+          lineStartFrame={currentLineStartFrame}
+        />
+      ) : (
+        <NewsChrome
+          tone={currentIndex >= 0 ? toneResolved[currentIndex] : "breaking"}
+          ticker={tickerText}
+        />
       )}
+
+      {/* セリフごとのHUD */}
+      {FORMAT === "court"
+        ? currentLine &&
+          hasCourtHud(currentLine) && (
+            <Sequence
+              key={`hud-${currentLine.id}`}
+              from={currentLineStartFrame}
+              durationInFrames={getLineSpan(currentLine)}
+            >
+              <CourtHud
+                tone={courtToneResolved[currentIndex]}
+                role={currentLine.courtRole}
+                roleName={SPEAKER_NAMES[currentLine.character]}
+                flash={currentLine.courtFlash}
+                flashSub={currentLine.courtFlashSub}
+                charge={currentLine.courtCharge}
+                chargeSub={currentLine.courtChargeSub}
+                objection={currentLine.courtObjection}
+                lower={currentLine.courtLower}
+                lowerLabel={currentLine.courtLowerLabel}
+                stamp={currentLine.courtStamp}
+                judgment={currentLine.courtJudgment}
+                judgmentSub={currentLine.courtJudgmentSub}
+                reveal={currentLine.courtReveal}
+                revealSub={currentLine.courtRevealSub}
+                cta={currentLine.courtCta}
+                note={currentLine.courtNote}
+                result={currentLine.courtResult}
+                durationInFrames={getLineSpan(currentLine)}
+              />
+            </Sequence>
+          )
+        : currentLine &&
+          hasHud(currentLine) && (
+            <Sequence
+              key={`hud-${currentLine.id}`}
+              from={currentLineStartFrame}
+              durationInFrames={getLineSpan(currentLine)}
+            >
+              <NewsHud
+                tone={toneResolved[currentIndex]}
+                live={currentLine.newsLive}
+                flash={currentLine.newsFlash}
+                flashSub={currentLine.newsFlashSub}
+                lower={currentLine.newsLower}
+                lowerLabel={currentLine.newsLowerLabel}
+                expert={currentLine.newsExpert}
+                expertRole={currentLine.newsExpertRole}
+                update={currentLine.newsUpdate}
+                correction={currentLine.newsCorrection}
+                correctionSub={currentLine.newsCorrectionSub}
+                reveal={currentLine.newsReveal}
+                revealSub={currentLine.newsRevealSub}
+                cta={currentLine.newsCta}
+                note={currentLine.newsNote}
+                result={currentLine.newsResult}
+                durationInFrames={getLineSpan(currentLine)}
+              />
+            </Sequence>
+          )}
 
       {/* 字幕（画面下部） */}
       {currentLine && !hidesSubtitle(currentLine) && (
