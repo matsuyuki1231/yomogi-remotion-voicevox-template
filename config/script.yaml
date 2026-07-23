@@ -275,7 +275,7 @@
   newsResult: 次に消えるのは あなた
   newsTicker: 次に消えるのはあなた よもぎサーバーで検索
   scene: 3
-  # 間を作らず言い終わりで即終了させる。すぐ id1 に戻るのでループが締まる
+  # 間を作らず、そのまま めたんの「えっ？」に食い込ませる
   pauseAfter: 0
   visual:
     type: video
@@ -285,3 +285,19 @@
   se:
     src: news-title2.mp3
     volume: 0.45
+
+# ===== オチ（ずんだの一言に めたんが素で戸惑う。0.5秒の間だけ置いてループへ）=====
+# リボンは id14 で消え、この行は字幕の「えっ？」だけ。SEは入れない（間で笑わせる）
+- id: 15
+  character: metan
+  text: えっ？
+  displayText: えっ？
+  scene: 3
+  # 音声が0.3秒しかないので、ほんの少しだけ間を足して"えっ？"を聞かせる（0.3秒弱）
+  pauseAfter: 12
+  visual:
+    type: video
+    src: マイクラ人狼/会議中の風景.mp4
+    animation: none
+    # id14 の続き（40＋id14の尺）から。カットせず地続きに見せる
+    startFrom: 95

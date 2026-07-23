@@ -398,6 +398,22 @@ export const scriptData: ScriptLine[] = [
     },
     "voiceFile": "14_zundamon.wav",
     "durationInFrames": 82
+  },
+  {
+    "id": 15,
+    "character": "metan",
+    "text": "えっ？",
+    "displayText": "えっ？",
+    "scene": 3,
+    "pauseAfter": 12,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 95
+    },
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 16
   }
 ];
 
