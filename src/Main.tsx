@@ -25,17 +25,29 @@ import {
   CourtHud,
   CourtTone,
 } from "./components/CourtHud";
+import {
+  ShopBackdrop,
+  ShopScrim,
+  ShopChrome,
+  ShopHud,
+  ShopTone,
+} from "./components/ShopHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 // 使っているフォーマットをスクリプトの中身から判定する。
-// court* のフィールドが1つでもあれば裁判・尋問型、なければ緊急速報・報道型。
-const FORMAT: "news" | "court" = scriptData.some((line) =>
-  Object.keys(line).some((key) => key.startsWith("court"))
+// shop* があればテレビショッピング・通販型、court* があれば裁判・尋問型、
+// どちらもなければ緊急速報・報道型。
+const FORMAT: "news" | "court" | "shop" = scriptData.some((line) =>
+  Object.keys(line).some((key) => key.startsWith("shop"))
 )
-  ? "court"
-  : "news";
+  ? "shop"
+  : scriptData.some((line) =>
+        Object.keys(line).some((key) => key.startsWith("court"))
+      )
+    ? "court"
+    : "news";
 
 // 発言者プレートの氏名（裁判・尋問型で使う）
 const SPEAKER_NAMES: Record<string, string> = {
@@ -142,9 +154,48 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- 通販トーン（生放送 / ご案内）を解決。値段発表の行から後ろに引き継がれる ----
+  const shopToneResolved: ShopTone[] = (() => {
+    let current: ShopTone = "live";
+    return scriptData.map((line) => {
+      if (line.shopTone === "live" || line.shopTone === "info") {
+        current = line.shopTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 値札（？？？円 → 0円）を解決。指定がない行は直前の値を引き継ぐ ----
+  const priceResolved: (string | null)[] = (() => {
+    let current: string | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.shopPrice === "string") {
+        current = line.shopPrice;
+      }
+      return current;
+    });
+  })();
+
+  // ---- セット内容の点数を解決。指定がない行は直前の値を引き継ぐ ----
+  const countResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.shopCount === "number") {
+        current = line.shopCount;
+      }
+      return current;
+    });
+  })();
+
   // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
   const tickerText = scriptData
-    .map((line) => (FORMAT === "court" ? line.courtTicker : line.newsTicker))
+    .map((line) =>
+      FORMAT === "shop"
+        ? line.shopTicker
+        : FORMAT === "court"
+          ? line.courtTicker
+          : line.newsTicker
+    )
     .filter((t): t is string => !!t)
     .join("　／　");
 
@@ -179,28 +230,51 @@ export const Main: React.FC = () => {
       line.courtResult
     );
 
+  // 通販HUDのパーツが1つでも出るか
+  const hasShopHud = (line: ScriptLine): boolean =>
+    !!(
+      line.shopFlash ||
+      line.shopBonus ||
+      line.shopItem ||
+      line.shopStamp ||
+      line.shopPriceSlam ||
+      line.shopReveal ||
+      line.shopCta ||
+      line.shopNote ||
+      line.shopResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムがテロップを兼ねるので、
   // どちらも字幕を出すのは検索CTAの行だけになる。
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    FORMAT === "court"
+    FORMAT === "shop"
       ? !!(
-          line.courtFlash ||
-          line.courtCharge ||
-          line.courtObjection ||
-          line.courtLower ||
-          line.courtJudgment ||
-          line.courtReveal ||
-          line.courtResult
+          line.shopFlash ||
+          line.shopBonus ||
+          line.shopItem ||
+          line.shopPriceSlam ||
+          line.shopReveal ||
+          line.shopResult
         )
-      : !!(
-          line.newsFlash ||
-          line.newsLower ||
-          line.newsCorrection ||
-          line.newsReveal ||
-          line.newsResult
-        );
+      : FORMAT === "court"
+        ? !!(
+            line.courtFlash ||
+            line.courtCharge ||
+            line.courtObjection ||
+            line.courtLower ||
+            line.courtJudgment ||
+            line.courtReveal ||
+            line.courtResult
+          )
+        : !!(
+            line.newsFlash ||
+            line.newsLower ||
+            line.newsCorrection ||
+            line.newsReveal ||
+            line.newsResult
+          );
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -220,7 +294,13 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      {FORMAT === "court" ? <CourtBackdrop /> : <NewsBackdrop />}
+      {FORMAT === "shop" ? (
+        <ShopBackdrop />
+      ) : FORMAT === "court" ? (
+        <CourtBackdrop />
+      ) : (
+        <NewsBackdrop />
+      )}
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -277,7 +357,13 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            {FORMAT === "court" ? <CourtScrim /> : <NewsScrim />}
+            {FORMAT === "shop" ? (
+              <ShopScrim />
+            ) : FORMAT === "court" ? (
+              <CourtScrim />
+            ) : (
+              <NewsScrim />
+            )}
           </Sequence>
         );
       })}
@@ -285,7 +371,17 @@ export const Main: React.FC = () => {
       {/* 常設のUI（ヘッダ帯・ティッカー・心証メーター等）。
           Sequence の外に置いてグローバルなフレームで動かすので、
           カットが変わってもティッカーやメーターが途切れない */}
-      {FORMAT === "court" ? (
+      {FORMAT === "shop" ? (
+        <ShopChrome
+          tone={currentIndex >= 0 ? shopToneResolved[currentIndex] : "live"}
+          ticker={tickerText}
+          price={currentIndex >= 0 ? priceResolved[currentIndex] : null}
+          pricePrev={currentIndex > 0 ? priceResolved[currentIndex - 1] : null}
+          count={currentIndex >= 0 ? countResolved[currentIndex] : null}
+          countPrev={currentIndex > 0 ? countResolved[currentIndex - 1] : null}
+          lineStartFrame={currentLineStartFrame}
+        />
+      ) : FORMAT === "court" ? (
         <CourtChrome
           tone={currentIndex >= 0 ? courtToneResolved[currentIndex] : "trial"}
           ticker={tickerText}
@@ -301,7 +397,35 @@ export const Main: React.FC = () => {
       )}
 
       {/* セリフごとのHUD */}
-      {FORMAT === "court"
+      {FORMAT === "shop" ? (
+        currentLine &&
+        hasShopHud(currentLine) && (
+          <Sequence
+            key={`hud-${currentLine.id}`}
+            from={currentLineStartFrame}
+            durationInFrames={getLineSpan(currentLine)}
+          >
+            <ShopHud
+              tone={shopToneResolved[currentIndex]}
+              flash={currentLine.shopFlash}
+              flashSub={currentLine.shopFlashSub}
+              bonus={currentLine.shopBonus}
+              bonusSub={currentLine.shopBonusSub}
+              item={currentLine.shopItem}
+              itemLabel={currentLine.shopItemLabel}
+              stamp={currentLine.shopStamp}
+              priceSlam={currentLine.shopPriceSlam}
+              priceSlamSub={currentLine.shopPriceSlamSub}
+              reveal={currentLine.shopReveal}
+              revealSub={currentLine.shopRevealSub}
+              cta={currentLine.shopCta}
+              note={currentLine.shopNote}
+              result={currentLine.shopResult}
+              durationInFrames={getLineSpan(currentLine)}
+            />
+          </Sequence>
+        )
+      ) : FORMAT === "court"
         ? currentLine &&
           hasCourtHud(currentLine) && (
             <Sequence

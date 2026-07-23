@@ -57,6 +57,24 @@ interface ScriptLine {
   courtCta?: string;
   courtNote?: string;
   courtResult?: string;
+  shopTone?: string;
+  shopTicker?: string;
+  shopPrice?: string;
+  shopCount?: number;
+  shopFlash?: string;
+  shopFlashSub?: string;
+  shopBonus?: string;
+  shopBonusSub?: string;
+  shopItem?: string;
+  shopItemLabel?: string;
+  shopStamp?: string;
+  shopPriceSlam?: string;
+  shopPriceSlamSub?: string;
+  shopReveal?: string;
+  shopRevealSub?: string;
+  shopCta?: string;
+  shopNote?: string;
+  shopResult?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -252,6 +270,25 @@ export interface ScriptLine {
   courtCta?: string;         // 検索バー風CTA（文字がタイプされる）
   courtNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   courtResult?: string;      // 結果＝ループ用リボン（冒頭の開廷に戻す）
+  // ---- テレビショッピング・通販型（ShopHud）----
+  shopTone?: "live" | "info"; // 通販トーン。指定行から後ろに引き継がれる（生放送＝赤 / ご案内＝緑）
+  shopTicker?: string;       // 画面最下部のティッカー文（全行ぶんを連結して常時流す）
+  shopPrice?: string;        // 常設の値札の文字列（？？？円 → 0円）。指定がない行は直前の値を引き継ぐ
+  shopCount?: number;        // セット内容の点数。指定がない行は直前の値を引き継ぐ
+  shopFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  shopFlashSub?: string;     // テロップの上に出す赤い小バッジ（例: 本日の商品）
+  shopBonus?: string;        // 「今ならさらに！」特典スラム（黄色いバースト＋集中線）
+  shopBonusSub?: string;     // 特典スラムの上の赤いバッジ（例: 今ならさらに！）
+  shopItem?: string;         // 下部の商品プレート本文（1カット1点。字幕の代わりに読ませる）
+  shopItemLabel?: string;    // 商品プレート左のラベル（セット1 / 特典 / お知らせ など）
+  shopStamp?: string;        // ギザギザのお得シール（セットIN など）
+  shopPriceSlam?: string;    // 値段発表スラム（通販トーンを解除する転換点。白フラッシュ付き）
+  shopPriceSlamSub?: string; // 値段発表スラムの補足行
+  shopReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  shopRevealSub?: string;    // リビール帯の補足行
+  shopCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  shopNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  shopResult?: string;       // 結果＝ループ用リボン（冒頭の商品紹介に戻す）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
