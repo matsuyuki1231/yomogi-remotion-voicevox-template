@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":14}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_simplestyle.mp3","volume":0.18,"loop":true,"fromLineId":11}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -46,21 +46,18 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  priceHook?: string;       // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  priceHookSub?: string;    // フックの上に出す小さいバッジ
-  priceStart?: boolean;     // 「査定スタート」。メーターが ¥0 で出現する行
-  priceItem?: string;       // 査定項目（値札スタンプの本文）
-  priceTag?: string;        // 値札の金額表示（例: 約250万円）
-  priceAdd?: number;        // メーターへの加算額（円）
-  priceDrum?: boolean;      // ドラムロール行。メーターを震わせて結果発表を溜める
-  priceTotal?: string;      // 総額発表の巨大数字（例: 5,785万円）
-  priceTotalSub?: string;   // 総額発表のバッジ（省略時は「査定結果」）
-  priceZero?: string;       // 0円スタンプ
-  priceZeroStrike?: string; // 0円スタンプで打ち消す金額
-  priceReveal?: string;     // リビール帯（宣伝への転換点）
-  priceRevealSub?: string;  // リビール帯の補足行
-  priceCta?: string;        // 検索バー風CTA（文字がタイプされる）
-  priceBait?: string;       // コメント誘発リボン
+  liveHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  liveHookSub?: string;     // フックの上に出す小さいバッジ
+  liveTitle?: string;       // LIVEバーの配信タイトル（省略時はデフォルト）
+  liveViewers?: number;     // 同時接続の目標値。値がある行の間だけカウンターを出す
+  comments?: string[];      // この行で投入する流れるコメント（弾幕）
+  pinned?: string;          // ピン留めコメント（冒頭フックの補強。3行ぶん出す）
+  superChat?: { name: string; amount: number; text: string }; // スパチャ（投げ銭）
+  liveReaction?: string;    // コメント爆発の一撃（例: マイクラ!?）
+  liveReveal?: string;      // リビール帯（宣伝への転換点）
+  liveRevealSub?: string;   // リビール帯の補足行
+  liveCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  liveBait?: string;        // コメント誘発リボン（冒頭の同接に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -89,10 +86,17 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "この生活、ぜんぶでいくらだと思う？",
-    "displayText": "この生活、ぜんぶでいくらだと思う？",
-    "priceHook": "この生活\nいくら？",
-    "priceHookSub": "現実のお金で査定してみた",
+    "text": "この配信、同時接続やばいことになってる。",
+    "displayText": "この配信、同接やばくない？",
+    "liveHook": "同接\n17万人。",
+    "liveHookSub": "深夜にバズってる配信がある",
+    "liveViewers": 172000,
+    "pinned": "え、これ無料なの！？",
+    "comments": [
+      "なにこれ",
+      "同接バグってる",
+      "深夜に開いちゃった"
+    ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -106,79 +110,19 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 88
+    "durationInFrames": 99
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "いまから査定するのだ。",
-    "displayText": "いまから査定するのだ！",
-    "priceStart": true,
+    "text": "なにが起きてるのか、見てみるのだ。",
+    "displayText": "何が起きてるのだ？",
+    "liveViewers": 186000,
+    "comments": [
+      "通知で来た",
+      "何が始まるの"
+    ],
     "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 54
-  },
-  {
-    "id": 3,
-    "character": "zundamon",
-    "text": "車を買う。",
-    "priceItem": "車を買う",
-    "priceTag": "約250万円",
-    "priceAdd": 2500000,
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 34
-  },
-  {
-    "id": 4,
-    "character": "zundamon",
-    "text": "土地も買う。",
-    "priceItem": "土地も買う",
-    "priceTag": "約1,500万円",
-    "priceAdd": 15000000,
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
-      "animation": "none",
-      "startFrom": 150
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 32
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "え、土地？",
-    "displayText": "え、土地？",
-    "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
@@ -187,19 +131,23 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 300
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 57
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 87
   },
   {
-    "id": 6,
+    "id": 3,
     "character": "zundamon",
-    "text": "家を建てる。",
-    "priceItem": "家を建てる",
-    "priceTag": "約3,000万円",
-    "priceAdd": 30000000,
+    "text": "この人、家を建ててるのだ。",
+    "displayText": "家、建ててる",
+    "liveViewers": 207000,
+    "comments": [
+      "家でかっ",
+      "一軒家じゃん",
+      "建築うますぎ"
+    ],
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -210,18 +158,52 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "item-get1.mp3",
-      "volume": 0.55
+      "volume": 0.5
     },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 33
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 76
   },
   {
-    "id": 7,
+    "id": 4,
+    "character": "metan",
+    "text": "しかも、自分の土地なんだって。",
+    "displayText": "しかも自分の土地",
+    "liveViewers": 229000,
+    "comments": [
+      "土地買えるの！？",
+      "自分の土地とか"
+    ],
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "04_metan.wav",
+    "durationInFrames": 69
+  },
+  {
+    "id": 5,
     "character": "zundamon",
-    "text": "店も開く。",
-    "priceItem": "店も開く",
-    "priceTag": "約1,000万円",
-    "priceAdd": 10000000,
+    "text": "店まで開いて、商売してるのだ。",
+    "displayText": "店まで開いてる",
+    "liveViewers": 253000,
+    "comments": [
+      "店持てるの",
+      "接客してる",
+      "商売人だ"
+    ],
+    "superChat": {
+      "name": "通りすがり",
+      "amount": 1000,
+      "text": "これ何のゲーム？"
+    },
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -231,39 +213,49 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 420
     },
     "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.55
+      "src": "amount-display1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 37
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 88
   },
   {
-    "id": 8,
+    "id": 6,
     "character": "metan",
-    "text": "もう五千万超えてない？",
-    "displayText": "もう5,000万超えてない？",
+    "text": "え、車で走ってるんだけど。",
+    "displayText": "車で走ってる！",
+    "liveViewers": 276000,
+    "comments": [
+      "車www",
+      "え、マイクラ？",
+      "いや違うよね"
+    ],
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
       "animation": "none",
-      "startFrom": 150
+      "startFrom": 120
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す22.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 54
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 86
   },
   {
-    "id": 9,
+    "id": 7,
     "character": "zundamon",
-    "text": "社長になる。",
-    "priceItem": "社長になる",
-    "priceTag": "会社設立 約25万円",
-    "priceAdd": 250000,
+    "text": "会社の社長にも、なれるのだ。",
+    "displayText": "社長にもなれる",
+    "liveViewers": 300000,
+    "comments": [
+      "社長で草",
+      "転職したい",
+      "会社作れるの"
+    ],
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -274,18 +266,27 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "item-get1.mp3",
-      "volume": 0.55
+      "volume": 0.5
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 36
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 82
   },
   {
-    "id": 10,
-    "character": "zundamon",
-    "text": "毎日、釣り三昧。",
-    "priceItem": "毎日釣り三昧",
-    "priceTag": "道具一式 約10万円",
-    "priceAdd": 100000,
+    "id": 8,
+    "character": "metan",
+    "text": "釣りだけで暮らしてる人もいるわ。",
+    "displayText": "釣りだけで暮らす人も",
+    "liveViewers": 324000,
+    "comments": [
+      "勝ち組すぎ",
+      "働きたくない",
+      "羨ましい"
+    ],
+    "superChat": {
+      "name": "社畜",
+      "amount": 5000,
+      "text": "もう会社辞めたい"
+    },
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -295,18 +296,23 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 780
     },
     "se": {
-      "src": "item-get1.mp3",
+      "src": "amount-display1.mp3",
       "volume": 0.55
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 68
+    "voiceFile": "08_metan.wav",
+    "durationInFrames": 62
   },
   {
-    "id": 11,
+    "id": 9,
     "character": "metan",
-    "text": "で、査定結果は？",
-    "displayText": "で、査定結果は？",
-    "priceDrum": true,
+    "text": "ねえ、これ結局なんの配信なの？",
+    "displayText": "これ、なんの配信なの？",
+    "liveViewers": 358000,
+    "comments": [
+      "結局なに",
+      "誰か教えて",
+      "気になりすぎ"
+    ],
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -317,80 +323,25 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "drum-roll1.mp3",
-      "volume": 0.6
+      "volume": 0.5
     },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 64
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 91
   },
   {
-    "id": 12,
+    "id": 10,
     "character": "zundamon",
-    "text": "総額、五千七百八十五万円なのだ。",
-    "priceTotal": "5,785万円",
-    "priceTotalSub": "査定結果",
+    "text": "マイクラなのだ。",
+    "displayText": "マイクラなのだ。",
+    "liveReaction": "マイクラ!?",
+    "liveViewers": 412000,
+    "comments": [
+      "嘘だろ",
+      "全部マイクラ!?",
+      "まさかの"
+    ],
     "scene": 2,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
-      "animation": "none",
-      "startFrom": 150
-    },
-    "se": {
-      "src": "amount-display1.mp3",
-      "volume": 0.6
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 117
-  },
-  {
-    "id": 13,
-    "character": "metan",
-    "text": "誰が払えるのよ。",
-    "displayText": "誰が払えるのよ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 480
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 41
-  },
-  {
-    "id": 14,
-    "character": "zundamon",
-    "text": "それが、ぜんぶタダなのだ。",
-    "priceZero": "0円",
-    "priceZeroStrike": "5,785万円",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 360
-    },
-    "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.55
-    },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 71
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "はい？",
-    "displayText": "はい？",
-    "scene": 3,
-    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
@@ -398,18 +349,22 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 200
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.4
+      "src": "boom.mp3",
+      "volume": 0.6
     },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 20
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 39
   },
   {
-    "id": 16,
+    "id": 11,
     "character": "zundamon",
-    "text": "ぜんぶ、よもぎサーバーの生活サーバーの話なのだ。",
-    "priceReveal": "ぜんぶ よもぎサーバー",
-    "priceRevealSub": "24時間あそべる 生活・経済サーバー",
+    "text": "正確には、よもぎサーバーの生活サーバーなのだ。",
+    "liveReveal": "よもぎサーバー",
+    "liveRevealSub": "24時間あそべる 生活・経済サーバー",
+    "comments": [
+      "よもぎサーバー！",
+      "知らなかった"
+    ],
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -419,18 +374,77 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 2750
     },
     "se": {
-      "src": "boom.mp3",
-      "volume": 0.55
+      "src": "jajean1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 135
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 128
   },
   {
-    "id": 17,
+    "id": 12,
+    "character": "metan",
+    "text": "え、これ配信を見てるんじゃないの？",
+    "displayText": "これ、配信じゃないの？",
+    "comments": [
+      "どういうこと",
+      "配信じゃない？"
+    ],
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 480
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 97
+  },
+  {
+    "id": 13,
     "character": "zundamon",
-    "text": "参加費も0円。来てほしいのだ。",
-    "priceReveal": "参加費 0円",
-    "priceRevealSub": "統合版マイクラがあれば誰でも",
+    "text": "違うのだ。全員、自分でプレイしてる人たちなのだ。",
+    "liveReveal": "全員、プレイヤー",
+    "liveRevealSub": "配信じゃない。あなたも入れる",
+    "comments": [
+      "つまり自分もできる",
+      "神かよ",
+      "入りたい"
+    ],
+    "superChat": {
+      "name": "新規勢",
+      "amount": 2000,
+      "text": "今から始めます！"
+    },
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "roll-finish1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 147
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "統合版マイクラがあれば、参加費は0円なのだ。",
+    "liveReveal": "参加費 0円",
+    "liveRevealSub": "統合版マイクラがあれば誰でも",
+    "comments": [
+      "無料は強い",
+      "今から入る"
+    ],
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -443,15 +457,19 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 93
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 128
   },
   {
-    "id": 18,
+    "id": 15,
     "character": "zundamon",
     "text": "よもぎサーバーで検索してほしいのだ。",
     "displayText": "検索すれば 入り方がわかる",
-    "priceCta": "よもぎサーバー",
+    "liveCta": "よもぎサーバー",
+    "comments": [
+      "検索した",
+      "入り方これか"
+    ],
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -465,14 +483,18 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "15_zundamon.wav",
     "durationInFrames": 88
   },
   {
-    "id": 19,
+    "id": 16,
     "character": "metan",
-    "text": "あなたの査定額、コメントで教えて。",
-    "priceBait": "いくらだと思った？",
+    "text": "あなたも、配信される側になれるわ。",
+    "liveBait": "同接、何人だと思った？",
+    "comments": [
+      "またバズってる",
+      "同接エグい"
+    ],
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -485,8 +507,8 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "19_metan.wav",
-    "durationInFrames": 84
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 82
   }
 ];
 

@@ -21,21 +21,18 @@ interface ScriptLine {
   character: string;
   text: string;
   displayText?: string;
-  priceHook?: string;
-  priceHookSub?: string;
-  priceStart?: boolean;
-  priceItem?: string;
-  priceTag?: string;
-  priceAdd?: number;
-  priceDrum?: boolean;
-  priceTotal?: string;
-  priceTotalSub?: string;
-  priceZero?: string;
-  priceZeroStrike?: string;
-  priceReveal?: string;
-  priceRevealSub?: string;
-  priceCta?: string;
-  priceBait?: string;
+  liveHook?: string;
+  liveHookSub?: string;
+  liveTitle?: string;
+  liveViewers?: number;
+  comments?: string[];
+  pinned?: string;
+  superChat?: { name: string; amount: number; text: string };
+  liveReaction?: string;
+  liveReveal?: string;
+  liveRevealSub?: string;
+  liveCta?: string;
+  liveBait?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -194,21 +191,18 @@ export interface ScriptLine {
   character: CharacterId;
   text: string;
   displayText?: string;
-  priceHook?: string;       // 冒頭のフック（巨大文字。改行はYAML側で明示する）
-  priceHookSub?: string;    // フックの上に出す小さいバッジ
-  priceStart?: boolean;     // 「査定スタート」。メーターが ¥0 で出現する行
-  priceItem?: string;       // 査定項目（値札スタンプの本文）
-  priceTag?: string;        // 値札の金額表示（例: 約250万円）
-  priceAdd?: number;        // メーターへの加算額（円）
-  priceDrum?: boolean;      // ドラムロール行。メーターを震わせて結果発表を溜める
-  priceTotal?: string;      // 総額発表の巨大数字（例: 5,785万円）
-  priceTotalSub?: string;   // 総額発表のバッジ（省略時は「査定結果」）
-  priceZero?: string;       // 0円スタンプ
-  priceZeroStrike?: string; // 0円スタンプで打ち消す金額
-  priceReveal?: string;     // リビール帯（宣伝への転換点）
-  priceRevealSub?: string;  // リビール帯の補足行
-  priceCta?: string;        // 検索バー風CTA（文字がタイプされる）
-  priceBait?: string;       // コメント誘発リボン
+  liveHook?: string;        // 冒頭のフック（巨大文字。改行はYAML側で明示する）
+  liveHookSub?: string;     // フックの上に出す小さいバッジ
+  liveTitle?: string;       // LIVEバーの配信タイトル（省略時はデフォルト）
+  liveViewers?: number;     // 同時接続の目標値。値がある行の間だけカウンターを出す
+  comments?: string[];      // この行で投入する流れるコメント（弾幕）
+  pinned?: string;          // ピン留めコメント（冒頭フックの補強。3行ぶん出す）
+  superChat?: { name: string; amount: number; text: string }; // スパチャ（投げ銭）
+  liveReaction?: string;    // コメント爆発の一撃（例: マイクラ!?）
+  liveReveal?: string;      // リビール帯（宣伝への転換点）
+  liveRevealSub?: string;   // リビール帯の補足行
+  liveCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  liveBait?: string;        // コメント誘発リボン（冒頭の同接に戻してループ）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

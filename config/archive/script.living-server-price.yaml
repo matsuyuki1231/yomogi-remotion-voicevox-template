@@ -1,0 +1,359 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / お会計・査定型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「お会計・査定」型（値段当て系フェイクアウト＋0円落とし）
+#   マイクラ映像に映る「暮らし」を現実のお金に換算して査定していく。
+#   画面上部のレジ風メーターが1項目ごとにチャリンと加算されて回り続け、
+#   車→土地→家→店→社長→釣り三昧と積み上がって総額5,785万円に到達。
+#   直後に「それが、ぜんぶタダ」で総額を0円に叩き落とすのがオチ。
+#
+#   「これ、いくらだと思う？」の値段当ては視聴者が頭の中で参加してしまう
+#   鉄板ジャンルで、コメント欄への査定額書き込みも自然に誘発できる。
+#   前半20秒はサーバー名を一切出さない。宣伝が来る頃には離脱ポイントを通り過ぎている。
+#
+#   締めの「いくらだと思った？」が冒頭の「いくらだと思う？」に戻るのでループする。
+#   （2025年3月末からループ再生も再生回数に加算されるため、末尾は必ず冒頭に接続する。
+#     最後の行の映像は1行目とまったく同じ src / startFrom にしてある）
+#
+# ■ 構造上のルール
+#   - 査定項目の行 = priceItem（デカ文字）+ priceTag（値札）+ priceAdd（円）。
+#     メーターはカット頭14フレームで回りきる。項目のセリフは体言止めの1フレーズ
+#   - priceAdd の合計と priceTotal / priceZeroStrike の数字は必ず一致させること
+#     （現在: 250万+1,500万+3,000万+1,000万+25万+10万 = 5,785万円 = ¥57,850,000）
+#   - 現実換算の金額はあくまで「ざっくり査定」のギャグ。サーバー側の事実
+#     （何ができるか）だけを docs/yomogi で裏を取る
+#
+# ■ 情報ソース: docs/yomogi 配下
+#   - 参加費無料・統合版のみ・24時間あそべる生活/経済サーバー（intro.md）
+#   - 生活ワールドに土地を購入して自分だけの家や店を建てられる（intro.md, commands/land-protection.md）
+#   - チェストショップは保護した土地の中に無料で設置できる（commands/chest-shop.md）
+#   - 会社は無料で設立できるが審査あり（commands/company.md）
+#   - 釣りで釣れる魚は275種類（intro.md）
+#   - 車に乗って生活ワールドを駆け回れる（intro.md）
+#
+# 素材: public/content/生活サーバー 配下
+# 効果音: item-get1 / drum-roll1 / amount-display1 / jajean1 は効果音ラボ
+# （商用可・クレジット不要 https://soundeffect-lab.info/）
+
+# ===== フック（0〜3秒）=====
+- id: 1
+  character: metan
+  text: この生活、ぜんぶでいくらだと思う？
+  displayText: この生活、ぜんぶでいくらだと思う？
+  priceHook: "この生活\nいくら？"
+  priceHookSub: 現実のお金で査定してみた
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 最終行と同じ位置。ここに戻ってくるのでループがつながる（明るい昼の街）
+    startFrom: 3000
+  se:
+    src: spotlight.mp3
+    volume: 0.5
+
+- id: 2
+  character: zundamon
+  text: いまから査定するのだ。
+  displayText: いまから査定するのだ！
+  priceStart: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.55
+
+# ===== 査定連発（3〜20秒。1項目1カット、メーターが回り続ける）=====
+- id: 3
+  character: zundamon
+  text: 車を買う。
+  priceItem: 車を買う
+  priceTag: 約250万円
+  priceAdd: 2500000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+- id: 4
+  character: zundamon
+  text: 土地も買う。
+  priceItem: 土地も買う
+  priceTag: 約1,500万円
+  priceAdd: 15000000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+- id: 5
+  character: metan
+  text: え、土地？
+  displayText: え、土地？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 6
+  character: zundamon
+  text: 家を建てる。
+  priceItem: 家を建てる
+  priceTag: 約3,000万円
+  priceAdd: 30000000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 190
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+- id: 7
+  character: zundamon
+  text: 店も開く。
+  priceItem: 店も開く
+  priceTag: 約1,000万円
+  priceAdd: 10000000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    # 看板を貼ったチェスト（＝店）が映る位置
+    startFrom: 420
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+- id: 8
+  character: metan
+  text: もう五千万超えてない？
+  displayText: もう5,000万超えてない？
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+- id: 9
+  character: zundamon
+  text: 社長になる。
+  priceItem: 社長になる
+  priceTag: 会社設立 約25万円
+  priceAdd: 250000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    # 会社プラグインのメニューが開いている位置。ここより手前は会社名（＝サーバー名）が
+    # 画面に映り込んでいて、リビール前にオチが割れてしまう
+    startFrom: 1500
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+- id: 10
+  character: zundamon
+  text: 毎日、釣り三昧。
+  priceItem: 毎日釣り三昧
+  priceTag: 道具一式 約10万円
+  priceAdd: 100000
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 780
+  se:
+    src: item-get1.mp3
+    volume: 0.55
+
+# ===== 結果発表（ここが中盤の山。まだサーバー名は出さない）=====
+- id: 11
+  character: metan
+  text: で、査定結果は？
+  displayText: で、査定結果は？
+  priceDrum: true
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4
+    animation: none
+    startFrom: 350
+  se:
+    src: drum-roll1.mp3
+    volume: 0.6
+
+- id: 12
+  character: zundamon
+  text: 総額、五千七百八十五万円なのだ。
+  priceTotal: 5,785万円
+  priceTotalSub: 査定結果
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/公式ショップで商品を買っている動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: amount-display1.mp3
+    volume: 0.6
+
+- id: 13
+  character: metan
+  text: 誰が払えるのよ。
+  displayText: 誰が払えるのよ
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    # 称号ショップの素材は全編暗い店内なので使わない。明るい昼の街並みを使う
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 480
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.4
+
+# ===== 0円落とし（オチ。BGMもここで切り替わる）=====
+- id: 14
+  character: zundamon
+  text: それが、ぜんぶタダなのだ。
+  priceZero: 0円
+  priceZeroStrike: 5,785万円
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    # 0円の決め絵なので明るい屋外の建築風景を使う（暗い素材やGUI画面だと落差の絵が沈む）
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 360
+  se:
+    src: jajean1.mp3
+    volume: 0.55
+
+- id: 15
+  character: metan
+  text: はい？
+  displayText: はい？
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.4
+
+# ===== リビール（ここで初めてサーバー名が出る）=====
+- id: 16
+  character: zundamon
+  text: ぜんぶ、よもぎサーバーの生活サーバーの話なのだ。
+  priceReveal: ぜんぶ よもぎサーバー
+  priceRevealSub: 24時間あそべる 生活・経済サーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 昼の明るい街。2200付近は夜で暗く、リビールの絵が沈むので使わない
+    startFrom: 2750
+  se:
+    src: boom.mp3
+    volume: 0.55
+
+- id: 17
+  character: zundamon
+  text: 参加費も0円。来てほしいのだ。
+  priceReveal: 参加費 0円
+  priceRevealSub: 統合版マイクラがあれば誰でも
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+# ===== CTA =====
+- id: 18
+  character: zundamon
+  text: よもぎサーバーで検索してほしいのだ。
+  displayText: 検索すれば 入り方がわかる
+  priceCta: よもぎサーバー
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    # 上下が黒く余らないよう、背景に生活ワールドの映像を敷く
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 3000
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+# ===== ループ（冒頭の「いくらだと思う？」に戻る。映像も1行目とまったく同じ位置）=====
+- id: 19
+  character: metan
+  text: あなたの査定額、コメントで教えて。
+  priceBait: いくらだと思った？
+  scene: 3
+  # 間を作らず言い終わりで即終了させる。すぐ1行目に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.45

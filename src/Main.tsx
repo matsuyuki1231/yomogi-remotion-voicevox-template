@@ -11,7 +11,15 @@ import { scriptData, scenes, ScriptLine, bgmConfig, bgmSegments } from "./data/s
 import { VIDEO_CONFIG } from "./config";
 import { Subtitle } from "./components/Subtitle";
 import { SceneVisuals } from "./components/SceneVisuals";
-import { PriceBackdrop, PriceScrim, PriceHud } from "./components/PriceHud";
+import {
+  LiveBackdrop,
+  LiveScrim,
+  LiveHud,
+  LiveCommentLayer,
+  CommentEvent,
+  SuperChatEvent,
+  PinnedComment,
+} from "./components/LiveHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -79,49 +87,56 @@ export const Main: React.FC = () => {
     0
   );
 
-  // ---- 金額メーターの累計計算 ----
-  // priceAdd を持つ行で加算する。メーターは「査定スタート」（priceStart）の行から
-  // 総額発表（priceTotal）の直前まで、合いの手の行でも出しっぱなしにする
-  const meterTotals = (() => {
-    let cum = 0;
+  // ---- 同時接続カウンターの累計計算 ----
+  // liveViewers を持つ行で目標値を更新する。カウンターは値のある行の間だけ出す
+  // （リビール＝id11以降で "配信" の建前が崩れるので消える）
+  const viewerTotals = (() => {
+    let last = 0;
     return scriptData.map((line) => {
-      const from = cum;
-      cum += line.priceAdd ?? 0;
-      return { from, to: cum };
+      const from = last;
+      const to = line.liveViewers ?? last;
+      last = to;
+      return { from, to };
     });
   })();
-  const meterStartIndex = scriptData.findIndex((l) => l.priceStart);
-  const meterEndIndex = scriptData.findIndex((l) => l.priceTotal);
-  const showsMeter = (index: number): boolean =>
-    meterStartIndex >= 0 &&
-    index >= meterStartIndex &&
-    (meterEndIndex < 0 || index < meterEndIndex);
+  const showsViewers = (index: number): boolean =>
+    scriptData[index].liveViewers != null;
 
-  // HUDのパーツが1つでも出るか（メーターだけの合いの手行も含む）
+  // ---- 流れるコメント／スパチャの通しタイムライン ----
+  // 各行の comments を行頭から少しずつずらして投入する。行境界をまたいで
+  // 流れ続けるように、Sequence の外で1本のタイムラインとして描く
+  const commentSchedule: CommentEvent[] = [];
+  const superChatSchedule: SuperChatEvent[] = [];
+  let pinned: PinnedComment | null = null;
+  scriptData.forEach((line, index) => {
+    const start = getLineStartFrame(index);
+    (line.comments ?? []).forEach((text, k) => {
+      commentSchedule.push({ frame: start + 3 + k * 9, text });
+    });
+    if (line.superChat) {
+      superChatSchedule.push({ frame: start + 4, ...line.superChat });
+    }
+    if (line.pinned) {
+      // ピン留めは冒頭フックの補強。3行ぶん出しっぱなしにする
+      const until = getLineStartFrame(Math.min(index + 3, scriptData.length));
+      pinned = { from: start, until, text: line.pinned };
+    }
+  });
+
+  // HUDのパーツが1つでも出るか
   const hasHud = (line: ScriptLine, index: number): boolean =>
     !!(
-      line.priceHook ||
-      line.priceStart ||
-      line.priceItem ||
-      line.priceDrum ||
-      line.priceTotal ||
-      line.priceZero ||
-      line.priceReveal ||
-      line.priceCta ||
-      line.priceBait ||
-      showsMeter(index)
+      line.liveHook ||
+      line.liveReaction ||
+      line.liveReveal ||
+      line.liveCta ||
+      line.liveBait ||
+      showsViewers(index)
     );
 
   // デカ文字テロップが同じことを言っている行では字幕を出さない（二重に読ませない）
   const hidesSubtitle = (line: ScriptLine): boolean =>
-    !!(
-      line.priceHook ||
-      line.priceItem ||
-      line.priceTotal ||
-      line.priceZero ||
-      line.priceReveal ||
-      line.priceBait
-    );
+    !!(line.liveHook || line.liveReveal || line.liveBait);
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -141,7 +156,7 @@ export const Main: React.FC = () => {
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      <PriceBackdrop />
+      <LiveBackdrop />
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -186,7 +201,7 @@ export const Main: React.FC = () => {
         </Sequence>
       ))}
 
-      {/* 各セリフの映像。分割⇔全画面が1.5秒ごとに切り替わるので premount しておかないと
+      {/* 各セリフの映像。1秒ごとにカットが変わるので premount しておかないと
           デコードが間に合わず頭が黒コマになる */}
       {scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
@@ -198,36 +213,37 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            <PriceScrim />
+            <LiveScrim />
           </Sequence>
         );
       })}
 
-      {/* セリフごとのHUD（金額メーター・値札スタンプ・総額発表・0円・リビール・CTA） */}
+      {/* ライブチャット層（全体を1本のタイムラインで流す＝行をまたいで途切れない） */}
+      <LiveCommentLayer
+        comments={commentSchedule}
+        superChats={superChatSchedule}
+        pinned={pinned}
+      />
+
+      {/* セリフごとのHUD（LIVEバー・同接カウンター・フック・爆発・リビール・CTA） */}
       {currentLine && hasHud(currentLine, currentIndex) && (
         <Sequence
           key={`hud-${currentLine.id}`}
           from={currentLineStartFrame}
           durationInFrames={getLineSpan(currentLine)}
         >
-          <PriceHud
-            hook={currentLine.priceHook}
-            hookSub={currentLine.priceHookSub}
-            start={currentLine.priceStart}
-            item={currentLine.priceItem}
-            tag={currentLine.priceTag}
-            showMeter={showsMeter(currentIndex)}
-            meterFrom={meterTotals[currentIndex].from}
-            meterTo={meterTotals[currentIndex].to}
-            drum={currentLine.priceDrum}
-            total={currentLine.priceTotal}
-            totalSub={currentLine.priceTotalSub}
-            zero={currentLine.priceZero}
-            zeroStrike={currentLine.priceZeroStrike}
-            reveal={currentLine.priceReveal}
-            revealSub={currentLine.priceRevealSub}
-            cta={currentLine.priceCta}
-            bait={currentLine.priceBait}
+          <LiveHud
+            hook={currentLine.liveHook}
+            hookSub={currentLine.liveHookSub}
+            showViewers={showsViewers(currentIndex)}
+            viewersFrom={viewerTotals[currentIndex].from}
+            viewersTo={viewerTotals[currentIndex].to}
+            title={currentLine.liveTitle}
+            reaction={currentLine.liveReaction}
+            reveal={currentLine.liveReveal}
+            revealSub={currentLine.liveRevealSub}
+            cta={currentLine.liveCta}
+            bait={currentLine.liveBait}
             durationInFrames={getLineSpan(currentLine)}
           />
         </Sequence>

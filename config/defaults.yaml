@@ -19,16 +19,16 @@ bgm:
   src: "amacha_picopicodisco.mp3"
   volume: 0.16
   loop: true
-  # お会計・査定型:
-  # 査定パートはゲームショー風に速い曲、0円落とし（id:14）で切り替えて空気を変える
+  # 偽ライブ配信・バズ中継型:
+  # 沸くパートは速い曲、リビール（id:11）で切り替えて空気を変える
   segments:
-    # 「ピコピコディスコ」— 軽快でコミカル。査定の連打と相性がいい
+    # 「ピコピコディスコ」— 軽快でコミカル。深夜バズ配信の高揚と相性がいい
     - src: "amacha_picopicodisco.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「シンプルスタイル」— 明るく爽やか。0円落とし〜宣伝パートの空気に切り替える
+    # 「シンプルスタイル」— 明るく爽やか。リビール〜宣伝パートの空気に切り替える
     - src: "amacha_simplestyle.mp3"
       volume: 0.18
       loop: true
-      fromLineId: 14
+      fromLineId: 11
