@@ -33,4 +33,4 @@ bgm:
     - src: "amacha_yuruyakanaasayake.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 14
+      fromLineId: 15

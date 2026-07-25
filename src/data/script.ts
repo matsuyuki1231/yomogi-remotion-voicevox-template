@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":14}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":15}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -171,13 +171,13 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "すみません。いま、何してたんですか？",
-    "intvQuestion": "いま、何してたんですか？",
+    "text": "マイクラのワールドにいる人に、突撃取材してみたわ。",
+    "intvFlash": "マイクラの街で\n突撃取材",
+    "intvFlashSub": "街の人7人に聞いてみた",
     "intvTone": "rec",
-    "intvCount": 1,
-    "intvTicker": "街の人7人に同じ質問をしてみました",
+    "intvTicker": "マイクラのワールドにいる人に突撃取材してみました",
     "scene": 1,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
@@ -189,10 +189,32 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 100
+    "durationInFrames": 112
   },
   {
     "id": 2,
+    "character": "metan",
+    "text": "すみません。いま、何してたんですか？",
+    "intvQuestion": "いま、何してたんですか？",
+    "intvCount": 1,
+    "intvTicker": "街の人7人に同じ質問をしてみました",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 3,
     "character": "zundamon",
     "text": "会社の決算なのだ。社員が六人いて、今月は黒字なのだ。",
     "intvName": "けんた",
@@ -214,11 +236,11 @@ export const scriptData: ScriptLine[] = [
       "src": "shock1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "02_zundamon.wav",
+    "voiceFile": "03_zundamon.wav",
     "durationInFrames": 166
   },
   {
-    "id": 3,
+    "id": 4,
     "character": "metan",
     "text": "会社……？　えっと、そちらの方は？",
     "intvQuestion": "そちらの方は？",
@@ -236,11 +258,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "03_metan.wav",
+    "voiceFile": "04_metan.wav",
     "durationInFrames": 100
   },
   {
-    "id": 4,
+    "id": 5,
     "character": "zundamon",
     "text": "店番なのだ。といっても、寝てる間に勝手に売れるのだ。",
     "intvName": "みなみ",
@@ -261,11 +283,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "04_zundamon.wav",
+    "voiceFile": "05_zundamon.wav",
     "durationInFrames": 144
   },
   {
-    "id": 5,
+    "id": 6,
     "character": "metan",
     "text": "寝てる間に……？　次の方、お願いします。",
     "intvQuestion": "次の方は？",
@@ -283,11 +305,11 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "05_metan.wav",
+    "voiceFile": "06_metan.wav",
     "durationInFrames": 105
   },
   {
-    "id": 6,
+    "id": 7,
     "character": "zundamon",
     "text": "釣りなのだ。魚は二百七十五種類いるから、まだ半分なのだ。",
     "intvName": "たくみ",
@@ -308,11 +330,11 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "06_zundamon.wav",
+    "voiceFile": "07_zundamon.wav",
     "durationInFrames": 168
   },
   {
-    "id": 7,
+    "id": 8,
     "character": "metan",
     "text": "二百七十五種類！？　……そちらは？",
     "intvQuestion": "そちらは？",
@@ -331,11 +353,11 @@ export const scriptData: ScriptLine[] = [
       "src": "shock1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "07_metan.wav",
+    "voiceFile": "08_metan.wav",
     "durationInFrames": 86
   },
   {
-    "id": 8,
+    "id": 9,
     "character": "zundamon",
     "text": "畑なのだ。収穫が終わらないから、今日は遅くなるのだ。",
     "intvName": "ゆか",
@@ -356,11 +378,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "08_zundamon.wav",
+    "voiceFile": "09_zundamon.wav",
     "durationInFrames": 146
   },
   {
-    "id": 9,
+    "id": 10,
     "character": "metan",
     "text": "その隣の方は、何を？",
     "intvQuestion": "隣の方は？",
@@ -378,11 +400,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "09_metan.wav",
+    "voiceFile": "10_metan.wav",
     "durationInFrames": 67
   },
   {
-    "id": 10,
+    "id": 11,
     "character": "zundamon",
     "text": "ドライブなのだ。いま、車で街を一周してきたところなのだ。",
     "intvName": "しんじ",
@@ -403,11 +425,11 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "10_zundamon.wav",
+    "voiceFile": "11_zundamon.wav",
     "durationInFrames": 157
   },
   {
-    "id": 11,
+    "id": 12,
     "character": "metan",
     "text": "車！？　じゃあ、最後の方は？",
     "intvQuestion": "最後の方は？",
@@ -426,11 +448,11 @@ export const scriptData: ScriptLine[] = [
       "src": "people-shout-oo2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "11_metan.wav",
+    "voiceFile": "12_metan.wav",
     "durationInFrames": 96
   },
   {
-    "id": 12,
+    "id": 13,
     "character": "zundamon",
     "text": "隣の人としゃべってたのだ。文字じゃなくて、声でなのだ。",
     "intvName": "あや",
@@ -451,11 +473,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "12_zundamon.wav",
+    "voiceFile": "13_zundamon.wav",
     "durationInFrames": 138
   },
   {
-    "id": 13,
+    "id": 14,
     "character": "metan",
     "text": "……ちょっと待って。ここ、入るのにいくらかかるの？",
     "intvQuestion": "ここ、入るのにいくら？",
@@ -472,11 +494,11 @@ export const scriptData: ScriptLine[] = [
       "src": "drum-roll1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "13_metan.wav",
+    "voiceFile": "14_metan.wav",
     "durationInFrames": 106
   },
   {
-    "id": 14,
+    "id": 15,
     "character": "zundamon",
     "text": "ゼロ円なのだ。六人とも、ゼロ円なのだ。",
     "intvWrapUp": "0円",
@@ -495,11 +517,11 @@ export const scriptData: ScriptLine[] = [
       "src": "don-1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "14_zundamon.wav",
+    "voiceFile": "15_zundamon.wav",
     "durationInFrames": 117
   },
   {
-    "id": 15,
+    "id": 16,
     "character": "metan",
     "text": "……ねえ。この街、どこにあるの？",
     "intvQuestion": "この街、どこにあるの？",
@@ -516,11 +538,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "15_metan.wav",
+    "voiceFile": "16_metan.wav",
     "durationInFrames": 85
   },
   {
-    "id": 16,
+    "id": 17,
     "character": "zundamon",
     "text": "よもぎサーバーの、生活サーバーなのだ。",
     "intvReveal": "よもぎサーバーの生活サーバー",
@@ -538,11 +560,11 @@ export const scriptData: ScriptLine[] = [
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "16_zundamon.wav",
+    "voiceFile": "17_zundamon.wav",
     "durationInFrames": 103
   },
   {
-    "id": 17,
+    "id": 18,
     "character": "metan",
     "text": "入り方は、よもぎサーバーで検索してね。",
     "displayText": "検索すると 入り方がわかる",
@@ -562,11 +584,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "17_metan.wav",
+    "voiceFile": "18_metan.wav",
     "durationInFrames": 89
   },
   {
-    "id": 18,
+    "id": 19,
     "character": "zundamon",
     "text": "七人目は、あなたなのだ。いま、何してたのだ？",
     "intvResult": "7人目は、あなた",
@@ -585,7 +607,7 @@ export const scriptData: ScriptLine[] = [
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "19_zundamon.wav",
     "durationInFrames": 146
   }
 ];

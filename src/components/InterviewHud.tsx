@@ -372,7 +372,7 @@ const RecHeader: React.FC<{
             whiteSpace: "nowrap",
           }}
         >
-          街の人{total}人に聞いてみた
+          マイクラの街の人{total}人に聞いてみた
         </span>
         <span
           style={{
