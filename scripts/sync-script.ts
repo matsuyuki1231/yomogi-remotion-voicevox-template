@@ -114,6 +114,23 @@ interface ScriptLine {
   intvNote?: string;
   intvResult?: string;
   intvResultSub?: string;
+  dramaTone?: string;
+  dramaTitle?: string;
+  dramaEpisode?: string;
+  dramaSpeaker?: string;
+  dramaLine?: string;
+  dramaMono?: string;
+  dramaJab?: string;
+  dramaChapter?: string;
+  dramaFact?: string;
+  dramaFlash?: string;
+  dramaFlashSub?: string;
+  dramaReveal?: string;
+  dramaRevealSub?: string;
+  dramaCta?: string;
+  dramaNote?: string;
+  dramaResult?: string;
+  dramaResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -369,6 +386,24 @@ export interface ScriptLine {
   intvNote?: string;         // CTA下の小さな注記（※取材風の演出です 等の但し書き）
   intvResult?: string;       // 結果＝ループ用リボン（冒頭の質問に戻す）
   intvResultSub?: string;    // 結果リボンの補足行（コメント誘発の一言）
+  // ---- 縦型ショートドラマ・逆転劇型（DramaHud）----
+  dramaTone?: "tense" | "turn"; // ドラマトーン。指定した行から後ろに引き継がれる（青→金）。逆転を文字で説明しないので、転換点はこれだけが担う
+  dramaTitle?: string;       // ヘッダ帯のエピソードタイトル（最初に指定した行のものを全体で使う）
+  dramaEpisode?: string;     // 話数バッジ（第1話 など。最初に指定した行のものを全体で使う）
+  dramaSpeaker?: string;     // 話者タグの表示名（省略時はキャラクター名）
+  dramaLine?: string;        // ドラマ字幕。この型では字幕が主役なので全行に書く
+  dramaMono?: string;        // 心の声（斜体・画面中央）。決定的な一行にだけ使う
+  dramaJab?: string;         // 見下しセリフの極太スラム（1秒フック）
+  dramaChapter?: string;     // 章タイトルカード（時間経過・場面転換）
+  dramaFact?: string;        // 事実チップ（積み上がって立場の差を可視化する。短い語にする）
+  dramaFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  dramaFlashSub?: string;    // テロップの上に出す金色の小バッジ
+  dramaReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  dramaRevealSub?: string;   // リビール帯の補足行
+  dramaCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  dramaNote?: string;        // CTA下の小さな注記（※フィクションです 等の但し書き）
+  dramaResult?: string;      // 次回予告リボン（冒頭へループさせる）
+  dramaResultSub?: string;   // 次回予告リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

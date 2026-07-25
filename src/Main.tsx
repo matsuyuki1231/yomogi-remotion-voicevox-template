@@ -46,22 +46,30 @@ import {
   InterviewHud,
   InterviewTone,
 } from "./components/InterviewHud";
+import {
+  DramaBackdrop,
+  DramaScrim,
+  DramaChrome,
+  DramaHud,
+  DramaTone,
+} from "./components/DramaHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
-type Format = "news" | "court" | "shop" | "reply" | "interview";
+type Format = "news" | "court" | "shop" | "reply" | "interview" | "drama";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// intv* なら街頭インタビュー型、reply* ならコメント返信型、
-// shop* ならテレビショッピング・通販型、court* なら裁判・尋問型、
-// どれでもなければ緊急速報・報道型。
+// drama* なら縦型ショートドラマ・逆転劇型、intv* なら街頭インタビュー型、
+// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
+// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
 const detectFormat = (): Format => {
   const hasPrefix = (prefix: string) =>
     scriptData.some((line) =>
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("drama")) return "drama";
   if (hasPrefix("intv")) return "interview";
   if (hasPrefix("reply")) return "reply";
   if (hasPrefix("shop")) return "shop";
@@ -266,6 +274,33 @@ export const Main: React.FC = () => {
     1
   );
 
+  // ---- ドラマトーン（逆転前 / 逆転後）を解決。指定した行から後ろに引き継がれる ----
+  // この型では逆転を文字で説明しないので、転換点はこのトーン反転だけが担う
+  const dramaToneResolved: DramaTone[] = (() => {
+    let current: DramaTone = "tense";
+    return scriptData.map((line) => {
+      if (line.dramaTone === "tense" || line.dramaTone === "turn") {
+        current = line.dramaTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 事実チップの積み上げ。その行までに出そろった事実を配列で持つ ----
+  const dramaFactsResolved: string[][] = (() => {
+    const stack: string[] = [];
+    return scriptData.map((line) => {
+      if (line.dramaFact) stack.push(line.dramaFact);
+      return [...stack];
+    });
+  })();
+
+  // エピソードタイトルと話数は最初に指定した行のものを動画全体で使う
+  const dramaTitle =
+    scriptData.find((line) => line.dramaTitle)?.dramaTitle ?? "";
+  const dramaEpisode =
+    scriptData.find((line) => line.dramaEpisode)?.dramaEpisode ?? "第1話";
+
   // 背景を流れるコメント片。全行の質問文を重複なく集める。
   // 新着コメント（replyNew）の行だけは、正体を聞く質問が最初から背景に
   // 見えているとネタバレになるので除く
@@ -281,6 +316,9 @@ export const Main: React.FC = () => {
   // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
   const tickerOf = (line: ScriptLine): string | undefined => {
     switch (FORMAT) {
+      // ドラマ型にティッカーはない（最下部はシークバー）
+      case "drama":
+        return undefined;
       case "interview":
         return line.intvTicker;
       case "reply":
@@ -373,6 +411,20 @@ export const Main: React.FC = () => {
       line.intvResult
     );
 
+  // ドラマHUDのパーツが1つでも出るか
+  const hasDramaHud = (line: ScriptLine): boolean =>
+    !!(
+      line.dramaLine ||
+      line.dramaMono ||
+      line.dramaJab ||
+      line.dramaChapter ||
+      line.dramaFlash ||
+      line.dramaReveal ||
+      line.dramaCta ||
+      line.dramaNote ||
+      line.dramaResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムが、
@@ -380,6 +432,11 @@ export const Main: React.FC = () => {
   // いずれも字幕を出すのは検索CTAの行だけになる。
   const hidesSubtitle = (line: ScriptLine): boolean => {
     switch (FORMAT) {
+      // ドラマ型だけは例外で、HUD側の「ドラマ字幕」が全行の字幕を担う。
+      // ほかの型はテロップが字幕を兼ねるので抑止するが、この型では
+      // セリフを読ませること自体が主役なので、常に HUD 側に出す
+      case "drama":
+        return true;
       case "interview":
         return !!(
           line.intvQuestion ||
@@ -449,6 +506,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "drama":
+        return <DramaBackdrop />;
       case "interview":
         return <InterviewBackdrop />;
       case "reply":
@@ -462,8 +521,13 @@ export const Main: React.FC = () => {
     }
   };
 
-  const renderScrim = () => {
+  // 暗幕はセリフごとの映像 Sequence の中に置くので、行のindexを受け取る。
+  // ドラマ型だけは行のトーンでカラーグレードを変える（前半＝冷たい青／
+  // 逆転後＝暖色）ので、ここで index が要る
+  const renderScrim = (index: number) => {
     switch (FORMAT) {
+      case "drama":
+        return <DramaScrim tone={dramaToneResolved[index]} />;
       case "interview":
         return <InterviewScrim />;
       case "reply":
@@ -479,6 +543,20 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "drama":
+        return (
+          <DramaChrome
+            tone={currentIndex >= 0 ? dramaToneResolved[currentIndex] : "tense"}
+            title={dramaTitle}
+            episode={dramaEpisode}
+            totalFrames={totalFrames}
+            facts={currentIndex >= 0 ? dramaFactsResolved[currentIndex] : []}
+            factsPrevCount={
+              currentIndex > 0 ? dramaFactsResolved[currentIndex - 1].length : 0
+            }
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "interview":
         return (
           <InterviewChrome
@@ -550,6 +628,33 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "drama":
+        if (!hasDramaHud(line)) return null;
+        return wrap(
+          <DramaHud
+            tone={dramaToneResolved[currentIndex]}
+            character={line.character}
+            speaker={line.dramaSpeaker}
+            characterName={SPEAKER_NAMES[line.character]}
+            line={line.dramaLine}
+            mono={line.dramaMono}
+            jab={line.dramaJab}
+            chapter={line.dramaChapter}
+            flash={line.dramaFlash}
+            flashSub={line.dramaFlashSub}
+            toneChanged={
+              currentIndex > 0 &&
+              dramaToneResolved[currentIndex] !== dramaToneResolved[currentIndex - 1]
+            }
+            reveal={line.dramaReveal}
+            revealSub={line.dramaRevealSub}
+            cta={line.dramaCta}
+            note={line.dramaNote}
+            result={line.dramaResult}
+            resultSub={line.dramaResultSub}
+            durationInFrames={span}
+          />
+        );
       case "interview":
         if (!hasInterviewHud(line)) return null;
         return wrap(
@@ -741,7 +846,7 @@ export const Main: React.FC = () => {
               lineId={line.id}
               handheld={FORMAT === "interview"}
             />
-            {renderScrim()}
+            {renderScrim(index)}
           </Sequence>
         );
       })}

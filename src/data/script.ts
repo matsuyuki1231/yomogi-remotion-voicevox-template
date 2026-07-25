@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":15}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_metropolis.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":18}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -143,6 +143,24 @@ export interface ScriptLine {
   intvNote?: string;         // CTA下の小さな注記（※取材風の演出です 等の但し書き）
   intvResult?: string;       // 結果＝ループ用リボン（冒頭の質問に戻す）
   intvResultSub?: string;    // 結果リボンの補足行（コメント誘発の一言）
+  // ---- 縦型ショートドラマ・逆転劇型（DramaHud）----
+  dramaTone?: "tense" | "turn"; // ドラマトーン。指定した行から後ろに引き継がれる（青→金）。逆転を文字で説明しないので、転換点はこれだけが担う
+  dramaTitle?: string;       // ヘッダ帯のエピソードタイトル（最初に指定した行のものを全体で使う）
+  dramaEpisode?: string;     // 話数バッジ（第1話 など。最初に指定した行のものを全体で使う）
+  dramaSpeaker?: string;     // 話者タグの表示名（省略時はキャラクター名）
+  dramaLine?: string;        // ドラマ字幕。この型では字幕が主役なので全行に書く
+  dramaMono?: string;        // 心の声（斜体・画面中央）。決定的な一行にだけ使う
+  dramaJab?: string;         // 見下しセリフの極太スラム（1秒フック）
+  dramaChapter?: string;     // 章タイトルカード（時間経過・場面転換）
+  dramaFact?: string;        // 事実チップ（積み上がって立場の差を可視化する。短い語にする）
+  dramaFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  dramaFlashSub?: string;    // テロップの上に出す金色の小バッジ
+  dramaReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  dramaRevealSub?: string;   // リビール帯の補足行
+  dramaCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  dramaNote?: string;        // CTA下の小さな注記（※フィクションです 等の但し書き）
+  dramaResult?: string;      // 次回予告リボン（冒頭へループさせる）
+  dramaResultSub?: string;   // 次回予告リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -171,13 +189,13 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "マイクラのワールドにいる人に、突撃取材してみたわ。",
-    "intvFlash": "マイクラの街で\n突撃取材",
-    "intvFlashSub": "街の人7人に聞いてみた",
-    "intvTone": "rec",
-    "intvTicker": "マイクラのワールドにいる人に突撃取材してみました",
+    "text": "まだ、マイクラなんてやってるの？",
+    "dramaTitle": "まだマイクラやってるの？",
+    "dramaEpisode": "第1話",
+    "dramaTone": "tense",
+    "dramaJab": "まだマイクラ、やってるの？",
     "scene": 1,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
@@ -189,15 +207,33 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 112
+    "durationInFrames": 71
   },
   {
     "id": 2,
+    "character": "zundamon",
+    "text": "やってるのだ。",
+    "dramaLine": "やってるのだ。",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 35
+  },
+  {
+    "id": 3,
     "character": "metan",
-    "text": "すみません。いま、何してたんですか？",
-    "intvQuestion": "いま、何してたんですか？",
-    "intvCount": 1,
-    "intvTicker": "街の人7人に同じ質問をしてみました",
+    "text": "私はもう卒業したの。来月から、社会人だから。",
+    "dramaLine": "もう卒業したの。来月から社会人だから",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -208,22 +244,17 @@ export const scriptData: ScriptLine[] = [
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
+      "volume": 0.4
     },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 100
+    "voiceFile": "03_metan.wav",
+    "durationInFrames": 128
   },
   {
-    "id": 3,
+    "id": 4,
     "character": "zundamon",
-    "text": "会社の決算なのだ。社員が六人いて、今月は黒字なのだ。",
-    "intvName": "けんた",
-    "intvRole": "会社を経営",
-    "intvAnswer": "会社の決算",
-    "intvAnswerSub": "社員が6人いて 今月は黒字",
-    "intvReaction": "!?",
-    "intvCount": 1,
-    "intvTicker": "1人目 マイクラの中で会社を経営している",
+    "text": "ずんだは、先月から社長なのだ。",
+    "dramaLine": "ずんだは、先月から社長なのだ",
+    "dramaFact": "会社",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -236,41 +267,75 @@ export const scriptData: ScriptLine[] = [
       "src": "shock1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 166
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 91
   },
   {
-    "id": 4,
+    "id": 5,
     "character": "metan",
-    "text": "会社……？　えっと、そちらのかたは？",
-    "intvQuestion": "そちらの方は？",
-    "intvCount": 2,
-    "intvTicker": "2人目 無人の店をやっている",
+    "text": "……は？　なに言ってるの。",
+    "dramaLine": "は？　なに言ってるの",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 900
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 54
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "社員が六人いて、今月は黒字なのだ。",
+    "dramaLine": "社員が6人いて、今月は黒字なのだ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
       "animation": "none",
       "startFrom": 60
     },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "04_metan.wav",
-    "durationInFrames": 101
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 110
   },
   {
-    "id": 5,
+    "id": 7,
+    "character": "metan",
+    "text": "それ、ゲームの話でしょ。",
+    "dramaJab": "それ、ゲームの話でしょ",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 90
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 64
+  },
+  {
+    "id": 8,
     "character": "zundamon",
-    "text": "店番なのだ。といっても、寝てる間に勝手に売れるのだ。",
-    "intvName": "みなみ",
-    "intvRole": "お店の店主",
-    "intvAnswer": "店番",
-    "intvAnswerSub": "寝てる間に勝手に売れる",
-    "intvCount": 2,
-    "intvTicker": "無人販売所なので寝ている間も商品が売れる",
+    "text": "お店もあるのだ。寝てる間に、売れてるのだ。",
+    "dramaLine": "お店もあるのだ。寝てる間に売れてるのだ",
+    "dramaFact": "店",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -280,44 +345,38 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 120
     },
     "se": {
-      "src": "item-get1.mp3",
+      "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 144
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 123
   },
   {
-    "id": 6,
+    "id": 9,
     "character": "metan",
-    "text": "寝てる間に……？　次のかた、お願いします。",
-    "intvQuestion": "次の方は？",
-    "intvCount": 3,
-    "intvTicker": "3人目 釣りをしている",
+    "text": "売れてる……？　勝手に……？",
+    "dramaLine": "売れてる……？　勝手に？",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
       "animation": "none",
-      "startFrom": 90
+      "startFrom": 400
     },
     "se": {
-      "src": "question1.mp3",
+      "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 104
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 59
   },
   {
-    "id": 7,
+    "id": 10,
     "character": "zundamon",
-    "text": "釣りなのだ。魚は二百七十五種類いるから、まだ半分なのだ。",
-    "intvName": "たくみ",
-    "intvRole": "漁師",
-    "intvAnswer": "釣り",
-    "intvAnswerSub": "魚は275種類 まだ半分しか釣ってない",
-    "intvCount": 3,
-    "intvTicker": "釣れる魚は275種類 バニラにはない魚も釣れる",
+    "text": "魚は、二百七十五種類いるのだ。まだ半分なのだ。",
+    "dramaLine": "魚は275種類いるのだ。まだ半分",
+    "dramaFact": "魚275種",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -330,89 +389,97 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 168
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 147
   },
   {
-    "id": 8,
+    "id": 11,
     "character": "metan",
-    "text": "二百七十五種類！？　……そちらは？",
-    "intvQuestion": "そちらは？",
-    "intvReaction": "275種!?",
-    "intvCount": 4,
-    "intvTicker": "4人目 畑を耕している",
+    "text": "二百七十五種類！？　なによ、それ。",
+    "dramaLine": "275種類！？　なによ、それ",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
       "animation": "none",
-      "startFrom": 420
+      "startFrom": 90
     },
     "se": {
-      "src": "shock1.mp3",
-      "volume": 0.45
+      "src": "people-shout-oo2.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 86
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 100
   },
   {
-    "id": 9,
+    "id": 12,
     "character": "zundamon",
-    "text": "畑なのだ。収穫が終わらないから、今日は遅くなるのだ。",
-    "intvName": "ゆか",
-    "intvRole": "農家",
-    "intvAnswer": "畑の収穫",
-    "intvAnswerSub": "終わらないので今日は遅くなる",
-    "intvCount": 4,
-    "intvTicker": "採掘 農業 木こり 釣り 作業勢にもおすすめ",
+    "text": "土地を買って、家も建てたのだ。",
+    "dramaLine": "土地を買って、家も建てたのだ",
+    "dramaFact": "家",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 100
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 146
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 85
   },
   {
-    "id": 10,
+    "id": 13,
     "character": "metan",
-    "text": "その隣のかたは、何を？",
-    "intvQuestion": "隣の方は？",
-    "intvCount": 5,
-    "intvTicker": "5人目 車で街を走っている",
+    "text": "家……？　持ち家ってこと？",
+    "dramaLine": "家……？　持ち家ってこと？",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
-      "startFrom": 170
+      "startFrom": 200
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "10_metan.wav",
-    "durationInFrames": 67
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 72
   },
   {
-    "id": 11,
+    "id": 14,
+    "character": "metan",
+    "text": "で、でも、しょせんゲームでしょ。",
+    "dramaChapter": "それでも、彼女は認めない",
+    "dramaLine": "でも、しょせんゲームでしょ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1500
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "14_metan.wav",
+    "durationInFrames": 84
+  },
+  {
+    "id": 15,
     "character": "zundamon",
-    "text": "ドライブなのだ。いま、車で街を一周してきたところなのだ。",
-    "intvName": "しんじ",
-    "intvRole": "ドライブ中",
-    "intvAnswer": "ドライブ",
-    "intvAnswerSub": "車で街を一周してきた",
-    "intvCount": 5,
-    "intvTicker": "車に乗って生活ワールドを駆け回れる",
+    "text": "通勤は車なのだ。いま、街を一周してきたのだ。",
+    "dramaLine": "通勤は車なのだ。街を一周してきた",
+    "dramaFact": "車",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
@@ -425,86 +492,55 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 157
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 146
   },
   {
-    "id": 12,
-    "character": "metan",
-    "text": "車！？　じゃあ、最後のかたは？",
-    "intvQuestion": "最後の方は？",
-    "intvReaction": "車!?",
-    "intvCount": 6,
-    "intvTicker": "6人目 近くの人としゃべっていた",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "people-shout-oo2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 96
-  },
-  {
-    "id": 13,
+    "id": 16,
     "character": "zundamon",
-    "text": "隣の人としゃべってたのだ。文字じゃなくて、声でなのだ。",
-    "intvName": "あや",
-    "intvRole": "街の住人",
-    "intvAnswer": "隣の人としゃべってた",
-    "intvAnswerSub": "文字じゃなくて 声で",
-    "intvCount": 6,
-    "intvTicker": "近距離VCで近くにいる人と声で話せる",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1200
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 138
-  },
-  {
-    "id": 14,
-    "character": "metan",
-    "text": "……ちょっと待って。ここ、入るのにいくらかかるの？",
-    "intvQuestion": "ここ、入るのにいくら？",
-    "intvTicker": "全員に聞きました ここに入るのにいくらかかるのか",
+    "text": "近所の人とは、声で話すのだ。",
+    "dramaLine": "近所の人とは、声で話すのだ",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 300
     },
     "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
+      "src": "item-get1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 106
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 88
   },
   {
-    "id": 15,
-    "character": "zundamon",
-    "text": "ゼロ円なのだ。六人とも、ゼロ円なのだ。",
-    "intvWrapUp": "0円",
-    "intvWrapUpSub": "6人とも 参加費はゼロ",
-    "intvTone": "wrap",
-    "intvTicker": "参加費は0円 6人とも同じ回答",
+    "id": 17,
+    "character": "metan",
+    "text": "……なんで、そっちのほうが、ちゃんとしてるのよ。",
+    "dramaMono": "私より、生活してる",
+    "scene": 2,
+    "pauseAfter": 0,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 98
+  },
+  {
+    "id": 18,
+    "character": "metan",
+    "text": "……待って。私、なにも持ってないわ。",
+    "dramaLine": "待って。私、なにも持ってないわ",
+    "dramaTone": "turn",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -514,40 +550,38 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 2400
     },
     "se": {
-      "src": "don-1.mp3",
-      "volume": 0.45
+      "src": "shock1.mp3",
+      "volume": 0.3
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 117
+    "voiceFile": "18_metan.wav",
+    "durationInFrames": 89
   },
   {
-    "id": 16,
+    "id": 19,
     "character": "metan",
-    "text": "……ねえ。この街、どこにあるの？",
-    "intvQuestion": "この街、どこにあるの？",
-    "intvTicker": "この街はどこにあるのか",
+    "text": "それ、どこでできるの？",
+    "dramaLine": "それ、どこでできるの？",
     "scene": 3,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 260
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 85
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 56
   },
   {
-    "id": 17,
+    "id": 20,
     "character": "zundamon",
     "text": "よもぎサーバーの、生活サーバーなのだ。",
-    "intvReveal": "よもぎサーバーの生活サーバー",
-    "intvRevealSub": "統合版マイクラ 参加費0円 24時間あそべる",
-    "intvTicker": "よもぎサーバーの生活サーバー 統合版マイクラで24時間あそべる",
+    "dramaReveal": "よもぎサーバーの生活サーバー",
+    "dramaRevealSub": "統合版マイクラ　24時間あそべる生活・経済サーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -560,17 +594,58 @@ export const scriptData: ScriptLine[] = [
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "17_zundamon.wav",
+    "voiceFile": "20_zundamon.wav",
     "durationInFrames": 103
   },
   {
-    "id": 18,
+    "id": 21,
     "character": "metan",
-    "text": "はいりかたは、よもぎサーバーで検索してね。",
-    "displayText": "検索すると 入り方がわかる",
-    "intvCta": "よもぎサーバー",
-    "intvNote": "※取材風の演出です／ボランティア運営のサーバーです",
-    "intvTicker": "入り方はネットで「よもぎサーバー」と検索",
+    "text": "……いくら、かかるの？",
+    "dramaLine": "いくら、かかるの？",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "drum-roll1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "21_metan.wav",
+    "durationInFrames": 48
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "ゼロ円なのだ。",
+    "dramaFlash": "0円",
+    "dramaFlashSub": "参加費",
+    "dramaFact": "0円",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 40
+  },
+  {
+    "id": 23,
+    "character": "metan",
+    "text": "はいりかたは、よもぎサーバーで検索ね。",
+    "dramaLine": "入り方は「よもぎサーバー」で検索",
+    "dramaCta": "よもぎサーバー",
+    "dramaNote": "※このドラマはフィクションです／ボランティア運営のサーバーです",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -584,17 +659,15 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_metan.wav",
-    "durationInFrames": 89
+    "voiceFile": "23_metan.wav",
+    "durationInFrames": 87
   },
   {
-    "id": 19,
+    "id": 24,
     "character": "zundamon",
-    "text": "ナナニンメは、あなたなのだ。いま、何してたのだ？",
-    "intvResult": "7人目は、あなた",
-    "intvResultSub": "いま、何してた？　コメントで教えて",
-    "intvCount": 7,
-    "intvTicker": "7人目はあなたです",
+    "text": "ダイニワは、あなたの番なのだ。まだマイクラ、やってるのだ？",
+    "dramaResult": "第2話　あなたの番",
+    "dramaResultSub": "まだマイクラ、やってる？　コメントで",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -604,11 +677,11 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.5
+      "src": "sceneswitch1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 146
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 161
   }
 ];
 
