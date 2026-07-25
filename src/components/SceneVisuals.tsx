@@ -15,7 +15,23 @@ import videoDurations from "../../public/content/video-durations.json";
 interface SceneVisualsProps {
   visual?: VisualContent;
   lineId?: number;
+  /** 手持ちカメラの揺れを足すか（街頭インタビュー型のロケ映像用） */
+  handheld?: boolean;
 }
+
+/**
+ * 手持ちカメラのゆっくりした揺れ。周期の違う正弦波を足して
+ * 「一定の振動」に見えないようにする。素材は 160%×125% に拡大して
+ * 敷いてあるので、この程度の移動では端が見えない
+ */
+const handheldOffset = (frame: number, enabled: boolean) => {
+  if (!enabled) return { x: 0, y: 0, rotate: 0 };
+  return {
+    x: Math.sin(frame / 7.3) * 6 + Math.sin(frame / 3.1) * 2.8,
+    y: Math.cos(frame / 5.9) * 5 + Math.sin(frame / 2.7) * 2.4,
+    rotate: Math.sin(frame / 11.4) * 0.35,
+  };
+};
 
 const useAnimationStyle = (
   frame: number,
@@ -85,7 +101,11 @@ const fullScreen: React.CSSProperties = {
   justifyContent: "center",
 };
 
-export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }) => {
+export const SceneVisuals: React.FC<SceneVisualsProps> = ({
+  visual,
+  lineId = 0,
+  handheld = false,
+}) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
   const animationStyle = useAnimationStyle(frame, fps, visual?.animation);
@@ -99,6 +119,8 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
     lineId % 2 === 0 ? [overhang, -overhang] : [-overhang, overhang],
     { extrapolateRight: "clamp" }
   );
+
+  const shake = handheldOffset(frame, handheld);
 
   if (!visual || visual.type === "none") {
     return null;
@@ -126,7 +148,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
             width: `${SCALE * 100}%`,
             height: "125%",
             objectFit: "cover",
-            transform: `translateX(calc(-50% + ${panX}px)) scale(${punch})`,
+            transform: `translateX(calc(-50% + ${panX + shake.x}px)) translateY(${shake.y}px) rotate(${shake.rotate}deg) scale(${punch})`,
           }}
           startFrom={startFrom}
           muted
@@ -156,7 +178,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
                 width: `${SCALE * 100}%`,
                 height: "125%",
                 objectFit: "cover",
-                transform: `translateX(calc(-50% + ${panX}px))`,
+                transform: `translateX(calc(-50% + ${panX + shake.x}px)) translateY(${shake.y}px) rotate(${shake.rotate}deg)`,
               }}
               startFrom={bgStartFrom}
               muted
@@ -211,7 +233,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({ visual, lineId = 0 }
                 width: `${SCALE * 100}%`,
                 height: "125%",
                 objectFit: "cover",
-                transform: `translateX(calc(-50% + ${panX}px))`,
+                transform: `translateX(calc(-50% + ${panX + shake.x}px)) translateY(${shake.y}px) rotate(${shake.rotate}deg)`,
               }}
               startFrom={bgStartFrom}
               muted

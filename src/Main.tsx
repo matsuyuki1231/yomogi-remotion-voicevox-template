@@ -39,21 +39,30 @@ import {
   ReplyHud,
   ReplyTone,
 } from "./components/ReplyHud";
+import {
+  InterviewBackdrop,
+  InterviewScrim,
+  InterviewChrome,
+  InterviewHud,
+  InterviewTone,
+} from "./components/InterviewHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
-type Format = "news" | "court" | "shop" | "reply";
+type Format = "news" | "court" | "shop" | "reply" | "interview";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
-// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
+// intv* なら街頭インタビュー型、reply* ならコメント返信型、
+// shop* ならテレビショッピング・通販型、court* なら裁判・尋問型、
+// どれでもなければ緊急速報・報道型。
 const detectFormat = (): Format => {
   const hasPrefix = (prefix: string) =>
     scriptData.some((line) =>
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("intv")) return "interview";
   if (hasPrefix("reply")) return "reply";
   if (hasPrefix("shop")) return "shop";
   if (hasPrefix("court")) return "court";
@@ -228,6 +237,35 @@ export const Main: React.FC = () => {
     1
   );
 
+  // ---- 取材トーン（REC / 取材終了）を解決。取材終了スラムの行から後ろに引き継がれる ----
+  const intvToneResolved: InterviewTone[] = (() => {
+    let current: InterviewTone = "rec";
+    return scriptData.map((line) => {
+      if (line.intvTone === "rec" || line.intvTone === "wrap") {
+        current = line.intvTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何人目を取材しているかを解決。指定がない行は直前の値を引き継ぐ ----
+  const intvCountResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.intvCount === "number") {
+        current = line.intvCount;
+      }
+      return current;
+    });
+  })();
+
+  // ドット列の個数。スクリプト中でいちばん大きい取材人数を総数とする
+  // （最後の1人＝視聴者ぶんの空きドットが冒頭から見えているのが引っぱり装置）
+  const intvCountTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.intvCount ?? 0),
+    1
+  );
+
   // 背景を流れるコメント片。全行の質問文を重複なく集める。
   // 新着コメント（replyNew）の行だけは、正体を聞く質問が最初から背景に
   // 見えているとネタバレになるので除く
@@ -243,6 +281,8 @@ export const Main: React.FC = () => {
   // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
   const tickerOf = (line: ScriptLine): string | undefined => {
     switch (FORMAT) {
+      case "interview":
+        return line.intvTicker;
       case "reply":
         return line.replyTicker;
       case "shop":
@@ -318,6 +358,21 @@ export const Main: React.FC = () => {
       line.replyResult
     );
 
+  // 街頭インタビューHUDのパーツが1つでも出るか
+  const hasInterviewHud = (line: ScriptLine): boolean =>
+    !!(
+      line.intvQuestion ||
+      line.intvName ||
+      line.intvAnswer ||
+      line.intvReaction ||
+      line.intvFlash ||
+      line.intvWrapUp ||
+      line.intvReveal ||
+      line.intvCta ||
+      line.intvNote ||
+      line.intvResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムが、
@@ -325,6 +380,15 @@ export const Main: React.FC = () => {
   // いずれも字幕を出すのは検索CTAの行だけになる。
   const hidesSubtitle = (line: ScriptLine): boolean => {
     switch (FORMAT) {
+      case "interview":
+        return !!(
+          line.intvQuestion ||
+          line.intvAnswer ||
+          line.intvFlash ||
+          line.intvWrapUp ||
+          line.intvReveal ||
+          line.intvResult
+        );
       case "reply":
         return !!(
           line.replyQuestion ||
@@ -385,6 +449,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "interview":
+        return <InterviewBackdrop />;
       case "reply":
         return <ReplyBackdrop />;
       case "shop":
@@ -398,6 +464,8 @@ export const Main: React.FC = () => {
 
   const renderScrim = () => {
     switch (FORMAT) {
+      case "interview":
+        return <InterviewScrim />;
       case "reply":
         return <ReplyScrim />;
       case "shop":
@@ -411,6 +479,17 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "interview":
+        return (
+          <InterviewChrome
+            tone={currentIndex >= 0 ? intvToneResolved[currentIndex] : "rec"}
+            ticker={tickerText}
+            count={currentIndex >= 0 ? intvCountResolved[currentIndex] : null}
+            countPrev={currentIndex > 0 ? intvCountResolved[currentIndex - 1] : null}
+            countTotal={intvCountTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "reply":
         return (
           <ReplyChrome
@@ -471,6 +550,31 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "interview":
+        if (!hasInterviewHud(line)) return null;
+        return wrap(
+          <InterviewHud
+            tone={intvToneResolved[currentIndex]}
+            character={line.character}
+            question={line.intvQuestion}
+            name={line.intvName}
+            role={line.intvRole}
+            answer={line.intvAnswer}
+            answerSub={line.intvAnswerSub}
+            reaction={line.intvReaction}
+            flash={line.intvFlash}
+            flashSub={line.intvFlashSub}
+            wrapUp={line.intvWrapUp}
+            wrapUpSub={line.intvWrapUpSub}
+            reveal={line.intvReveal}
+            revealSub={line.intvRevealSub}
+            cta={line.intvCta}
+            note={line.intvNote}
+            result={line.intvResult}
+            resultSub={line.intvResultSub}
+            durationInFrames={span}
+          />
+        );
       case "reply":
         if (!hasReplyHud(line)) return null;
         return wrap(
@@ -630,7 +734,13 @@ export const Main: React.FC = () => {
             durationInFrames={getLineSpan(line)}
             premountFor={fps}
           >
-            <SceneVisuals visual={line.visual} lineId={line.id} />
+            {/* 街頭インタビュー型だけ、映像に手持ちカメラの揺れを足す。
+                「取材班が現地で回している」という嘘を映像側でも成立させる */}
+            <SceneVisuals
+              visual={line.visual}
+              lineId={line.id}
+              handheld={FORMAT === "interview"}
+            />
             {renderScrim()}
           </Sequence>
         );

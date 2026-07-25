@@ -16,21 +16,21 @@ automation:
 bgm:
   # フリーBGM（商用可・クレジット任意・コンテンツID登録不可）
   # segments を指定した場合はそちらが優先される（src は未指定時のフォールバック）
-  src: "amacha_marbletechno1.mp3"
+  src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # コメント返信・反論処理型:
-  # 前半（煽りコメント〜質問を潰していくパート）は硬質なテクノで
-  # 「未回答があと何件」の緊張を作り、回答完了（id:14）で穏やかな曲に
-  # 切り替えて「後半は落ち着かせて宣伝」の転換を音でも作る
+  # 街頭インタビュー・突撃取材型:
+  # 前半（1人ずつ聞いて回るパート）はバラエティのロケVTRらしい軽い曲で
+  # 「次は何が出てくるのか」のテンポを作り、取材終了＝0円（id:14）で
+  # 穏やかな曲に切り替えて「後半は落ち着かせて宣伝」の転換を音でも作る
   segments:
-    # 「マーブルテクノⅠ」— テクノ・エレクトロ。質問を潰していくテンポに合わせる
-    - src: "amacha_marbletechno1.mp3"
+    # 「三時のおやつ」— 軽快でコミカル。街を回って聞き込むテンポに合わせる
+    - src: "amacha_sanjinooyatsu.mp3"
       volume: 0.18
       loop: true
       fromLineId: 1
-    # 「ミルキーウェイ」— ヒーリング。0円＝回答完了の解放感〜宣伝パートに切り替える
-    - src: "amacha_milkyway.mp3"
+    # 「ゆるやかな朝焼け」— 穏やか。0円＝取材終了の解放感〜宣伝パートに切り替える
+    - src: "amacha_yuruyakanaasayake.mp3"
       volume: 0.2
       loop: true
       fromLineId: 14

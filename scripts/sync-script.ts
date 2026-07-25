@@ -95,6 +95,25 @@ interface ScriptLine {
   replyNote?: string;
   replyResult?: string;
   replyResultSub?: string;
+  intvTone?: string;
+  intvTicker?: string;
+  intvCount?: number;
+  intvQuestion?: string;
+  intvName?: string;
+  intvRole?: string;
+  intvAnswer?: string;
+  intvAnswerSub?: string;
+  intvReaction?: string;
+  intvFlash?: string;
+  intvFlashSub?: string;
+  intvWrapUp?: string;
+  intvWrapUpSub?: string;
+  intvReveal?: string;
+  intvRevealSub?: string;
+  intvCta?: string;
+  intvNote?: string;
+  intvResult?: string;
+  intvResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -330,6 +349,26 @@ export interface ScriptLine {
   replyNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   replyResult?: string;      // 結果＝ループ用リボン（冒頭のコメントに戻す）
   replyResultSub?: string;   // 結果リボンの補足行（コメント誘発の一言）
+  // ---- 街頭インタビュー・突撃取材型（InterviewHud）----
+  intvTone?: "rec" | "wrap"; // 取材トーン。指定行から後ろに引き継がれる（REC＝赤 / 取材終了＝緑）
+  intvTicker?: string;       // 最下部の取材メモ帯を流れる文（全行ぶんを連結して常時流す）
+  intvCount?: number;        // 何人目の取材か。指定がない行は直前の値を引き継ぐ
+  intvQuestion?: string;     // 取材班の質問（白い吹き出し。マイクアイコン付き）
+  intvName?: string;         // 回答者の仮名（架空の人物）
+  intvRole?: string;         // 回答者の肩書き（会社経営 / 自営業 など）
+  intvAnswer?: string;       // 回答の極太テロップ（字幕の代わりに読ませる）
+  intvAnswerSub?: string;    // 回答テロップの補足行
+  intvReaction?: string;     // 「!?」リアクションスタンプ（集中線つき）
+  intvFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  intvFlashSub?: string;     // テロップの上に出す赤い小バッジ
+  intvWrapUp?: string;       // 取材終了スラム（トーンを解除する転換点。白フラッシュ付き）
+  intvWrapUpSub?: string;    // 取材終了スラムの補足行
+  intvReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  intvRevealSub?: string;    // リビール帯の補足行
+  intvCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  intvNote?: string;         // CTA下の小さな注記（※取材風の演出です 等の但し書き）
+  intvResult?: string;       // 結果＝ループ用リボン（冒頭の質問に戻す）
+  intvResultSub?: string;    // 結果リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
