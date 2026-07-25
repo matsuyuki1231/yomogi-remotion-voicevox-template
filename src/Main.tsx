@@ -32,22 +32,35 @@ import {
   ShopHud,
   ShopTone,
 } from "./components/ShopHud";
+import {
+  ReplyBackdrop,
+  ReplyScrim,
+  ReplyChrome,
+  ReplyHud,
+  ReplyTone,
+} from "./components/ReplyHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
-// 使っているフォーマットをスクリプトの中身から判定する。
-// shop* があればテレビショッピング・通販型、court* があれば裁判・尋問型、
-// どちらもなければ緊急速報・報道型。
-const FORMAT: "news" | "court" | "shop" = scriptData.some((line) =>
-  Object.keys(line).some((key) => key.startsWith("shop"))
-)
-  ? "shop"
-  : scriptData.some((line) =>
-        Object.keys(line).some((key) => key.startsWith("court"))
-      )
-    ? "court"
-    : "news";
+type Format = "news" | "court" | "shop" | "reply";
+
+// 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
+// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
+// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
+const detectFormat = (): Format => {
+  const hasPrefix = (prefix: string) =>
+    scriptData.some((line) =>
+      Object.keys(line).some((key) => key.startsWith(prefix))
+    );
+
+  if (hasPrefix("reply")) return "reply";
+  if (hasPrefix("shop")) return "shop";
+  if (hasPrefix("court")) return "court";
+  return "news";
+};
+
+const FORMAT: Format = detectFormat();
 
 // 発言者プレートの氏名（裁判・尋問型で使う）
 const SPEAKER_NAMES: Record<string, string> = {
@@ -187,15 +200,62 @@ export const Main: React.FC = () => {
     });
   })();
 
-  // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
-  const tickerText = scriptData
-    .map((line) =>
-      FORMAT === "shop"
-        ? line.shopTicker
-        : FORMAT === "court"
-          ? line.courtTicker
-          : line.newsTicker
+  // ---- コメント返信トーン（返信中 / 解決ずみ）を解決。回答完了の行から後ろに引き継がれる ----
+  const replyToneResolved: ReplyTone[] = (() => {
+    let current: ReplyTone = "flame";
+    return scriptData.map((line) => {
+      if (line.replyTone === "flame" || line.replyTone === "calm") {
+        current = line.replyTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 未回答の件数を解決。指定がない行は直前の値を引き継ぐ ----
+  const pendingResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.replyPending === "number") {
+        current = line.replyPending;
+      }
+      return current;
+    });
+  })();
+
+  // 解決バーの分母。スクリプト中でいちばん多い未回答件数を100%とする
+  const pendingTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.replyPending ?? 0),
+    1
+  );
+
+  // 背景を流れるコメント片。全行の質問文を重複なく集める。
+  // 新着コメント（replyNew）の行だけは、正体を聞く質問が最初から背景に
+  // 見えているとネタバレになるので除く
+  const chatterLines = Array.from(
+    new Set(
+      scriptData
+        .filter((line) => !line.replyNew)
+        .map((line) => line.replyQuestion)
+        .filter((q): q is string => !!q)
     )
+  );
+
+  // ティッカーは全行ぶんを1本に連結し、動画を通して途切れず流し続ける
+  const tickerOf = (line: ScriptLine): string | undefined => {
+    switch (FORMAT) {
+      case "reply":
+        return line.replyTicker;
+      case "shop":
+        return line.shopTicker;
+      case "court":
+        return line.courtTicker;
+      default:
+        return line.newsTicker;
+    }
+  };
+
+  const tickerText = scriptData
+    .map(tickerOf)
     .filter((t): t is string => !!t)
     .join("　／　");
 
@@ -244,37 +304,65 @@ export const Main: React.FC = () => {
       line.shopResult
     );
 
+  // コメント返信HUDのパーツが1つでも出るか
+  const hasReplyHud = (line: ScriptLine): boolean =>
+    !!(
+      line.replyQuestion ||
+      line.replyAnswer ||
+      line.replyFlash ||
+      line.replyClear ||
+      line.replyReveal ||
+      line.replyStamp ||
+      line.replyCta ||
+      line.replyNote ||
+      line.replyResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
-  // 裁判型では証拠プレート・起訴状・判決スラムがテロップを兼ねるので、
-  // どちらも字幕を出すのは検索CTAの行だけになる。
-  const hidesSubtitle = (line: ScriptLine): boolean =>
-    FORMAT === "shop"
-      ? !!(
+  // 裁判型では証拠プレート・起訴状・判決スラムが、
+  // コメント返信型では質問カード・返信カードがテロップを兼ねるので、
+  // いずれも字幕を出すのは検索CTAの行だけになる。
+  const hidesSubtitle = (line: ScriptLine): boolean => {
+    switch (FORMAT) {
+      case "reply":
+        return !!(
+          line.replyQuestion ||
+          line.replyAnswer ||
+          line.replyFlash ||
+          line.replyClear ||
+          line.replyReveal ||
+          line.replyResult
+        );
+      case "shop":
+        return !!(
           line.shopFlash ||
           line.shopBonus ||
           line.shopItem ||
           line.shopPriceSlam ||
           line.shopReveal ||
           line.shopResult
-        )
-      : FORMAT === "court"
-        ? !!(
-            line.courtFlash ||
-            line.courtCharge ||
-            line.courtObjection ||
-            line.courtLower ||
-            line.courtJudgment ||
-            line.courtReveal ||
-            line.courtResult
-          )
-        : !!(
-            line.newsFlash ||
-            line.newsLower ||
-            line.newsCorrection ||
-            line.newsReveal ||
-            line.newsResult
-          );
+        );
+      case "court":
+        return !!(
+          line.courtFlash ||
+          line.courtCharge ||
+          line.courtObjection ||
+          line.courtLower ||
+          line.courtJudgment ||
+          line.courtReveal ||
+          line.courtResult
+        );
+      default:
+        return !!(
+          line.newsFlash ||
+          line.newsLower ||
+          line.newsCorrection ||
+          line.newsReveal ||
+          line.newsResult
+        );
+    }
+  };
 
   // BGM区間の開始フレームと長さを算出
   const segments = bgmSegments;
@@ -291,16 +379,202 @@ export const Main: React.FC = () => {
       })
     : null;
 
+  // ---- フォーマットごとの描画 ----
+  // 背景・暗幕・常設UI・セリフごとのHUDの4か所が同じ分岐になるので、
+  // それぞれ関数に切り出しておく（フォーマットを増やすときはここだけ足す）
+
+  const renderBackdrop = () => {
+    switch (FORMAT) {
+      case "reply":
+        return <ReplyBackdrop />;
+      case "shop":
+        return <ShopBackdrop />;
+      case "court":
+        return <CourtBackdrop />;
+      default:
+        return <NewsBackdrop />;
+    }
+  };
+
+  const renderScrim = () => {
+    switch (FORMAT) {
+      case "reply":
+        return <ReplyScrim />;
+      case "shop":
+        return <ShopScrim />;
+      case "court":
+        return <CourtScrim />;
+      default:
+        return <NewsScrim />;
+    }
+  };
+
+  const renderChrome = () => {
+    switch (FORMAT) {
+      case "reply":
+        return (
+          <ReplyChrome
+            tone={currentIndex >= 0 ? replyToneResolved[currentIndex] : "flame"}
+            ticker={tickerText}
+            chatter={chatterLines}
+            pending={currentIndex >= 0 ? pendingResolved[currentIndex] : null}
+            pendingPrev={currentIndex > 0 ? pendingResolved[currentIndex - 1] : null}
+            pendingTotal={pendingTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
+      case "shop":
+        return (
+          <ShopChrome
+            tone={currentIndex >= 0 ? shopToneResolved[currentIndex] : "live"}
+            ticker={tickerText}
+            price={currentIndex >= 0 ? priceResolved[currentIndex] : null}
+            pricePrev={currentIndex > 0 ? priceResolved[currentIndex - 1] : null}
+            count={currentIndex >= 0 ? countResolved[currentIndex] : null}
+            countPrev={currentIndex > 0 ? countResolved[currentIndex - 1] : null}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
+      case "court":
+        return (
+          <CourtChrome
+            tone={currentIndex >= 0 ? courtToneResolved[currentIndex] : "trial"}
+            ticker={tickerText}
+            guilt={currentIndex >= 0 ? guiltResolved[currentIndex] : null}
+            guiltPrev={currentIndex > 0 ? guiltResolved[currentIndex - 1] : null}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
+      default:
+        return (
+          <NewsChrome
+            tone={currentIndex >= 0 ? toneResolved[currentIndex] : "breaking"}
+            ticker={tickerText}
+          />
+        );
+    }
+  };
+
+  const renderHud = () => {
+    const line = currentLine;
+    if (!line) return null;
+
+    const span = getLineSpan(line);
+    const wrap = (hud: React.ReactNode) => (
+      <Sequence
+        key={`hud-${line.id}`}
+        from={currentLineStartFrame}
+        durationInFrames={span}
+      >
+        {hud}
+      </Sequence>
+    );
+
+    switch (FORMAT) {
+      case "reply":
+        if (!hasReplyHud(line)) return null;
+        return wrap(
+          <ReplyHud
+            tone={replyToneResolved[currentIndex]}
+            character={line.character}
+            characterName={SPEAKER_NAMES[line.character]}
+            user={line.replyUser}
+            question={line.replyQuestion}
+            likes={line.replyLikes}
+            answer={line.replyAnswer}
+            answerSub={line.replyAnswerSub}
+            newBadge={line.replyNew}
+            stamp={line.replyStamp}
+            flash={line.replyFlash}
+            flashSub={line.replyFlashSub}
+            clear={line.replyClear}
+            clearSub={line.replyClearSub}
+            reveal={line.replyReveal}
+            revealSub={line.replyRevealSub}
+            cta={line.replyCta}
+            note={line.replyNote}
+            result={line.replyResult}
+            resultSub={line.replyResultSub}
+            durationInFrames={span}
+          />
+        );
+      case "shop":
+        if (!hasShopHud(line)) return null;
+        return wrap(
+          <ShopHud
+            tone={shopToneResolved[currentIndex]}
+            flash={line.shopFlash}
+            flashSub={line.shopFlashSub}
+            bonus={line.shopBonus}
+            bonusSub={line.shopBonusSub}
+            item={line.shopItem}
+            itemLabel={line.shopItemLabel}
+            stamp={line.shopStamp}
+            priceSlam={line.shopPriceSlam}
+            priceSlamSub={line.shopPriceSlamSub}
+            reveal={line.shopReveal}
+            revealSub={line.shopRevealSub}
+            cta={line.shopCta}
+            note={line.shopNote}
+            result={line.shopResult}
+            durationInFrames={span}
+          />
+        );
+      case "court":
+        if (!hasCourtHud(line)) return null;
+        return wrap(
+          <CourtHud
+            tone={courtToneResolved[currentIndex]}
+            role={line.courtRole}
+            roleName={SPEAKER_NAMES[line.character]}
+            flash={line.courtFlash}
+            flashSub={line.courtFlashSub}
+            charge={line.courtCharge}
+            chargeSub={line.courtChargeSub}
+            objection={line.courtObjection}
+            lower={line.courtLower}
+            lowerLabel={line.courtLowerLabel}
+            stamp={line.courtStamp}
+            judgment={line.courtJudgment}
+            judgmentSub={line.courtJudgmentSub}
+            reveal={line.courtReveal}
+            revealSub={line.courtRevealSub}
+            cta={line.courtCta}
+            note={line.courtNote}
+            result={line.courtResult}
+            durationInFrames={span}
+          />
+        );
+      default:
+        if (!hasHud(line)) return null;
+        return wrap(
+          <NewsHud
+            tone={toneResolved[currentIndex]}
+            live={line.newsLive}
+            flash={line.newsFlash}
+            flashSub={line.newsFlashSub}
+            lower={line.newsLower}
+            lowerLabel={line.newsLowerLabel}
+            expert={line.newsExpert}
+            expertRole={line.newsExpertRole}
+            update={line.newsUpdate}
+            correction={line.newsCorrection}
+            correctionSub={line.newsCorrectionSub}
+            reveal={line.newsReveal}
+            revealSub={line.newsRevealSub}
+            cta={line.newsCta}
+            note={line.newsNote}
+            result={line.newsResult}
+            durationInFrames={span}
+          />
+        );
+    }
+  };
+
   return (
     <AbsoluteFill style={{ fontFamily }}>
       {/* 映像素材がない行のためのフォールバック背景 */}
-      {FORMAT === "shop" ? (
-        <ShopBackdrop />
-      ) : FORMAT === "court" ? (
-        <CourtBackdrop />
-      ) : (
-        <NewsBackdrop />
-      )}
+      {renderBackdrop()}
 
       {/* BGM再生（Sequenceで囲んでレンダリング時の音声はみ出しを防ぐ） */}
       {bgmTrack
@@ -357,133 +631,18 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             <SceneVisuals visual={line.visual} lineId={line.id} />
-            {FORMAT === "shop" ? (
-              <ShopScrim />
-            ) : FORMAT === "court" ? (
-              <CourtScrim />
-            ) : (
-              <NewsScrim />
-            )}
+            {renderScrim()}
           </Sequence>
         );
       })}
 
-      {/* 常設のUI（ヘッダ帯・ティッカー・心証メーター等）。
+      {/* 常設のUI（ヘッダ帯・ティッカー・心証メーター・未回答カウンター等）。
           Sequence の外に置いてグローバルなフレームで動かすので、
           カットが変わってもティッカーやメーターが途切れない */}
-      {FORMAT === "shop" ? (
-        <ShopChrome
-          tone={currentIndex >= 0 ? shopToneResolved[currentIndex] : "live"}
-          ticker={tickerText}
-          price={currentIndex >= 0 ? priceResolved[currentIndex] : null}
-          pricePrev={currentIndex > 0 ? priceResolved[currentIndex - 1] : null}
-          count={currentIndex >= 0 ? countResolved[currentIndex] : null}
-          countPrev={currentIndex > 0 ? countResolved[currentIndex - 1] : null}
-          lineStartFrame={currentLineStartFrame}
-        />
-      ) : FORMAT === "court" ? (
-        <CourtChrome
-          tone={currentIndex >= 0 ? courtToneResolved[currentIndex] : "trial"}
-          ticker={tickerText}
-          guilt={currentIndex >= 0 ? guiltResolved[currentIndex] : null}
-          guiltPrev={currentIndex > 0 ? guiltResolved[currentIndex - 1] : null}
-          lineStartFrame={currentLineStartFrame}
-        />
-      ) : (
-        <NewsChrome
-          tone={currentIndex >= 0 ? toneResolved[currentIndex] : "breaking"}
-          ticker={tickerText}
-        />
-      )}
+      {renderChrome()}
 
       {/* セリフごとのHUD */}
-      {FORMAT === "shop" ? (
-        currentLine &&
-        hasShopHud(currentLine) && (
-          <Sequence
-            key={`hud-${currentLine.id}`}
-            from={currentLineStartFrame}
-            durationInFrames={getLineSpan(currentLine)}
-          >
-            <ShopHud
-              tone={shopToneResolved[currentIndex]}
-              flash={currentLine.shopFlash}
-              flashSub={currentLine.shopFlashSub}
-              bonus={currentLine.shopBonus}
-              bonusSub={currentLine.shopBonusSub}
-              item={currentLine.shopItem}
-              itemLabel={currentLine.shopItemLabel}
-              stamp={currentLine.shopStamp}
-              priceSlam={currentLine.shopPriceSlam}
-              priceSlamSub={currentLine.shopPriceSlamSub}
-              reveal={currentLine.shopReveal}
-              revealSub={currentLine.shopRevealSub}
-              cta={currentLine.shopCta}
-              note={currentLine.shopNote}
-              result={currentLine.shopResult}
-              durationInFrames={getLineSpan(currentLine)}
-            />
-          </Sequence>
-        )
-      ) : FORMAT === "court"
-        ? currentLine &&
-          hasCourtHud(currentLine) && (
-            <Sequence
-              key={`hud-${currentLine.id}`}
-              from={currentLineStartFrame}
-              durationInFrames={getLineSpan(currentLine)}
-            >
-              <CourtHud
-                tone={courtToneResolved[currentIndex]}
-                role={currentLine.courtRole}
-                roleName={SPEAKER_NAMES[currentLine.character]}
-                flash={currentLine.courtFlash}
-                flashSub={currentLine.courtFlashSub}
-                charge={currentLine.courtCharge}
-                chargeSub={currentLine.courtChargeSub}
-                objection={currentLine.courtObjection}
-                lower={currentLine.courtLower}
-                lowerLabel={currentLine.courtLowerLabel}
-                stamp={currentLine.courtStamp}
-                judgment={currentLine.courtJudgment}
-                judgmentSub={currentLine.courtJudgmentSub}
-                reveal={currentLine.courtReveal}
-                revealSub={currentLine.courtRevealSub}
-                cta={currentLine.courtCta}
-                note={currentLine.courtNote}
-                result={currentLine.courtResult}
-                durationInFrames={getLineSpan(currentLine)}
-              />
-            </Sequence>
-          )
-        : currentLine &&
-          hasHud(currentLine) && (
-            <Sequence
-              key={`hud-${currentLine.id}`}
-              from={currentLineStartFrame}
-              durationInFrames={getLineSpan(currentLine)}
-            >
-              <NewsHud
-                tone={toneResolved[currentIndex]}
-                live={currentLine.newsLive}
-                flash={currentLine.newsFlash}
-                flashSub={currentLine.newsFlashSub}
-                lower={currentLine.newsLower}
-                lowerLabel={currentLine.newsLowerLabel}
-                expert={currentLine.newsExpert}
-                expertRole={currentLine.newsExpertRole}
-                update={currentLine.newsUpdate}
-                correction={currentLine.newsCorrection}
-                correctionSub={currentLine.newsCorrectionSub}
-                reveal={currentLine.newsReveal}
-                revealSub={currentLine.newsRevealSub}
-                cta={currentLine.newsCta}
-                note={currentLine.newsNote}
-                result={currentLine.newsResult}
-                durationInFrames={getLineSpan(currentLine)}
-              />
-            </Sequence>
-          )}
+      {renderHud()}
 
       {/* 字幕（画面下部） */}
       {currentLine && !hidesSubtitle(currentLine) && (

@@ -75,6 +75,26 @@ interface ScriptLine {
   shopCta?: string;
   shopNote?: string;
   shopResult?: string;
+  replyTone?: string;
+  replyTicker?: string;
+  replyPending?: number;
+  replyUser?: string;
+  replyQuestion?: string;
+  replyLikes?: string;
+  replyAnswer?: string;
+  replyAnswerSub?: string;
+  replyNew?: string;
+  replyStamp?: string;
+  replyFlash?: string;
+  replyFlashSub?: string;
+  replyClear?: string;
+  replyClearSub?: string;
+  replyReveal?: string;
+  replyRevealSub?: string;
+  replyCta?: string;
+  replyNote?: string;
+  replyResult?: string;
+  replyResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -289,6 +309,27 @@ export interface ScriptLine {
   shopCta?: string;          // 検索バー風CTA（文字がタイプされる）
   shopNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   shopResult?: string;       // 結果＝ループ用リボン（冒頭の商品紹介に戻す）
+  // ---- コメント返信・反論処理型（ReplyHud）----
+  replyTone?: "flame" | "calm"; // コメント欄トーン。指定行から後ろに引き継がれる（返信中＝赤 / 解決ずみ＝緑）
+  replyTicker?: string;      // 最下部の入力欄バーを流れる文（全行ぶんを連結して常時流す）
+  replyPending?: number;     // 未回答の件数。指定がない行は直前の値を引き継ぐ
+  replyUser?: string;        // 質問コメントの投稿者名（架空のハンドル）
+  replyQuestion?: string;    // 質問コメント本文。回答行にも書くと小さく上に残る
+  replyLikes?: string;       // 質問コメントのいいね数表示（例: 2.4万）
+  replyAnswer?: string;      // 返信カード本文（字幕の代わりに読ませる）
+  replyAnswerSub?: string;   // 返信カードの補足行
+  replyNew?: string;         // 黄色い「新着コメント」バッジ
+  replyStamp?: string;       // 丸い「解決」スタンプ
+  replyFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  replyFlashSub?: string;    // テロップの上に出す赤い小バッジ（例: 未回答 5件）
+  replyClear?: string;       // 回答完了スラム（トーンを解除する転換点。白フラッシュ付き）
+  replyClearSub?: string;    // 回答完了スラムの補足行
+  replyReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  replyRevealSub?: string;   // リビール帯の補足行
+  replyCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  replyNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  replyResult?: string;      // 結果＝ループ用リボン（冒頭のコメントに戻す）
+  replyResultSub?: string;   // 結果リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

@@ -35,10 +35,10 @@ export interface BGMSegment extends BGMConfig {
 }
 
 // BGM設定（動画全体で1曲）
-export const bgmConfig: BGMConfig | null = {"src":"amacha_picopicodisco.mp3","volume":0.18,"loop":true};
+export const bgmConfig: BGMConfig | null = {"src":"amacha_marbletechno1.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.18,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":9}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.18,"loop":true,"fromLineId":1},{"src":"amacha_milkyway.mp3","volume":0.2,"loop":true,"fromLineId":14}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -102,6 +102,27 @@ export interface ScriptLine {
   shopCta?: string;          // 検索バー風CTA（文字がタイプされる）
   shopNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   shopResult?: string;       // 結果＝ループ用リボン（冒頭の商品紹介に戻す）
+  // ---- コメント返信・反論処理型（ReplyHud）----
+  replyTone?: "flame" | "calm"; // コメント欄トーン。指定行から後ろに引き継がれる（返信中＝赤 / 解決ずみ＝緑）
+  replyTicker?: string;      // 最下部の入力欄バーを流れる文（全行ぶんを連結して常時流す）
+  replyPending?: number;     // 未回答の件数。指定がない行は直前の値を引き継ぐ
+  replyUser?: string;        // 質問コメントの投稿者名（架空のハンドル）
+  replyQuestion?: string;    // 質問コメント本文。回答行にも書くと小さく上に残る
+  replyLikes?: string;       // 質問コメントのいいね数表示（例: 2.4万）
+  replyAnswer?: string;      // 返信カード本文（字幕の代わりに読ませる）
+  replyAnswerSub?: string;   // 返信カードの補足行
+  replyNew?: string;         // 黄色い「新着コメント」バッジ
+  replyStamp?: string;       // 丸い「解決」スタンプ
+  replyFlash?: string;       // 巨大テロップ（改行はYAML側で明示する）
+  replyFlashSub?: string;    // テロップの上に出す赤い小バッジ（例: 未回答 5件）
+  replyClear?: string;       // 回答完了スラム（トーンを解除する転換点。白フラッシュ付き）
+  replyClearSub?: string;    // 回答完了スラムの補足行
+  replyReveal?: string;      // リビール帯（正体明かし。宣伝への転換点）
+  replyRevealSub?: string;   // リビール帯の補足行
+  replyCta?: string;         // 検索バー風CTA（文字がタイプされる）
+  replyNote?: string;        // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  replyResult?: string;      // 結果＝ループ用リボン（冒頭のコメントに戻す）
+  replyResultSub?: string;   // 結果リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -130,11 +151,12 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "本日の商品は、この暮らし、まるごとです。",
-    "shopFlash": "この暮らし\nまるごと通販",
-    "shopFlashSub": "本日の商品",
-    "shopTone": "live",
-    "shopTicker": "深夜のテレビ通販 本日の商品は「マイクラの暮らし」まるごとセット",
+    "text": "マイクラ、もうやることなくない？……って、コメントが来たわ。",
+    "replyUser": "通りすがり",
+    "replyQuestion": "マイクラ、もうやることなくない？",
+    "replyLikes": "2.4万",
+    "replyTone": "flame",
+    "replyTicker": "よく来る質問にぜんぶ答えます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -144,22 +166,43 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "jajean1.mp3",
+      "src": "text-impact3.mp3",
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 107
+    "durationInFrames": 142
   },
   {
     "id": 2,
+    "character": "zundamon",
+    "text": "この六つ、よく言われるのだ。今日は、全部答えるのだ。",
+    "replyFlash": "来た質問\n全部答える",
+    "replyFlashSub": "未回答 6件",
+    "replyPending": 6,
+    "replyTicker": "よく言われる六つの質問に全部答えます",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 250
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 150
+  },
+  {
+    "id": 3,
     "character": "metan",
-    "text": "セット内容その1。自分だけの、マイホーム。",
-    "shopItemLabel": "セット1",
-    "shopItem": "自分だけのマイホーム",
-    "shopStamp": "セットIN",
-    "shopCount": 1,
-    "shopPrice": "？？？円",
-    "shopTicker": "セット1 生活ワールドに土地を買って自分だけの家を建てられる",
+    "text": "まずはこれ。どうせ家を建てて、終わりでしょ？",
+    "replyUser": "名無しの村人",
+    "replyQuestion": "どうせ家を建てて終わりでしょ",
+    "replyLikes": "8,102",
+    "replyTicker": "質問1 どうせ家を建てて終わりでしょ",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -169,47 +212,25 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 100
     },
     "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 110
-  },
-  {
-    "id": 3,
-    "character": "zundamon",
-    "text": "その2。無人でも売れる、お店なのだ。",
-    "shopItemLabel": "セット2",
-    "shopItem": "無人でも売れるお店",
-    "shopStamp": "セットIN",
-    "shopCount": 2,
-    "shopTicker": "セット2 チェストショップで寝ている間もアイテムが売れる",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 260
-    },
-    "se": {
-      "src": "correct1.mp3",
+      "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 110
+    "voiceFile": "03_metan.wav",
+    "durationInFrames": 102
   },
   {
     "id": 4,
-    "character": "metan",
-    "text": "その3。社員を雇える、会社。",
-    "shopItemLabel": "セット3",
-    "shopItem": "社員を雇える会社",
-    "shopStamp": "セットIN",
-    "shopCount": 3,
-    "shopTicker": "セット3 会社制度で社員を雇って本格的な会社経営ができる",
+    "character": "zundamon",
+    "text": "お店も、会社も作れるのだ。",
+    "replyUser": "名無しの村人",
+    "replyQuestion": "どうせ家を建てて終わりでしょ",
+    "replyAnswer": "お店も 会社も作れる",
+    "replyAnswerSub": "社員を雇って経営できる",
+    "replyStamp": "解決",
+    "replyPending": 5,
+    "replyTicker": "回答1 家のほかに店も会社も作れる",
     "scene": 2,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
@@ -217,23 +238,195 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 1690
     },
     "se": {
-      "src": "amount-display1.mp3",
-      "volume": 0.45
+      "src": "correct1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "04_metan.wav",
-    "durationInFrames": 93
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 81
   },
   {
     "id": 5,
-    "character": "zundamon",
-    "text": "その4。魚が275種類いる、釣りなのだ。",
-    "shopItemLabel": "セット4",
-    "shopItem": "釣れる魚275種類",
-    "shopStamp": "セットIN",
-    "shopCount": 4,
-    "shopTicker": "セット4 釣りで釣れる魚はバニラにいない魚も含めて275種類",
+    "character": "metan",
+    "text": "次。それ、パソコンがないと無理よね？",
+    "replyUser": "スマホ勢",
+    "replyQuestion": "パソコンがないと無理でしょ",
+    "replyLikes": "5,470",
+    "replyTicker": "質問2 パソコンがないと無理でしょ",
     "scene": 2,
     "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "animation": "none",
+      "startFrom": 90
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 98
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "スマホでも、スイッチでも入れるのだ。統合版だからなのだ。",
+    "replyUser": "スマホ勢",
+    "replyQuestion": "パソコンがないと無理でしょ",
+    "replyAnswer": "スマホでもスイッチでも入れる",
+    "replyAnswerSub": "統合版マイクラのサーバー",
+    "replyStamp": "解決",
+    "replyPending": 4,
+    "replyTicker": "回答2 統合版なのでスマホやスイッチからも参加できる",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 800
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 144
+  },
+  {
+    "id": 7,
+    "character": "metan",
+    "text": "これも多いわ。どうせ人、いないんでしょ？",
+    "replyUser": "元サバイバル勢",
+    "replyQuestion": "どうせ過疎ってるんでしょ",
+    "replyLikes": "12,900",
+    "replyTicker": "質問3 どうせ過疎ってるんでしょ",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 170
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 97
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "二十四時間あそべて、近くの人とは声で話せるのだ。",
+    "replyUser": "元サバイバル勢",
+    "replyQuestion": "どうせ過疎ってるんでしょ",
+    "replyAnswer": "24時間あそべる",
+    "replyAnswerSub": "近くの人とは声で話せる",
+    "replyStamp": "解決",
+    "replyPending": 3,
+    "replyTicker": "回答3 24時間あそべて近距離VCで近くの人と話せる",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 420
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 137
+  },
+  {
+    "id": 9,
+    "character": "metan",
+    "text": "これが一番多いかも。荒らされたら、終わりでしょ？",
+    "replyUser": "心配性",
+    "replyQuestion": "荒らされたら終わりでしょ",
+    "replyLikes": "7,340",
+    "replyTicker": "質問4 荒らされたら終わりでしょ",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 113
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "土地も、チェストも保護できるのだ。",
+    "replyUser": "心配性",
+    "replyQuestion": "荒らされたら終わりでしょ",
+    "replyAnswer": "土地もチェストも保護できる",
+    "replyAnswerSub": "自分と共有した人だけが触れる",
+    "replyStamp": "解決",
+    "replyPending": 2,
+    "replyTicker": "回答4 土地保護とチェスト保護で自分の家も持ち物も守れる",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェスト保護をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 84
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "私も思ったわ。建築、下手なんだけど。",
+    "replyUser": "センスなし",
+    "replyQuestion": "建築が下手だから無理",
+    "replyLikes": "3,205",
+    "replyTicker": "質問5 建築が下手だから無理",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 96
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "釣れる魚は、二百七十五種類。車で走るだけでもいいのだ。",
+    "replyUser": "センスなし",
+    "replyQuestion": "建築が下手だから無理",
+    "replyAnswer": "釣れる魚275種類",
+    "replyAnswerSub": "車で街を走るだけでもいい",
+    "replyStamp": "解決",
+    "replyPending": 1,
+    "replyTicker": "回答5 釣り275種類 車で街を走るだけでも楽しめる",
+    "scene": 2,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/釣りをしている動画.mp4",
@@ -244,20 +437,19 @@ export const scriptData: ScriptLine[] = [
       "src": "people-shout-oo2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 147
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 173
   },
   {
-    "id": 6,
+    "id": 13,
     "character": "metan",
-    "text": "その5。街を走れる、車。",
-    "shopItemLabel": "セット5",
-    "shopItem": "街を走れる車",
-    "shopStamp": "セットIN",
-    "shopCount": 5,
-    "shopTicker": "セット5 車に乗って生活ワールドを駆け回れる",
+    "text": "最後の質問。で、いくらかかるの？",
+    "replyUser": "財布と相談",
+    "replyQuestion": "で、結局いくらかかるの？",
+    "replyLikes": "19,400",
+    "replyTicker": "質問6 で、結局いくらかかるの？",
     "scene": 2,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
@@ -265,66 +457,21 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 120
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 79
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "今ならなんと、ガチャも付いてくるのだ！",
-    "shopBonusSub": "今ならさらに！",
-    "shopBonus": "ガチャも付いてくる",
-    "shopCount": 6,
-    "shopTicker": "特典 ガチャを引いてレアアイテムをゲットできる",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
-      "animation": "none",
-      "startFrom": 285
-    },
-    "se": {
-      "src": "text-impact1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 95
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "さあ、気になるお値段は。",
-    "shopFlash": "気になる\nお値段は",
-    "shopFlashSub": "このあと発表",
-    "shopTicker": "まもなくお値段発表 チャンネルはそのまま",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 170
-    },
-    "se": {
       "src": "drum-roll1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 64
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 104
   },
   {
-    "id": 9,
+    "id": 14,
     "character": "zundamon",
-    "text": "なんと、ゼロ円なのだ！参加は無料なのだ！",
-    "shopPriceSlam": "0円",
-    "shopPriceSlamSub": "参加費はずっと無料",
-    "shopPrice": "0円",
-    "shopTone": "info",
-    "shopTicker": "お値段発表 参加費は0円 ずっと無料",
+    "text": "ゼロ円なのだ。参加費は、ずっと無料なのだ。",
+    "replyClear": "0円",
+    "replyClearSub": "未回答 0件 ぜんぶ解決",
+    "replyTone": "calm",
+    "replyPending": 0,
+    "replyTicker": "回答6 参加費は0円 ずっと無料",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -337,61 +484,65 @@ export const scriptData: ScriptLine[] = [
       "src": "don-1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 125
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 123
   },
   {
-    "id": 10,
+    "id": 15,
     "character": "metan",
-    "text": "実はこれ、よもぎサーバーの、生活サーバーなの。",
-    "shopReveal": "よもぎサーバーの生活サーバー",
-    "shopRevealSub": "統合版マイクラの 生活・経済サーバー",
-    "shopTicker": "商品の正体はよもぎサーバーの生活サーバー",
+    "text": "……あら。まだ一件、来てるわ。",
+    "replyNew": "新着コメント",
+    "replyUser": "たった今",
+    "replyQuestion": "で、どこのサーバーなの？",
+    "replyLikes": "1",
+    "replyPending": 1,
+    "replyTicker": "新着コメント で、どこのサーバーなの？",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 420
+      "startFrom": 1200
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 74
+  },
+  {
+    "id": 16,
+    "character": "zundamon",
+    "text": "よもぎサーバーの、生活サーバーなのだ。",
+    "replyReveal": "よもぎサーバーの生活サーバー",
+    "replyRevealSub": "統合版マイクラの 生活・経済サーバー",
+    "replyPending": 0,
+    "replyTicker": "答えはよもぎサーバーの生活サーバー",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 200
     },
     "se": {
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "10_metan.wav",
-    "durationInFrames": 120
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 103
   },
   {
-    "id": 11,
-    "character": "zundamon",
-    "text": "統合版で、24時間あそべるのだ。",
-    "shopItemLabel": "お知らせ",
-    "shopItem": "統合版で24時間あそべる",
-    "shopTicker": "統合版マイクラで24時間いつでもあそべる",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 250
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 105
-  },
-  {
-    "id": 12,
+    "id": 17,
     "character": "metan",
-    "text": "ご注文は、よもぎサーバーで検索してね。",
+    "text": "入り方は、よもぎサーバーで検索してね。",
     "displayText": "検索すると 入り方がわかる",
-    "shopCta": "よもぎサーバー",
-    "shopNote": "※ボランティアで運営されているサーバーです",
-    "shopTicker": "ご注文はネットで「よもぎサーバー」と検索",
+    "replyCta": "よもぎサーバー",
+    "replyNote": "※ボランティアで運営されているサーバーです",
+    "replyTicker": "入り方はネットで「よもぎサーバー」と検索",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -405,15 +556,16 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 96
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 89
   },
   {
-    "id": 13,
+    "id": 18,
     "character": "zundamon",
-    "text": "お次の商品は、あなたの新生活なのだ。",
-    "shopResult": "お次の商品は あなたの新生活",
-    "shopTicker": "お次の商品はあなたの新生活 よもぎサーバーで検索",
+    "text": "質問、まだあるのだ？コメントで待ってるのだ。",
+    "replyResult": "質問、まだある？",
+    "replyResultSub": "コメントで待ってる",
+    "replyTicker": "質問はコメントで受付中",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
@@ -426,8 +578,8 @@ export const scriptData: ScriptLine[] = [
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 114
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 124
   }
 ];
 
