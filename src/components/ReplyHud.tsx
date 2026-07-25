@@ -380,7 +380,7 @@ const ReplyHeader: React.FC<{
             whiteSpace: "nowrap",
           }}
         >
-          よく来る質問に答えるコーナー
+          よもぎサーバーに来た質問
         </span>
         <span
           style={{

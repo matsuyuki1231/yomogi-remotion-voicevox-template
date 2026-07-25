@@ -156,7 +156,7 @@ export const scriptData: ScriptLine[] = [
     "replyQuestion": "マイクラ、もうやることなくない？",
     "replyLikes": "2.4万",
     "replyTone": "flame",
-    "replyTicker": "よく来る質問にぜんぶ答えます",
+    "replyTicker": "よもぎサーバーによく来る質問にぜんぶ答えます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -175,11 +175,11 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 2,
     "character": "zundamon",
-    "text": "この六つ、よく言われるのだ。今日は、全部答えるのだ。",
-    "replyFlash": "来た質問\n全部答える",
+    "text": "よもぎサーバーに、よく来る質問なのだ。今日は、全部答えるのだ。",
+    "replyFlash": "よもぎサーバーへの\n質問 全部答える",
     "replyFlashSub": "未回答 6件",
     "replyPending": 6,
-    "replyTicker": "よく言われる六つの質問に全部答えます",
+    "replyTicker": "よもぎサーバーによく来る六つの質問に全部答えます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -193,7 +193,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 150
+    "durationInFrames": 173
   },
   {
     "id": 3,
@@ -493,10 +493,10 @@ export const scriptData: ScriptLine[] = [
     "text": "……あら。まだ一件、来てるわ。",
     "replyNew": "新着コメント",
     "replyUser": "たった今",
-    "replyQuestion": "で、どこのサーバーなの？",
+    "replyQuestion": "で、どうやって入るの？",
     "replyLikes": "1",
     "replyPending": 1,
-    "replyTicker": "新着コメント で、どこのサーバーなの？",
+    "replyTicker": "新着コメント で、どうやって入るの？",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -515,11 +515,11 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 16,
     "character": "zundamon",
-    "text": "よもぎサーバーの、生活サーバーなのだ。",
+    "text": "統合版マイクラなら、誰でも入れるのだ。",
     "replyReveal": "よもぎサーバーの生活サーバー",
-    "replyRevealSub": "統合版マイクラの 生活・経済サーバー",
+    "replyRevealSub": "統合版マイクラ 参加費0円 24時間あそべる",
     "replyPending": 0,
-    "replyTicker": "答えはよもぎサーバーの生活サーバー",
+    "replyTicker": "よもぎサーバーの生活サーバーは統合版マイクラなら誰でも入れる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
