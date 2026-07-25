@@ -84,8 +84,11 @@ if (fs.existsSync(OUTPUT_FILE)) {
   Object.assign(durations, JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8")));
 }
 
+const scanned = new Set<string>();
+
 for (const file of videoFiles) {
   const relPath = path.relative(CONTENT_DIR, file).replace(/\\/g, "/");
+  scanned.add(relPath);
   const frames = getVideoDurationInFrames(ffprobe, file);
   if (frames !== null) {
     durations[relPath] = frames;
@@ -95,5 +98,14 @@ for (const file of videoFiles) {
   }
 }
 
+// 実体のなくなったエントリを消す。残しておくと「durations.json にあるから使える」と
+// 思い込んで存在しないファイルを visual.src に書いてしまい、レンダリングが404で落ちる
+const removed = Object.keys(durations).filter((key) => !scanned.has(key));
+for (const key of removed) {
+  delete durations[key];
+  console.log(`  🗑️  削除（ファイルなし）: ${key}`);
+}
+
 fs.writeFileSync(OUTPUT_FILE, JSON.stringify(durations, null, 2));
 console.log(`\n✅ ${OUTPUT_FILE} に保存しました`);
+console.log(`   ${scanned.size} 件を登録${removed.length ? ` / ${removed.length} 件を削除` : ""}`);

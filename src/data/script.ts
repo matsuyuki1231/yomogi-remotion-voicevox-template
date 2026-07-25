@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_metropolis.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":18}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -189,36 +189,36 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "まだ、マイクラなんてやってるの？",
-    "dramaTitle": "まだマイクラやってるの？",
+    "text": "あなた、人狼でしょ。",
+    "dramaTitle": "あなた、人狼でしょ",
     "dramaEpisode": "第1話",
     "dramaTone": "tense",
-    "dramaJab": "まだマイクラ、やってるの？",
+    "dramaJab": "あなた、人狼でしょ",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 3000
+      "startFrom": 40
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 71
+    "durationInFrames": 54
   },
   {
     "id": 2,
     "character": "zundamon",
-    "text": "やってるのだ。",
-    "dramaLine": "やってるのだ。",
+    "text": "ちがうのだ。",
+    "dramaLine": "ちがうのだ。",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
       "startFrom": 60
     },
@@ -227,420 +227,518 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 35
+    "durationInFrames": 31
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "私はもう卒業したの。来月から、社会人だから。",
-    "dramaLine": "もう卒業したの。来月から社会人だから",
+    "text": "じゃあ、昨日の夜、どこにいたの。",
+    "dramaLine": "じゃあ、昨日の夜、どこにいたの",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 30
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 128
+    "durationInFrames": 85
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "ずんだは、先月から社長なのだ。",
-    "dramaLine": "ずんだは、先月から社長なのだ",
-    "dramaFact": "会社",
+    "text": "……それは、言えないのだ。",
+    "dramaLine": "それは、言えないのだ",
+    "dramaFact": "アリバイなし",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 1690
+      "startFrom": 40
     },
     "se": {
       "src": "shock1.mp3",
-      "volume": 0.4
+      "volume": 0.35
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 91
+    "durationInFrames": 64
   },
   {
     "id": 5,
     "character": "metan",
-    "text": "……は？　なに言ってるの。",
-    "dramaLine": "は？　なに言ってるの",
+    "text": "ほら。言えないんじゃない。",
+    "dramaLine": "ほら。言えないんじゃない",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 900
+      "startFrom": 100
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.4
     },
     "voiceFile": "05_metan.wav",
-    "durationInFrames": 54
+    "durationInFrames": 53
   },
   {
     "id": 6,
     "character": "zundamon",
-    "text": "社員が六人いて、今月は黒字なのだ。",
-    "dramaLine": "社員が6人いて、今月は黒字なのだ",
+    "text": "言ったら、村が負けるのだ。",
+    "dramaLine": "言ったら、村が負けるのだ",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 130
     },
     "se": {
-      "src": "item-get1.mp3",
+      "src": "決定ボタンを押す1.mp3",
       "volume": 0.4
     },
     "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 110
+    "durationInFrames": 71
   },
   {
     "id": 7,
     "character": "metan",
-    "text": "それ、ゲームの話でしょ。",
-    "dramaJab": "それ、ゲームの話でしょ",
+    "text": "役職者のフリ？　みんな、そう言うのよ。",
+    "dramaLine": "役職者のフリ？　みんな、そう言うのよ",
+    "dramaFact": "怪しいCO",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 90
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 64
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "お店もあるのだ。寝てる間に、売れてるのだ。",
-    "dramaLine": "お店もあるのだ。寝てる間に売れてるのだ",
-    "dramaFact": "店",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 123
-  },
-  {
-    "id": 9,
-    "character": "metan",
-    "text": "売れてる……？　勝手に……？",
-    "dramaLine": "売れてる……？　勝手に？",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
-      "animation": "none",
-      "startFrom": 400
+      "startFrom": 100
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 59
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 102
   },
   {
-    "id": 10,
+    "id": 8,
     "character": "zundamon",
-    "text": "魚は、二百七十五種類いるのだ。まだ半分なのだ。",
-    "dramaLine": "魚は275種類いるのだ。まだ半分",
-    "dramaFact": "魚275種",
+    "text": "ずんだは、霊媒師なのだ。",
+    "dramaLine": "ずんだは、霊媒師なのだ",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 900
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 147
-  },
-  {
-    "id": 11,
-    "character": "metan",
-    "text": "二百七十五種類！？　なによ、それ。",
-    "dramaLine": "275種類！？　なによ、それ",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
-      "animation": "none",
-      "startFrom": 90
-    },
-    "se": {
-      "src": "people-shout-oo2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "土地を買って、家も建てたのだ。",
-    "dramaLine": "土地を買って、家も建てたのだ",
-    "dramaFact": "家",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
-      "animation": "none",
-      "startFrom": 100
+      "startFrom": 110
     },
     "se": {
       "src": "item-get1.mp3",
-      "volume": 0.4
+      "volume": 0.35
     },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 85
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 72
   },
   {
-    "id": 13,
+    "id": 9,
     "character": "metan",
-    "text": "家……？　持ち家ってこと？",
-    "dramaLine": "家……？　持ち家ってこと？",
+    "text": "昨日も、そう言った人が人狼だったわ。",
+    "dramaLine": "昨日も、そう言った人が人狼だったわ",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 160
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 72
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 86
   },
   {
-    "id": 14,
-    "character": "metan",
-    "text": "で、でも、しょせんゲームでしょ。",
-    "dramaChapter": "それでも、彼女は認めない",
-    "dramaLine": "でも、しょせんゲームでしょ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1500
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 84
-  },
-  {
-    "id": 15,
+    "id": 10,
     "character": "zundamon",
-    "text": "通勤は車なのだ。いま、街を一周してきたのだ。",
-    "dramaLine": "通勤は車なのだ。街を一周してきた",
-    "dramaFact": "車",
+    "text": "今日は、ちがうのだ。",
+    "dramaLine": "今日は、ちがうのだ",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 200
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "決定ボタンを押す1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 146
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 56
   },
   {
-    "id": 16,
-    "character": "zundamon",
-    "text": "近所の人とは、声で話すのだ。",
-    "dramaLine": "近所の人とは、声で話すのだ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 88
-  },
-  {
-    "id": 17,
+    "id": 11,
     "character": "metan",
-    "text": "……なんで、そっちのほうが、ちゃんとしてるのよ。",
-    "dramaMono": "私より、生活してる",
+    "text": "みんな見てたわよ。あなたが、人を撃つところ。",
+    "dramaLine": "みんな見てたわよ。あなたが人を撃つところ",
+    "dramaFact": "目撃者",
     "scene": 2,
-    "pauseAfter": 0,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 170
     },
     "se": {
-      "src": "anxiety_piano.mp3",
+      "src": "shock1.mp3",
       "volume": 0.35
     },
-    "voiceFile": "17_metan.wav",
+    "voiceFile": "11_metan.wav",
     "durationInFrames": 98
   },
   {
-    "id": 18,
-    "character": "metan",
-    "text": "……待って。私、なにも持ってないわ。",
-    "dramaLine": "待って。私、なにも持ってないわ",
-    "dramaTone": "turn",
-    "scene": 3,
+    "id": 12,
+    "character": "zundamon",
+    "text": "あれは、人狼を撃ったのだ。",
+    "dramaLine": "あれは、人狼を撃ったのだ",
+    "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 2400
+      "startFrom": 180
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 74
+  },
+  {
+    "id": 13,
+    "character": "metan",
+    "text": "証拠は？",
+    "dramaLine": "証拠は？",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 220
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 30
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "……ないのだ。",
+    "dramaLine": "ないのだ",
+    "dramaFact": "証拠なし",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 270
     },
     "se": {
       "src": "shock1.mp3",
       "volume": 0.3
     },
-    "voiceFile": "18_metan.wav",
-    "durationInFrames": 89
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 28
+  },
+  {
+    "id": 15,
+    "character": "metan",
+    "text": "……信じたい。でも、間違えたら村が終わる。",
+    "dramaMono": "信じたい。でも、間違えたら村が終わる",
+    "scene": 2,
+    "pauseAfter": 0,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 240
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 16,
+    "character": "metan",
+    "text": "……ごめんね。",
+    "dramaChapter": "投票",
+    "dramaLine": "ごめんね",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "animation": "none",
+      "startFrom": 250
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 23
+  },
+  {
+    "id": 17,
+    "character": "metan",
+    "text": "ずんだもんに、投票します。",
+    "dramaLine": "ずんだもんに、投票します",
+    "dramaFact": "6票",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 240
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 66
+  },
+  {
+    "id": 18,
+    "character": "zundamon",
+    "text": "……村を、頼むのだ。",
+    "dramaLine": "村を、頼むのだ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 340
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 56
   },
   {
     "id": 19,
     "character": "metan",
-    "text": "それ、どこでできるの？",
-    "dramaLine": "それ、どこでできるの？",
+    "text": "……ずんだもん、本当に霊媒師だったのね。",
+    "dramaLine": "ずんだもん、本当に霊媒師だったのね",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "animation": "none",
+      "startFrom": 320
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.3
+    },
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 88
+  },
+  {
+    "id": 20,
+    "character": "metan",
+    "text": "……私が、吊ったのね。",
+    "dramaMono": "私が、吊った",
+    "scene": 2,
+    "pauseAfter": 0,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 310
+    },
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.3
+    },
+    "voiceFile": "20_metan.wav",
+    "durationInFrames": 51
+  },
+  {
+    "id": 21,
+    "character": "zundamon",
+    "text": "気にしなくていいのだ。",
+    "dramaLine": "気にしなくていいのだ",
+    "dramaTone": "turn",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 130
+    },
+    "se": {
+      "src": "sceneswitch1.mp3",
+      "volume": 0.3
+    },
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 51
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "疑うのも、疑われるのも、ぜんぶゲームなのだ。",
+    "dramaLine": "疑うのも、疑われるのも、ぜんぶゲーム",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 128
+  },
+  {
+    "id": 23,
+    "character": "zundamon",
+    "text": "会議で疑って、外では弓で撃ち合うのだ。",
+    "dramaLine": "会議で疑って、外では弓で撃ち合う",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "23_zundamon.wav",
+    "durationInFrames": 113
+  },
+  {
+    "id": 24,
+    "character": "metan",
+    "text": "……これ、なんてゲームなの？",
+    "dramaLine": "これ、なんてゲームなの？",
     "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 260
+      "startFrom": 70
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "19_metan.wav",
-    "durationInFrames": 56
+    "voiceFile": "24_metan.wav",
+    "durationInFrames": 61
   },
   {
-    "id": 20,
+    "id": 25,
     "character": "zundamon",
-    "text": "よもぎサーバーの、生活サーバーなのだ。",
-    "dramaReveal": "よもぎサーバーの生活サーバー",
-    "dramaRevealSub": "統合版マイクラ　24時間あそべる生活・経済サーバー",
+    "text": "よもぎサーバーの、マイクラジンロウなのだ。",
+    "dramaReveal": "よもぎサーバーのマイクラ人狼",
+    "dramaRevealSub": "毎週土曜21:30から　役職41種類　参加費0円",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 320
+      "startFrom": 190
     },
     "se": {
       "src": "jajean1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 103
+    "voiceFile": "25_zundamon.wav",
+    "durationInFrames": 100
   },
   {
-    "id": 21,
+    "id": 26,
     "character": "metan",
-    "text": "……いくら、かかるの？",
-    "dramaLine": "いくら、かかるの？",
+    "text": "初めてでも、できる？",
+    "dramaLine": "初めてでも、できる？",
     "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 240
     },
     "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.5
+      "src": "question1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "21_metan.wav",
-    "durationInFrames": 48
+    "voiceFile": "26_metan.wav",
+    "durationInFrames": 55
   },
   {
-    "id": 22,
+    "id": 27,
     "character": "zundamon",
-    "text": "ゼロ円なのだ。",
-    "dramaFlash": "0円",
-    "dramaFlashSub": "参加費",
-    "dramaFact": "0円",
+    "text": "みんなが教えてくれるから、大丈夫なのだ。",
+    "dramaLine": "みんなが教えてくれるから、大丈夫",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 210
     },
     "se": {
-      "src": "don-1.mp3",
-      "volume": 0.5
+      "src": "item-get1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 40
+    "voiceFile": "27_zundamon.wav",
+    "durationInFrames": 106
   },
   {
-    "id": 23,
+    "id": 28,
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
     "dramaLine": "入り方は「よもぎサーバー」で検索",
@@ -652,36 +750,36 @@ export const scriptData: ScriptLine[] = [
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "zoomIn",
-      "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "backgroundStartFrom": 500
+      "backgroundSrc": "マイクラ人狼/会議中の風景2.mp4",
+      "backgroundStartFrom": 100
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "23_metan.wav",
+    "voiceFile": "28_metan.wav",
     "durationInFrames": 87
   },
   {
-    "id": 24,
+    "id": 29,
     "character": "zundamon",
-    "text": "ダイニワは、あなたの番なのだ。まだマイクラ、やってるのだ？",
+    "text": "ダイニワは、あなたの番なのだ。次は、あなたが疑われるのだ。",
     "dramaResult": "第2話　あなたの番",
-    "dramaResultSub": "まだマイクラ、やってる？　コメントで",
+    "dramaResultSub": "次は、あなたが疑われる",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 3000
+      "startFrom": 40
     },
     "se": {
-      "src": "sceneswitch1.mp3",
-      "volume": 0.45
+      "src": "jajean1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "24_zundamon.wav",
-    "durationInFrames": 161
+    "voiceFile": "29_zundamon.wav",
+    "durationInFrames": 170
   }
 ];
 
