@@ -242,7 +242,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 4,
     "character": "metan",
-    "text": "会社……？　えっと、そちらの方は？",
+    "text": "会社……？　えっと、そちらのかたは？",
     "intvQuestion": "そちらの方は？",
     "intvCount": 2,
     "intvTicker": "2人目 無人の店をやっている",
@@ -259,7 +259,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "04_metan.wav",
-    "durationInFrames": 100
+    "durationInFrames": 101
   },
   {
     "id": 5,
@@ -289,7 +289,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 6,
     "character": "metan",
-    "text": "寝てる間に……？　次の方、お願いします。",
+    "text": "寝てる間に……？　次のかた、お願いします。",
     "intvQuestion": "次の方は？",
     "intvCount": 3,
     "intvTicker": "3人目 釣りをしている",
@@ -306,7 +306,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "06_metan.wav",
-    "durationInFrames": 105
+    "durationInFrames": 104
   },
   {
     "id": 7,
@@ -384,7 +384,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 10,
     "character": "metan",
-    "text": "その隣の方は、何を？",
+    "text": "その隣のかたは、何を？",
     "intvQuestion": "隣の方は？",
     "intvCount": 5,
     "intvTicker": "5人目 車で街を走っている",
@@ -431,7 +431,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 12,
     "character": "metan",
-    "text": "車！？　じゃあ、最後の方は？",
+    "text": "車！？　じゃあ、最後のかたは？",
     "intvQuestion": "最後の方は？",
     "intvReaction": "車!?",
     "intvCount": 6,
@@ -566,7 +566,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 18,
     "character": "metan",
-    "text": "入り方は、よもぎサーバーで検索してね。",
+    "text": "はいりかたは、よもぎサーバーで検索してね。",
     "displayText": "検索すると 入り方がわかる",
     "intvCta": "よもぎサーバー",
     "intvNote": "※取材風の演出です／ボランティア運営のサーバーです",
@@ -590,7 +590,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 19,
     "character": "zundamon",
-    "text": "七人目は、あなたなのだ。いま、何してたのだ？",
+    "text": "ナナニンメは、あなたなのだ。いま、何してたのだ？",
     "intvResult": "7人目は、あなた",
     "intvResultSub": "いま、何してた？　コメントで教えて",
     "intvCount": 7,
