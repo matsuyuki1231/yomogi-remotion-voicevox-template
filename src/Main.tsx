@@ -53,22 +53,31 @@ import {
   DramaHud,
   DramaTone,
 } from "./components/DramaHud";
+import {
+  JobBackdrop,
+  JobScrim,
+  JobChrome,
+  JobHud,
+  JobTone,
+} from "./components/JobHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
-type Format = "news" | "court" | "shop" | "reply" | "interview" | "drama";
+type Format = "news" | "court" | "shop" | "reply" | "interview" | "drama" | "job";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// drama* なら縦型ショートドラマ・逆転劇型、intv* なら街頭インタビュー型、
-// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
-// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
+// job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
+// intv* なら街頭インタビュー型、reply* ならコメント返信型、
+// shop* ならテレビショッピング・通販型、court* なら裁判・尋問型、
+// どれでもなければ緊急速報・報道型。
 const detectFormat = (): Format => {
   const hasPrefix = (prefix: string) =>
     scriptData.some((line) =>
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("job")) return "job";
   if (hasPrefix("drama")) return "drama";
   if (hasPrefix("intv")) return "interview";
   if (hasPrefix("reply")) return "reply";
@@ -295,6 +304,61 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- 求人トーン（求人サイト / 実在）を解決。求人票が裂ける行から後ろに引き継がれる ----
+  // このトーンは背景そのものを切り替える。posting のあいだは実映像を1枚も出さず、
+  // real になってはじめてマイクラの映像が現れる
+  const jobToneResolved: JobTone[] = (() => {
+    let current: JobTone = "posting";
+    return scriptData.map((line) => {
+      if (line.jobTone === "posting" || line.jobTone === "real") {
+        current = line.jobTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何件目の募集要項かを解決。指定がない行は直前の値を引き継ぐ ----
+  const jobNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.jobNo === "number") {
+        current = line.jobNo;
+      }
+      return current;
+    });
+  })();
+
+  // スクロールレールの分母。スクリプト中でいちばん大きい件数を総数とする
+  const jobNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.jobNo ?? 0),
+    1
+  );
+
+  // ---- 直前に読み上げた条項カードを引き継ぐ ----
+  // ツッコミ（jobRetort）だけの行で条項カードが消えると、白い紙面が丸ごと
+  // 空いてしまって間延びする。前の条項をそのまま残し、めたんがそれを見て
+  // 反応している画にする（新しい条項の行だけカードを弾ませる）
+  // 求人票が裂けた後（real）は条項カードを持ち越さない。実映像の上に
+  // 白いカードが残ってしまうため、トーンが変わった時点で捨てる
+  type JobTermCard = { term: string; label?: string; sub?: string };
+  const jobTermResolved: (JobTermCard | null)[] = (() => {
+    let current: JobTermCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.jobTerm) {
+        current = {
+          term: line.jobTerm,
+          label: line.jobTermLabel,
+          sub: line.jobTermSub,
+        };
+      }
+      return jobToneResolved[i] === "posting" ? current : null;
+    });
+  })();
+
+  // サイト名と職種名は最初に指定した行のものを動画全体で使う
+  const jobSite = scriptData.find((line) => line.jobSite)?.jobSite ?? "求人";
+  const jobTitle = scriptData.find((line) => line.jobTitle)?.jobTitle ?? "";
+
   // エピソードタイトルと話数は最初に指定した行のものを動画全体で使う
   const dramaTitle =
     scriptData.find((line) => line.dramaTitle)?.dramaTitle ?? "";
@@ -319,6 +383,8 @@ export const Main: React.FC = () => {
       // ドラマ型にティッカーはない（最下部はシークバー）
       case "drama":
         return undefined;
+      case "job":
+        return line.jobTicker;
       case "interview":
         return line.intvTicker;
       case "reply":
@@ -425,6 +491,19 @@ export const Main: React.FC = () => {
       line.dramaResult
     );
 
+  // 求人票HUDのパーツが1つでも出るか
+  const hasJobHud = (line: ScriptLine): boolean =>
+    !!(
+      line.jobTerm ||
+      line.jobRetort ||
+      line.jobFlash ||
+      line.jobBreak ||
+      line.jobReveal ||
+      line.jobCta ||
+      line.jobNote ||
+      line.jobResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムが、
@@ -437,6 +516,17 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 求人票型は条項カードとツッコミ吹き出しが画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ
+      case "job":
+        return !!(
+          line.jobTerm ||
+          line.jobRetort ||
+          line.jobFlash ||
+          line.jobBreak ||
+          line.jobReveal ||
+          line.jobResult
+        );
       case "interview":
         return !!(
           line.intvQuestion ||
@@ -506,6 +596,14 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      // 求人票型だけは背景そのものがフォーマットの主役。前半は白い求人サイトの
+      // 紙面で、実映像は1枚も出ない（トーンが real に変わるまで）
+      case "job":
+        return (
+          <JobBackdrop
+            tone={currentIndex >= 0 ? jobToneResolved[currentIndex] : "posting"}
+          />
+        );
       case "drama":
         return <DramaBackdrop />;
       case "interview":
@@ -526,6 +624,8 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      case "job":
+        return <JobScrim />;
       case "drama":
         return <DramaScrim tone={dramaToneResolved[index]} />;
       case "interview":
@@ -543,6 +643,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "job":
+        return (
+          <JobChrome
+            tone={currentIndex >= 0 ? jobToneResolved[currentIndex] : "posting"}
+            site={jobSite}
+            title={jobTitle}
+            ticker={tickerText}
+            no={currentIndex >= 0 ? jobNoResolved[currentIndex] : null}
+            noPrev={currentIndex > 0 ? jobNoResolved[currentIndex - 1] : null}
+            noTotal={jobNoTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "drama":
         return (
           <DramaChrome
@@ -628,6 +741,32 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "job":
+        if (!hasJobHud(line)) return null;
+        return wrap(
+          <JobHud
+            tone={jobToneResolved[currentIndex]}
+            character={line.character}
+            term={jobTermResolved[currentIndex]?.term}
+            termLabel={jobTermResolved[currentIndex]?.label}
+            termSub={jobTermResolved[currentIndex]?.sub}
+            // 自分で条項を出していない行は、前の条項を静かに残しているだけ
+            termHeld={!line.jobTerm}
+            stamp={line.jobStamp}
+            retort={line.jobRetort}
+            flash={line.jobFlash}
+            flashSub={line.jobFlashSub}
+            breakText={line.jobBreak}
+            breakSub={line.jobBreakSub}
+            reveal={line.jobReveal}
+            revealSub={line.jobRevealSub}
+            cta={line.jobCta}
+            note={line.jobNote}
+            result={line.jobResult}
+            resultSub={line.jobResultSub}
+            durationInFrames={span}
+          />
+        );
       case "drama":
         if (!hasDramaHud(line)) return null;
         return wrap(

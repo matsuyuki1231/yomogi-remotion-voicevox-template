@@ -19,21 +19,25 @@ bgm:
   src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # 縦型ショートドラマ・逆転劇型（人狼版 script.werewolf-drama.yaml 用）:
-  # 前半（疑いの根拠が積まれ、吊り間違えるまで）は不穏な曲で緊張を作り、
-  # 空気が反転する id:19 で明るい曲に切り替えて「ぜんぶゲームだった」の解放を音でも作る
+  # 求人票・募集要項型（script.living-server-job.yaml 用）:
+  # 前半（白い求人サイトの画面で条項を12連発するあいだ）は淡々とした機械的な曲で
+  # 「書類を上から読んでいる」テンポを作り、求人票が裂ける id:19 で明るい曲に
+  # 切り替えて「マイクラの中にあった」の解放を音でも作る
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
-  #   生活サーバー版（script.living-server-drama.yaml）:
+  #   縦型ショートドラマ型・生活サーバー版（script.living-server-drama.yaml）:
   #     amacha_metropolis 0.16 / fromLineId 1
   #     amacha_yuruyakanaasayake 0.2 / fromLineId 18
+  #   縦型ショートドラマ型・人狼版（script.werewolf-drama.yaml）:
+  #     amacha_technophobia 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 19
   segments:
-    # 「テクノフォビア」— 不穏。疑心暗鬼〜吊り間違いまでの前半に合わせる
-    - src: "amacha_technophobia.mp3"
+    # 「マーブルテクノ」— 淡々・機械的。募集要項を上から読み上げる前半に合わせる
+    - src: "amacha_marbletechno1.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 明るい。「ぜんぶゲームなのだ」の解放〜宣伝パートに切り替える
+    # 「ハッピータイム」— 明るい。求人票が裂けてからの解放〜宣伝パートに切り替える
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true

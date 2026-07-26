@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -161,6 +161,27 @@ export interface ScriptLine {
   dramaNote?: string;        // CTA下の小さな注記（※フィクションです 等の但し書き）
   dramaResult?: string;      // 次回予告リボン（冒頭へループさせる）
   dramaResultSub?: string;   // 次回予告リボンの補足行（コメント誘発の一言）
+  // ---- 求人票・募集要項型（JobHud）----
+  jobTone?: "posting" | "real"; // 求人トーン。指定行から後ろに引き継がれる（求人サイト＝青・実映像なし / 実在＝緑・実映像あり）
+  jobSite?: string;          // ヘッダの求人サイト名（最初に指定した行のものを全体で使う）
+  jobTitle?: string;         // 求人カードの職種名（最初に指定した行のものを全体で使う）
+  jobTicker?: string;        // 最下部を流れる細則（全行ぶんを連結して常時流す）
+  jobNo?: number;            // 何件目の募集要項か。指定がない行は直前の値を引き継ぐ
+  jobTerm?: string;          // 条項カード本文（この型の主役。1カット1条項）
+  jobTermLabel?: string;     // 条項カード左上のラベル（給与 / 労働時間 / 待遇 など）
+  jobTermSub?: string;       // 条項カードの補足行（原文の要約・出典）
+  jobStamp?: string;         // 条項カードに押す丸スタンプ（ホワイト など）
+  jobRetort?: string;        // ツッコミ吹き出し（求人票を見ている側の一言）
+  jobFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  jobFlashSub?: string;      // テロップの上に出す赤い小バッジ
+  jobBreak?: string;         // 求人票が裂ける転換スラム。この行から実映像が現れる
+  jobBreakSub?: string;      // 転換スラムの補足行
+  jobReveal?: string;        // リビール帯（正体明かし。宣伝への転換点）
+  jobRevealSub?: string;     // リビール帯の補足行
+  jobCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  jobNote?: string;          // CTA下の小さな注記（※求人票は演出です 等の但し書き）
+  jobResult?: string;        // ループ用リボン（冒頭の求人票に戻す）
+  jobResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -189,597 +210,474 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "あなた、人狼でしょ。",
-    "dramaTitle": "あなた、人狼でしょ",
-    "dramaEpisode": "第1話",
-    "dramaTone": "tense",
-    "dramaJab": "あなた、人狼でしょ",
+    "text": "ノルマは、シュウサンジカンまで？",
+    "jobSite": "求人ナビ",
+    "jobTitle": "【急募】資材の収集・建築スタッフ",
+    "jobTone": "posting",
+    "jobNo": 1,
+    "jobFlash": "ノルマは 週3時間まで",
+    "jobFlashSub": "募集要項",
+    "jobTerm": "ノルマは 週3時間まで",
+    "jobTermLabel": "労働時間",
+    "jobTermSub": "事実上それ以上の労働が必要なノルマも禁止（第3条 3.13）",
+    "jobTicker": "※ノルマを「週3時間」以上、または事実上それ以上の労働が必要な程度にしてはいけません（第3条 3.13）",
     "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 40
-    },
+    "pauseAfter": -3,
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.5
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 54
-  },
-  {
-    "id": 2,
-    "character": "zundamon",
-    "text": "ちがうのだ。",
-    "dramaLine": "ちがうのだ。",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 31
-  },
-  {
-    "id": 3,
-    "character": "metan",
-    "text": "じゃあ、昨日の夜、どこにいたの。",
-    "dramaLine": "じゃあ、昨日の夜、どこにいたの",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 30
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "03_metan.wav",
-    "durationInFrames": 85
-  },
-  {
-    "id": 4,
-    "character": "zundamon",
-    "text": "……それは、言えないのだ。",
-    "dramaLine": "それは、言えないのだ",
-    "dramaFact": "アリバイなし",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 40
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 64
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "ほら。言えないんじゃない。",
-    "dramaLine": "ほら。言えないんじゃない",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 53
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "言ったら、村が負けるのだ。",
-    "dramaLine": "言ったら、村が負けるのだ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 130
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "06_zundamon.wav",
     "durationInFrames": 71
   },
   {
-    "id": 7,
+    "id": 2,
     "character": "metan",
-    "text": "役職者のフリ？　みんな、そう言うのよ。",
-    "dramaLine": "役職者のフリ？　みんな、そう言うのよ",
-    "dramaFact": "怪しいCO",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 102
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "ずんだは、霊媒師なのだ。",
-    "dramaLine": "ずんだは、霊媒師なのだ",
-    "scene": 2,
+    "text": "なにこれ。こんな求人、ある？",
+    "jobRetort": "なにこれ。こんな求人、ある？",
+    "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 110
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 72
-  },
-  {
-    "id": 9,
-    "character": "metan",
-    "text": "昨日も、そう言った人が人狼だったわ。",
-    "dramaLine": "昨日も、そう言った人が人狼だったわ",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 160
-    },
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 86
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "今日は、ちがうのだ。",
-    "dramaLine": "今日は、ちがうのだ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 56
-  },
-  {
-    "id": 11,
-    "character": "metan",
-    "text": "みんな見てたわよ。あなたが、人を撃つところ。",
-    "dramaLine": "みんな見てたわよ。あなたが人を撃つところ",
-    "dramaFact": "目撃者",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 170
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 98
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "あれは、人狼を撃ったのだ。",
-    "dramaLine": "あれは、人狼を撃ったのだ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 74
-  },
-  {
-    "id": 13,
-    "character": "metan",
-    "text": "証拠は？",
-    "dramaLine": "証拠は？",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 220
-    },
     "se": {
       "src": "question1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 30
-  },
-  {
-    "id": 14,
-    "character": "zundamon",
-    "text": "……ないのだ。",
-    "dramaLine": "ないのだ",
-    "dramaFact": "証拠なし",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 270
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.3
-    },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 28
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "……信じたい。でも、間違えたら村が終わる。",
-    "dramaMono": "信じたい。でも、間違えたら村が終わる",
-    "scene": 2,
-    "pauseAfter": 0,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 240
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 16,
-    "character": "metan",
-    "text": "……ごめんね。",
-    "dramaChapter": "投票",
-    "dramaLine": "ごめんね",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 250
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
       "volume": 0.4
     },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 23
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 87
   },
   {
-    "id": 17,
-    "character": "metan",
-    "text": "ずんだもんに、投票します。",
-    "dramaLine": "ずんだもんに、投票します",
-    "dramaFact": "6票",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 240
-    },
-    "se": {
-      "src": "don-1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "17_metan.wav",
-    "durationInFrames": 66
-  },
-  {
-    "id": 18,
+    "id": 3,
     "character": "zundamon",
-    "text": "……村を、頼むのだ。",
-    "dramaLine": "村を、頼むのだ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 340
-    },
+    "text": "時給は、ゴセンワイジー以上なのだ。",
+    "jobNo": 2,
+    "jobTerm": "時給は 5,000YG 以上",
+    "jobTermLabel": "給与",
+    "jobTermSub": "事実上の時給が5,000YG以上になるよう努める（第7条 7.1）",
+    "jobTicker": "※活動歴によって給与を差別してはいけません（第7条 7.2）",
+    "scene": 1,
+    "pauseAfter": -4,
     "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.35
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 94
+  },
+  {
+    "id": 4,
+    "character": "metan",
+    "text": "ワイジーって、なに？",
+    "jobRetort": "YGって、なに？",
+    "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "04_metan.wav",
     "durationInFrames": 56
   },
   {
-    "id": 19,
-    "character": "metan",
-    "text": "……ずんだもん、本当に霊媒師だったのね。",
-    "dramaLine": "ずんだもん、本当に霊媒師だったのね",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 320
-    },
-    "se": {
-      "src": "boom.mp3",
-      "volume": 0.3
-    },
-    "voiceFile": "19_metan.wav",
-    "durationInFrames": 88
-  },
-  {
-    "id": 20,
-    "character": "metan",
-    "text": "……私が、吊ったのね。",
-    "dramaMono": "私が、吊った",
-    "scene": 2,
-    "pauseAfter": 0,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 310
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.3
-    },
-    "voiceFile": "20_metan.wav",
-    "durationInFrames": 51
-  },
-  {
-    "id": 21,
+    "id": 5,
     "character": "zundamon",
-    "text": "気にしなくていいのだ。",
-    "dramaLine": "気にしなくていいのだ",
-    "dramaTone": "turn",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
-      "animation": "none",
-      "startFrom": 130
-    },
-    "se": {
-      "src": "sceneswitch1.mp3",
-      "volume": 0.3
-    },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 51
-  },
-  {
-    "id": 22,
-    "character": "zundamon",
-    "text": "疑うのも、疑われるのも、ぜんぶゲームなのだ。",
-    "dramaLine": "疑うのも、疑われるのも、ぜんぶゲーム",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 128
-  },
-  {
-    "id": 23,
-    "character": "zundamon",
-    "text": "会議で疑って、外では弓で撃ち合うのだ。",
-    "dramaLine": "会議で疑って、外では弓で撃ち合う",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 113
-  },
-  {
-    "id": 24,
-    "character": "metan",
-    "text": "……これ、なんてゲームなの？",
-    "dramaLine": "これ、なんてゲームなの？",
-    "scene": 3,
+    "text": "道具代は、会社が出すのだ。",
+    "jobNo": 3,
+    "jobTerm": "道具代は 会社が出す",
+    "jobTermLabel": "待遇",
+    "jobTermSub": "業務に必要な費用を社員に負担させてはいけない（第5条 5.8）",
+    "jobStamp": "ホワイト",
+    "jobTicker": "※社員に対しパワハラ、セクハラをしてはいけません（第5条 5.9）",
+    "scene": 1,
     "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 70
-    },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "24_metan.wav",
-    "durationInFrames": 61
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 81
   },
   {
-    "id": 25,
+    "id": 6,
     "character": "zundamon",
-    "text": "よもぎサーバーの、マイクラジンロウなのだ。",
-    "dramaReveal": "よもぎサーバーのマイクラ人狼",
-    "dramaRevealSub": "毎週土曜21:30から　役職41種類　参加費0円",
+    "text": "ミスの弁償も、請求できないのだ。",
+    "jobNo": 4,
+    "jobTerm": "ミスの弁償は 請求できない",
+    "jobTermLabel": "待遇",
+    "jobTermSub": "故意・重過失によらない損害は社員に請求できない（第5条 5.1）",
+    "scene": 1,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 97
+  },
+  {
+    "id": 7,
+    "character": "metan",
+    "text": "待って。うちの会社より条件いいんだけど。",
+    "jobRetort": "待って。うちの会社より条件いい",
+    "scene": 1,
+    "pauseAfter": -3,
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 95
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "辞めたい人は、止められないのだ。",
+    "jobNo": 5,
+    "jobTerm": "辞めたい人は 止められない",
+    "jobTermLabel": "退職",
+    "jobTermSub": "自己都合退職は理由を問わず拒否できない（第5条 5.2）",
+    "scene": 2,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 81
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "副業の禁止も、できないのだ。",
+    "jobNo": 6,
+    "jobTerm": "副業の禁止は できない",
+    "jobTermLabel": "副業",
+    "jobTermSub": "企業は社員が副業を行うことを禁止してはいけない（第5条 5.6）",
+    "scene": 2,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 83
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "労働条件通知書は、必ず渡すのだ。",
+    "jobNo": 7,
+    "jobTerm": "労働条件通知書を 必ず渡す",
+    "jobTermLabel": "契約",
+    "jobTermSub": "賃金・ノルマ・解雇事由まで文書で明記する（第3条）",
+    "jobTicker": "※労働条件通知書は、社員と運営が容易に閲覧できるようにしてください（第3条 3.2）",
+    "scene": 2,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 112
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "そこまで決まってるの？",
+    "jobRetort": "そこまで決まってるの？",
+    "scene": 2,
+    "pauseAfter": -3,
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 48
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "面接で、タメぐちは禁止なのだ。",
+    "jobNo": 8,
+    "jobTerm": "面接で ため口は禁止",
+    "jobTermLabel": "採用",
+    "jobTermSub": "ため口を使って面接をしてはいけない（第6条 6.1）",
+    "jobStamp": "実在",
+    "scene": 2,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 13,
+    "character": "metan",
+    "text": "口調まで決まってるの！？",
+    "jobRetort": "口調まで決まってるの！？",
+    "scene": 2,
+    "pauseAfter": -3,
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 50
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "落ちても、必ず連絡が来るのだ。",
+    "jobNo": 9,
+    "jobTerm": "不採用でも 必ず連絡する",
+    "jobTermLabel": "採用",
+    "jobTermSub": "採用試験の結果は合否にかかわらず伝える（第6条 6.4）",
+    "scene": 2,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 15,
+    "character": "zundamon",
+    "text": "経験のありなしで、差別も禁止なのだ。",
+    "jobNo": 10,
+    "jobTerm": "経験の有無で 差別しない",
+    "jobTermLabel": "採用",
+    "jobTermSub": "活動歴によって採用可否を差別してはいけない（第6条 6.6）",
+    "scene": 3,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 108
+  },
+  {
+    "id": 16,
+    "character": "zundamon",
+    "text": "ぼったくりも、禁止なのだ。",
+    "jobNo": 11,
+    "jobTerm": "ぼったくりは 禁止",
+    "jobTermLabel": "取引",
+    "jobTermSub": "最低販売価格の1.3倍を超える価格で売ってはいけない（第10条 10.4）",
+    "jobTicker": "※誰でもできる操作の代行で、1分あたり200YGを超える収益を得てはいけません（第10条 10.1）",
+    "scene": 3,
+    "pauseAfter": -4,
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 71
+  },
+  {
+    "id": 17,
+    "character": "zundamon",
+    "text": "新しいお客さんは、ニジュウヨジカン返品自由なのだ。",
+    "jobNo": 12,
+    "jobTerm": "新規のお客は 24時間 返品自由",
+    "jobTermLabel": "取引",
+    "jobTermSub": "理由を問わず返品に応じなければならない（第10条 10.3）",
+    "jobStamp": "全12件",
+    "scene": 3,
+    "pauseAfter": -3,
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 137
+  },
+  {
+    "id": 18,
+    "character": "metan",
+    "text": "そんな会社、ニホンにあるわけないでしょ。",
+    "jobRetort": "そんな会社、日本にあるわけない",
+    "scene": 3,
+    "pauseAfter": -2,
+    "se": {
+      "src": "anxiety_piano.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "18_metan.wav",
+    "durationInFrames": 88
+  },
+  {
+    "id": 19,
+    "character": "zundamon",
+    "text": "ニホンには、ないのだ。",
+    "jobTone": "real",
+    "jobBreak": "日本には、ありません",
+    "jobBreakSub": "——ですが",
+    "scene": 3,
+    "pauseAfter": 12,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 3000
+    },
+    "se": {
+      "src": "boom.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 58
+  },
+  {
+    "id": 20,
+    "character": "zundamon",
+    "text": "マイクラの中に、あるのだ。",
+    "jobReveal": "マイクラの中に あります",
+    "jobRevealSub": "よもぎ生活サーバー「優良企業ガイドライン」",
+    "jobTicker": "※よもぎ生活サーバーは統合版・参加費0円・24時間あそべます",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
       "animation": "none",
-      "startFrom": 190
+      "startFrom": 60
     },
     "se": {
-      "src": "jajean1.mp3",
+      "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "25_zundamon.wav",
-    "durationInFrames": 100
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 72
   },
   {
-    "id": 26,
-    "character": "metan",
-    "text": "初めてでも、できる？",
-    "dramaLine": "初めてでも、できる？",
+    "id": 21,
+    "character": "zundamon",
+    "text": "会社は、審査を通ればだれでも無料で作れるのだ。",
+    "jobFlash": "会社設立 0円",
+    "jobFlashSub": "誰でも",
     "scene": 3,
-    "pauseAfter": -4,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 240
+      "startFrom": 40
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 127
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "ルールを守った会社には、運営から支援金が出るのだ。",
+    "jobFlash": "支援金 月30,000YG",
+    "jobFlashSub": "公認企業",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 900
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 142
+  },
+  {
+    "id": 23,
+    "character": "metan",
+    "text": "え、私も社長になれるってこと？",
+    "jobRetort": "え、私も社長になれるの？",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1200
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "26_metan.wav",
-    "durationInFrames": 55
+    "voiceFile": "23_metan.wav",
+    "durationInFrames": 100
   },
   {
-    "id": 27,
+    "id": 24,
     "character": "zundamon",
-    "text": "みんなが教えてくれるから、大丈夫なのだ。",
-    "dramaLine": "みんなが教えてくれるから、大丈夫",
+    "text": "参加費はゼロ円。統合版なら、だれでもなのだ。",
+    "jobFlash": "参加費 0円",
+    "jobFlashSub": "統合版",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 210
+      "startFrom": 100
     },
     "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.4
+      "src": "don-1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "27_zundamon.wav",
-    "durationInFrames": 106
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 133
   },
   {
-    "id": 28,
+    "id": 25,
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
-    "dramaLine": "入り方は「よもぎサーバー」で検索",
-    "dramaCta": "よもぎサーバー",
-    "dramaNote": "※このドラマはフィクションです／ボランティア運営のサーバーです",
+    "displayText": "入り方は「よもぎサーバー」で検索",
+    "jobCta": "よもぎサーバー",
+    "jobNote": "※求人票は演出です／ボランティア運営のサーバーです",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "zoomIn",
-      "backgroundSrc": "マイクラ人狼/会議中の風景2.mp4",
-      "backgroundStartFrom": 100
+      "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "backgroundStartFrom": 500
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "28_metan.wav",
+    "voiceFile": "25_metan.wav",
     "durationInFrames": 87
   },
   {
-    "id": 29,
+    "id": 26,
     "character": "zundamon",
-    "text": "ダイニワは、あなたの番なのだ。次は、あなたが疑われるのだ。",
-    "dramaResult": "第2話　あなたの番",
-    "dramaResultSub": "次は、あなたが疑われる",
+    "text": "あなたの職場は、どうなのだ？",
+    "jobResult": "あなたの職場、この条件ある？",
+    "jobResultSub": "コメントで教えて",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 40
+      "startFrom": 3000
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.5
+      "src": "sceneswitch1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "29_zundamon.wav",
-    "durationInFrames": 170
+    "voiceFile": "26_zundamon.wav",
+    "durationInFrames": 80
   }
 ];
 

@@ -131,6 +131,26 @@ interface ScriptLine {
   dramaNote?: string;
   dramaResult?: string;
   dramaResultSub?: string;
+  jobTone?: string;
+  jobSite?: string;
+  jobTitle?: string;
+  jobTicker?: string;
+  jobNo?: number;
+  jobTerm?: string;
+  jobTermLabel?: string;
+  jobTermSub?: string;
+  jobStamp?: string;
+  jobRetort?: string;
+  jobFlash?: string;
+  jobFlashSub?: string;
+  jobBreak?: string;
+  jobBreakSub?: string;
+  jobReveal?: string;
+  jobRevealSub?: string;
+  jobCta?: string;
+  jobNote?: string;
+  jobResult?: string;
+  jobResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -404,6 +424,27 @@ export interface ScriptLine {
   dramaNote?: string;        // CTA下の小さな注記（※フィクションです 等の但し書き）
   dramaResult?: string;      // 次回予告リボン（冒頭へループさせる）
   dramaResultSub?: string;   // 次回予告リボンの補足行（コメント誘発の一言）
+  // ---- 求人票・募集要項型（JobHud）----
+  jobTone?: "posting" | "real"; // 求人トーン。指定行から後ろに引き継がれる（求人サイト＝青・実映像なし / 実在＝緑・実映像あり）
+  jobSite?: string;          // ヘッダの求人サイト名（最初に指定した行のものを全体で使う）
+  jobTitle?: string;         // 求人カードの職種名（最初に指定した行のものを全体で使う）
+  jobTicker?: string;        // 最下部を流れる細則（全行ぶんを連結して常時流す）
+  jobNo?: number;            // 何件目の募集要項か。指定がない行は直前の値を引き継ぐ
+  jobTerm?: string;          // 条項カード本文（この型の主役。1カット1条項）
+  jobTermLabel?: string;     // 条項カード左上のラベル（給与 / 労働時間 / 待遇 など）
+  jobTermSub?: string;       // 条項カードの補足行（原文の要約・出典）
+  jobStamp?: string;         // 条項カードに押す丸スタンプ（ホワイト など）
+  jobRetort?: string;        // ツッコミ吹き出し（求人票を見ている側の一言）
+  jobFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  jobFlashSub?: string;      // テロップの上に出す赤い小バッジ
+  jobBreak?: string;         // 求人票が裂ける転換スラム。この行から実映像が現れる
+  jobBreakSub?: string;      // 転換スラムの補足行
+  jobReveal?: string;        // リビール帯（正体明かし。宣伝への転換点）
+  jobRevealSub?: string;     // リビール帯の補足行
+  jobCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  jobNote?: string;          // CTA下の小さな注記（※求人票は演出です 等の但し書き）
+  jobResult?: string;        // ループ用リボン（冒頭の求人票に戻す）
+  jobResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
