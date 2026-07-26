@@ -151,6 +151,25 @@ interface ScriptLine {
   jobNote?: string;
   jobResult?: string;
   jobResultSub?: string;
+  respTone?: string;
+  respWorld?: string;
+  respLast?: string;
+  respHp?: number;
+  respMemo?: string;
+  respMemoSub?: string;
+  respRetort?: string;
+  respFlash?: string;
+  respFlashSub?: string;
+  respDeath?: string;
+  respDeathSub?: string;
+  respSpawn?: string;
+  respSpawnSub?: string;
+  respReveal?: string;
+  respRevealSub?: string;
+  respCta?: string;
+  respNote?: string;
+  respResult?: string;
+  respResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -445,6 +464,26 @@ export interface ScriptLine {
   jobNote?: string;          // CTA下の小さな注記（※求人票は演出です 等の但し書き）
   jobResult?: string;        // ループ用リボン（冒頭の求人票に戻す）
   jobResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- リスポーン型（RespawnHud）----
+  respTone?: "world" | "spawn"; // ゲームトーン。指定行から後ろに引き継がれる（記憶＝暗い青 / リスポーン後＝暖色）
+  respWorld?: string;        // セーブデータ帯のワールド名（最初に指定した行のものを全体で使う）
+  respLast?: string;         // セーブデータ帯の「最終プレイ ○日前」（最初に指定した行のものを全体で使う）
+  respHp?: number;           // 残りの体力ハート数。指定がない行は直前の値を引き継ぐ。減った行でダメージ演出が入る
+  respMemo?: string;         // 記憶＝「あるある」。進捗トーストの本文（この型の主役。1カット1個）
+  respMemoSub?: string;      // 進捗トーストの補足行
+  respRetort?: string;       // ツッコミ吹き出し（画面を見ている側の一言）
+  respFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  respFlashSub?: string;     // テロップの上に出す金色の小バッジ
+  respDeath?: string;        // 死亡画面の見出し（死んでしまった！）。書いた行のあいだ出しっぱなしになる
+  respDeathSub?: string;     // 死亡画面のスコア行
+  respSpawn?: string;        // リスポーンのボタン名。この行でボタンが押され、白く飛んで実映像に変わる
+  respSpawnSub?: string;     // リスポーン直後に出るチャットのシステムメッセージ
+  respReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  respRevealSub?: string;    // リビール帯の補足行
+  respCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  respNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  respResult?: string;       // ループ用リボン（冒頭のワールド選択画面に戻す）
+  respResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_solarisnoame.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":19}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -182,6 +182,26 @@ export interface ScriptLine {
   jobNote?: string;          // CTA下の小さな注記（※求人票は演出です 等の但し書き）
   jobResult?: string;        // ループ用リボン（冒頭の求人票に戻す）
   jobResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- リスポーン型（RespawnHud）----
+  respTone?: "world" | "spawn"; // ゲームトーン。指定行から後ろに引き継がれる（記憶＝暗い青 / リスポーン後＝暖色）
+  respWorld?: string;        // セーブデータ帯のワールド名（最初に指定した行のものを全体で使う）
+  respLast?: string;         // セーブデータ帯の「最終プレイ ○日前」（最初に指定した行のものを全体で使う）
+  respHp?: number;           // 残りの体力ハート数。指定がない行は直前の値を引き継ぐ。減った行でダメージ演出が入る
+  respMemo?: string;         // 記憶＝「あるある」。進捗トーストの本文（この型の主役。1カット1個）
+  respMemoSub?: string;      // 進捗トーストの補足行
+  respRetort?: string;       // ツッコミ吹き出し（画面を見ている側の一言）
+  respFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  respFlashSub?: string;     // テロップの上に出す金色の小バッジ
+  respDeath?: string;        // 死亡画面の見出し（死んでしまった！）。書いた行のあいだ出しっぱなしになる
+  respDeathSub?: string;     // 死亡画面のスコア行
+  respSpawn?: string;        // リスポーンのボタン名。この行でボタンが押され、白く飛んで実映像に変わる
+  respSpawnSub?: string;     // リスポーン直後に出るチャットのシステムメッセージ
+  respReveal?: string;       // リビール帯（正体明かし。宣伝への転換点）
+  respRevealSub?: string;    // リビール帯の補足行
+  respCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  respNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  respResult?: string;       // ループ用リボン（冒頭のワールド選択画面に戻す）
+  respResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -210,313 +230,392 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "ノルマは、シュウサンジカンまで？",
-    "jobSite": "求人ナビ",
-    "jobTitle": "【急募】資材の収集・建築スタッフ",
-    "jobTone": "posting",
-    "jobNo": 1,
-    "jobFlash": "ノルマは 週3時間まで",
-    "jobFlashSub": "募集要項",
-    "jobTerm": "ノルマは 週3時間まで",
-    "jobTermLabel": "労働時間",
-    "jobTermSub": "事実上それ以上の労働が必要なノルマも禁止（第3条 3.13）",
-    "jobTicker": "※ノルマを「週3時間」以上、または事実上それ以上の労働が必要な程度にしてはいけません（第3条 3.13）",
+    "text": "あなたのワールド、まだ残ってるわ。",
+    "respWorld": "新しい世界",
+    "respLast": "最終プレイ 1,847日前",
+    "respTone": "world",
+    "respHp": 10,
+    "respFlash": "あなたのワールド\nまだ残ってる",
+    "respFlashSub": "セーブデータ",
     "scene": 1,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
     "se": {
-      "src": "text-impact1.mp3",
-      "volume": 0.5
+      "src": "anxiety_piano.mp3",
+      "volume": 0.35
     },
     "voiceFile": "01_metan.wav",
-    "durationInFrames": 71
+    "durationInFrames": 80
   },
   {
     "id": 2,
-    "character": "metan",
-    "text": "なにこれ。こんな求人、ある？",
-    "jobRetort": "なにこれ。こんな求人、ある？",
+    "character": "zundamon",
+    "text": "マイクラ、いつやめたのだ？",
+    "respRetort": "マイクラ、いつやめた？",
     "scene": 1,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 1000
+    },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 87
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 75
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "時給は、ゴセンワイジー以上なのだ。",
-    "jobNo": 2,
-    "jobTerm": "時給は 5,000YG 以上",
-    "jobTermLabel": "給与",
-    "jobTermSub": "事実上の時給が5,000YG以上になるよう努める（第7条 7.1）",
-    "jobTicker": "※活動歴によって給与を差別してはいけません（第7条 7.2）",
+    "text": "最初の夜、土に埋まって朝を待ったのだ。",
+    "respHp": 9,
+    "respMemo": "最初の夜、土に埋まって朝を待った",
+    "respMemoSub": "最初の夜を生きのびる",
     "scene": 1,
     "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 620
+    },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "blow3.mp3",
       "volume": 0.45
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 94
+    "durationInFrames": 108
   },
   {
     "id": 4,
+    "character": "zundamon",
+    "text": "木の家を建てて、これでいいと思ったのだ。",
+    "respHp": 8,
+    "respMemo": "木の家で「これでいい」と思った",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 30
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 99
+  },
+  {
+    "id": 5,
     "character": "metan",
-    "text": "ワイジーって、なに？",
-    "jobRetort": "YGって、なに？",
+    "text": "なんで知ってるのよ。",
+    "respRetort": "なんで知ってるのよ",
     "scene": 1,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "04_metan.wav",
-    "durationInFrames": 56
-  },
-  {
-    "id": 5,
-    "character": "zundamon",
-    "text": "道具代は、会社が出すのだ。",
-    "jobNo": 3,
-    "jobTerm": "道具代は 会社が出す",
-    "jobTermLabel": "待遇",
-    "jobTermSub": "業務に必要な費用を社員に負担させてはいけない（第5条 5.8）",
-    "jobStamp": "ホワイト",
-    "jobTicker": "※社員に対しパワハラ、セクハラをしてはいけません（第5条 5.9）",
-    "scene": 1,
-    "pauseAfter": -4,
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 81
+    "voiceFile": "05_metan.wav",
+    "durationInFrames": 40
   },
   {
     "id": 6,
     "character": "zundamon",
-    "text": "ミスの弁償も、請求できないのだ。",
-    "jobNo": 4,
-    "jobTerm": "ミスの弁償は 請求できない",
-    "jobTermLabel": "待遇",
-    "jobTermSub": "故意・重過失によらない損害は社員に請求できない（第5条 5.1）",
+    "text": "ダイヤを見つけて、声が出たのだ。",
+    "respHp": 7,
+    "respMemo": "ダイヤを見つけて、声が出た",
     "scene": 1,
     "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 470
+    },
     "se": {
-      "src": "決定ボタンを押す3.mp3",
+      "src": "blow3.mp3",
       "volume": 0.45
     },
     "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 97
+    "durationInFrames": 84
   },
   {
     "id": 7,
-    "character": "metan",
-    "text": "待って。うちの会社より条件いいんだけど。",
-    "jobRetort": "待って。うちの会社より条件いい",
+    "character": "zundamon",
+    "text": "洞窟で迷って、出られなくなったのだ。",
+    "respHp": 6,
+    "respMemo": "洞窟で迷って、出られなくなった",
     "scene": 1,
-    "pauseAfter": -3,
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 700
     },
-    "voiceFile": "07_metan.wav",
-    "durationInFrames": 95
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 100
   },
   {
     "id": 8,
     "character": "zundamon",
-    "text": "辞めたい人は、止められないのだ。",
-    "jobNo": 5,
-    "jobTerm": "辞めたい人は 止められない",
-    "jobTermLabel": "退職",
-    "jobTermSub": "自己都合退職は理由を問わず拒否できない（第5条 5.2）",
-    "scene": 2,
+    "text": "エンダードラゴンは、倒してないのだ。",
+    "respHp": 5,
+    "respMemo": "エンダードラゴンは倒してない",
+    "respMemoSub": "いつか倒すつもりだった",
+    "scene": 1,
     "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "blow3.mp3",
       "volume": 0.45
     },
     "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 81
+    "durationInFrames": 89
   },
   {
     "id": 9,
-    "character": "zundamon",
-    "text": "副業の禁止も、できないのだ。",
-    "jobNo": 6,
-    "jobTerm": "副業の禁止は できない",
-    "jobTermLabel": "副業",
-    "jobTermSub": "企業は社員が副業を行うことを禁止してはいけない（第5条 5.6）",
-    "scene": 2,
-    "pauseAfter": -4,
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 83
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "労働条件通知書は、必ず渡すのだ。",
-    "jobNo": 7,
-    "jobTerm": "労働条件通知書を 必ず渡す",
-    "jobTermLabel": "契約",
-    "jobTermSub": "賃金・ノルマ・解雇事由まで文書で明記する（第3条）",
-    "jobTicker": "※労働条件通知書は、社員と運営が容易に閲覧できるようにしてください（第3条 3.2）",
-    "scene": 2,
-    "pauseAfter": -4,
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 112
-  },
-  {
-    "id": 11,
     "character": "metan",
-    "text": "そこまで決まってるの？",
-    "jobRetort": "そこまで決まってるの？",
-    "scene": 2,
+    "text": "やめて。",
+    "respRetort": "やめて",
+    "scene": 1,
     "pauseAfter": -3,
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 30
     },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 48
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "面接で、タメぐちは禁止なのだ。",
-    "jobNo": 8,
-    "jobTerm": "面接で ため口は禁止",
-    "jobTermLabel": "採用",
-    "jobTermSub": "ため口を使って面接をしてはいけない（第6条 6.1）",
-    "jobStamp": "実在",
-    "scene": 2,
-    "pauseAfter": -4,
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 92
-  },
-  {
-    "id": 13,
-    "character": "metan",
-    "text": "口調まで決まってるの！？",
-    "jobRetort": "口調まで決まってるの！？",
-    "scene": 2,
-    "pauseAfter": -3,
     "se": {
       "src": "shock1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 50
+    "voiceFile": "09_metan.wav",
+    "durationInFrames": 19
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "友達と、サーバー立てようって言ったのだ。",
+    "respHp": 4,
+    "respMemo": "「サーバー立てようぜ」と言った",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 800
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 11,
+    "character": "zundamon",
+    "text": "結局、立たなかったのだ。",
+    "respHp": 3,
+    "respMemo": "結局、立たなかった",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 230
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 74
+  },
+  {
+    "id": 12,
+    "character": "metan",
+    "text": "やめてってば。",
+    "respRetort": "やめてってば",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 260
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 28
+  },
+  {
+    "id": 13,
+    "character": "zundamon",
+    "text": "ひさしぶりに開いて、なにをすればいいか分からなかったのだ。",
+    "respHp": 2,
+    "respMemo": "開いても、やることが分からない",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 180
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 135
   },
   {
     "id": 14,
     "character": "zundamon",
-    "text": "落ちても、必ず連絡が来るのだ。",
-    "jobNo": 9,
-    "jobTerm": "不採用でも 必ず連絡する",
-    "jobTermLabel": "採用",
-    "jobTermSub": "採用試験の結果は合否にかかわらず伝える（第6条 6.4）",
+    "text": "そのまま、閉じたのだ。",
+    "respHp": 1,
+    "respMemo": "そのまま、閉じた",
     "scene": 2,
     "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 220
+    },
     "se": {
-      "src": "決定ボタンを押す1.mp3",
+      "src": "blow3.mp3",
       "volume": 0.45
     },
     "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 92
+    "durationInFrames": 59
   },
   {
     "id": 15,
     "character": "zundamon",
-    "text": "経験のありなしで、差別も禁止なのだ。",
-    "jobNo": 10,
-    "jobTerm": "経験の有無で 差別しない",
-    "jobTermLabel": "採用",
-    "jobTermSub": "活動歴によって採用可否を差別してはいけない（第6条 6.6）",
-    "scene": 3,
-    "pauseAfter": -4,
+    "text": "そして、それきりなのだ。",
+    "respHp": 0,
+    "respMemo": "そして、それきり",
+    "respMemoSub": "最終プレイ 1,847日前",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
     "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
+      "src": "blow3.mp3",
+      "volume": 0.5
     },
     "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 108
+    "durationInFrames": 62
   },
   {
     "id": 16,
-    "character": "zundamon",
-    "text": "ぼったくりも、禁止なのだ。",
-    "jobNo": 11,
-    "jobTerm": "ぼったくりは 禁止",
-    "jobTermLabel": "取引",
-    "jobTermSub": "最低販売価格の1.3倍を超える価格で売ってはいけない（第10条 10.4）",
-    "jobTicker": "※誰でもできる操作の代行で、1分あたり200YGを超える収益を得てはいけません（第10条 10.1）",
-    "scene": 3,
-    "pauseAfter": -4,
+    "character": "metan",
+    "text": "ひどいわ。",
+    "respDeath": "死んでしまった！",
+    "respDeathSub": "スコア 1,847",
+    "scene": 2,
+    "pauseAfter": 14,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 180
+    },
     "se": {
-      "src": "決定ボタンを押す3.mp3",
+      "src": "solemnity1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 71
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 24
   },
   {
     "id": 17,
     "character": "zundamon",
-    "text": "新しいお客さんは、ニジュウヨジカン返品自由なのだ。",
-    "jobNo": 12,
-    "jobTerm": "新規のお客は 24時間 返品自由",
-    "jobTermLabel": "取引",
-    "jobTermSub": "理由を問わず返品に応じなければならない（第10条 10.3）",
-    "jobStamp": "全12件",
-    "scene": 3,
+    "text": "でも、飽きたわけじゃないのだ。",
+    "respFlash": "飽きたわけじゃない",
+    "scene": 2,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 1300
+    },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.45
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.35
     },
     "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 137
+    "durationInFrames": 72
   },
   {
     "id": 18,
-    "character": "metan",
-    "text": "そんな会社、ニホンにあるわけないでしょ。",
-    "jobRetort": "そんな会社、日本にあるわけない",
-    "scene": 3,
+    "character": "zundamon",
+    "text": "やることが、無くなっただけなのだ。",
+    "respFlash": "やることが\n無くなっただけ",
+    "scene": 2,
     "pauseAfter": -2,
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.4
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 120
     },
-    "voiceFile": "18_metan.wav",
-    "durationInFrames": 88
+    "se": {
+      "src": "text-impact1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 82
   },
   {
     "id": 19,
     "character": "zundamon",
-    "text": "ニホンには、ないのだ。",
-    "jobTone": "real",
-    "jobBreak": "日本には、ありません",
-    "jobBreakSub": "——ですが",
+    "text": "リスポーンするのだ。",
+    "respTone": "spawn",
+    "respHp": 10,
+    "respSpawn": "リスポーン",
+    "respSpawnSub": "スポーン地点を設定しました",
     "scene": 3,
-    "pauseAfter": 12,
+    "pauseAfter": 14,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
@@ -524,61 +623,59 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 3000
     },
     "se": {
-      "src": "boom.mp3",
+      "src": "sceneswitch1.mp3",
       "volume": 0.5
     },
     "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 58
+    "durationInFrames": 46
   },
   {
     "id": 20,
     "character": "zundamon",
-    "text": "マイクラの中に、あるのだ。",
-    "jobReveal": "マイクラの中に あります",
-    "jobRevealSub": "よもぎ生活サーバー「優良企業ガイドライン」",
-    "jobTicker": "※よもぎ生活サーバーは統合版・参加費0円・24時間あそべます",
+    "text": "ここが、あたらしいスポーン地点なのだ。",
+    "respReveal": "よもぎ生活サーバー",
+    "respRevealSub": "やることが、まだある",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 1200
     },
     "se": {
       "src": "don-1.mp3",
       "volume": 0.5
     },
     "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 72
+    "durationInFrames": 92
   },
   {
     "id": 21,
     "character": "zundamon",
-    "text": "会社は、審査を通ればだれでも無料で作れるのだ。",
-    "jobFlash": "会社設立 0円",
-    "jobFlashSub": "誰でも",
+    "text": "家を建てて、店を開くのだ。",
+    "respFlash": "家を建てて\n店を開く",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
       "animation": "none",
-      "startFrom": 40
+      "startFrom": 60
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
     "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 127
+    "durationInFrames": 80
   },
   {
     "id": 22,
     "character": "zundamon",
-    "text": "ルールを守った会社には、運営から支援金が出るのだ。",
-    "jobFlash": "支援金 月30,000YG",
-    "jobFlashSub": "公認企業",
+    "text": "会社をつくって、社長にもなれるのだ。",
+    "respFlash": "会社をつくる",
+    "respFlashSub": "会社制度",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -592,56 +689,96 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.45
     },
     "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 142
+    "durationInFrames": 99
   },
   {
     "id": 23,
-    "character": "metan",
-    "text": "え、私も社長になれるってこと？",
-    "jobRetort": "え、私も社長になれるの？",
+    "character": "zundamon",
+    "text": "釣れる魚は、ニヒャクナナジュウゴ種類なのだ。",
+    "respFlash": "釣れる魚 275種",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 1200
+      "startFrom": 400
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "23_zundamon.wav",
+    "durationInFrames": 109
+  },
+  {
+    "id": 24,
+    "character": "zundamon",
+    "text": "車にも乗れて、近くの人とは声で話せるのだ。",
+    "respFlash": "車に乗る\n声で話す",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 126
+  },
+  {
+    "id": 25,
+    "character": "metan",
+    "text": "待って。それ、ぜんぶ同じ世界でできるの？",
+    "respRetort": "それ、ぜんぶ同じ世界で？",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "animation": "none",
+      "startFrom": 30
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "23_metan.wav",
-    "durationInFrames": 100
+    "voiceFile": "25_metan.wav",
+    "durationInFrames": 108
   },
   {
-    "id": 24,
+    "id": 26,
     "character": "zundamon",
     "text": "参加費はゼロ円。統合版なら、だれでもなのだ。",
-    "jobFlash": "参加費 0円",
-    "jobFlashSub": "統合版",
+    "respFlash": "参加費 0円",
+    "respFlashSub": "統合版",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 320
     },
     "se": {
       "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "26_zundamon.wav",
     "durationInFrames": 133
   },
   {
-    "id": 25,
+    "id": 27,
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
-    "displayText": "入り方は「よもぎサーバー」で検索",
-    "jobCta": "よもぎサーバー",
-    "jobNote": "※求人票は演出です／ボランティア運営のサーバーです",
+    "displayText": "「よもぎサーバー」で検索",
+    "respCta": "よもぎサーバー",
+    "respNote": "※統合版のみ／ボランティア運営のサーバーです",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -655,29 +792,30 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "25_metan.wav",
+    "voiceFile": "27_metan.wav",
     "durationInFrames": 87
   },
   {
-    "id": 26,
+    "id": 28,
     "character": "zundamon",
-    "text": "あなたの職場は、どうなのだ？",
-    "jobResult": "あなたの職場、この条件ある？",
-    "jobResultSub": "コメントで教えて",
+    "text": "あなたの最終ログインは、いつなのだ？",
+    "respTone": "world",
+    "respResult": "最終ログイン、いつ？",
+    "respResultSub": "コメントで教えて",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "none",
-      "startFrom": 3000
+      "startFrom": 40
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 80
+    "voiceFile": "28_zundamon.wav",
+    "durationInFrames": 102
   }
 ];
 

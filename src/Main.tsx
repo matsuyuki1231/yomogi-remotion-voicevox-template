@@ -60,23 +60,39 @@ import {
   JobHud,
   JobTone,
 } from "./components/JobHud";
+import {
+  RespawnBackdrop,
+  RespawnScrim,
+  RespawnChrome,
+  RespawnHud,
+  RespawnTone,
+} from "./components/RespawnHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
-type Format = "news" | "court" | "shop" | "reply" | "interview" | "drama" | "job";
+type Format =
+  | "news"
+  | "court"
+  | "shop"
+  | "reply"
+  | "interview"
+  | "drama"
+  | "job"
+  | "respawn";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
-// intv* なら街頭インタビュー型、reply* ならコメント返信型、
-// shop* ならテレビショッピング・通販型、court* なら裁判・尋問型、
-// どれでもなければ緊急速報・報道型。
+// resp* ならリスポーン型、job* なら求人票・募集要項型、
+// drama* なら縦型ショートドラマ・逆転劇型、intv* なら街頭インタビュー型、
+// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
+// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
 const detectFormat = (): Format => {
   const hasPrefix = (prefix: string) =>
     scriptData.some((line) =>
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("resp")) return "respawn";
   if (hasPrefix("job")) return "job";
   if (hasPrefix("drama")) return "drama";
   if (hasPrefix("intv")) return "interview";
@@ -355,6 +371,62 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- ゲームトーン（記憶 / リスポーン後）を解決。指定した行から後ろに引き継がれる ----
+  // 転換を文字で説明しないので、リスポーンの合図はこのトーン反転（カラーグレードの
+  // 冷 → 暖）と、ハートが全回復することだけが担う
+  const respToneResolved: RespawnTone[] = (() => {
+    let current: RespawnTone = "world";
+    return scriptData.map((line) => {
+      if (line.respTone === "world" || line.respTone === "spawn") {
+        current = line.respTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 残りの体力ハートを解決。指定がない行は直前の値を引き継ぐ ----
+  const respHpResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.respHp === "number") {
+        current = line.respHp;
+      }
+      return current;
+    });
+  })();
+
+  // ハートの総数。スクリプト中でいちばん大きい体力を満タンとする
+  const respHpTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.respHp ?? 0),
+    1
+  );
+
+  // ---- 死亡画面を後続の行に引き継ぐ ----
+  // 「死んでしまった！」が出てから数行のあいだ画面は出っぱなしになるが、
+  // 毎行アニメーションが焼き直されると画面が跳ねてうるさい。
+  // 直前の行と同じものを出すだけの行では held を立てて動かさない。
+  // リスポーンの行（respSpawn）以降は自前で幕を畳むので持ち越さない。
+  type RespDeathCard = { text: string; sub?: string };
+  const respDeathResolved: (RespDeathCard | null)[] = (() => {
+    let current: RespDeathCard | null = null;
+    return scriptData.map((line) => {
+      // リスポーンの行で幕は畳まれる。それ以降は二度と出さない
+      if (line.respSpawn) {
+        current = null;
+        return null;
+      }
+      if (line.respDeath) {
+        current = { text: line.respDeath, sub: line.respDeathSub };
+      }
+      return current;
+    });
+  })();
+
+  // ワールド名と最終プレイ表示は最初に指定した行のものを動画全体で使う
+  const respWorld =
+    scriptData.find((line) => line.respWorld)?.respWorld ?? "新しい世界";
+  const respLast = scriptData.find((line) => line.respLast)?.respLast ?? "";
+
   // サイト名と職種名は最初に指定した行のものを動画全体で使う
   const jobSite = scriptData.find((line) => line.jobSite)?.jobSite ?? "求人";
   const jobTitle = scriptData.find((line) => line.jobTitle)?.jobTitle ?? "";
@@ -382,6 +454,9 @@ export const Main: React.FC = () => {
     switch (FORMAT) {
       // ドラマ型にティッカーはない（最下部はシークバー）
       case "drama":
+        return undefined;
+      // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
+      case "respawn":
         return undefined;
       case "job":
         return line.jobTicker;
@@ -504,6 +579,20 @@ export const Main: React.FC = () => {
       line.jobResult
     );
 
+  // リスポーンHUDのパーツが1つでも出るか
+  const hasRespawnHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      line.respMemo ||
+      line.respRetort ||
+      line.respFlash ||
+      respDeathResolved[index] ||
+      line.respSpawn ||
+      line.respReveal ||
+      line.respCta ||
+      line.respNote ||
+      line.respResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムが、
@@ -516,6 +605,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // リスポーン型は進捗トーストとツッコミ吹き出しが画面テロップを兼ねる。
+      // 死亡画面とリスポーンの行は画面を全部使うので字幕を出さない
+      // （リスポーンの行はそもそも「文字で説明しない」のが要点）。
+      // 字幕を出すのは検索CTAの行だけ
+      case "respawn":
+        return !!(
+          line.respMemo ||
+          line.respRetort ||
+          line.respFlash ||
+          line.respDeath ||
+          line.respSpawn ||
+          line.respReveal ||
+          line.respResult
+        );
       // 求人票型は条項カードとツッコミ吹き出しが画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ
       case "job":
@@ -596,6 +699,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "respawn":
+        return <RespawnBackdrop />;
       // 求人票型だけは背景そのものがフォーマットの主役。前半は白い求人サイトの
       // 紙面で、実映像は1枚も出ない（トーンが real に変わるまで）
       case "job":
@@ -624,6 +729,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // リスポーン型もトーンで色そのものを変える（記憶＝冷たい青／
+      // リスポーン後＝暖色）。転換を文字で説明しないぶんをここが担う
+      case "respawn":
+        return <RespawnScrim tone={respToneResolved[index]} />;
       case "job":
         return <JobScrim />;
       case "drama":
@@ -643,6 +752,18 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "respawn":
+        return (
+          <RespawnChrome
+            tone={currentIndex >= 0 ? respToneResolved[currentIndex] : "world"}
+            world={respWorld}
+            last={respLast}
+            hp={currentIndex >= 0 ? respHpResolved[currentIndex] : null}
+            hpPrev={currentIndex > 0 ? respHpResolved[currentIndex - 1] : null}
+            hpTotal={respHpTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "job":
         return (
           <JobChrome
@@ -741,6 +862,32 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "respawn":
+        if (!hasRespawnHud(line, currentIndex)) return null;
+        return wrap(
+          <RespawnHud
+            tone={respToneResolved[currentIndex]}
+            character={line.character}
+            memo={line.respMemo}
+            memoSub={line.respMemoSub}
+            retort={line.respRetort}
+            flash={line.respFlash}
+            flashSub={line.respFlashSub}
+            death={respDeathResolved[currentIndex]?.text}
+            deathSub={respDeathResolved[currentIndex]?.sub}
+            // 自分で出した死亡画面ではなく、前の行のものを残しているだけの行
+            deathHeld={!line.respDeath}
+            spawn={line.respSpawn}
+            spawnSub={line.respSpawnSub}
+            reveal={line.respReveal}
+            revealSub={line.respRevealSub}
+            cta={line.respCta}
+            note={line.respNote}
+            result={line.respResult}
+            resultSub={line.respResultSub}
+            durationInFrames={span}
+          />
+        );
       case "job":
         if (!hasJobHud(line)) return null;
         return wrap(
