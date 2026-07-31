@@ -42,20 +42,24 @@
 #   この型は最初から巻き戻しプレイヤーのパロディUIだと分かる茶番なので、
 #   常設メーター（DAYカウンター＋縦レール）で「あと何日で0になるのか」を
 #   明示してよい。ただし**「ここから宣伝です」「立場が変わりました」の類は書かない**。
-#   転換（id19）はトーンの反転（青→緑）とチップが積み直り始めることだけで伝える。
+#   転換（id20）はトーンの反転（青→緑）とチップが積み直り始めることだけで伝える。
 #
 # ■ 構造上のルール
 #   - チップは巻き戻しで8個ぜんぶ剥がす（車→会社→店→家→土地→釣り竿→仲間→ツルハシ）。
-#     id15 で持ち物ゼロになり、その状態で id16 の DAY 1 スラムが出る
+#     id16 で持ち物ゼロになり、その状態で id17 の DAY 1 スラムが出る
 #   - 宣伝パートで積み直すのは5個（土地→家→店→会社→車）。剥がした順の逆に戻る
-#   - 最終行（id28）は rwTone を now に戻し、rwDay を 365 に戻す。
+#   - 最終行（id29）は rwTone を now に戻し、rwDay を 365 に戻す。
 #     チップは Main 側が「一度 start に入ったら積み上げたまま」に解決するので、
 #     ループの継ぎ目でも持ち物は5個のまま割れない
+#   - **サーバー名は伏せない**。この型の引っぱりはDAYカウンターと剥がれていく
+#     チップが担うので、名前を隠す必要がない。id4 で「ここは、よもぎサーバーの
+#     生活鯖なのだ」と言い切ってしまう（コメント返信型と同じ考え方）。
+#     id20 のリビール帯は正体明かしではなく、宣伝への転換点の合図として残す
 #   - 記録の中身は全部 docs/yomogi で裏が取れる機能にする。
 #     日付と人物はフィクションなので rwNote で明示する
 #   - rwLog / rwRetort / rwFlash / rwOrigin / rwReveal / rwResult がある行は
-#     テロップが字幕を兼ねるので字幕を出さない。字幕は検索CTA（id27）の行だけ
-#   - 転換の行（id4 / id16 / id19）は演出に間が要るので pauseAfter を正の値にする
+#     テロップが字幕を兼ねるので字幕を出さない。字幕は検索CTA（id28）の行だけ
+#   - 転換の行（id5 / id17 / id20）は演出に間が要るので pauseAfter を正の値にする
 #   - startFrom は素材の長さ（public/content/video-durations.json）を超えないこと
 #
 # ■ 情報ソース: docs/yomogi 配下（記録・宣伝パートはすべてここで裏取り）
@@ -132,8 +136,29 @@
     src: question1.mp3
     volume: 0.4
 
-# ===== 巻き戻し開始。ここからDAYが減り、チップが1つずつ剥がれる =====
 - id: 4
+  character: zundamon
+  # 引っぱりはDAYカウンターとチップが担うので、サーバー名は伏せない。
+  # 「なんの動画なのか」を冒頭で言い切ってしまったほうが離脱しない
+  text: ここは、よもぎサーバーの生活鯖なのだ。
+  rwTicker: よもぎサーバーの生活鯖
+  rwFlash: |-
+    よもぎサーバー
+    生活鯖
+  rwFlashSub: ここは
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: spotlight.mp3
+    volume: 0.45
+
+# ===== 巻き戻し開始。ここからDAYが減り、チップが1つずつ剥がれる =====
+- id: 5
   character: zundamon
   text: 巻き戻してみるのだ。
   rwTone: rewind
@@ -150,7 +175,7 @@
     src: sceneswitch1.mp3
     volume: 0.5
 
-- id: 5
+- id: 6
   character: zundamon
   text: 車を買った日なのだ。
   rwDay: 331
@@ -168,7 +193,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 6
+- id: 7
   character: zundamon
   text: 社員が、ロクニンになった日。
   rwDay: 288
@@ -186,7 +211,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 7
+- id: 8
   character: metan
   text: 会社？　マイクラで？
   rwRetort: 会社？　マイクラで？
@@ -201,7 +226,7 @@
     src: question1.mp3
     volume: 0.4
 
-- id: 8
+- id: 9
   character: zundamon
   text: 店を出した日なのだ。
   rwDay: 205
@@ -219,7 +244,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 9
+- id: 10
   character: zundamon
   text: 家が、建った日なのだ。
   rwDay: 120
@@ -236,7 +261,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 10
+- id: 11
   character: zundamon
   text: 土地を、買った日なのだ。
   rwDay: 96
@@ -254,7 +279,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 11
+- id: 12
   character: metan
   text: 待って。戻りすぎよ。
   rwRetort: 待って。戻りすぎよ
@@ -269,7 +294,7 @@
     src: shock1.mp3
     volume: 0.4
 
-- id: 12
+- id: 13
   character: zundamon
   text: 釣れる魚が、ニヒャクナナジュウゴ種類だと知った日。
   rwDay: 62
@@ -286,7 +311,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 13
+- id: 14
   character: zundamon
   text: 知らない人に、声をかけられた日。
   rwDay: 19
@@ -304,7 +329,7 @@
     src: blow3.mp3
     volume: 0.45
 
-- id: 14
+- id: 15
   character: zundamon
   text: ツルハシを、イッポンもらった日なのだ。
   rwDay: 7
@@ -322,7 +347,7 @@
     volume: 0.5
 
 # ここで持ち物が0になる。「持ち物なし」の表示が出たまま DAY 1 へ落ちる
-- id: 15
+- id: 16
   character: zundamon
   text: 名前を、決めただけの日。
   rwDay: 3
@@ -339,7 +364,7 @@
     volume: 0.5
 
 # ===== 底に着く。持ち物ゼロの状態で全画面 =====
-- id: 16
+- id: 17
   character: zundamon
   text: ここで、止まるのだ。
   rwDay: 1
@@ -357,7 +382,7 @@
     src: solemnity1.mp3
     volume: 0.45
 
-- id: 17
+- id: 18
   character: metan
   text: ……なにも、ないわね。
   rwFlash: なにも、ない
@@ -373,7 +398,7 @@
     volume: 0.35
 
 # この一行がこの動画の芯。ここまでの巻き戻しは全部これを刺すための助走
-- id: 18
+- id: 19
   character: zundamon
   text: 1年前は、だれでもここなのだ。
   rwFlash: |-
@@ -392,7 +417,7 @@
 
 # ===== 転換。トーンが緑に反転し、ここからチップが積み直る =====
 # 「ここから宣伝です」とは書かない。色の反転とチップの復活だけで伝える
-- id: 19
+- id: 20
   character: zundamon
   text: そして、ここから始められるのだ。
   rwTone: start
@@ -411,7 +436,7 @@
     volume: 0.5
 
 # ===== 宣伝パート（剥がした順の逆に積み直る。全部 docs/yomogi で裏取り）=====
-- id: 20
+- id: 21
   character: zundamon
   text: 土地は、買えるのだ。
   rwGot: 土地
@@ -429,7 +454,7 @@
     src: item-get1.mp3
     volume: 0.45
 
-- id: 21
+- id: 22
   character: zundamon
   text: そこに、家を建てるのだ。
   rwGot: 家
@@ -447,7 +472,7 @@
     src: item-get1.mp3
     volume: 0.45
 
-- id: 22
+- id: 23
   character: zundamon
   text: 店番のいらない店も、出せるのだ。
   rwGot: 店
@@ -466,7 +491,7 @@
     src: item-get1.mp3
     volume: 0.45
 
-- id: 23
+- id: 24
   character: zundamon
   text: 会社をつくって、社長にもなれるのだ。
   rwGot: 会社
@@ -485,7 +510,7 @@
     src: item-get1.mp3
     volume: 0.45
 
-- id: 24
+- id: 25
   character: zundamon
   text: 車にも乗れて、近くの人とは声で話せるのだ。
   rwGot: 車
@@ -503,7 +528,7 @@
     src: correct1.mp3
     volume: 0.45
 
-- id: 25
+- id: 26
   character: metan
   text: それ、ぜんぶ同じ世界でできるの？
   rwRetort: それ、ぜんぶ同じ世界で？
@@ -518,7 +543,7 @@
     src: question1.mp3
     volume: 0.4
 
-- id: 26
+- id: 27
   character: zundamon
   text: 参加費はゼロ円。統合版なら、だれでもなのだ。
   rwFlash: 参加費 0円
@@ -536,7 +561,7 @@
     volume: 0.5
 
 # ===== CTA（検索バー＋但し書き）。字幕を出すのはこの行だけ =====
-- id: 27
+- id: 28
   character: metan
   # 「入り方」は「イリガタ」と読まれてしまうのでひらがなにする
   text: はいりかたは、よもぎサーバーで検索ね。
@@ -558,7 +583,7 @@
 # ===== ループ＋コメント誘発 =====
 # トーンと DAY を冒頭に戻し、映像も id1 と同じ位置に返す。
 # 時間が円環になるのでループの継ぎ目が消える
-- id: 28
+- id: 29
   character: zundamon
   # 「DAY 1」はアルファベットなのでVOICEVOXが読めない。音声側はカタカナにする。
   # 「デイワン」は デ'/イ'ワン と割れるので「デーワン」（デエワ'ン）にすること

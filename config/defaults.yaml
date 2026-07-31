@@ -22,7 +22,7 @@ bgm:
   # 巻き戻し型（script.living-server-rewind.yaml 用）:
   # 巻き戻しパート（DAY 365 → DAY 1。持ち物が1つずつ剥がれていくあいだ）は
   # 静かで沈んだ曲。ここが騒がしいと「なにも無くなっていく」感じが消える。
-  # 転換の id:19 で朝焼けの曲に切り替え、色（青→緑）とチップが積み直るのと
+  # 転換の id:20 で朝焼けの曲に切り替え、色（青→緑）とチップが積み直るのと
   # 同時に空気を入れ替える
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
@@ -48,4 +48,4 @@ bgm:
     - src: "amacha_yuruyakanaasayake.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 19
+      fromLineId: 20

@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_solarisnoame.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_solarisnoame.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_yuruyakanaasayake.mp3","volume":0.2,"loop":true,"fromLineId":20}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -314,6 +314,28 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 4,
     "character": "zundamon",
+    "text": "ここは、よもぎサーバーの生活鯖なのだ。",
+    "rwTicker": "よもぎサーバーの生活鯖",
+    "rwFlash": "よもぎサーバー\n生活鯖",
+    "rwFlashSub": "ここは",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 106
+  },
+  {
+    "id": 5,
+    "character": "zundamon",
     "text": "巻き戻してみるのだ。",
     "rwTone": "rewind",
     "rwTicker": "巻き戻し中",
@@ -329,11 +351,11 @@ export const scriptData: ScriptLine[] = [
       "src": "sceneswitch1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "04_zundamon.wav",
+    "voiceFile": "05_zundamon.wav",
     "durationInFrames": 52
   },
   {
-    "id": 5,
+    "id": 6,
     "character": "zundamon",
     "text": "車を買った日なのだ。",
     "rwDay": 331,
@@ -352,11 +374,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "05_zundamon.wav",
+    "voiceFile": "06_zundamon.wav",
     "durationInFrames": 55
   },
   {
-    "id": 6,
+    "id": 7,
     "character": "zundamon",
     "text": "社員が、ロクニンになった日。",
     "rwDay": 288,
@@ -375,11 +397,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "06_zundamon.wav",
+    "voiceFile": "07_zundamon.wav",
     "durationInFrames": 76
   },
   {
-    "id": 7,
+    "id": 8,
     "character": "metan",
     "text": "会社？　マイクラで？",
     "rwRetort": "会社？　マイクラで？",
@@ -395,11 +417,11 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "07_metan.wav",
+    "voiceFile": "08_metan.wav",
     "durationInFrames": 60
   },
   {
-    "id": 8,
+    "id": 9,
     "character": "zundamon",
     "text": "店を出した日なのだ。",
     "rwDay": 205,
@@ -418,11 +440,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "08_zundamon.wav",
+    "voiceFile": "09_zundamon.wav",
     "durationInFrames": 50
   },
   {
-    "id": 9,
+    "id": 10,
     "character": "zundamon",
     "text": "家が、建った日なのだ。",
     "rwDay": 120,
@@ -440,11 +462,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "09_zundamon.wav",
+    "voiceFile": "10_zundamon.wav",
     "durationInFrames": 66
   },
   {
-    "id": 10,
+    "id": 11,
     "character": "zundamon",
     "text": "土地を、買った日なのだ。",
     "rwDay": 96,
@@ -463,11 +485,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "10_zundamon.wav",
+    "voiceFile": "11_zundamon.wav",
     "durationInFrames": 66
   },
   {
-    "id": 11,
+    "id": 12,
     "character": "metan",
     "text": "待って。戻りすぎよ。",
     "rwRetort": "待って。戻りすぎよ",
@@ -483,11 +505,11 @@ export const scriptData: ScriptLine[] = [
       "src": "shock1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "11_metan.wav",
+    "voiceFile": "12_metan.wav",
     "durationInFrames": 52
   },
   {
-    "id": 12,
+    "id": 13,
     "character": "zundamon",
     "text": "釣れる魚が、ニヒャクナナジュウゴ種類だと知った日。",
     "rwDay": 62,
@@ -505,11 +527,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "12_zundamon.wav",
+    "voiceFile": "13_zundamon.wav",
     "durationInFrames": 122
   },
   {
-    "id": 13,
+    "id": 14,
     "character": "zundamon",
     "text": "知らない人に、声をかけられた日。",
     "rwDay": 19,
@@ -528,11 +550,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.45
     },
-    "voiceFile": "13_zundamon.wav",
+    "voiceFile": "14_zundamon.wav",
     "durationInFrames": 88
   },
   {
-    "id": 14,
+    "id": 15,
     "character": "zundamon",
     "text": "ツルハシを、イッポンもらった日なのだ。",
     "rwDay": 7,
@@ -550,11 +572,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.5
     },
-    "voiceFile": "14_zundamon.wav",
+    "voiceFile": "15_zundamon.wav",
     "durationInFrames": 95
   },
   {
-    "id": 15,
+    "id": 16,
     "character": "zundamon",
     "text": "名前を、決めただけの日。",
     "rwDay": 3,
@@ -571,11 +593,11 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.5
     },
-    "voiceFile": "15_zundamon.wav",
+    "voiceFile": "16_zundamon.wav",
     "durationInFrames": 69
   },
   {
-    "id": 16,
+    "id": 17,
     "character": "zundamon",
     "text": "ここで、止まるのだ。",
     "rwDay": 1,
@@ -593,11 +615,11 @@ export const scriptData: ScriptLine[] = [
       "src": "solemnity1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "16_zundamon.wav",
+    "voiceFile": "17_zundamon.wav",
     "durationInFrames": 55
   },
   {
-    "id": 17,
+    "id": 18,
     "character": "metan",
     "text": "……なにも、ないわね。",
     "rwFlash": "なにも、ない",
@@ -613,11 +635,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.35
     },
-    "voiceFile": "17_metan.wav",
+    "voiceFile": "18_metan.wav",
     "durationInFrames": 46
   },
   {
-    "id": 18,
+    "id": 19,
     "character": "zundamon",
     "text": "1年前は、だれでもここなのだ。",
     "rwFlash": "1年前は\nだれでも ここ",
@@ -633,11 +655,11 @@ export const scriptData: ScriptLine[] = [
       "src": "text-impact3.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
+    "voiceFile": "19_zundamon.wav",
     "durationInFrames": 89
   },
   {
-    "id": 19,
+    "id": 20,
     "character": "zundamon",
     "text": "そして、ここから始められるのだ。",
     "rwTone": "start",
@@ -656,11 +678,11 @@ export const scriptData: ScriptLine[] = [
       "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "19_zundamon.wav",
+    "voiceFile": "20_zundamon.wav",
     "durationInFrames": 83
   },
   {
-    "id": 20,
+    "id": 21,
     "character": "zundamon",
     "text": "土地は、買えるのだ。",
     "rwGot": "土地",
@@ -679,11 +701,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "20_zundamon.wav",
+    "voiceFile": "21_zundamon.wav",
     "durationInFrames": 58
   },
   {
-    "id": 21,
+    "id": 22,
     "character": "zundamon",
     "text": "そこに、家を建てるのだ。",
     "rwGot": "家",
@@ -702,11 +724,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "21_zundamon.wav",
+    "voiceFile": "22_zundamon.wav",
     "durationInFrames": 72
   },
   {
-    "id": 22,
+    "id": 23,
     "character": "zundamon",
     "text": "店番のいらない店も、出せるのだ。",
     "rwGot": "店",
@@ -726,11 +748,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "22_zundamon.wav",
+    "voiceFile": "23_zundamon.wav",
     "durationInFrames": 92
   },
   {
-    "id": 23,
+    "id": 24,
     "character": "zundamon",
     "text": "会社をつくって、社長にもなれるのだ。",
     "rwGot": "会社",
@@ -750,11 +772,11 @@ export const scriptData: ScriptLine[] = [
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "23_zundamon.wav",
+    "voiceFile": "24_zundamon.wav",
     "durationInFrames": 99
   },
   {
-    "id": 24,
+    "id": 25,
     "character": "zundamon",
     "text": "車にも乗れて、近くの人とは声で話せるのだ。",
     "rwGot": "車",
@@ -773,11 +795,11 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "25_zundamon.wav",
     "durationInFrames": 126
   },
   {
-    "id": 25,
+    "id": 26,
     "character": "metan",
     "text": "それ、ぜんぶ同じ世界でできるの？",
     "rwRetort": "それ、ぜんぶ同じ世界で？",
@@ -793,11 +815,11 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "25_metan.wav",
+    "voiceFile": "26_metan.wav",
     "durationInFrames": 85
   },
   {
-    "id": 26,
+    "id": 27,
     "character": "zundamon",
     "text": "参加費はゼロ円。統合版なら、だれでもなのだ。",
     "rwFlash": "参加費 0円",
@@ -815,11 +837,11 @@ export const scriptData: ScriptLine[] = [
       "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "26_zundamon.wav",
+    "voiceFile": "27_zundamon.wav",
     "durationInFrames": 133
   },
   {
-    "id": 27,
+    "id": 28,
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
     "displayText": "「よもぎサーバー」で検索",
@@ -838,11 +860,11 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "27_metan.wav",
+    "voiceFile": "28_metan.wav",
     "durationInFrames": 87
   },
   {
-    "id": 28,
+    "id": 29,
     "character": "zundamon",
     "text": "あなたのデーワンは、いつなのだ？",
     "rwTone": "now",
@@ -861,7 +883,7 @@ export const scriptData: ScriptLine[] = [
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "28_zundamon.wav",
+    "voiceFile": "29_zundamon.wav",
     "durationInFrames": 85
   }
 ];
