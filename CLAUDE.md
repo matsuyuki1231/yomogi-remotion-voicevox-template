@@ -611,7 +611,8 @@ public/
 
 | ファイル | 中身 | HUD |
 |----------|------|-----|
-| `config/script.living-server-screenquiz.yaml` | **生活サーバー版・画面当てクイズ型（最新／45秒25行）** | `QuizHud` |
+| `config/script.werewolf-screenquiz.yaml` | **マイクラ人狼版・画面当てクイズ型（最新／21行）** | `QuizHud` |
+| `config/script.living-server-screenquiz.yaml` | 生活サーバー版・画面当てクイズ型（45秒25行） | `QuizHud` |
 | `config/script.living-server-rewind.yaml` | 生活サーバー版・巻き戻し型（51秒29行） | `RewindHud` |
 | `config/script.living-server-respawn.yaml` | 生活サーバー版・リスポーン型 | `RespawnHud` |
 | `config/script.living-server-job.yaml` | 生活サーバー版・求人票/募集要項型 | `JobHud` |
@@ -707,6 +708,16 @@ sync を飛ばすと前の版のセリフで音声を作ってしまう。音声
 映像で成立しない設問は**設問のほうを変える**。土地は当初「なにを買ってる？」に
 していたが、土地保護の素材にGUIらしい画がなく問題が成立しなかったので、
 建築中の画に合わせて「この土地、どうやって手に入れた？」に変えている。
+
+**人狼版（`config/script.werewolf-screenquiz.yaml`）は同じHUD・同じフィールドのまま
+題材だけ差し替えてある**（全6問21行）。人狼素材は4本しかないが、
+「殺し屋が霊媒師のフリ.mp4」には一人称視点の人狼HUD（右上「あなたの役職は:
+殺し屋（人狼陣営）」・役職一覧・COログ・赤いキル表示）がそのまま映っており、
+GUIが答えになるこの型と相性がいい。学習ルールは「いちばん物騒な選択肢が正解」に
+読み替えて維持（会議／殺された／47種類／殺し屋／処刑）し、最終問題（参加費0円）だけ
+お得側に裏切るのは生活サーバー版と同じ。役職数は intro.md の41種類ではなく、
+日付つきで新しい all_roles.md（2026年7月19日時点で47）を採用している。
+「会議中の風景2.mp4」の f≈390 前後はカメラが黒い人物に塞がれるので出題カットに使わない。
 
 #### スクリプトのフィールド（quiz*）
 
