@@ -248,10 +248,32 @@ export const scenes: SceneInfo[] = [
 export const scriptData: ScriptLine[] = [
   {
     "id": 1,
-    "character": "metan",
-    "text": "土地、家、店、会社、車。ぜんぶ持ってるわ。",
+    "character": "zundamon",
+    "text": "ここは、よもぎサーバーの生活鯖なのだ。",
     "rwTone": "now",
     "rwDay": 365,
+    "rwTicker": "よもぎサーバーの生活鯖",
+    "rwFlash": "よもぎサーバー\n生活鯖",
+    "rwFlashSub": "ここは",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "01_zundamon.wav",
+    "durationInFrames": 106
+  },
+  {
+    "id": 2,
+    "character": "metan",
+    "text": "土地、家、店、会社、車。ぜんぶ持ってるわ。",
     "rwTicker": "この記録は 365日ぶん",
     "rwFlash": "ぜんぶ持ってる",
     "rwFlashSub": "1年後",
@@ -267,11 +289,11 @@ export const scriptData: ScriptLine[] = [
       "src": "text-impact1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "01_metan.wav",
+    "voiceFile": "02_metan.wav",
     "durationInFrames": 166
   },
   {
-    "id": 2,
+    "id": 3,
     "character": "zundamon",
     "text": "年収は、ゼロ円なのだ。",
     "rwTicker": "年収 0円",
@@ -288,11 +310,11 @@ export const scriptData: ScriptLine[] = [
       "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "02_zundamon.wav",
+    "voiceFile": "03_zundamon.wav",
     "durationInFrames": 75
   },
   {
-    "id": 3,
+    "id": 4,
     "character": "metan",
     "text": "は？",
     "rwRetort": "は？",
@@ -308,30 +330,8 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "03_metan.wav",
+    "voiceFile": "04_metan.wav",
     "durationInFrames": 17
-  },
-  {
-    "id": 4,
-    "character": "zundamon",
-    "text": "ここは、よもぎサーバーの生活鯖なのだ。",
-    "rwTicker": "よもぎサーバーの生活鯖",
-    "rwFlash": "よもぎサーバー\n生活鯖",
-    "rwFlashSub": "ここは",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "spotlight.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 106
   },
   {
     "id": 5,
@@ -875,9 +875,9 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 2600
+      "startFrom": 100
     },
     "se": {
       "src": "sceneswitch1.mp3",

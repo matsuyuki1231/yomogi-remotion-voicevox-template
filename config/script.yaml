@@ -13,10 +13,10 @@
 #      名指しされており、どちらも定石は**完成品を最初に見せてから過程に戻る**こと。
 #      この型はその構造そのもの（既存21型は一度も時間経過軸を使っていない）
 #   2. Shortsの平均視聴時間が45秒→58秒に伸び、45〜75秒の高情報密度が優遇される
-#      → 1カット1日で28カット
+#      → 1カット1日で29カット
 #   3. ループ再生も再生回数に加算される → 最終行で DAY を 365 に戻し、
 #      映像も id1 と同じ src / startFrom にする。時間が円環になって継ぎ目が消える
-#   4. 冒頭1秒は「起」ではなく「転」→ 前置きゼロで「ぜんぶ持ってる」＋「年収0円」の矛盾
+#   4. 冒頭は矛盾で掴む → id1 で名乗ったすぐ後、id2・id3 で「ぜんぶ持ってる」＋「年収0円」
 #   5. コメント誘発を構造に埋める → 最終行「あなたのDAY 1は？」
 #
 # ■ 宣伝としてなぜ正しいか
@@ -52,8 +52,10 @@
 #     チップは Main 側が「一度 start に入ったら積み上げたまま」に解決するので、
 #     ループの継ぎ目でも持ち物は5個のまま割れない
 #   - **サーバー名は伏せない**。この型の引っぱりはDAYカウンターと剥がれていく
-#     チップが担うので、名前を隠す必要がない。id4 で「ここは、よもぎサーバーの
-#     生活鯖なのだ」と言い切ってしまう（コメント返信型と同じ考え方）。
+#     チップが担うので、名前を隠す必要がない。**id1 で「ここは、よもぎサーバーの
+#     生活鯖なのだ」と名乗る**（コメント返信型と同じ考え方）。定石の
+#     「冒頭1秒は転」からは外れるが、なんの動画なのかを1フレーム目で
+#     確定させることを優先している。矛盾（ぜんぶ持ってる／年収0円）は id2・id3 で畳みかける。
 #     id20 のリビール帯は正体明かしではなく、宣伝への転換点の合図として残す
 #   - 記録の中身は全部 docs/yomogi で裏が取れる機能にする。
 #     日付と人物はフィクションなので rwNote で明示する
@@ -85,62 +87,15 @@
 #         blow3 / solemnity1 / don-1 / item-get1 / correct1 / anxiety_piano /
 #         決定ボタンを押す1〜4 はいずれも効果音ラボ（商用可・クレジット不要）
 
-# ===== 前置きゼロ。矛盾をそのまま1行目に置く（1秒フック）=====
+# ===== 1行目でサーバーを名乗る =====
+# 引っぱりはDAYカウンターと剥がれていくチップが担うので、サーバー名は伏せない。
+# 定石（冒頭1秒は「起」ではなく「転」）からは外れるが、「なんの動画なのか」を
+# 1フレーム目で確定させることを優先している。そのぶん次の行から矛盾を畳みかける
 - id: 1
-  character: metan
-  text: 土地、家、店、会社、車。ぜんぶ持ってるわ。
+  character: zundamon
+  text: ここは、よもぎサーバーの生活鯖なのだ。
   rwTone: now
   rwDay: 365
-  rwTicker: この記録は 365日ぶん
-  rwFlash: ぜんぶ持ってる
-  rwFlashSub: 1年後
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
-    animation: none
-    startFrom: 2600
-  se:
-    src: text-impact1.mp3
-    volume: 0.5
-
-- id: 2
-  character: zundamon
-  text: 年収は、ゼロ円なのだ。
-  rwTicker: 年収 0円
-  rwFlash: 年収 0円
-  scene: 1
-  pauseAfter: -3
-  visual:
-    type: video
-    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
-    animation: none
-    startFrom: 900
-  se:
-    src: don-1.mp3
-    volume: 0.5
-
-- id: 3
-  character: metan
-  text: は？
-  rwRetort: は？
-  scene: 1
-  pauseAfter: -4
-  visual:
-    type: video
-    src: 生活サーバー/商店街で帽子を購入している動画.mp4
-    animation: none
-    startFrom: 40
-  se:
-    src: question1.mp3
-    volume: 0.4
-
-- id: 4
-  character: zundamon
-  # 引っぱりはDAYカウンターとチップが担うので、サーバー名は伏せない。
-  # 「なんの動画なのか」を冒頭で言い切ってしまったほうが離脱しない
-  text: ここは、よもぎサーバーの生活鯖なのだ。
   rwTicker: よもぎサーバーの生活鯖
   rwFlash: |-
     よもぎサーバー
@@ -156,6 +111,55 @@
   se:
     src: spotlight.mp3
     volume: 0.45
+
+# ===== 矛盾を畳みかける（実質のフック）=====
+- id: 2
+  character: metan
+  text: 土地、家、店、会社、車。ぜんぶ持ってるわ。
+  rwTicker: この記録は 365日ぶん
+  rwFlash: ぜんぶ持ってる
+  rwFlashSub: 1年後
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2600
+  se:
+    src: text-impact1.mp3
+    volume: 0.5
+
+- id: 3
+  character: zundamon
+  text: 年収は、ゼロ円なのだ。
+  rwTicker: 年収 0円
+  rwFlash: 年収 0円
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 900
+  se:
+    src: don-1.mp3
+    volume: 0.5
+
+- id: 4
+  character: metan
+  text: は？
+  rwRetort: は？
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/商店街で帽子を購入している動画.mp4
+    animation: none
+    startFrom: 40
+  se:
+    src: question1.mp3
+    volume: 0.4
 
 # ===== 巻き戻し開始。ここからDAYが減り、チップが1つずつ剥がれる =====
 - id: 5
@@ -597,9 +601,9 @@
   pauseAfter: 0
   visual:
     type: video
-    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
     animation: none
-    startFrom: 2600
+    startFrom: 100
   se:
     src: sceneswitch1.mp3
     volume: 0.45
