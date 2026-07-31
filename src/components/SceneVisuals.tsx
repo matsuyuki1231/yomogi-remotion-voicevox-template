@@ -17,7 +17,23 @@ interface SceneVisualsProps {
   lineId?: number;
   /** 手持ちカメラの揺れを足すか（街頭インタビュー型のロケ映像用） */
   handheld?: boolean;
+  /**
+   * 素材を全画面に敷かず、**元の比率のまま画面中央のモニターに映す**か。
+   *
+   * 画面当てクイズ型の出題カットで使う。この型は映像の中身（プラグインのGUI）が
+   * 問題そのものなので、いつもの 160%×125% の拡大＋パンをかけると
+   * 肝心のGUIが画面外に切れて問題が成立しない。拡大もパンもせずに
+   * 原寸比で置き、上下はスタジオの暗がりとして残す。
+   */
+  screen?: boolean;
 }
+
+// モニターの位置（画面当てクイズ型のレイアウトに合わせて固定）。
+// 素材は 1920×1012（比率 1.897）なので、画面幅いっぱいに置くと高さは約569になる。
+// contain なので実際の高さが多少ずれても中で letterbox されるだけ
+const SCREEN_TOP = 372;
+const SCREEN_HEIGHT = 569;
+const SCREEN_INSET = 0;
 
 /**
  * 手持ちカメラのゆっくりした揺れ。周期の違う正弦波を足して
@@ -105,6 +121,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   visual,
   lineId = 0,
   handheld = false,
+  screen = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -124,6 +141,49 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
 
   if (!visual || visual.type === "none") {
     return null;
+  }
+
+  if (visual.type === "video" && visual.src && screen) {
+    const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
+    // 出るときだけ軽く起き上がる。動かし続けると読みにくいのでここで止める
+    const rise = interpolate(frame, [0, fps * 0.25], [0.94, 1], {
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    });
+
+    return (
+      <div style={{ ...fullScreen, overflow: "hidden" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: SCREEN_TOP,
+            left: SCREEN_INSET,
+            right: SCREEN_INSET,
+            height: SCREEN_HEIGHT,
+            background: "#04060d",
+            border: "5px solid rgba(255,255,255,0.16)",
+            boxShadow:
+              "0 30px 80px rgba(0,0,0,0.85), 0 0 70px rgba(139,123,255,0.22)",
+            overflow: "hidden",
+            transform: `scale(${rise})`,
+          }}
+        >
+          <OffthreadVideo
+            src={staticFile(`content/${visual.src}`)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              // 拡大せず、素材の比率のまま全体を見せる（GUIを1文字も切らない）
+              objectFit: "contain",
+            }}
+            startFrom={startFrom}
+            muted
+          />
+        </div>
+      </div>
+    );
   }
 
   if (visual.type === "video" && visual.src) {

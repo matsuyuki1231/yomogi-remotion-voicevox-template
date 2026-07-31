@@ -74,6 +74,13 @@ import {
   RewindHud,
   RewindTone,
 } from "./components/RewindHud";
+import {
+  QuizBackdrop,
+  QuizScrim,
+  QuizChrome,
+  QuizHud,
+  QuizTone,
+} from "./components/QuizHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -87,19 +94,27 @@ type Format =
   | "drama"
   | "job"
   | "respawn"
-  | "rewind";
+  | "rewind"
+  | "quiz";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// rw* なら巻き戻し型、resp* ならリスポーン型、job* なら求人票・募集要項型、
-// drama* なら縦型ショートドラマ・逆転劇型、intv* なら街頭インタビュー型、
-// reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
-// court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
+// quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
+// job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
+// intv* なら街頭インタビュー型、reply* ならコメント返信型、
+// shop* ならテレビショッピング・通販型、court* なら裁判・尋問型、
+// どれでもなければ緊急速報・報道型。
+//
+// 注意: `config/archive/script.living-server-quiz3.yaml` と
+// `script.living-server-quiz.yaml`（どちらも削除済みの旧クイズ型）も quiz* を使うが、
+// フィールド名が違うので現行の QuizHud では描画できない。復元するときは
+// タグ（format-quiz3-v1 / format-quiz-v1）からコンポーネントごと戻すこと。
 const detectFormat = (): Format => {
   const hasPrefix = (prefix: string) =>
     scriptData.some((line) =>
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("quiz")) return "quiz";
   if (hasPrefix("rw")) return "rewind";
   if (hasPrefix("resp")) return "respawn";
   if (hasPrefix("job")) return "job";
@@ -510,6 +525,48 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- クイズトーン（出題中 / クリア後）を解決。指定した行から後ろに引き継がれる ----
+  const quizToneResolved: QuizTone[] = (() => {
+    let current: QuizTone = "play";
+    return scriptData.map((line) => {
+      if (line.quizTone === "play" || line.quizTone === "clear") {
+        current = line.quizTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const quizNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.quizNo === "number") {
+        current = line.quizNo;
+      }
+      return current;
+    });
+  })();
+
+  // 進捗セグメントの分母。スクリプト中でいちばん大きい問題番号を全問数とする
+  const quizNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.quizNo ?? 0),
+    1
+  );
+
+  // ---- 難易度（★の数）を解決。指定がない行は直前の値を引き継ぐ ----
+  const quizLevelResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.quizLevel === "number") {
+        current = line.quizLevel;
+      }
+      return current;
+    });
+  })();
+
+  // 番組タイトルは最初に指定した行のものを動画全体で使う
+  const quizTitle = scriptData.find((line) => line.quizTitle)?.quizTitle ?? "クイズ";
+
   // ワールド名と最終プレイ表示は最初に指定した行のものを動画全体で使う
   const respWorld =
     scriptData.find((line) => line.respWorld)?.respWorld ?? "新しい世界";
@@ -546,6 +603,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "quiz":
+        return line.quizTicker;
       case "rewind":
         return line.rwTicker;
       case "job":
@@ -683,6 +742,22 @@ export const Main: React.FC = () => {
       line.respResult
     );
 
+  // クイズHUDのパーツが1つでも出るか
+  const hasQuizHud = (line: ScriptLine): boolean =>
+    !!(
+      line.quizHook ||
+      line.quizQ ||
+      line.quizChoices ||
+      line.quizVerdict ||
+      line.quizFact ||
+      line.quizRetort ||
+      line.quizFlash ||
+      line.quizReveal ||
+      line.quizCta ||
+      line.quizNote ||
+      line.quizResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -708,6 +783,19 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // クイズ型は設問カード・選択肢ボタン・判定スタンプが画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ
+      case "quiz":
+        return !!(
+          line.quizHook ||
+          line.quizQ ||
+          line.quizChoices ||
+          line.quizVerdict ||
+          line.quizRetort ||
+          line.quizFlash ||
+          line.quizReveal ||
+          line.quizResult
+        );
       // 巻き戻し型は記録カードとツッコミ吹き出しが画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ
       case "rewind":
@@ -813,6 +901,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "quiz":
+        return <QuizBackdrop />;
       case "rewind":
         return <RewindBackdrop />;
       case "respawn":
@@ -845,6 +935,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // クイズ型の暗幕は**中央をほとんど素通しにする**。
+      // 映像そのものが問題なので、沈めると問題が読めなくなる
+      case "quiz":
+        return <QuizScrim tone={quizToneResolved[index]} />;
       // 巻き戻し型もトーンで色そのものを変える（完成形＝暖色／巻き戻し中＝
       // 冷たい青／出発点＝緑）。時間の向きが変わったことを色でも伝える
       case "rewind":
@@ -872,6 +966,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "quiz":
+        return (
+          <QuizChrome
+            tone={currentIndex >= 0 ? quizToneResolved[currentIndex] : "play"}
+            title={quizTitle}
+            no={currentIndex >= 0 ? quizNoResolved[currentIndex] : null}
+            noPrev={currentIndex > 0 ? quizNoResolved[currentIndex - 1] : null}
+            noTotal={quizNoTotal}
+            level={currentIndex >= 0 ? quizLevelResolved[currentIndex] : null}
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "rewind":
         return (
           <RewindChrome
@@ -1000,6 +1107,34 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "quiz":
+        if (!hasQuizHud(line)) return null;
+        return wrap(
+          <QuizHud
+            tone={quizToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.quizHook}
+            hookSub={line.quizHookSub}
+            question={line.quizQ}
+            choices={line.quizChoices}
+            answer={line.quizAnswer}
+            timer={line.quizTimer}
+            showAnswer={line.quizShowAnswer}
+            verdict={line.quizVerdict}
+            verdictSub={line.quizVerdictSub}
+            fact={line.quizFact}
+            retort={line.quizRetort}
+            flash={line.quizFlash}
+            flashSub={line.quizFlashSub}
+            reveal={line.quizReveal}
+            revealSub={line.quizRevealSub}
+            cta={line.quizCta}
+            note={line.quizNote}
+            result={line.quizResult}
+            resultSub={line.quizResultSub}
+            durationInFrames={span}
+          />
+        );
       case "rewind":
         if (!hasRewindHud(line)) return null;
         return wrap(
@@ -1287,11 +1422,15 @@ export const Main: React.FC = () => {
             premountFor={fps}
           >
             {/* 街頭インタビュー型だけ、映像に手持ちカメラの揺れを足す。
-                「取材班が現地で回している」という嘘を映像側でも成立させる */}
+                「取材班が現地で回している」という嘘を映像側でも成立させる。
+                クイズ型の**出題カット（選択肢が出ている行）だけ**は、拡大もパンもせず
+                原寸比で中央のモニターに映す。この型は映像の中身が問題そのものなので、
+                いつもの拡大をかけると肝心のGUIが切れて問題が成立しない */}
             <SceneVisuals
               visual={line.visual}
               lineId={line.id}
               handheld={FORMAT === "interview"}
+              screen={FORMAT === "quiz" && !!line.quizChoices}
             />
             {renderScrim(index)}
           </Sequence>

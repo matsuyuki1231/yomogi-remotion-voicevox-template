@@ -188,6 +188,30 @@ interface ScriptLine {
   rwNote?: string;
   rwResult?: string;
   rwResultSub?: string;
+  quizTone?: string;
+  quizTitle?: string;
+  quizTicker?: string;
+  quizNo?: number;
+  quizLevel?: number;
+  quizHook?: string;
+  quizHookSub?: string;
+  quizQ?: string;
+  quizChoices?: string[];
+  quizAnswer?: number;
+  quizTimer?: boolean;
+  quizShowAnswer?: boolean;
+  quizVerdict?: string;
+  quizVerdictSub?: string;
+  quizFact?: string;
+  quizRetort?: string;
+  quizFlash?: string;
+  quizFlashSub?: string;
+  quizReveal?: string;
+  quizRevealSub?: string;
+  quizCta?: string;
+  quizNote?: string;
+  quizResult?: string;
+  quizResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -521,6 +545,32 @@ export interface ScriptLine {
   rwNote?: string;           // CTA下の小さな注記（※フィクションです 等の但し書き）
   rwResult?: string;         // ループ用リボン（冒頭の DAY 365 に戻す）
   rwResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 画面当てクイズ型（QuizHud）----
+  // ※ archive の旧クイズ型（quiz3 / ○×）も quiz* を使うがフィールド名が違い、互換性はない
+  quizTone?: "play" | "clear"; // クイズトーン。指定行から後ろに引き継がれる（出題中＝紫 / クリア後＝緑）
+  quizTitle?: string;        // ヘッダの番組タイトル（最初に指定した行のものを全体で使う）
+  quizTicker?: string;       // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  quizNo?: number;           // 何問目か。指定がない行は直前の値を引き継ぐ。進捗セグメントの分母は最大値
+  quizLevel?: number;        // 難易度（★の数 1〜5）。指定がない行は直前の値を引き継ぐ。演出用
+  quizHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  quizHookSub?: string;      // 大テロップの上に出す小バッジ
+  quizQ?: string;            // 設問文（この型では「この画面、なにしてる？」が基本）
+  quizChoices?: string[];    // 選択肢（3つ想定）。出題行と解答行の両方に同じ内容を書く
+  quizAnswer?: number;       // 正解の位置（**0始まり**）
+  quizTimer?: boolean;       // 出題行。制限時間バーがセリフの尺いっぱいで縮む
+  quizShowAnswer?: boolean;  // 解答行。正解のボタンが緑に光り、ほかが沈む
+  quizVerdict?: string;      // 中央に叩き込む判定スタンプ（会社の決算 など）
+  quizVerdictSub?: string;   // 判定スタンプの上の小ラベル（正解 など）
+  quizFact?: string;         // 正解の根拠を1行で（会社プラグイン など）
+  quizRetort?: string;       // ツッコミ吹き出し（画面を見ている側の一言）
+  quizFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  quizFlashSub?: string;     // テロップの上に出す小バッジ
+  quizReveal?: string;       // リビール帯（全問終了＝宣伝への転換点）
+  quizRevealSub?: string;    // リビール帯の補足行
+  quizCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  quizNote?: string;         // CTA下の小さな注記（※難易度は演出です 等の但し書き）
+  quizResult?: string;       // ループ用リボン（冒頭に戻す）
+  quizResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
