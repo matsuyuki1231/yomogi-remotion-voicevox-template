@@ -170,6 +170,24 @@ interface ScriptLine {
   respNote?: string;
   respResult?: string;
   respResultSub?: string;
+  rwTone?: string;
+  rwTicker?: string;
+  rwDay?: number;
+  rwGot?: string;
+  rwLog?: string;
+  rwLogLabel?: string;
+  rwLogSub?: string;
+  rwRetort?: string;
+  rwFlash?: string;
+  rwFlashSub?: string;
+  rwOrigin?: string;
+  rwOriginSub?: string;
+  rwReveal?: string;
+  rwRevealSub?: string;
+  rwCta?: string;
+  rwNote?: string;
+  rwResult?: string;
+  rwResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -484,6 +502,25 @@ export interface ScriptLine {
   respNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   respResult?: string;       // ループ用リボン（冒頭のワールド選択画面に戻す）
   respResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 巻き戻し型（RewindHud）----
+  rwTone?: "now" | "rewind" | "start"; // 巻き戻しトーン。指定行から後ろに引き継がれる（完成形＝金 / 巻き戻し中＝冷たい青 / 出発点＝緑）
+  rwTicker?: string;         // 最下部の記録メモ帯を流れる文（全行ぶんを連結して常時流す）
+  rwDay?: number;            // 何日目か（365 → 1）。指定がない行は直前の値を引き継ぐ
+  rwGot?: string;            // 持ち物チップ。巻き戻し中は次の行で失い、宣伝フェーズでは新しく積まれる
+  rwLog?: string;            // 記録カード本文（この型の主役。1カット1日）
+  rwLogLabel?: string;       // 記録カード左上のラベル（この日 / 出来事 など）
+  rwLogSub?: string;         // 記録カードの補足行
+  rwRetort?: string;         // ツッコミ吹き出し（記録を見ている側の一言）
+  rwFlash?: string;          // 巨大テロップ（改行はYAML側で明示する）
+  rwFlashSub?: string;       // テロップの上に出す小バッジ
+  rwOrigin?: string;         // DAY 1 到達スラム（全画面・白フラッシュ）。持ち物が全部消えた瞬間
+  rwOriginSub?: string;      // DAY 1 到達スラムの補足行
+  rwReveal?: string;         // リビール帯（正体明かし。宣伝への転換点）
+  rwRevealSub?: string;      // リビール帯の補足行
+  rwCta?: string;            // 検索バー風CTA（文字がタイプされる）
+  rwNote?: string;           // CTA下の小さな注記（※フィクションです 等の但し書き）
+  rwResult?: string;         // ループ用リボン（冒頭の DAY 365 に戻す）
+  rwResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

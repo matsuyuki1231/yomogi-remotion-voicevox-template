@@ -19,12 +19,16 @@ bgm:
   src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # リスポーン型（script.living-server-respawn.yaml 用）:
-  # 前半（記憶パート。あるあるが刺さって体力が削れていくあいだ）は静かで沈んだ曲。
-  # ここが騒がしいと「刺さる」感じが消える。リスポーンする id:19 で朝焼けの曲に
-  # 切り替え、色（青→暖色）とハートの全回復と同時に空気を入れ替える
+  # 巻き戻し型（script.living-server-rewind.yaml 用）:
+  # 巻き戻しパート（DAY 365 → DAY 1。持ち物が1つずつ剥がれていくあいだ）は
+  # 静かで沈んだ曲。ここが騒がしいと「なにも無くなっていく」感じが消える。
+  # 転換の id:19 で朝焼けの曲に切り替え、色（青→緑）とチップが積み直るのと
+  # 同時に空気を入れ替える
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
+  #   リスポーン型（script.living-server-respawn.yaml）:
+  #     amacha_solarisnoame 0.16 / fromLineId 1
+  #     amacha_yuruyakanaasayake 0.2 / fromLineId 19
   #   求人票・募集要項型（script.living-server-job.yaml）:
   #     amacha_marbletechno1 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
@@ -35,12 +39,12 @@ bgm:
   #     amacha_technophobia 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
   segments:
-    # 「ソラリスの雨」— 静かで沈んだ曲。記憶を1つずつ突いていく前半に合わせる
+    # 「ソラリスの雨」— 静かで沈んだ曲。持ち物が剥がれていく巻き戻しパートに合わせる
     - src: "amacha_solarisnoame.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ゆるやかな朝焼け」— リスポーン＝夜明け。転換〜宣伝パートに切り替える
+    # 「ゆるやかな朝焼け」— DAY 1 からの出発。転換〜宣伝パートに切り替える
     - src: "amacha_yuruyakanaasayake.mp3"
       volume: 0.2
       loop: true

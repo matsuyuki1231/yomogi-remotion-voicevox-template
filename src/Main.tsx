@@ -67,6 +67,13 @@ import {
   RespawnHud,
   RespawnTone,
 } from "./components/RespawnHud";
+import {
+  RewindBackdrop,
+  RewindScrim,
+  RewindChrome,
+  RewindHud,
+  RewindTone,
+} from "./components/RewindHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -79,10 +86,11 @@ type Format =
   | "interview"
   | "drama"
   | "job"
-  | "respawn";
+  | "respawn"
+  | "rewind";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// resp* ならリスポーン型、job* なら求人票・募集要項型、
+// rw* なら巻き戻し型、resp* ならリスポーン型、job* なら求人票・募集要項型、
 // drama* なら縦型ショートドラマ・逆転劇型、intv* なら街頭インタビュー型、
 // reply* ならコメント返信型、shop* ならテレビショッピング・通販型、
 // court* なら裁判・尋問型、どれでもなければ緊急速報・報道型。
@@ -92,6 +100,7 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("rw")) return "rewind";
   if (hasPrefix("resp")) return "respawn";
   if (hasPrefix("job")) return "job";
   if (hasPrefix("drama")) return "drama";
@@ -422,6 +431,85 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- 巻き戻しトーン（完成形 / 巻き戻し中 / 出発点）を解決 ----
+  // 指定した行から後ろに引き継がれる。now→rewind→start と一方向に進み、
+  // 最終行だけ now に戻して冒頭へループさせる
+  const rwToneResolved: RewindTone[] = (() => {
+    let current: RewindTone = "now";
+    return scriptData.map((line) => {
+      if (
+        line.rwTone === "now" ||
+        line.rwTone === "rewind" ||
+        line.rwTone === "start"
+      ) {
+        current = line.rwTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何日目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const rwDayResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.rwDay === "number") {
+        current = line.rwDay;
+      }
+      return current;
+    });
+  })();
+
+  // 縦レールの上端。スクリプト中でいちばん大きい日数を起点とする
+  const rwDayTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.rwDay ?? 0),
+    1
+  );
+
+  // ---- 持ち物チップを解決 ----
+  // rwGot は「その行で動く1個」。巻き戻しフェーズ（now / rewind）では
+  // **その行のあいだはまだ手元にあって、次の行で消える**。逆に宣伝フェーズ（start）
+  // では、その行ではじめて積まれる。剥がした順に積み直るので、
+  // 「あなたも同じ順で手に入る」を文字で言わずに済む。
+  type RewindChips = {
+    chips: string[];
+    changing: string | null;
+    mode: "lose" | "gain";
+  };
+  const rwChipsResolved: RewindChips[] = (() => {
+    // 一度 start に入ったら、そのあとトーンが now に戻っても（＝ループ用の
+    // 最終行）チップは積み上げたままにする。ここを毎行のトーンで判定すると
+    // 最終行だけ持ち物が空になってループの継ぎ目が割れる
+    const startedAt = rwToneResolved.findIndex((tone) => tone === "start");
+    const inStart = (i: number) => startedAt >= 0 && i >= startedAt;
+
+    const losing = scriptData.map((line, i) =>
+      inStart(i) ? null : (line.rwGot ?? null)
+    );
+    const gaining = scriptData.map((line, i) =>
+      inStart(i) ? (line.rwGot ?? null) : null
+    );
+
+    return scriptData.map((line, i) => {
+      if (inStart(i)) {
+        return {
+          chips: gaining.slice(0, i + 1).filter((c): c is string => !!c),
+          changing: gaining[i],
+          mode: "gain",
+        };
+      }
+      // これ以降に失うものが、いまはまだ手元にある。
+      // 新しく手に入れたものほど右に並べたいので、失う順の逆に並べる
+      return {
+        chips: losing
+          .slice(i)
+          .filter((c): c is string => !!c)
+          .reverse(),
+        changing: losing[i],
+        mode: "lose",
+      };
+    });
+  })();
+
   // ワールド名と最終プレイ表示は最初に指定した行のものを動画全体で使う
   const respWorld =
     scriptData.find((line) => line.respWorld)?.respWorld ?? "新しい世界";
@@ -458,6 +546,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "rewind":
+        return line.rwTicker;
       case "job":
         return line.jobTicker;
       case "interview":
@@ -593,6 +683,19 @@ export const Main: React.FC = () => {
       line.respResult
     );
 
+  // 巻き戻しHUDのパーツが1つでも出るか
+  const hasRewindHud = (line: ScriptLine): boolean =>
+    !!(
+      line.rwLog ||
+      line.rwRetort ||
+      line.rwFlash ||
+      line.rwOrigin ||
+      line.rwReveal ||
+      line.rwCta ||
+      line.rwNote ||
+      line.rwResult
+    );
+
   // 画面テロップが同じことを言っている行では字幕を出さない（二重に読ませない）。
   // 報道型ではニューススーパー・ヘッドライン・リビール帯が、
   // 裁判型では証拠プレート・起訴状・判決スラムが、
@@ -605,6 +708,17 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 巻き戻し型は記録カードとツッコミ吹き出しが画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ
+      case "rewind":
+        return !!(
+          line.rwLog ||
+          line.rwRetort ||
+          line.rwFlash ||
+          line.rwOrigin ||
+          line.rwReveal ||
+          line.rwResult
+        );
       // リスポーン型は進捗トーストとツッコミ吹き出しが画面テロップを兼ねる。
       // 死亡画面とリスポーンの行は画面を全部使うので字幕を出さない
       // （リスポーンの行はそもそも「文字で説明しない」のが要点）。
@@ -699,6 +813,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "rewind":
+        return <RewindBackdrop />;
       case "respawn":
         return <RespawnBackdrop />;
       // 求人票型だけは背景そのものがフォーマットの主役。前半は白い求人サイトの
@@ -729,6 +845,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 巻き戻し型もトーンで色そのものを変える（完成形＝暖色／巻き戻し中＝
+      // 冷たい青／出発点＝緑）。時間の向きが変わったことを色でも伝える
+      case "rewind":
+        return <RewindScrim tone={rwToneResolved[index]} />;
       // リスポーン型もトーンで色そのものを変える（記憶＝冷たい青／
       // リスポーン後＝暖色）。転換を文字で説明しないぶんをここが担う
       case "respawn":
@@ -752,6 +872,24 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "rewind":
+        return (
+          <RewindChrome
+            tone={currentIndex >= 0 ? rwToneResolved[currentIndex] : "now"}
+            day={currentIndex >= 0 ? rwDayResolved[currentIndex] : null}
+            dayPrev={currentIndex > 0 ? rwDayResolved[currentIndex - 1] : null}
+            dayTotal={rwDayTotal}
+            chips={currentIndex >= 0 ? rwChipsResolved[currentIndex].chips : []}
+            chipChanging={
+              currentIndex >= 0 ? rwChipsResolved[currentIndex].changing : null
+            }
+            chipMode={
+              currentIndex >= 0 ? rwChipsResolved[currentIndex].mode : "lose"
+            }
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "respawn":
         return (
           <RespawnChrome
@@ -862,6 +1000,29 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "rewind":
+        if (!hasRewindHud(line)) return null;
+        return wrap(
+          <RewindHud
+            tone={rwToneResolved[currentIndex]}
+            character={line.character}
+            log={line.rwLog}
+            logLabel={line.rwLogLabel}
+            logSub={line.rwLogSub}
+            retort={line.rwRetort}
+            flash={line.rwFlash}
+            flashSub={line.rwFlashSub}
+            origin={line.rwOrigin}
+            originSub={line.rwOriginSub}
+            reveal={line.rwReveal}
+            revealSub={line.rwRevealSub}
+            cta={line.rwCta}
+            note={line.rwNote}
+            result={line.rwResult}
+            resultSub={line.rwResultSub}
+            durationInFrames={span}
+          />
+        );
       case "respawn":
         if (!hasRespawnHud(line, currentIndex)) return null;
         return wrap(

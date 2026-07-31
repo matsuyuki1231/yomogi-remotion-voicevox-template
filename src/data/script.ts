@@ -202,6 +202,25 @@ export interface ScriptLine {
   respNote?: string;         // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   respResult?: string;       // ループ用リボン（冒頭のワールド選択画面に戻す）
   respResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 巻き戻し型（RewindHud）----
+  rwTone?: "now" | "rewind" | "start"; // 巻き戻しトーン。指定行から後ろに引き継がれる（完成形＝金 / 巻き戻し中＝冷たい青 / 出発点＝緑）
+  rwTicker?: string;         // 最下部の記録メモ帯を流れる文（全行ぶんを連結して常時流す）
+  rwDay?: number;            // 何日目か（365 → 1）。指定がない行は直前の値を引き継ぐ
+  rwGot?: string;            // 持ち物チップ。巻き戻し中は次の行で失い、宣伝フェーズでは新しく積まれる
+  rwLog?: string;            // 記録カード本文（この型の主役。1カット1日）
+  rwLogLabel?: string;       // 記録カード左上のラベル（この日 / 出来事 など）
+  rwLogSub?: string;         // 記録カードの補足行
+  rwRetort?: string;         // ツッコミ吹き出し（記録を見ている側の一言）
+  rwFlash?: string;          // 巨大テロップ（改行はYAML側で明示する）
+  rwFlashSub?: string;       // テロップの上に出す小バッジ
+  rwOrigin?: string;         // DAY 1 到達スラム（全画面・白フラッシュ）。持ち物が全部消えた瞬間
+  rwOriginSub?: string;      // DAY 1 到達スラムの補足行
+  rwReveal?: string;         // リビール帯（正体明かし。宣伝への転換点）
+  rwRevealSub?: string;      // リビール帯の補足行
+  rwCta?: string;            // 検索バー風CTA（文字がタイプされる）
+  rwNote?: string;           // CTA下の小さな注記（※フィクションです 等の但し書き）
+  rwResult?: string;         // ループ用リボン（冒頭の DAY 365 に戻す）
+  rwResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -230,453 +249,34 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "metan",
-    "text": "あなたのワールド、まだ残ってるわ。",
-    "respWorld": "新しい世界",
-    "respLast": "最終プレイ 1,847日前",
-    "respTone": "world",
-    "respHp": 10,
-    "respFlash": "あなたのワールド\nまだ残ってる",
-    "respFlashSub": "セーブデータ",
+    "text": "土地、家、店、会社、車。ぜんぶ持ってるわ。",
+    "rwTone": "now",
+    "rwDay": 365,
+    "rwTicker": "この記録は 365日ぶん",
+    "rwFlash": "ぜんぶ持ってる",
+    "rwFlashSub": "1年後",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 40
-    },
-    "se": {
-      "src": "anxiety_piano.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "01_metan.wav",
-    "durationInFrames": 80
-  },
-  {
-    "id": 2,
-    "character": "zundamon",
-    "text": "マイクラ、いつやめたのだ？",
-    "respRetort": "マイクラ、いつやめた？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "02_zundamon.wav",
-    "durationInFrames": 75
-  },
-  {
-    "id": 3,
-    "character": "zundamon",
-    "text": "最初の夜、土に埋まって朝を待ったのだ。",
-    "respHp": 9,
-    "respMemo": "最初の夜、土に埋まって朝を待った",
-    "respMemoSub": "最初の夜を生きのびる",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 620
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 108
-  },
-  {
-    "id": 4,
-    "character": "zundamon",
-    "text": "木の家を建てて、これでいいと思ったのだ。",
-    "respHp": 8,
-    "respMemo": "木の家で「これでいい」と思った",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 30
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 99
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "なんで知ってるのよ。",
-    "respRetort": "なんで知ってるのよ",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 40
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "ダイヤを見つけて、声が出たのだ。",
-    "respHp": 7,
-    "respMemo": "ダイヤを見つけて、声が出た",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 470
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 84
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "洞窟で迷って、出られなくなったのだ。",
-    "respHp": 6,
-    "respMemo": "洞窟で迷って、出られなくなった",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 700
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "エンダードラゴンは、倒してないのだ。",
-    "respHp": 5,
-    "respMemo": "エンダードラゴンは倒してない",
-    "respMemoSub": "いつか倒すつもりだった",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
-      "animation": "none",
-      "startFrom": 40
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 89
-  },
-  {
-    "id": 9,
-    "character": "metan",
-    "text": "やめて。",
-    "respRetort": "やめて",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 30
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 19
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "友達と、サーバー立てようって言ったのだ。",
-    "respHp": 4,
-    "respMemo": "「サーバー立てようぜ」と言った",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 800
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "結局、立たなかったのだ。",
-    "respHp": 3,
-    "respMemo": "結局、立たなかった",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 230
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 74
-  },
-  {
-    "id": 12,
-    "character": "metan",
-    "text": "やめてってば。",
-    "respRetort": "やめてってば",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
-      "animation": "none",
-      "startFrom": 260
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 28
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "ひさしぶりに開いて、なにをすればいいか分からなかったのだ。",
-    "respHp": 2,
-    "respMemo": "開いても、やることが分からない",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 135
-  },
-  {
-    "id": 14,
-    "character": "zundamon",
-    "text": "そのまま、閉じたのだ。",
-    "respHp": 1,
-    "respMemo": "そのまま、閉じた",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
-      "animation": "none",
-      "startFrom": 220
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 59
-  },
-  {
-    "id": 15,
-    "character": "zundamon",
-    "text": "そして、それきりなのだ。",
-    "respHp": 0,
-    "respMemo": "そして、それきり",
-    "respMemoSub": "最終プレイ 1,847日前",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 62
-  },
-  {
-    "id": 16,
-    "character": "metan",
-    "text": "ひどいわ。",
-    "respDeath": "死んでしまった！",
-    "respDeathSub": "スコア 1,847",
-    "scene": 2,
-    "pauseAfter": 14,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "solemnity1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 24
-  },
-  {
-    "id": 17,
-    "character": "zundamon",
-    "text": "でも、飽きたわけじゃないのだ。",
-    "respFlash": "飽きたわけじゃない",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 1300
-    },
-    "se": {
-      "src": "決定ボタンを押す1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 72
-  },
-  {
-    "id": 18,
-    "character": "zundamon",
-    "text": "やることが、無くなっただけなのだ。",
-    "respFlash": "やることが\n無くなっただけ",
-    "scene": 2,
-    "pauseAfter": -2,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 120
+      "startFrom": 2600
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 82
+    "voiceFile": "01_metan.wav",
+    "durationInFrames": 166
   },
   {
-    "id": 19,
+    "id": 2,
     "character": "zundamon",
-    "text": "リスポーンするのだ。",
-    "respTone": "spawn",
-    "respHp": 10,
-    "respSpawn": "リスポーン",
-    "respSpawnSub": "スポーン地点を設定しました",
-    "scene": 3,
-    "pauseAfter": 14,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 3000
-    },
-    "se": {
-      "src": "sceneswitch1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 46
-  },
-  {
-    "id": 20,
-    "character": "zundamon",
-    "text": "ここが、あたらしいスポーン地点なのだ。",
-    "respReveal": "よもぎ生活サーバー",
-    "respRevealSub": "やることが、まだある",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1200
-    },
-    "se": {
-      "src": "don-1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 92
-  },
-  {
-    "id": 21,
-    "character": "zundamon",
-    "text": "家を建てて、店を開くのだ。",
-    "respFlash": "家を建てて\n店を開く",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 80
-  },
-  {
-    "id": 22,
-    "character": "zundamon",
-    "text": "会社をつくって、社長にもなれるのだ。",
-    "respFlash": "会社をつくる",
-    "respFlashSub": "会社制度",
-    "scene": 3,
+    "text": "年収は、ゼロ円なのだ。",
+    "rwTicker": "年収 0円",
+    "rwFlash": "年収 0円",
+    "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
@@ -685,19 +285,216 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 900
     },
     "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
+      "src": "don-1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 99
+    "voiceFile": "02_zundamon.wav",
+    "durationInFrames": 75
   },
   {
-    "id": 23,
+    "id": 3,
+    "character": "metan",
+    "text": "は？",
+    "rwRetort": "は？",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "03_metan.wav",
+    "durationInFrames": 17
+  },
+  {
+    "id": 4,
     "character": "zundamon",
-    "text": "釣れる魚は、ニヒャクナナジュウゴ種類なのだ。",
-    "respFlash": "釣れる魚 275種",
-    "scene": 3,
+    "text": "巻き戻してみるのだ。",
+    "rwTone": "rewind",
+    "rwTicker": "巻き戻し中",
+    "scene": 1,
+    "pauseAfter": 10,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1800
+    },
+    "se": {
+      "src": "sceneswitch1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 52
+  },
+  {
+    "id": 5,
+    "character": "zundamon",
+    "text": "車を買った日なのだ。",
+    "rwDay": 331,
+    "rwGot": "車",
+    "rwLog": "車を買った",
+    "rwLogSub": "歩かなくてよくなった",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 55
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "社員が、ロクニンになった日。",
+    "rwDay": 288,
+    "rwGot": "会社",
+    "rwLog": "社員が6人になった",
+    "rwLogSub": "社長はひとりだけ",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1400
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 76
+  },
+  {
+    "id": 7,
+    "character": "metan",
+    "text": "会社？　マイクラで？",
+    "rwRetort": "会社？　マイクラで？",
+    "scene": 1,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "07_metan.wav",
+    "durationInFrames": 60
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "店を出した日なのだ。",
+    "rwDay": 205,
+    "rwGot": "店",
+    "rwLog": "店を出した",
+    "rwLogSub": "店番はいらない",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 50
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "家が、建った日なのだ。",
+    "rwDay": 120,
+    "rwGot": "家",
+    "rwLog": "家が建った",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 66
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "土地を、買った日なのだ。",
+    "rwDay": 96,
+    "rwGot": "土地",
+    "rwLog": "土地を買った",
+    "rwLogSub": "ここに建てると決めた",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 66
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "待って。戻りすぎよ。",
+    "rwRetort": "待って。戻りすぎよ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 52
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "釣れる魚が、ニヒャクナナジュウゴ種類だと知った日。",
+    "rwDay": 62,
+    "rwGot": "釣り竿",
+    "rwLog": "魚が275種いると知った",
+    "scene": 2,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/釣りをしている動画.mp4",
@@ -705,27 +502,275 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 400
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 122
+  },
+  {
+    "id": 13,
+    "character": "zundamon",
+    "text": "知らない人に、声をかけられた日。",
+    "rwDay": 19,
+    "rwGot": "仲間",
+    "rwLog": "知らない人に声をかけられた",
+    "rwLogSub": "近くにいたから、声が届いた",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 88
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "ツルハシを、イッポンもらった日なのだ。",
+    "rwDay": 7,
+    "rwGot": "ツルハシ",
+    "rwLog": "ツルハシを1本もらった",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 500
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 95
+  },
+  {
+    "id": 15,
+    "character": "zundamon",
+    "text": "名前を、決めただけの日。",
+    "rwDay": 3,
+    "rwLog": "名前を決めただけ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/人工資源で原木を掘っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 69
+  },
+  {
+    "id": 16,
+    "character": "zundamon",
+    "text": "ここで、止まるのだ。",
+    "rwDay": 1,
+    "rwOrigin": "DAY 1",
+    "rwOriginSub": "持ち物 なし",
+    "scene": 2,
+    "pauseAfter": 14,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 700
+    },
+    "se": {
+      "src": "solemnity1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 55
+  },
+  {
+    "id": 17,
+    "character": "metan",
+    "text": "……なにも、ないわね。",
+    "rwFlash": "なにも、ない",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 780
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 46
+  },
+  {
+    "id": 18,
+    "character": "zundamon",
+    "text": "1年前は、だれでもここなのだ。",
+    "rwFlash": "1年前は\nだれでも ここ",
+    "scene": 2,
+    "pauseAfter": -2,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/人工資源で原木を掘っている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "text-impact3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 89
+  },
+  {
+    "id": 19,
+    "character": "zundamon",
+    "text": "そして、ここから始められるのだ。",
+    "rwTone": "start",
+    "rwTicker": "24時間 あそべる 生活・経済サーバー",
+    "rwReveal": "よもぎ生活サーバー",
+    "rwRevealSub": "DAY 1 から、だれでも",
+    "scene": 3,
+    "pauseAfter": 10,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 3000
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 83
+  },
+  {
+    "id": 20,
+    "character": "zundamon",
+    "text": "土地は、買えるのだ。",
+    "rwGot": "土地",
+    "rwLog": "土地を買う",
+    "rwLogLabel": "この先",
+    "rwTicker": "生活ワールドに土地を買える",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 58
+  },
+  {
+    "id": 21,
+    "character": "zundamon",
+    "text": "そこに、家を建てるのだ。",
+    "rwGot": "家",
+    "rwLog": "家を建てる",
+    "rwLogLabel": "この先",
+    "rwTicker": "自分だけの家を建てられる",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 72
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "店番のいらない店も、出せるのだ。",
+    "rwGot": "店",
+    "rwLog": "無人の店を出す",
+    "rwLogLabel": "この先",
+    "rwLogSub": "チェストショップ",
+    "rwTicker": "チェストショップは無人販売所",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 23,
+    "character": "zundamon",
+    "text": "会社をつくって、社長にもなれるのだ。",
+    "rwGot": "会社",
+    "rwLog": "会社をつくる",
+    "rwLogLabel": "この先",
+    "rwLogSub": "設立は無料",
+    "rwTicker": "会社は誰でも無料で設立できる",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "item-get1.mp3",
       "volume": 0.45
     },
     "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 109
+    "durationInFrames": 99
   },
   {
     "id": 24,
     "character": "zundamon",
     "text": "車にも乗れて、近くの人とは声で話せるのだ。",
-    "respFlash": "車に乗る\n声で話す",
+    "rwGot": "車",
+    "rwLog": "車に乗る。声で話す",
+    "rwLogLabel": "この先",
+    "rwTicker": "近距離VCで近くの人と話せる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 60
     },
     "se": {
-      "src": "item-get1.mp3",
+      "src": "correct1.mp3",
       "volume": 0.45
     },
     "voiceFile": "24_zundamon.wav",
@@ -734,36 +779,37 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 25,
     "character": "metan",
-    "text": "待って。それ、ぜんぶ同じ世界でできるの？",
-    "respRetort": "それ、ぜんぶ同じ世界で？",
+    "text": "それ、ぜんぶ同じ世界でできるの？",
+    "rwRetort": "それ、ぜんぶ同じ世界で？",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 30
+      "startFrom": 40
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "25_metan.wav",
-    "durationInFrames": 108
+    "durationInFrames": 85
   },
   {
     "id": 26,
     "character": "zundamon",
     "text": "参加費はゼロ円。統合版なら、だれでもなのだ。",
-    "respFlash": "参加費 0円",
-    "respFlashSub": "統合版",
+    "rwFlash": "参加費 0円",
+    "rwFlashSub": "統合版",
+    "rwTicker": "参加費0円／統合版で参加できる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 320
+      "startFrom": 380
     },
     "se": {
       "src": "don-1.mp3",
@@ -777,8 +823,8 @@ export const scriptData: ScriptLine[] = [
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
     "displayText": "「よもぎサーバー」で検索",
-    "respCta": "よもぎサーバー",
-    "respNote": "※統合版のみ／ボランティア運営のサーバーです",
+    "rwCta": "よもぎサーバー",
+    "rwNote": "※日付と人物は演出です／統合版のみ・ボランティア運営",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
@@ -798,24 +844,25 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 28,
     "character": "zundamon",
-    "text": "あなたの最終ログインは、いつなのだ？",
-    "respTone": "world",
-    "respResult": "最終ログイン、いつ？",
-    "respResultSub": "コメントで教えて",
+    "text": "あなたのデーワンは、いつなのだ？",
+    "rwTone": "now",
+    "rwDay": 365,
+    "rwResult": "あなたのDAY 1は？",
+    "rwResultSub": "コメントで教えて",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 40
+      "startFrom": 2600
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
     "voiceFile": "28_zundamon.wav",
-    "durationInFrames": 102
+    "durationInFrames": 85
   }
 ];
 
