@@ -212,6 +212,40 @@ interface ScriptLine {
   quizNote?: string;
   quizResult?: string;
   quizResultSub?: string;
+  milTone?: string;
+  milTitle?: string;
+  milChallenger?: string;
+  milTicker?: string;
+  milPrizes?: string[];
+  milStep?: number;
+  milWon?: boolean;
+  milHook?: string;
+  milHookSub?: string;
+  milQ?: string;
+  milChoices?: string[];
+  milAnswer?: number;
+  milTimer?: boolean;
+  milShowAnswer?: boolean;
+  milKeep?: number[];
+  milAudience?: number[];
+  milFinal?: boolean;
+  milLifeline?: string;
+  milLifelineLabel?: string;
+  milLifelineSub?: string;
+  milVerdict?: string;
+  milVerdictSub?: string;
+  milFact?: string;
+  milRetort?: string;
+  milFlash?: string;
+  milFlashSub?: string;
+  milWin?: string;
+  milWinSub?: string;
+  milReveal?: string;
+  milRevealSub?: string;
+  milCta?: string;
+  milNote?: string;
+  milResult?: string;
+  milResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -571,6 +605,41 @@ export interface ScriptLine {
   quizNote?: string;         // CTA下の小さな注記（※難易度は演出です 等の但し書き）
   quizResult?: string;       // ループ用リボン（冒頭に戻す）
   quizResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- クイズ$ミリオネア型（MillionHud）----
+  milTone?: "quiz" | "win";  // ミリオネアトーン。指定行から後ろに引き継がれる（挑戦中＝青 / 獲得後＝緑）
+  milTitle?: string;         // ヘッダの番組タイトル（最初に指定した行のものを全体で使う）
+  milChallenger?: string;    // 挑戦者プレートの名前（最初に指定した行のものを全体で使う）
+  milTicker?: string;        // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  milPrizes?: string[];      // 賞金ラダーの金額（下から上へ。最初に指定した行のものを全体で使う）
+  milStep?: number;          // いま何問目に挑戦しているか（1始まり）。指定がない行は直前の値を引き継ぐ
+  milWon?: boolean;          // その行で milStep 段目を獲得する（ラダーが1段確定して点灯する）
+  milHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  milHookSub?: string;       // 大テロップの上に出す金バッジ
+  milQ?: string;             // 設問文
+  milChoices?: string[];     // 選択肢（4つ）。出題行と解答行の両方に同じ内容を書く
+  milAnswer?: number;        // 正解の位置（**0始まり**）
+  milTimer?: boolean;        // 出題行。制限時間バーがセリフの尺いっぱいで縮む
+  milShowAnswer?: boolean;   // 解答行。正解のボタンが緑に光り、ほかが沈む
+  milKeep?: number[];        // 50:50 で残す選択肢の位置（0始まり・2つ）。ほかは文字が消える
+  milAudience?: number[];    // オーディエンスの投票率（選択肢と同じ並びで4つ）。演出
+  milFinal?: boolean;        // 「ファイナルアンサー？」帯を出す
+  milLifeline?: string;      // 使ったライフラインの key（fifty / audience / phone）。以降ずっと×が残る
+  milLifelineLabel?: string; // ライフラインスラムの本文（省略時は key の表示名）
+  milLifelineSub?: string;   // ライフラインスラムの補足行
+  milVerdict?: string;       // 中央に叩き込む判定スタンプ（275種類 など）
+  milVerdictSub?: string;    // 判定スタンプの上の小ラベル（正解 など）
+  milFact?: string;          // 正解の根拠を1行で（出典を書く）
+  milRetort?: string;        // ツッコミ吹き出し
+  milFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  milFlashSub?: string;      // テロップの上に出す小バッジ
+  milWin?: string;           // 賞金獲得スラム（全画面・金の閃光）
+  milWinSub?: string;        // 賞金獲得スラムの補足行
+  milReveal?: string;        // リビール帯（宣伝への転換点）
+  milRevealSub?: string;     // リビール帯の補足行
+  milCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  milNote?: string;          // CTA下の小さな注記（※賞金は演出です 等の但し書き）
+  milResult?: string;        // ループ用リボン（冒頭に戻す）
+  milResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.19,"loop":true,"fromLineId":17}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -247,6 +247,41 @@ export interface ScriptLine {
   quizNote?: string;         // CTA下の小さな注記（※難易度は演出です 等の但し書き）
   quizResult?: string;       // ループ用リボン（冒頭に戻す）
   quizResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- クイズ$ミリオネア型（MillionHud）----
+  milTone?: "quiz" | "win";  // ミリオネアトーン。指定行から後ろに引き継がれる（挑戦中＝青 / 獲得後＝緑）
+  milTitle?: string;         // ヘッダの番組タイトル（最初に指定した行のものを全体で使う）
+  milChallenger?: string;    // 挑戦者プレートの名前（最初に指定した行のものを全体で使う）
+  milTicker?: string;        // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  milPrizes?: string[];      // 賞金ラダーの金額（下から上へ。最初に指定した行のものを全体で使う）
+  milStep?: number;          // いま何問目に挑戦しているか（1始まり）。指定がない行は直前の値を引き継ぐ
+  milWon?: boolean;          // その行で milStep 段目を獲得する（ラダーが1段確定して点灯する）
+  milHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  milHookSub?: string;       // 大テロップの上に出す金バッジ
+  milQ?: string;             // 設問文
+  milChoices?: string[];     // 選択肢（4つ）。出題行と解答行の両方に同じ内容を書く
+  milAnswer?: number;        // 正解の位置（**0始まり**）
+  milTimer?: boolean;        // 出題行。制限時間バーがセリフの尺いっぱいで縮む
+  milShowAnswer?: boolean;   // 解答行。正解のボタンが緑に光り、ほかが沈む
+  milKeep?: number[];        // 50:50 で残す選択肢の位置（0始まり・2つ）。ほかは文字が消える
+  milAudience?: number[];    // オーディエンスの投票率（選択肢と同じ並びで4つ）。演出
+  milFinal?: boolean;        // 「ファイナルアンサー？」帯を出す
+  milLifeline?: string;      // 使ったライフラインの key（fifty / audience / phone）。以降ずっと×が残る
+  milLifelineLabel?: string; // ライフラインスラムの本文（省略時は key の表示名）
+  milLifelineSub?: string;   // ライフラインスラムの補足行
+  milVerdict?: string;       // 中央に叩き込む判定スタンプ（275種類 など）
+  milVerdictSub?: string;    // 判定スタンプの上の小ラベル（正解 など）
+  milFact?: string;          // 正解の根拠を1行で（出典を書く）
+  milRetort?: string;        // ツッコミ吹き出し
+  milFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  milFlashSub?: string;      // テロップの上に出す小バッジ
+  milWin?: string;           // 賞金獲得スラム（全画面・金の閃光）
+  milWinSub?: string;        // 賞金獲得スラムの補足行
+  milReveal?: string;        // リビール帯（宣伝への転換点）
+  milRevealSub?: string;     // リビール帯の補足行
+  milCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  milNote?: string;          // CTA下の小さな注記（※賞金は演出です 等の但し書き）
+  milResult?: string;        // ループ用リボン（冒頭に戻す）
+  milResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -275,556 +310,733 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "ここは、よもぎサーバーのマイクラジンロウなのだ。",
-    "quizTone": "play",
-    "quizTitle": "よもぎ人狼クイズ",
-    "quizTicker": "よもぎサーバーのマイクラ人狼クイズ",
-    "quizHook": "マイクラ人狼\nクイズ",
-    "quizHookSub": "全6問",
+    "text": "ここは、よもぎサーバーの生活鯖なのだ。",
+    "milTone": "quiz",
+    "milTitle": "よもぎ生活鯖ミリオネア",
+    "milChallenger": "あなた",
+    "milPrizes": [
+      "1万YG",
+      "5万YG",
+      "20万YG",
+      "50万YG",
+      "100万YG",
+      "300万YG"
+    ],
+    "milTicker": "よもぎサーバーの生活鯖クイズ",
+    "milHook": "よもぎ生活鯖\nミリオネア",
+    "milHookSub": "全6問",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 2600
     },
     "se": {
       "src": "spotlight.mp3",
       "volume": 0.45
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 112
+    "durationInFrames": 106
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "なにが起きてるか、どこまで分かる？",
-    "quizTicker": "映像を見て、なにが起きてるか当てる",
-    "quizFlash": "どこまで分かる？",
-    "quizFlashSub": "3択",
+    "text": "今日の挑戦者は、あなたよ。",
+    "milStep": 1,
+    "milTicker": "挑戦者はあなた 全6問",
+    "milFlash": "挑戦者は、あなた",
+    "milFlashSub": "賞金 300万YG",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 20
+      "startFrom": 120
     },
     "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
+      "src": "don-1.mp3",
+      "volume": 0.5
     },
     "voiceFile": "02_metan.wav",
-    "durationInFrames": 78
+    "durationInFrames": 66
   },
   {
     "id": 3,
     "character": "metan",
-    "text": "第1問。みんな集まって、なにしてるところ？",
-    "quizNo": 1,
-    "quizLevel": 1,
-    "quizTicker": "第1問 この人だかり、なにしてる？",
-    "quizQ": "この人だかり、なにしてる？",
-    "quizChoices": [
-      "記念撮影",
-      "犯人を探す会議",
-      "かくれんぼ"
+    "text": "ダイイチモン。釣れる魚は、何種類？",
+    "milStep": 1,
+    "milTicker": "第1問 釣れる魚は何種類？",
+    "milQ": "釣れる魚は、何種類？",
+    "milChoices": [
+      "20種類",
+      "60種類",
+      "275種類",
+      "1000種類"
     ],
-    "quizAnswer": 1,
-    "quizTimer": true,
+    "milAnswer": 2,
+    "milTimer": true,
     "scene": 1,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 55
+      "startFrom": 300
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "03_metan.wav",
-    "durationInFrames": 116
+    "durationInFrames": 101
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "正解は、犯人を探す会議なのだ。",
-    "quizQ": "この人だかり、なにしてる？",
-    "quizChoices": [
-      "記念撮影",
-      "犯人を探す会議",
-      "かくれんぼ"
+    "text": "正解は、ニヒャクナナジュウゴ種類なのだ。",
+    "milStep": 1,
+    "milWon": true,
+    "milQ": "釣れる魚は、何種類？",
+    "milChoices": [
+      "20種類",
+      "60種類",
+      "275種類",
+      "1000種類"
     ],
-    "quizAnswer": 1,
-    "quizShowAnswer": true,
-    "quizVerdict": "犯人捜し",
-    "quizVerdictSub": "正解",
-    "quizFact": "誰が人狼かを話し合う会議がある",
+    "milAnswer": 2,
+    "milShowAnswer": true,
+    "milVerdict": "275種類",
+    "milVerdictSub": "正解",
+    "milFact": "バニラにいない魚がたくさん釣れる",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 135
+      "startFrom": 380
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.45
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 102
+    "durationInFrames": 103
   },
   {
     "id": 5,
     "character": "metan",
-    "text": "マイクラで、犯人捜し？",
-    "quizRetort": "マイクラで、犯人捜し？",
+    "text": "多すぎるでしょ。",
+    "milRetort": "多すぎるでしょ",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 240
+      "startFrom": 900
     },
     "se": {
       "src": "shock1.mp3",
       "volume": 0.4
     },
     "voiceFile": "05_metan.wav",
-    "durationInFrames": 67
+    "durationInFrames": 33
   },
   {
     "id": 6,
     "character": "metan",
-    "text": "第2問。この画面で、いま、なにが起きた？",
-    "quizNo": 2,
-    "quizLevel": 2,
-    "quizTicker": "第2問 いま、なにが起きた？",
-    "quizQ": "いま、なにが起きた？",
-    "quizChoices": [
-      "誰かが殺された",
-      "魚が釣れた",
-      "レベルアップ"
+    "text": "ダイニモン。ダイヤの鉱石をひとつ掘ると、いくらもらえる？",
+    "milStep": 2,
+    "milTicker": "第2問 ダイヤ鉱石ひとつでいくら？",
+    "milQ": "ダイヤ鉱石、掘るといくら？",
+    "milChoices": [
+      "100YG",
+      "20YG",
+      "3YG",
+      "0YG"
     ],
-    "quizAnswer": 0,
-    "quizTimer": true,
+    "milAnswer": 1,
+    "milTimer": true,
     "scene": 2,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "none",
-      "startFrom": 0
+      "startFrom": 200
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "06_metan.wav",
-    "durationInFrames": 122
+    "durationInFrames": 133
   },
   {
     "id": 7,
     "character": "zundamon",
-    "text": "正解は、誰かが殺されたところなのだ。",
-    "quizQ": "いま、なにが起きた？",
-    "quizChoices": [
-      "誰かが殺された",
-      "魚が釣れた",
-      "レベルアップ"
+    "text": "正解は、ニジュウワイジイなのだ。",
+    "milStep": 2,
+    "milWon": true,
+    "milQ": "ダイヤ鉱石、掘るといくら？",
+    "milChoices": [
+      "100YG",
+      "20YG",
+      "3YG",
+      "0YG"
     ],
-    "quizAnswer": 0,
-    "quizShowAnswer": true,
-    "quizVerdict": "殺された",
-    "quizVerdictSub": "正解",
-    "quizFact": "一撃弓でプレイヤーを倒せる",
+    "milAnswer": 1,
+    "milShowAnswer": true,
+    "milVerdict": "20YG",
+    "milVerdictSub": "正解",
+    "milFact": "役職を「採掘者」にすると鉱石でYGがもらえる",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "none",
-      "startFrom": 70
+      "startFrom": 420
     },
     "se": {
-      "src": "shock1.mp3",
+      "src": "correct1.mp3",
       "volume": 0.45
     },
     "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 106
+    "durationInFrames": 85
   },
   {
     "id": 8,
     "character": "metan",
-    "text": "物騒すぎるでしょ。",
-    "quizRetort": "物騒すぎるでしょ",
+    "text": "ダイサンモン。自分だけの島は、作れる？",
+    "milStep": 3,
+    "milTicker": "第3問 自分だけの島は作れる？",
+    "milQ": "自分だけの島は、作れる？",
+    "milChoices": [
+      "作れない",
+      "運営に申請する",
+      "課金すれば作れる",
+      "300万YGで作れる"
+    ],
+    "milAnswer": 3,
+    "milTimer": true,
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
-      "startFrom": 0
+      "startFrom": 60
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "08_metan.wav",
-    "durationInFrames": 40
+    "durationInFrames": 101
   },
   {
     "id": 9,
-    "character": "metan",
-    "text": "第3問。役職は、ぜんぶで何種類ある？",
-    "quizNo": 3,
-    "quizLevel": 3,
-    "quizTicker": "第3問 役職は何種類？",
-    "quizQ": "役職、何種類ある？",
-    "quizChoices": [
-      "3種類",
-      "10種類",
-      "47種類"
-    ],
-    "quizAnswer": 2,
-    "quizTimer": true,
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 116
-  },
-  {
-    "id": 10,
     "character": "zundamon",
-    "text": "正解は、ヨンジュウナナ種類なのだ。",
-    "quizQ": "役職、何種類ある？",
-    "quizChoices": [
-      "3種類",
-      "10種類",
-      "47種類"
+    "text": "正解は、サンビャクマンワイジイで作れるのだ。",
+    "milStep": 3,
+    "milWon": true,
+    "milQ": "自分だけの島は、作れる？",
+    "milChoices": [
+      "作れない",
+      "運営に申請する",
+      "課金すれば作れる",
+      "300万YGで作れる"
     ],
-    "quizAnswer": 2,
-    "quizShowAnswer": true,
-    "quizVerdict": "47種類",
-    "quizVerdictSub": "正解",
-    "quizFact": "サーバー独自の役職を入れて47種類",
+    "milAnswer": 3,
+    "milShowAnswer": true,
+    "milVerdict": "300万YG",
+    "milVerdictSub": "正解",
+    "milFact": "島プラグイン。自分だけのワールドが持てる",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
-      "startFrom": 250
+      "startFrom": 220
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 92
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 114
+  },
+  {
+    "id": 10,
+    "character": "metan",
+    "text": "ゲームの中のお金で、島が買えるのね。",
+    "milRetort": "ゲームの中のお金で、島が買えるの",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "10_metan.wav",
+    "durationInFrames": 91
   },
   {
     "id": 11,
     "character": "metan",
-    "text": "第4問。霊媒師を名乗るこの人、正体は？",
-    "quizNo": 4,
-    "quizLevel": 4,
-    "quizTicker": "第4問 霊媒師を名乗るこの人、正体は？",
-    "quizQ": "霊媒師を名乗るこの人、実は？",
-    "quizChoices": [
-      "本物の霊媒師",
-      "人狼の殺し屋",
-      "ただの市民"
+    "text": "ダイヨンモン。会社の社員は、何人まで？",
+    "milStep": 4,
+    "milTicker": "第4問 会社の社員は何人まで？",
+    "milQ": "会社の社員は、何人まで？",
+    "milChoices": [
+      "制限なし",
+      "30人まで",
+      "10人まで",
+      "社長1人だけ"
     ],
-    "quizAnswer": 1,
-    "quizTimer": true,
+    "milAnswer": 0,
+    "milTimer": true,
     "scene": 2,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 130
+      "startFrom": 990
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "11_metan.wav",
-    "durationInFrames": 123
+    "durationInFrames": 109
   },
   {
     "id": 12,
-    "character": "zundamon",
-    "text": "正解は、人狼側の殺し屋なのだ。",
-    "quizQ": "霊媒師を名乗るこの人、実は？",
-    "quizChoices": [
-      "本物の霊媒師",
-      "人狼の殺し屋",
-      "ただの市民"
+    "character": "metan",
+    "text": "ここで、フィフティフィフティを使うわ。",
+    "milStep": 4,
+    "milLifeline": "fifty",
+    "milLifelineLabel": "50:50",
+    "milLifelineSub": "選択肢を2つ消す",
+    "milQ": "会社の社員は、何人まで？",
+    "milChoices": [
+      "制限なし",
+      "30人まで",
+      "10人まで",
+      "社長1人だけ"
     ],
-    "quizAnswer": 1,
-    "quizShowAnswer": true,
-    "quizVerdict": "殺し屋",
-    "quizVerdictSub": "正解",
-    "quizFact": "役職は嘘をついて名乗れる",
+    "milAnswer": 0,
+    "milKeep": [
+      0,
+      2
+    ],
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1040
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 74
+  },
+  {
+    "id": 13,
+    "character": "zundamon",
+    "text": "正解は、制限なしなのだ。",
+    "milStep": 4,
+    "milWon": true,
+    "milQ": "会社の社員は、何人まで？",
+    "milChoices": [
+      "制限なし",
+      "30人まで",
+      "10人まで",
+      "社長1人だけ"
+    ],
+    "milAnswer": 0,
+    "milShowAnswer": true,
+    "milVerdict": "制限なし",
+    "milVerdictSub": "正解",
+    "milFact": "社長は1人。課長と社員は何人でもいい",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 215
+      "startFrom": 1100
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 104
-  },
-  {
-    "id": 13,
-    "character": "metan",
-    "text": "嘘、つき放題じゃない。",
-    "quizRetort": "嘘、つき放題じゃない",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "13_metan.wav",
-    "durationInFrames": 64
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 84
   },
   {
     "id": 14,
     "character": "metan",
-    "text": "第5問。この会議の最後には、なにが起きる？",
-    "quizNo": 5,
-    "quizLevel": 5,
-    "quizTicker": "第5問 会議の最後に、なにが起きる？",
-    "quizQ": "会議の最後、なにが起きる？",
-    "quizChoices": [
-      "投票で1人処刑",
-      "仲直りして解散",
-      "じゃんけん大会"
+    "text": "ダイゴモン。この鯖の会社の、最低時給は？",
+    "milStep": 5,
+    "milTicker": "第5問 会社の最低時給は？",
+    "milQ": "会社の最低時給は？",
+    "milChoices": [
+      "決まってない",
+      "時給500YG",
+      "時給1000YG",
+      "時給5000YG"
     ],
-    "quizAnswer": 0,
-    "quizTimer": true,
+    "milAnswer": 3,
+    "milTimer": true,
     "scene": 3,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 55
+      "startFrom": 60
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "14_metan.wav",
-    "durationInFrames": 113
+    "durationInFrames": 118
   },
   {
     "id": 15,
-    "character": "zundamon",
-    "text": "正解は、投票でひとり、処刑されるのだ。",
-    "quizQ": "会議の最後、なにが起きる？",
-    "quizChoices": [
-      "投票で1人処刑",
-      "仲直りして解散",
-      "じゃんけん大会"
+    "character": "metan",
+    "text": "オーディエンスに、聞いてみましょう。",
+    "milStep": 5,
+    "milLifeline": "audience",
+    "milLifelineLabel": "オーディエンス",
+    "milLifelineSub": "会場のみなさんに聞きます",
+    "milQ": "会社の最低時給は？",
+    "milChoices": [
+      "決まってない",
+      "時給500YG",
+      "時給1000YG",
+      "時給5000YG"
     ],
-    "quizAnswer": 0,
-    "quizShowAnswer": true,
-    "quizVerdict": "処刑",
-    "quizVerdictSub": "正解",
-    "quizFact": "最多票のプレイヤーが処刑される",
+    "milAnswer": 3,
+    "milAudience": [
+      9,
+      12,
+      22,
+      57
+    ],
     "scene": 3,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景.mp4",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 140
+      "startFrom": 180
     },
     "se": {
-      "src": "don-1.mp3",
+      "src": "決定ボタンを押す2.mp3",
       "volume": 0.45
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 121
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 70
   },
   {
     "id": 16,
-    "character": "metan",
-    "text": "最終問題。これで遊ぶのに、いくらかかる？",
-    "quizNo": 6,
-    "quizLevel": 5,
-    "quizTicker": "最終問題 これで遊ぶのに、いくら？",
-    "quizQ": "これで遊ぶのに、いくら？",
-    "quizChoices": [
-      "月 500円",
-      "チケット制",
-      "0円"
+    "character": "zundamon",
+    "text": "正解は、ジキュウゴセンワイジイなのだ。",
+    "milStep": 5,
+    "milWon": true,
+    "milQ": "会社の最低時給は？",
+    "milChoices": [
+      "決まってない",
+      "時給500YG",
+      "時給1000YG",
+      "時給5000YG"
     ],
-    "quizAnswer": 2,
-    "quizTimer": true,
+    "milAnswer": 3,
+    "milShowAnswer": true,
+    "milVerdict": "時給5000YG",
+    "milVerdictSub": "正解",
+    "milFact": "優良企業ガイドライン 第7条",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
       "animation": "none",
       "startFrom": 300
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 99
+  },
+  {
+    "id": 17,
+    "character": "metan",
+    "text": "最終問題。この鯖で遊ぶのに、いくらかかる？",
+    "milStep": 6,
+    "milTicker": "最終問題 遊ぶのにいくらかかる？",
+    "milQ": "遊ぶのに、いくらかかる？",
+    "milChoices": [
+      "月 500円",
+      "買い切り 2000円",
+      "0円",
+      "300万YG"
+    ],
+    "milAnswer": 2,
+    "milTimer": true,
+    "milFinal": true,
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1200
     },
     "se": {
       "src": "drum-roll1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "16_metan.wav",
-    "durationInFrames": 108
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 116
   },
   {
-    "id": 17,
+    "id": 18,
+    "character": "metan",
+    "text": "テレホン。近くにいる人に、声で聞くわ。",
+    "milStep": 6,
+    "milLifeline": "phone",
+    "milLifelineLabel": "テレホン",
+    "milLifelineSub": "近距離VCで、近くの人と話せます",
+    "milQ": "遊ぶのに、いくらかかる？",
+    "milChoices": [
+      "月 500円",
+      "買い切り 2000円",
+      "0円",
+      "300万YG"
+    ],
+    "milAnswer": 2,
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 480
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "18_metan.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 19,
     "character": "zundamon",
     "text": "正解は、ゼロ円なのだ。",
-    "quizTone": "clear",
-    "quizQ": "これで遊ぶのに、いくら？",
-    "quizChoices": [
+    "milTone": "win",
+    "milStep": 6,
+    "milWon": true,
+    "milTicker": "参加費0円 統合版 24時間",
+    "milQ": "遊ぶのに、いくらかかる？",
+    "milChoices": [
       "月 500円",
-      "チケット制",
-      "0円"
+      "買い切り 2000円",
+      "0円",
+      "300万YG"
     ],
-    "quizAnswer": 2,
-    "quizShowAnswer": true,
-    "quizVerdict": "0円",
-    "quizVerdictSub": "正解",
-    "quizFact": "参加費は無料。統合版なら誰でも",
+    "milAnswer": 2,
+    "milShowAnswer": true,
+    "milVerdict": "0円",
+    "milVerdictSub": "正解",
+    "milFact": "参加費は無料。統合版なら誰でも",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 365
+      "startFrom": 1290
     },
     "se": {
       "src": "jajean1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "17_zundamon.wav",
+    "voiceFile": "19_zundamon.wav",
     "durationInFrames": 76
   },
   {
-    "id": 18,
+    "id": 20,
     "character": "zundamon",
-    "text": "これ、毎週土曜のよるに、ほんとうにやってるのだ。",
-    "quizTicker": "毎週土曜21:30から開催",
-    "quizReveal": "よもぎサーバーのマイクラ人狼",
-    "quizRevealSub": "毎週土曜21:30、ほんとにやってます",
+    "text": "ゼンモンセイカイ。賞金、サンビャクマンワイジイなのだ。",
+    "milTicker": "賞金300万YG獲得",
+    "milWin": "300万YG",
+    "milWinSub": "賞金 300万YG 獲得",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 2500
+    },
+    "se": {
+      "src": "people-performance-cheer1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 138
+  },
+  {
+    "id": 21,
+    "character": "metan",
+    "text": "それ、本当にもらえるの？",
+    "milRetort": "それ、本当にもらえるの？",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "21_metan.wav",
+    "durationInFrames": 65
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "もらえないのだ。でも、この鯖なら自分で稼げるのだ。",
+    "milTicker": "賞金は出ません。稼ぐところからです",
+    "milReveal": "よもぎ生活サーバー",
+    "milRevealSub": "賞金は出ません。稼ぐところからです",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1600
     },
     "se": {
       "src": "don-1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 131
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 139
   },
   {
-    "id": 19,
+    "id": 23,
     "character": "zundamon",
-    "text": "初めてでも、みんなが教えてくれるのだ。",
-    "quizTicker": "初参加歓迎・サポート充実",
-    "quizFlash": "初参加\n歓迎",
+    "text": "土地を買って、家も店も建てられるのだ。",
+    "milTicker": "土地を買って家も店も建てられる",
+    "milFlash": "土地も 家も\n店も 会社も",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
       "animation": "none",
-      "startFrom": 290
+      "startFrom": 300
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 100
+    "voiceFile": "23_zundamon.wav",
+    "durationInFrames": 105
   },
   {
-    "id": 20,
+    "id": 24,
     "character": "metan",
-    "text": "はいりかたは、よもぎサーバーで検索ね。",
-    "displayText": "「よもぎサーバー」で検索",
-    "quizCta": "よもぎサーバー",
-    "quizNote": "※難易度の★は演出です／統合版のみ・ボランティア運営",
+    "text": "統合版なら、24時間あそべるのよね。",
+    "milTicker": "統合版・24時間・参加費0円",
+    "milRetort": "統合版なら、24時間あそべる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
-      "type": "image",
-      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
-      "animation": "zoomIn",
-      "backgroundSrc": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
-      "backgroundStartFrom": 380
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 3100
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "24_metan.wav",
+    "durationInFrames": 97
+  },
+  {
+    "id": 25,
+    "character": "metan",
+    "text": "はいりかたは、よもぎサーバーで検索ね。",
+    "displayText": "「よもぎサーバー」で検索",
+    "milTicker": "よもぎサーバーで検索",
+    "milCta": "よもぎサーバー",
+    "milNote": "※賞金と投票率は演出です／統合版のみ・ボランティア運営",
+    "scene": 3,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1300
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
-    "voiceFile": "20_metan.wav",
+    "voiceFile": "25_metan.wav",
     "durationInFrames": 87
   },
   {
-    "id": 21,
+    "id": 26,
     "character": "zundamon",
-    "text": "次の会議は、あなたも容疑者なのだ。",
-    "quizResult": "次は、あなたが容疑者",
-    "quizResultSub": "何問わかった？ コメントで",
+    "text": "あなたなら、何問目までいけるのだ？",
+    "milTicker": "あなたなら何問目まで？",
+    "milResult": "あなたなら、何問目まで？",
+    "milResultSub": "コメントで教えてほしいのだ",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 2600
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 101
+    "voiceFile": "26_zundamon.wav",
+    "durationInFrames": 93
   }
 ];
 

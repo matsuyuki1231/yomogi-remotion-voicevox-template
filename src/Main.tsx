@@ -81,6 +81,14 @@ import {
   QuizHud,
   QuizTone,
 } from "./components/QuizHud";
+import {
+  MillionBackdrop,
+  MillionScrim,
+  MillionChrome,
+  MillionHud,
+  MillionTone,
+  LIFELINES,
+} from "./components/MillionHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -95,9 +103,11 @@ type Format =
   | "job"
   | "respawn"
   | "rewind"
-  | "quiz";
+  | "quiz"
+  | "million";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
+// mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
 // job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
 // intv* なら街頭インタビュー型、reply* ならコメント返信型、
@@ -114,6 +124,7 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("mil")) return "million";
   if (hasPrefix("quiz")) return "quiz";
   if (hasPrefix("rw")) return "rewind";
   if (hasPrefix("resp")) return "respawn";
@@ -567,6 +578,58 @@ export const Main: React.FC = () => {
   // 番組タイトルは最初に指定した行のものを動画全体で使う
   const quizTitle = scriptData.find((line) => line.quizTitle)?.quizTitle ?? "クイズ";
 
+  // ---- ミリオネアトーン（挑戦中 / 獲得後）を解決。指定した行から後ろに引き継がれる ----
+  const milToneResolved: MillionTone[] = (() => {
+    let current: MillionTone = "quiz";
+    return scriptData.map((line) => {
+      if (line.milTone === "quiz" || line.milTone === "win") {
+        current = line.milTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- いま何問目に挑戦しているかを解決。指定がない行は直前の値を引き継ぐ ----
+  const milStepResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.milStep === "number") {
+        current = line.milStep;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 賞金ラダーで獲得ずみの段数を解決 ----
+  // milWon: true の行でその行の milStep 段目が確定する。以降は下がらない
+  const milWonResolved: number[] = (() => {
+    let current = 0;
+    return scriptData.map((line, i) => {
+      if (line.milWon) {
+        current = Math.max(current, milStepResolved[i] ?? 0);
+      }
+      return current;
+    });
+  })();
+
+  // ---- 使用ずみのライフラインを解決（一度使ったら二度と戻らない） ----
+  const milUsedResolved: string[][] = (() => {
+    const used: string[] = [];
+    return scriptData.map((line) => {
+      if (line.milLifeline && !used.includes(line.milLifeline)) {
+        used.push(line.milLifeline);
+      }
+      return [...used];
+    });
+  })();
+
+  // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
+  const milTitle =
+    scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
+  const milChallenger =
+    scriptData.find((line) => line.milChallenger)?.milChallenger ?? "あなた";
+  const milPrizes = scriptData.find((line) => line.milPrizes)?.milPrizes ?? [];
+
   // ワールド名と最終プレイ表示は最初に指定した行のものを動画全体で使う
   const respWorld =
     scriptData.find((line) => line.respWorld)?.respWorld ?? "新しい世界";
@@ -603,6 +666,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "million":
+        return line.milTicker;
       case "quiz":
         return line.quizTicker;
       case "rewind":
@@ -758,6 +823,24 @@ export const Main: React.FC = () => {
       line.quizResult
     );
 
+  // ミリオネアHUDのパーツが1つでも出るか
+  const hasMillionHud = (line: ScriptLine): boolean =>
+    !!(
+      line.milHook ||
+      line.milQ ||
+      line.milChoices ||
+      line.milLifeline ||
+      line.milVerdict ||
+      line.milFact ||
+      line.milRetort ||
+      line.milFlash ||
+      line.milWin ||
+      line.milReveal ||
+      line.milCta ||
+      line.milNote ||
+      line.milResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -783,6 +866,21 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // ミリオネア型は設問カード・選択肢・判定スタンプ・賞金ラダーが画面テロップを
+      // 兼ねる。字幕を出すのは検索CTAの行だけ
+      case "million":
+        return !!(
+          line.milHook ||
+          line.milQ ||
+          line.milChoices ||
+          line.milLifeline ||
+          line.milVerdict ||
+          line.milRetort ||
+          line.milFlash ||
+          line.milWin ||
+          line.milReveal ||
+          line.milResult
+        );
       // クイズ型は設問カード・選択肢ボタン・判定スタンプが画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ
       case "quiz":
@@ -901,6 +999,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "million":
+        return <MillionBackdrop />;
       case "quiz":
         return <QuizBackdrop />;
       case "rewind":
@@ -935,6 +1035,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // ミリオネア型は「暗いスタジオに映像が映っている」画にする。中央だけ
+      // スポットを残して四隅を沈め、トーンで青→緑に振る
+      case "million":
+        return <MillionScrim tone={milToneResolved[index]} />;
       // クイズ型の暗幕は**中央をほとんど素通しにする**。
       // 映像そのものが問題なので、沈めると問題が読めなくなる
       case "quiz":
@@ -966,6 +1070,22 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "million":
+        return (
+          <MillionChrome
+            tone={currentIndex >= 0 ? milToneResolved[currentIndex] : "quiz"}
+            title={milTitle}
+            challenger={milChallenger}
+            prizes={milPrizes}
+            step={currentIndex >= 0 ? milStepResolved[currentIndex] : null}
+            won={currentIndex >= 0 ? milWonResolved[currentIndex] : 0}
+            wonPrev={currentIndex > 0 ? milWonResolved[currentIndex - 1] : 0}
+            used={currentIndex >= 0 ? milUsedResolved[currentIndex] : []}
+            justUsed={currentLine?.milLifeline}
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "quiz":
         return (
           <QuizChrome
@@ -1107,6 +1227,47 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "million":
+        if (!hasMillionHud(line)) return null;
+        return wrap(
+          <MillionHud
+            tone={milToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.milHook}
+            hookSub={line.milHookSub}
+            question={line.milQ}
+            choices={line.milChoices}
+            answer={line.milAnswer}
+            timer={line.milTimer}
+            showAnswer={line.milShowAnswer}
+            keep={line.milKeep}
+            audience={line.milAudience}
+            final={line.milFinal}
+            lifeline={
+              line.milLifeline
+                ? (line.milLifelineLabel ??
+                  LIFELINES.find((l) => l.key === line.milLifeline)?.label ??
+                  line.milLifeline)
+                : undefined
+            }
+            lifelineSub={line.milLifelineSub}
+            verdict={line.milVerdict}
+            verdictSub={line.milVerdictSub}
+            fact={line.milFact}
+            retort={line.milRetort}
+            flash={line.milFlash}
+            flashSub={line.milFlashSub}
+            win={line.milWin}
+            winSub={line.milWinSub}
+            reveal={line.milReveal}
+            revealSub={line.milRevealSub}
+            cta={line.milCta}
+            note={line.milNote}
+            result={line.milResult}
+            resultSub={line.milResultSub}
+            durationInFrames={span}
+          />
+        );
       case "quiz":
         if (!hasQuizHud(line)) return null;
         return wrap(
