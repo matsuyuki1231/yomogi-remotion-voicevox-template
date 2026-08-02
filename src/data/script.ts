@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -282,6 +282,24 @@ export interface ScriptLine {
   milNote?: string;          // CTA下の小さな注記（※賞金は演出です 等の但し書き）
   milResult?: string;        // ループ用リボン（冒頭に戻す）
   milResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 正直CM・王道PR型（PromoHud）----
+  pvTone?: "pitch" | "close"; // 宣伝トーン。指定行から後ろに引き継がれる（宣伝中＝蓬緑 / 締め＝金）
+  pvTicker?: string;         // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  pvNo?: number;             // できることの番号（1→12）。指定がない行は直前の値を引き継ぐ。カウンターの分母は最大値
+  pvCard?: string;           // 機能カード本文（この型の主役。1カット1機能）
+  pvCardLabel?: string;      // 機能カードの短いラベル（土地 / 店 / 会社 など）
+  pvCardSub?: string;        // 機能カードの補足行
+  pvRetort?: string;         // ツッコミ吹き出し
+  pvFlash?: string;          // 巨大テロップ（改行はYAML側で明示する）
+  pvFlashSub?: string;       // テロップの上に出す小バッジ（例: 正直CM）
+  pvPrice?: string;          // 参加費0円スラム（全画面・白フラッシュ）。12個目の機能だけこれで出す
+  pvPriceSub?: string;       // 参加費スラムの補足行
+  pvReveal?: string;         // まとめ帯（正式名称と条件を大きく出す）
+  pvRevealSub?: string;      // まとめ帯の補足行
+  pvCta?: string;            // 検索バー風CTA（文字がタイプされる）
+  pvNote?: string;           // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  pvResult?: string;         // ループ用リボン（冒頭の宣言に戻す）
+  pvResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -310,44 +328,31 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "ここは、よもぎサーバーの生活鯖なのだ。",
-    "milTone": "quiz",
-    "milTitle": "よもぎ生活鯖ミリオネア",
-    "milChallenger": "あなた",
-    "milPrizes": [
-      "1万YG",
-      "5万YG",
-      "20万YG",
-      "50万YG",
-      "100万YG",
-      "300万YG"
-    ],
-    "milTicker": "よもぎサーバーの生活鯖クイズ",
-    "milHook": "よもぎ生活鯖\nミリオネア",
-    "milHookSub": "全6問",
+    "text": "これは、宣伝なのだ！",
+    "pvTone": "pitch",
+    "pvTicker": "これは宣伝です",
+    "pvFlash": "これは\n宣伝です",
+    "pvFlashSub": "正直CM",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 2600
+      "startFrom": 600
     },
     "se": {
-      "src": "spotlight.mp3",
-      "volume": 0.45
+      "src": "don-1.mp3",
+      "volume": 0.5
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 106
+    "durationInFrames": 65
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "今日の挑戦者は、あなたよ。",
-    "milStep": 1,
-    "milTicker": "挑戦者はあなた 全6問",
-    "milFlash": "挑戦者は、あなた",
-    "milFlashSub": "賞金 300万YG",
+    "text": "隠す気、ゼロなのね。",
+    "pvRetort": "隠す気、ゼロなのね",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -357,256 +362,157 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 120
     },
     "se": {
-      "src": "don-1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "02_metan.wav",
-    "durationInFrames": 66
-  },
-  {
-    "id": 3,
-    "character": "metan",
-    "text": "ダイイチモン。釣れる魚は、何種類？",
-    "milStep": 1,
-    "milTicker": "第1問 釣れる魚は何種類？",
-    "milQ": "釣れる魚は、何種類？",
-    "milChoices": [
-      "20種類",
-      "60種類",
-      "275種類",
-      "1000種類"
-    ],
-    "milAnswer": 2,
-    "milTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "03_metan.wav",
-    "durationInFrames": 101
+    "voiceFile": "02_metan.wav",
+    "durationInFrames": 59
+  },
+  {
+    "id": 3,
+    "character": "zundamon",
+    "text": "よもぎサーバーの生活鯖、できることをぜんぶ見せるのだ！",
+    "pvTicker": "よもぎサーバーの生活鯖",
+    "pvFlash": "できること\nぜんぶ見せます",
+    "pvFlashSub": "よもぎサーバー 生活鯖",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1400
+    },
+    "se": {
+      "src": "sceneswitch1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 137
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "正解は、ニヒャクナナジュウゴ種類なのだ。",
-    "milStep": 1,
-    "milWon": true,
-    "milQ": "釣れる魚は、何種類？",
-    "milChoices": [
-      "20種類",
-      "60種類",
-      "275種類",
-      "1000種類"
-    ],
-    "milAnswer": 2,
-    "milShowAnswer": true,
-    "milVerdict": "275種類",
-    "milVerdictSub": "正解",
-    "milFact": "バニラにいない魚がたくさん釣れる",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 380
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 103
-  },
-  {
-    "id": 5,
-    "character": "metan",
-    "text": "多すぎるでしょ。",
-    "milRetort": "多すぎるでしょ",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 900
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "05_metan.wav",
-    "durationInFrames": 33
-  },
-  {
-    "id": 6,
-    "character": "metan",
-    "text": "ダイニモン。ダイヤの鉱石をひとつ掘ると、いくらもらえる？",
-    "milStep": 2,
-    "milTicker": "第2問 ダイヤ鉱石ひとつでいくら？",
-    "milQ": "ダイヤ鉱石、掘るといくら？",
-    "milChoices": [
-      "100YG",
-      "20YG",
-      "3YG",
-      "0YG"
-    ],
-    "milAnswer": 1,
-    "milTimer": true,
+    "text": "土地を、買うのだ。",
+    "pvNo": 1,
+    "pvCard": "土地を買う",
+    "pvCardLabel": "土地",
+    "pvCardSub": "生活ワールドに自分の土地を持てる",
+    "pvTicker": "土地は生活ワールドで購入できる",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 100
     },
     "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 133
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 53
+  },
+  {
+    "id": 5,
+    "character": "zundamon",
+    "text": "家を、建てるのだ。",
+    "pvNo": 2,
+    "pvCard": "家を建てる",
+    "pvCardLabel": "家",
+    "pvCardSub": "買った土地は自分だけのもの",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 62
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "無人の店も、出せるのだ。",
+    "pvNo": 3,
+    "pvCard": "無人の店を出す",
+    "pvCardLabel": "店",
+    "pvCardSub": "チェストショップ。店番はいらない",
+    "pvTicker": "チェストショップは無人販売所",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 73
   },
   {
     "id": 7,
     "character": "zundamon",
-    "text": "正解は、ニジュウワイジイなのだ。",
-    "milStep": 2,
-    "milWon": true,
-    "milQ": "ダイヤ鉱石、掘るといくら？",
-    "milChoices": [
-      "100YG",
-      "20YG",
-      "3YG",
-      "0YG"
-    ],
-    "milAnswer": 1,
-    "milShowAnswer": true,
-    "milVerdict": "20YG",
-    "milVerdictSub": "正解",
-    "milFact": "役職を「採掘者」にすると鉱石でYGがもらえる",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 420
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 85
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "ダイサンモン。自分だけの島は、作れる？",
-    "milStep": 3,
-    "milTicker": "第3問 自分だけの島は作れる？",
-    "milQ": "自分だけの島は、作れる？",
-    "milChoices": [
-      "作れない",
-      "運営に申請する",
-      "課金すれば作れる",
-      "300万YGで作れる"
-    ],
-    "milAnswer": 3,
-    "milTimer": true,
+    "text": "チェストは、保護できるのだ。",
+    "pvNo": 4,
+    "pvCard": "チェストを守る",
+    "pvCardLabel": "保護",
+    "pvCardSub": "保護したチェストは自分だけが開けられる",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "生活サーバー/チェスト保護をしている動画.mp4",
       "animation": "none",
       "startFrom": 60
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 69
+  },
+  {
+    "id": 8,
+    "character": "metan",
+    "text": "もう暮らせるじゃない。",
+    "pvRetort": "もう暮らせるじゃない",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "08_metan.wav",
-    "durationInFrames": 101
+    "durationInFrames": 40
   },
   {
     "id": 9,
     "character": "zundamon",
-    "text": "正解は、サンビャクマンワイジイで作れるのだ。",
-    "milStep": 3,
-    "milWon": true,
-    "milQ": "自分だけの島は、作れる？",
-    "milChoices": [
-      "作れない",
-      "運営に申請する",
-      "課金すれば作れる",
-      "300万YGで作れる"
-    ],
-    "milAnswer": 3,
-    "milShowAnswer": true,
-    "milVerdict": "300万YG",
-    "milVerdictSub": "正解",
-    "milFact": "島プラグイン。自分だけのワールドが持てる",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 220
-    },
-    "se": {
-      "src": "item-get1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 114
-  },
-  {
-    "id": 10,
-    "character": "metan",
-    "text": "ゲームの中のお金で、島が買えるのね。",
-    "milRetort": "ゲームの中のお金で、島が買えるの",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "10_metan.wav",
-    "durationInFrames": 91
-  },
-  {
-    "id": 11,
-    "character": "metan",
-    "text": "ダイヨンモン。会社の社員は、何人まで？",
-    "milStep": 4,
-    "milTicker": "第4問 会社の社員は何人まで？",
-    "milQ": "会社の社員は、何人まで？",
-    "milChoices": [
-      "制限なし",
-      "30人まで",
-      "10人まで",
-      "社長1人だけ"
-    ],
-    "milAnswer": 0,
-    "milTimer": true,
+    "text": "会社を、つくるのだ。",
+    "pvNo": 5,
+    "pvCard": "会社をつくる",
+    "pvCardLabel": "会社",
+    "pvCardSub": "設立は無料。社員の人数は無制限",
+    "pvTicker": "会社は誰でも無料で設立できる（審査あり）",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
@@ -616,401 +522,370 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 990
     },
     "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す5.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "11_metan.wav",
-    "durationInFrames": 109
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 59
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "釣り。魚は、ニヒャクナナジュウゴ種類なのだ。",
+    "displayText": "釣り。魚は、275種類なのだ。",
+    "pvNo": 6,
+    "pvCard": "魚は275種類",
+    "pvCardLabel": "釣り",
+    "pvCardSub": "バニラにいない魚も釣れる",
+    "pvTicker": "釣りで釣れる魚は275種類",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 400
+    },
+    "se": {
+      "src": "決定ボタンを押す22.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 123
+  },
+  {
+    "id": 11,
+    "character": "zundamon",
+    "text": "農業も、できるのだ。",
+    "pvNo": 7,
+    "pvCard": "農業をする",
+    "pvCardLabel": "農業",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "決定ボタンを押す23.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 63
   },
   {
     "id": 12,
-    "character": "metan",
-    "text": "ここで、フィフティフィフティを使うわ。",
-    "milStep": 4,
-    "milLifeline": "fifty",
-    "milLifelineLabel": "50:50",
-    "milLifelineSub": "選択肢を2つ消す",
-    "milQ": "会社の社員は、何人まで？",
-    "milChoices": [
-      "制限なし",
-      "30人まで",
-      "10人まで",
-      "社長1人だけ"
-    ],
-    "milAnswer": 0,
-    "milKeep": [
-      0,
-      2
-    ],
+    "character": "zundamon",
+    "text": "素材は、資源ワールドで掘るのだ。",
+    "pvNo": 8,
+    "pvCard": "資源ワールドで掘る",
+    "pvCardLabel": "採掘",
+    "pvCardSub": "人工資源・天然資源ワールドがある",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 1040
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "12_metan.wav",
-    "durationInFrames": 74
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "正解は、制限なしなのだ。",
-    "milStep": 4,
-    "milWon": true,
-    "milQ": "会社の社員は、何人まで？",
-    "milChoices": [
-      "制限なし",
-      "30人まで",
-      "10人まで",
-      "社長1人だけ"
-    ],
-    "milAnswer": 0,
-    "milShowAnswer": true,
-    "milVerdict": "制限なし",
-    "milVerdictSub": "正解",
-    "milFact": "社長は1人。課長と社員は何人でもいい",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 1100
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 84
-  },
-  {
-    "id": 14,
-    "character": "metan",
-    "text": "ダイゴモン。この鯖の会社の、最低時給は？",
-    "milStep": 5,
-    "milTicker": "第5問 会社の最低時給は？",
-    "milQ": "会社の最低時給は？",
-    "milChoices": [
-      "決まってない",
-      "時給500YG",
-      "時給1000YG",
-      "時給5000YG"
-    ],
-    "milAnswer": 3,
-    "milTimer": true,
-    "scene": 3,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 118
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "オーディエンスに、聞いてみましょう。",
-    "milStep": 5,
-    "milLifeline": "audience",
-    "milLifelineLabel": "オーディエンス",
-    "milLifelineSub": "会場のみなさんに聞きます",
-    "milQ": "会社の最低時給は？",
-    "milChoices": [
-      "決まってない",
-      "時給500YG",
-      "時給1000YG",
-      "時給5000YG"
-    ],
-    "milAnswer": 3,
-    "milAudience": [
-      9,
-      12,
-      22,
-      57
-    ],
-    "scene": 3,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 70
-  },
-  {
-    "id": 16,
-    "character": "zundamon",
-    "text": "正解は、ジキュウゴセンワイジイなのだ。",
-    "milStep": 5,
-    "milWon": true,
-    "milQ": "会社の最低時給は？",
-    "milChoices": [
-      "決まってない",
-      "時給500YG",
-      "時給1000YG",
-      "時給5000YG"
-    ],
-    "milAnswer": 3,
-    "milShowAnswer": true,
-    "milVerdict": "時給5000YG",
-    "milVerdictSub": "正解",
-    "milFact": "優良企業ガイドライン 第7条",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "none",
       "startFrom": 300
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.45
+      "src": "決定ボタンを押す31.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 99
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 89
   },
   {
-    "id": 17,
-    "character": "metan",
-    "text": "最終問題。この鯖で遊ぶのに、いくらかかる？",
-    "milStep": 6,
-    "milTicker": "最終問題 遊ぶのにいくらかかる？",
-    "milQ": "遊ぶのに、いくらかかる？",
-    "milChoices": [
-      "月 500円",
-      "買い切り 2000円",
-      "0円",
-      "300万YG"
-    ],
-    "milAnswer": 2,
-    "milTimer": true,
-    "milFinal": true,
-    "scene": 3,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1200
-    },
-    "se": {
-      "src": "drum-roll1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "17_metan.wav",
-    "durationInFrames": 116
-  },
-  {
-    "id": 18,
-    "character": "metan",
-    "text": "テレホン。近くにいる人に、声で聞くわ。",
-    "milStep": 6,
-    "milLifeline": "phone",
-    "milLifelineLabel": "テレホン",
-    "milLifelineSub": "近距離VCで、近くの人と話せます",
-    "milQ": "遊ぶのに、いくらかかる？",
-    "milChoices": [
-      "月 500円",
-      "買い切り 2000円",
-      "0円",
-      "300万YG"
-    ],
-    "milAnswer": 2,
-    "scene": 3,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 480
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "18_metan.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 19,
+    "id": 13,
     "character": "zundamon",
-    "text": "正解は、ゼロ円なのだ。",
-    "milTone": "win",
-    "milStep": 6,
-    "milWon": true,
-    "milTicker": "参加費0円 統合版 24時間",
-    "milQ": "遊ぶのに、いくらかかる？",
-    "milChoices": [
-      "月 500円",
-      "買い切り 2000円",
-      "0円",
-      "300万YG"
-    ],
-    "milAnswer": 2,
-    "milShowAnswer": true,
-    "milVerdict": "0円",
-    "milVerdictSub": "正解",
-    "milFact": "参加費は無料。統合版なら誰でも",
-    "scene": 3,
+    "text": "バフを借りて、サクサク進めるのだ。",
+    "pvNo": 9,
+    "pvCard": "バフを借りる",
+    "pvCardLabel": "バフ",
+    "pvCardSub": "採掘速度上昇や暗視をレンタル",
+    "pvTicker": "バフは有料レンタル",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "animation": "none",
+      "startFrom": 40
+    },
+    "se": {
+      "src": "決定ボタンを押す32.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "13_zundamon.wav",
+    "durationInFrames": 92
+  },
+  {
+    "id": 14,
+    "character": "metan",
+    "text": "コツコツやる人に、よさそうね。",
+    "pvRetort": "コツコツやる人に、よさそう",
+    "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/人工資源で原木を掘っている動画2.mp4",
       "animation": "none",
-      "startFrom": 1290
+      "startFrom": 60
     },
     "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.45
+      "src": "correct1.mp3",
+      "volume": 0.4
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 76
+    "voiceFile": "14_metan.wav",
+    "durationInFrames": 72
+  },
+  {
+    "id": 15,
+    "character": "zundamon",
+    "text": "車に、乗るのだ。",
+    "pvNo": 10,
+    "pvCard": "車に乗る",
+    "pvCardLabel": "車",
+    "pvCardSub": "生活ワールドを駆け回れる",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "決定ボタンを押す42.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 56
+  },
+  {
+    "id": 16,
+    "character": "zundamon",
+    "text": "ガチャを、引くのだ。",
+    "pvNo": 11,
+    "pvCard": "ガチャを引く",
+    "pvCardLabel": "ガチャ",
+    "pvCardSub": "レアアイテムが出る",
+    "pvTicker": "ガチャはチケットで引ける",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "決定ボタンを押す1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 52
+  },
+  {
+    "id": 17,
+    "character": "zundamon",
+    "text": "称号も、つけられるのだ。",
+    "pvNo": 12,
+    "pvCard": "称号をつける",
+    "pvCardLabel": "称号",
+    "pvCardSub": "自作の称号も作れる",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/称号を購入して変更している動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 70
+  },
+  {
+    "id": 18,
+    "character": "zundamon",
+    "text": "島をつくって、自分のワールドも持てるのだ。",
+    "pvNo": 13,
+    "pvCard": "自分の島を持つ",
+    "pvCardLabel": "島",
+    "pvCardSub": "島プラグインで自分だけのワールド",
+    "pvTicker": "島プラグインで自分だけのワールドを作れる",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 100
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 110
+  },
+  {
+    "id": 19,
+    "character": "metan",
+    "text": "もはや、別のゲームよ。",
+    "pvRetort": "もはや、別のゲームよ",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 61
   },
   {
     "id": 20,
     "character": "zundamon",
-    "text": "ゼンモンセイカイ。賞金、サンビャクマンワイジイなのだ。",
-    "milTicker": "賞金300万YG獲得",
-    "milWin": "300万YG",
-    "milWinSub": "賞金 300万YG 獲得",
-    "scene": 3,
-    "pauseAfter": -3,
+    "text": "近くの人と、声でしゃべれるのだ。",
+    "pvNo": 14,
+    "pvCard": "声でしゃべる",
+    "pvCardLabel": "VC",
+    "pvCardSub": "近距離VC。距離で音量が変わる",
+    "pvTicker": "近距離VCは近くの人と話せる",
+    "scene": 2,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
       "animation": "none",
-      "startFrom": 2500
+      "startFrom": 80
     },
     "se": {
-      "src": "people-performance-cheer1.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.5
     },
     "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 138
+    "durationInFrames": 88
   },
   {
     "id": 21,
     "character": "metan",
-    "text": "それ、本当にもらえるの？",
-    "milRetort": "それ、本当にもらえるの？",
-    "scene": 3,
-    "pauseAfter": -4,
+    "text": "で、おいくらなの？",
+    "pvRetort": "で、おいくらなの？",
+    "scene": 2,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 100
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "21_metan.wav",
-    "durationInFrames": 65
+    "durationInFrames": 52
   },
   {
     "id": 22,
     "character": "zundamon",
-    "text": "もらえないのだ。でも、この鯖なら自分で稼げるのだ。",
-    "milTicker": "賞金は出ません。稼ぐところからです",
-    "milReveal": "よもぎ生活サーバー",
-    "milRevealSub": "賞金は出ません。稼ぐところからです",
+    "text": "参加費、ゼロ円なのだ！",
+    "pvTone": "close",
+    "pvNo": 15,
+    "pvPrice": "参加費 0円",
+    "pvPriceSub": "これも「できること」なのだ",
+    "pvTicker": "参加費0円",
     "scene": 3,
-    "pauseAfter": -3,
+    "pauseAfter": 10,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 1600
+      "startFrom": 3000
     },
     "se": {
-      "src": "don-1.mp3",
+      "src": "jajean1.mp3",
       "volume": 0.5
     },
     "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 139
+    "durationInFrames": 74
   },
   {
     "id": 23,
-    "character": "zundamon",
-    "text": "土地を買って、家も店も建てられるのだ。",
-    "milTicker": "土地を買って家も店も建てられる",
-    "milFlash": "土地も 家も\n店も 会社も",
+    "character": "metan",
+    "text": "よもぎサーバーの生活鯖。24時間、あそべるわ。",
+    "pvReveal": "よもぎ生活サーバー",
+    "pvRevealSub": "統合版・24時間・参加費0円",
+    "pvTicker": "24時間あそべる生活・経済サーバー",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 380
     },
     "se": {
-      "src": "item-get1.mp3",
+      "src": "correct1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 105
+    "voiceFile": "23_metan.wav",
+    "durationInFrames": 126
   },
   {
     "id": 24,
-    "character": "metan",
-    "text": "統合版なら、24時間あそべるのよね。",
-    "milTicker": "統合版・24時間・参加費0円",
-    "milRetort": "統合版なら、24時間あそべる",
+    "character": "zundamon",
+    "text": "統合版なら、スマホでも遊べるのだ。",
+    "pvFlash": "スマホでもOK",
+    "pvFlashSub": "統合版",
+    "pvTicker": "統合版で参加できる",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 3100
+      "startFrom": 2200
     },
     "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
+      "src": "text-impact1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "24_metan.wav",
-    "durationInFrames": 97
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 100
   },
   {
     "id": 25,
     "character": "metan",
     "text": "はいりかたは、よもぎサーバーで検索ね。",
     "displayText": "「よもぎサーバー」で検索",
-    "milTicker": "よもぎサーバーで検索",
-    "milCta": "よもぎサーバー",
-    "milNote": "※賞金と投票率は演出です／統合版のみ・ボランティア運営",
+    "pvCta": "よもぎサーバー",
+    "pvNote": "※統合版のみ・ボランティア運営です",
     "scene": 3,
     "pauseAfter": -3,
     "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1300
+      "type": "image",
+      "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
+      "animation": "zoomIn",
+      "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "backgroundStartFrom": 500
     },
     "se": {
-      "src": "決定ボタンを押す4.mp3",
+      "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
     "voiceFile": "25_metan.wav",
@@ -1019,24 +894,23 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 26,
     "character": "zundamon",
-    "text": "あなたなら、何問目までいけるのだ？",
-    "milTicker": "あなたなら何問目まで？",
-    "milResult": "あなたなら、何問目まで？",
-    "milResultSub": "コメントで教えてほしいのだ",
+    "text": "参加、待ってるのだ。どれから始めるか、コメントで！",
+    "pvResult": "参加、待ってる",
+    "pvResultSub": "どれから始める？ コメントで",
     "scene": 3,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 2600
+      "startFrom": 600
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
     "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 93
+    "durationInFrames": 149
   }
 ];
 

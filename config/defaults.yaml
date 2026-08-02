@@ -19,12 +19,15 @@ bgm:
   src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # クイズ$ミリオネア型（script.living-server-millionaire.yaml 用）:
-  # 出題パート（id1〜18）はスタジオの緊張感があるテクノで賞金ラダーを登らせる。
-  # 最終問題の正解＝トーンが win に反転する id:19 で明るい曲に切り替え、
-  # 「全問正解」の空気に変える
+  # 正直CM・王道PR型（script.living-server-promo.yaml 用）:
+  # カタログ12連発（id1〜18）はポップで速い曲で駆け抜け、
+  # 参加費0円スラム＝トーンが close に反転する id:19 で明るい曲に切り替えて
+  # 締めの空気に変える
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
+  #   クイズ$ミリオネア型（script.living-server-millionaire.yaml）:
+  #     amacha_marbletechno1 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 19
   #   画面当てクイズ型・人狼版（script.werewolf-screenquiz.yaml）:
   #     amacha_picopicodisco 0.15 / fromLineId 1
   #     amacha_happytime 0.19 / fromLineId 17
@@ -47,12 +50,12 @@ bgm:
   #     amacha_technophobia 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
   segments:
-    # 「マーブルテクノ」— 無機質な緊張感。賞金ラダーを登っていくパートに当てる
-    - src: "amacha_marbletechno1.mp3"
+    # 「ピコピコディスコ」— ポップで速い。カタログ12連発を駆け抜けるパートに当てる
+    - src: "amacha_picopicodisco.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 全問正解。トーンが青→緑に反転する行から切り替える
+    # 「ハッピータイム」— 参加費0円スラム。トーンが緑→金に反転する行から切り替える
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true

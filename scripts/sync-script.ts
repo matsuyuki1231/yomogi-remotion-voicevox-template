@@ -246,6 +246,23 @@ interface ScriptLine {
   milNote?: string;
   milResult?: string;
   milResultSub?: string;
+  pvTone?: string;
+  pvTicker?: string;
+  pvNo?: number;
+  pvCard?: string;
+  pvCardLabel?: string;
+  pvCardSub?: string;
+  pvRetort?: string;
+  pvFlash?: string;
+  pvFlashSub?: string;
+  pvPrice?: string;
+  pvPriceSub?: string;
+  pvReveal?: string;
+  pvRevealSub?: string;
+  pvCta?: string;
+  pvNote?: string;
+  pvResult?: string;
+  pvResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -640,6 +657,24 @@ export interface ScriptLine {
   milNote?: string;          // CTA下の小さな注記（※賞金は演出です 等の但し書き）
   milResult?: string;        // ループ用リボン（冒頭に戻す）
   milResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 正直CM・王道PR型（PromoHud）----
+  pvTone?: "pitch" | "close"; // 宣伝トーン。指定行から後ろに引き継がれる（宣伝中＝蓬緑 / 締め＝金）
+  pvTicker?: string;         // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  pvNo?: number;             // できることの番号（1→12）。指定がない行は直前の値を引き継ぐ。カウンターの分母は最大値
+  pvCard?: string;           // 機能カード本文（この型の主役。1カット1機能）
+  pvCardLabel?: string;      // 機能カードの短いラベル（土地 / 店 / 会社 など）
+  pvCardSub?: string;        // 機能カードの補足行
+  pvRetort?: string;         // ツッコミ吹き出し
+  pvFlash?: string;          // 巨大テロップ（改行はYAML側で明示する）
+  pvFlashSub?: string;       // テロップの上に出す小バッジ（例: 正直CM）
+  pvPrice?: string;          // 参加費0円スラム（全画面・白フラッシュ）。12個目の機能だけこれで出す
+  pvPriceSub?: string;       // 参加費スラムの補足行
+  pvReveal?: string;         // まとめ帯（正式名称と条件を大きく出す）
+  pvRevealSub?: string;      // まとめ帯の補足行
+  pvCta?: string;            // 検索バー風CTA（文字がタイプされる）
+  pvNote?: string;           // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
+  pvResult?: string;         // ループ用リボン（冒頭の宣言に戻す）
+  pvResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

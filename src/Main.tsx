@@ -89,6 +89,13 @@ import {
   MillionTone,
   LIFELINES,
 } from "./components/MillionHud";
+import {
+  PromoBackdrop,
+  PromoScrim,
+  PromoChrome,
+  PromoHud,
+  PromoTone,
+} from "./components/PromoHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -104,10 +111,11 @@ type Format =
   | "respawn"
   | "rewind"
   | "quiz"
-  | "million";
+  | "million"
+  | "promo";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// mil* ならクイズ$ミリオネア型、
+// pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
 // job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
 // intv* なら街頭インタビュー型、reply* ならコメント返信型、
@@ -124,6 +132,7 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  if (hasPrefix("pv")) return "promo";
   if (hasPrefix("mil")) return "million";
   if (hasPrefix("quiz")) return "quiz";
   if (hasPrefix("rw")) return "rewind";
@@ -623,6 +632,34 @@ export const Main: React.FC = () => {
     });
   })();
 
+  // ---- 正直CMトーン（宣伝中 / 締め）を解決。指定した行から後ろに引き継がれる ----
+  const pvToneResolved: PromoTone[] = (() => {
+    let current: PromoTone = "pitch";
+    return scriptData.map((line) => {
+      if (line.pvTone === "pitch" || line.pvTone === "close") {
+        current = line.pvTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- できることの番号を解決。指定がない行は直前の値を引き継ぐ ----
+  const pvNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.pvNo === "number") {
+        current = line.pvNo;
+      }
+      return current;
+    });
+  })();
+
+  // カウンターの分母。スクリプト中でいちばん大きい番号を総数とする
+  const pvNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.pvNo ?? 0),
+    1
+  );
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -666,6 +703,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "promo":
+        return line.pvTicker;
       case "million":
         return line.milTicker;
       case "quiz":
@@ -841,6 +880,19 @@ export const Main: React.FC = () => {
       line.milResult
     );
 
+  // 正直CM HUDのパーツが1つでも出るか
+  const hasPromoHud = (line: ScriptLine): boolean =>
+    !!(
+      line.pvCard ||
+      line.pvRetort ||
+      line.pvFlash ||
+      line.pvPrice ||
+      line.pvReveal ||
+      line.pvCta ||
+      line.pvNote ||
+      line.pvResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -866,6 +918,17 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 正直CM型は機能カード・テロップ・スラムが画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ
+      case "promo":
+        return !!(
+          line.pvCard ||
+          line.pvRetort ||
+          line.pvFlash ||
+          line.pvPrice ||
+          line.pvReveal ||
+          line.pvResult
+        );
       // ミリオネア型は設問カード・選択肢・判定スタンプ・賞金ラダーが画面テロップを
       // 兼ねる。字幕を出すのは検索CTAの行だけ
       case "million":
@@ -999,6 +1062,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "promo":
+        return <PromoBackdrop />;
       case "million":
         return <MillionBackdrop />;
       case "quiz":
@@ -1035,6 +1100,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 正直CM型の暗幕は全型でいちばん薄い。素材そのものが商品カタログなので、
+      // 隠すものが何もない
+      case "promo":
+        return <PromoScrim tone={pvToneResolved[index]} />;
       // ミリオネア型は「暗いスタジオに映像が映っている」画にする。中央だけ
       // スポットを残して四隅を沈め、トーンで青→緑に振る
       case "million":
@@ -1070,6 +1139,17 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "promo":
+        return (
+          <PromoChrome
+            tone={currentIndex >= 0 ? pvToneResolved[currentIndex] : "pitch"}
+            no={currentIndex >= 0 ? pvNoResolved[currentIndex] : null}
+            noPrev={currentIndex > 0 ? pvNoResolved[currentIndex - 1] : null}
+            noTotal={pvNoTotal}
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "million":
         return (
           <MillionChrome
@@ -1227,6 +1307,30 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "promo":
+        if (!hasPromoHud(line)) return null;
+        return wrap(
+          <PromoHud
+            tone={pvToneResolved[currentIndex]}
+            character={line.character}
+            no={pvNoResolved[currentIndex]}
+            card={line.pvCard}
+            cardLabel={line.pvCardLabel}
+            cardSub={line.pvCardSub}
+            retort={line.pvRetort}
+            flash={line.pvFlash}
+            flashSub={line.pvFlashSub}
+            price={line.pvPrice}
+            priceSub={line.pvPriceSub}
+            reveal={line.pvReveal}
+            revealSub={line.pvRevealSub}
+            cta={line.pvCta}
+            note={line.pvNote}
+            result={line.pvResult}
+            resultSub={line.pvResultSub}
+            durationInFrames={span}
+          />
+        );
       case "million":
         if (!hasMillionHud(line)) return null;
         return wrap(
