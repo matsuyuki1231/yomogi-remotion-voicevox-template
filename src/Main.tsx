@@ -96,6 +96,15 @@ import {
   PromoHud,
   PromoTone,
 } from "./components/PromoHud";
+import {
+  JoinBackdrop,
+  JoinScrim,
+  JoinChrome,
+  JoinHud,
+  JoinTone,
+  JoinScreen,
+  JoinFocus,
+} from "./components/JoinHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
@@ -112,9 +121,11 @@ type Format =
   | "rewind"
   | "quiz"
   | "million"
-  | "promo";
+  | "promo"
+  | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
+// join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
 // job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
@@ -132,6 +143,8 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("join")) return "join";
   if (hasPrefix("pv")) return "promo";
   if (hasPrefix("mil")) return "million";
   if (hasPrefix("quiz")) return "quiz";
@@ -660,6 +673,99 @@ export const Main: React.FC = () => {
     1
   );
 
+  // ---- 参加導線トーン（手順中 / 入ったあと）を解決 ----
+  // 指定した行から後ろに引き継がれる。setup のあいだは映像がぼけていて、
+  // inside に入った瞬間にピントが合う。転換点はこのトーンだけが担う
+  const joinToneResolved: JoinTone[] = (() => {
+    let current: JoinTone = "setup";
+    return scriptData.map((line) => {
+      if (line.joinTone === "setup" || line.joinTone === "inside") {
+        current = line.joinTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何ステップ目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const joinStepResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.joinStep === "number") {
+        current = line.joinStep;
+      }
+      return current;
+    });
+  })();
+
+  // STEPバーの分母。スクリプト中でいちばん大きいステップ番号を総数とする
+  const joinStepTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.joinStep ?? 0),
+    1
+  );
+
+  // ---- 入ったあとに積み上がる「やったこと」チップ ----
+  const joinChipsResolved: string[][] = (() => {
+    const stack: string[] = [];
+    return scriptData.map((line) => {
+      if (line.joinGot) stack.push(line.joinGot);
+      return [...stack];
+    });
+  })();
+
+  // ---- マイクラUIパネルの画面を解決 ----
+  // ツッコミだけの行でパネルが消えると画面が空くので、直前の画面を残す。
+  // 入ったあと（inside）は実映像が主役になるのでパネルを捨てる
+  const joinScreenResolved: (JoinScreen | null)[] = (() => {
+    let current: JoinScreen | null = null;
+    return scriptData.map((line, i) => {
+      if (
+        line.joinScreen === "play" ||
+        line.joinScreen === "servers" ||
+        line.joinScreen === "form" ||
+        line.joinScreen === "discord" ||
+        line.joinScreen === "code"
+      ) {
+        current = line.joinScreen;
+      }
+      return joinToneResolved[i] === "setup" ? current : null;
+    });
+  })();
+
+  // ---- フォーム／Discord画面の値を解決（一度入れた値は後続の行でも入ったまま） ----
+  const joinFieldResolved = (
+    key: "joinName" | "joinAddress" | "joinPort" | "joinChannel" | "joinCode"
+  ) =>
+    (() => {
+      let current = "";
+      return scriptData.map((line) => {
+        if (typeof line[key] === "string") {
+          current = line[key] as string;
+        }
+        return current;
+      });
+    })();
+  const joinNameResolved = joinFieldResolved("joinName");
+  const joinAddressResolved = joinFieldResolved("joinAddress");
+  const joinPortResolved = joinFieldResolved("joinPort");
+  const joinChannelResolved = joinFieldResolved("joinChannel");
+  // 連携コードは一度出たら後続の `1! auth` の行でも同じものを見せる
+  const joinCodeResolved = joinFieldResolved("joinCode");
+
+  // ヘッダのサービス名とティッカーのラベルは最初に指定した行のものを全体で使う
+  const joinTitle =
+    scriptData.find((line) => line.joinTitle)?.joinTitle ?? "よもぎサーバー";
+  const joinTag = scriptData.find((line) => line.joinTag)?.joinTag ?? "よもぎ鯖";
+
+  // ---- 経過時間カウンターの起点と停止点（グローバルフレーム） ----
+  // この型のメーターは演出ではなく**動画の実経過時間**なので、
+  // 開始行と停止行の実フレームをそのまま渡す
+  const joinClockStartIndex = scriptData.findIndex((line) => line.joinClockStart);
+  const joinClockStopIndex = scriptData.findIndex((line) => line.joinClockStop);
+  const joinClockFrom =
+    joinClockStartIndex >= 0 ? getLineStartFrame(joinClockStartIndex) : null;
+  const joinClockStop =
+    joinClockStopIndex >= 0 ? getLineStartFrame(joinClockStopIndex) : null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -703,6 +809,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "join":
+        return line.joinTicker;
       case "promo":
         return line.pvTicker;
       case "million":
@@ -880,6 +988,22 @@ export const Main: React.FC = () => {
       line.milResult
     );
 
+  // 参加導線HUDのパーツが1つでも出るか。
+  // マイクラUIパネルは引き継ぎで出る行もあるので index で判定する
+  const hasJoinHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      joinScreenResolved[index] ||
+      line.joinCard ||
+      line.joinRetort ||
+      line.joinFlash ||
+      line.joinDone ||
+      line.joinPrice ||
+      line.joinReveal ||
+      line.joinCta ||
+      line.joinNote ||
+      line.joinResult
+    );
+
   // 正直CM HUDのパーツが1つでも出るか
   const hasPromoHud = (line: ScriptLine): boolean =>
     !!(
@@ -918,6 +1042,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 参加導線型は手順カード・テロップ・スラムが画面テロップを兼ねる。
+      // マイクラUIパネルが出ている行も、パネル自体を読ませたいので字幕は出さない。
+      // 字幕を出すのは検索CTAの行だけ
+      case "join":
+        return !!(
+          line.joinScreen ||
+          line.joinCard ||
+          line.joinRetort ||
+          line.joinFlash ||
+          line.joinDone ||
+          line.joinPrice ||
+          line.joinReveal ||
+          line.joinResult
+        );
       // 正直CM型は機能カード・テロップ・スラムが画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ
       case "promo":
@@ -1062,6 +1200,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "join":
+        return <JoinBackdrop />;
       case "promo":
         return <PromoBackdrop />;
       case "million":
@@ -1100,6 +1240,11 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 参加導線型は手順パートで映像をぼかして沈める（＝マイクラのメニュー画面の
+      // 背景に見える）。入れた瞬間にぼけが取れて実映像がクリアになる。
+      // 「入った」を文字ではなくピントで伝えるので、ここがこの型の転換点
+      case "join":
+        return <JoinScrim tone={joinToneResolved[index]} />;
       // 正直CM型の暗幕は全型でいちばん薄い。素材そのものが商品カタログなので、
       // 隠すものが何もない
       case "promo":
@@ -1139,6 +1284,25 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "join":
+        return (
+          <JoinChrome
+            tone={currentIndex >= 0 ? joinToneResolved[currentIndex] : "setup"}
+            title={joinTitle}
+            tag={joinTag}
+            step={currentIndex >= 0 ? joinStepResolved[currentIndex] : null}
+            stepPrev={currentIndex > 0 ? joinStepResolved[currentIndex - 1] : null}
+            stepTotal={joinStepTotal}
+            chips={currentIndex >= 0 ? joinChipsResolved[currentIndex] : []}
+            chipsPrevCount={
+              currentIndex > 0 ? joinChipsResolved[currentIndex - 1].length : 0
+            }
+            clockFrom={joinClockFrom}
+            clockStop={joinClockStop}
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "promo":
         return (
           <PromoChrome
@@ -1307,6 +1471,42 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "join":
+        if (!hasJoinHud(line, currentIndex)) return null;
+        return wrap(
+          <JoinHud
+            tone={joinToneResolved[currentIndex]}
+            character={line.character}
+            screen={joinScreenResolved[currentIndex] ?? undefined}
+            focus={line.joinFocus as JoinFocus | undefined}
+            serverName={joinNameResolved[currentIndex]}
+            address={joinAddressResolved[currentIndex]}
+            port={joinPortResolved[currentIndex]}
+            channel={joinChannelResolved[currentIndex]}
+            command={line.joinCommand}
+            reply={line.joinReply}
+            code={joinCodeResolved[currentIndex]}
+            typing={line.joinTyping as JoinFocus | undefined}
+            pressed={line.joinPressed}
+            card={line.joinCard}
+            cardLabel={line.joinCardLabel}
+            cardSub={line.joinCardSub}
+            retort={line.joinRetort}
+            flash={line.joinFlash}
+            flashSub={line.joinFlashSub}
+            done={line.joinDone}
+            doneSub={line.joinDoneSub}
+            price={line.joinPrice}
+            priceSub={line.joinPriceSub}
+            reveal={line.joinReveal}
+            revealSub={line.joinRevealSub}
+            cta={line.joinCta}
+            note={line.joinNote}
+            result={line.joinResult}
+            resultSub={line.joinResultSub}
+            durationInFrames={span}
+          />
+        );
       case "promo":
         if (!hasPromoHud(line)) return null;
         return wrap(

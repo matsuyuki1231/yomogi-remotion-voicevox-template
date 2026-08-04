@@ -154,8 +154,11 @@ async function main() {
   if (scriptDataMatch) {
     // 簡易パース（本番ではAST解析を使用）
     const dataStr = scriptDataMatch[1];
+    // character と text のあいだに別のフィールド（joinTone など）が入ることがあるので
+    // 決め打ちで隣接を要求しない。ここを固定にすると、該当の行だけ**黙って**
+    // 音声が生成されず、前の版の wav が残ったまま尺だけ既定値になる事故が起きる
     const lineMatches = dataStr.matchAll(
-      /\{\s*"?id"?:\s*(\d+),\s*"?character"?:\s*"([^"]+)",\s*"?text"?:\s*"([^"]+)"[\s\S]*?"?voiceFile"?:\s*"([^"]+)"/g
+      /\{\s*"?id"?:\s*(\d+),\s*"?character"?:\s*"([^"]+)",[\s\S]*?"?text"?:\s*"([^"]+)"[\s\S]*?"?voiceFile"?:\s*"([^"]+)"/g
     );
 
     for (const match of lineMatches) {
@@ -166,6 +169,15 @@ async function main() {
         voiceFile: match[4],
       });
     }
+  }
+
+  // パース漏れは静かに間違った動画を作るので、ここで必ず落とす
+  const expectedCount = (scriptContent.match(/"voiceFile":/g) ?? []).length;
+  if (scriptData.length !== expectedCount) {
+    console.error(
+      `スクリプトのパースに失敗しました: ${expectedCount} 行あるはずが ${scriptData.length} 行しか読めていません`
+    );
+    process.exit(1);
   }
 
   console.log(`${scriptData.length}件のセリフを処理します...`);

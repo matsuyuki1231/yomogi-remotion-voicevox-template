@@ -1,0 +1,637 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / 参加導線ハウツー型）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「参加導線ハウツー型（JOIN）」入り方、これだけ
+#   既存26型はすべて「魅力を見せる → 最後の1行で『よもぎサーバーで検索』」で
+#   終わっていた。CTAは動画のオマケで、実際に参加するかどうかは視聴者が
+#   動画を閉じたあとの話だった。この型は**CTAそのものを動画の本体にする**。
+#   前半は参加手順の実演（STEP 1〜5）、後半は入った直後にやることの案内で、
+#   見ながらそのまま参加できる。
+#
+# ■ 設計原則との対応
+#   1. 冒頭1秒は「転」… 手順動画なのに**結論（もう入れた画）から始める**。
+#      id1 だけトーンが inside なので、映像がぼけずにクリアに出る
+#   2. 常設の"あと何"メーター … 前半は STEPバー（1→5）、後半は
+#      やったことチップ。さらに**経過時間カウンターは演出ではなく
+#      動画の実経過時間**で、「1分で入れる」と言ったものが本当に
+#      何秒で終わったのかを画面が証明する（id3 で開始、id12 で停止）
+#   3. 1カット1情報 … 1行1手順。すべて docs/yomogi で裏が取れる
+#   4. ループ … 最終行の映像を id1 と同じ src / startFrom にし、
+#      「まずどこ行く？」で冒頭に戻す。id1 と最終行はどちらも inside なので
+#      トーンの継ぎ目も割れない
+#   5. コメント誘発 … 「入ったら、まずどこ行く？」
+#   6. 余白ゼロ … 最終行の pauseAfter は 0
+#
+# ■ 宣伝としてなぜ正しいか
+#   未参加層の最大の障壁は「面白そうだけど、入り方が面倒くさそう」。
+#   そこに正面から答える。手順を最後まで見せること自体が
+#   「本当に誰でも入れる」の証明になるので、宣伝の信憑性が上がる。
+#   後半の機能紹介も「入ったあと何をすればいいか」という実用情報の形で出るので
+#   押し売りにならない。
+#
+# ■ 構造上のルール
+#   - サーバー名は1秒も伏せない（id1 のテロップで名乗る）
+#   - 前半（setup）は映像をぼかして沈める＝マイクラのメニュー背景に見える。
+#     id12 で inside に反転してピントが合う。**転換を文字で予告しない**
+#   - マイクラUIパネルは joinScreen を書いた行から後ろに引き継がれる。
+#     inside に入った時点で捨てられる（実映像の上にパネルを残さない）
+#   - フォームの入力値（joinName / joinAddress / joinPort）も引き継がれる
+#   - 参加完了スラム（id12）と参加費0円スラム（id26）は pauseAfter を正の値にして
+#     スラムが着地するまで一拍おく
+#   - Switch/PS系は docs に「特殊な操作が必要・自己責任」とあるので手順本編では
+#     扱わず、フレンド追加（ymg24mc）という docs 記載の代替だけ id27 で触れる
+#
+# ■ 情報ソース: docs/yomogi 配下（手順・機能はすべてここで裏取り）
+#   参加方法（living/how-to-join/join-with-address.md）
+#     - サーバーアドレス「ymg24.org」／ポート「19132」
+#     - 統合版を起動 → プレイ → サーバー → サーバーを追加 → 追加してプレイ
+#   フレンド追加（living/how-to-join/join-with-friend.md）
+#     - 「ymg24mc」をフレンド追加すると生活鯖と人狼の両方に参加できる。
+#       Switchでも本体設定を変えずに参加できる
+#   はじめに（intro.md）… 統合版・参加費無料・24時間・ボランティア運営
+#   役職制度（living/commands/role.md）… /roleで何度でも無料変更。
+#     初期役職「鯖民」のままだと、どのブロックを掘っても報酬が得られない。
+#     採掘者はダイヤ鉱石20YG など
+#   土地保護（living/commands/land-protection.md）… 有料で土地を購入。
+#     資源ワールド（人工資源・天然資源）では土地を買えない＝掘る場所
+#   チェストショップ（living/commands/chest-shop.md）… 無人販売所
+#   会社（living/commands/company.md）… 無料設立（審査あり）。社員数に制限なし
+#   近距離VC（living/commands/limited-vc.md）… 近くの人と話せる。距離で音量が変わる
+#
+# 素材: public/content/生活サーバー 配下
+# 効果音: 効果音ラボ（商用可・クレジット不要）
+
+# ===== 結論から（1秒フック）。手順動画なのに、もう入れた画から始める =====
+- id: 1
+  character: zundamon
+  # text は character の直後に置くこと。あいだに別フィールドを挟むと
+  # generate-voices.ts の行パーサがこの行を取りこぼす
+  # 「入り方」は イリガタ と読まれるのでひらがなにする
+  text: はいりかた、これだけなのだ！
+  displayText: 入り方、これだけなのだ！
+  # この行だけトーンが inside なので映像がぼけない
+  joinTone: inside
+  joinTitle: よもぎサーバー 生活鯖
+  joinTag: 生活鯖
+  joinTicker: よもぎサーバー 生活鯖の入り方
+  joinFlash: |-
+    入り方
+    これだけ
+  joinFlashSub: よもぎサーバー 生活鯖
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # 結論の画なので明るい昼のカットを選ぶ（600 付近は夕景で暗い）
+    startFrom: 500
+  se:
+    src: don-1.mp3
+    volume: 0.5
+
+- id: 2
+  character: metan
+  text: もう入ってるじゃない。
+  joinRetort: もう入ってるじゃない
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 120
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+# ここから手順。トーンが setup に落ちて映像がぼけ、経過時間が回り始める
+- id: 3
+  character: zundamon
+  # 「いっぷん」は イッ'/プ'ン と割れ、漢数字の「一分で」は イチ'ブデ と誤読される。
+  # **半角数字の「1分」だけが** イッ'プン と正しく1句に収まる
+  text: さいしょから、やるのだ。1分で入れるのだ。
+  displayText: 最初から、やるのだ。1分で入れるのだ。
+  joinTone: setup
+  joinClockStart: true
+  joinFlash: |-
+    1分で
+    入れます
+  joinFlashSub: 実演
+  joinTicker: 統合版・参加費0円・24時間
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1400
+  se:
+    src: sceneswitch1.mp3
+    volume: 0.5
+
+# ===== STEP 1〜5（実演）=====
+- id: 4
+  character: zundamon
+  # 「トウゴウバン」とカタカナで書くと ト'オ/ゴオ'バン と割れる。漢字のほうが正しい
+  text: マイクラの、統合版を開くのだ。
+  joinStep: 1
+  joinScreen: play
+  joinFocus: play
+  joinCard: 統合版を開く
+  joinCardLabel: STEP 1
+  joinCardSub: Java版では参加できない
+  joinTicker: 統合版のみ（Java版では参加できません）
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+- id: 5
+  character: zundamon
+  text: サーバーの、タブを開くのだ。
+  joinStep: 2
+  joinScreen: servers
+  joinFocus: tab
+  joinCard: サーバーのタブを開く
+  joinCardLabel: STEP 2
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/商店街で帽子を購入している動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.5
+
+- id: 6
+  character: zundamon
+  text: サーバーを追加、を押すのだ。
+  joinStep: 3
+  joinFocus: add
+  joinCard: サーバーを追加
+  joinCardLabel: STEP 3
+  joinCardSub: 画面の左上にある
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 380
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.5
+
+- id: 7
+  character: metan
+  # 「10秒」は ジュッビョウ と割れることがあるのでひらがなにする
+  text: まだ、じゅうびょうも経ってないわ。
+  displayText: まだ、10秒も経ってないわ。
+  joinRetort: まだ10秒も経ってないわ
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+# フォームが開く。ここでアドレスが実際にタイプされる
+- id: 8
+  character: zundamon
+  # アルファベットは読み飛ばされるのでカタカナで書く。伸ばし棒だと
+  # ワイエ'ム/ジイ' と妙な位置で割れるので「ジイ」と書く。
+  # 読点で区切ると間が空いて4.5秒に伸びるので、空白区切り＋言い切りで詰める
+  text: アドレスは、ワイエムジイ ニイヨン ドット オオアアルジイ！
+  displayText: アドレスは ymg24.org なのだ。
+  joinStep: 4
+  joinScreen: form
+  joinFocus: address
+  joinTyping: address
+  joinName: よもぎ生活鯖
+  joinAddress: ymg24.org
+  joinPort: "19132"
+  joinCard: ymg24.org
+  joinCardLabel: アドレス
+  joinCardSub: サーバー名は、なんでもいい
+  joinTicker: サーバーアドレスは ymg24.org
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2200
+  se:
+    src: typewriter-1.mp3
+    volume: 0.5
+
+- id: 9
+  character: zundamon
+  # 数字はそのままだと読み飛ばされるのでカタカナで書く（「19132のまま」だと
+  # イチマンキュウセンヒャクサンジュウニ と読まれる）。1桁ずつ空白で区切ると
+  # 聞き取りやすいが5.2秒に伸びて「同じ絵を5秒以上続けない」に反するので、
+  # 続けて書いて詰める。数字はフォームとカードに大きく出るので画で補える
+  text: ポートは、イチキュウイチサンニのままなのだ。
+  displayText: ポートは 19132 のままなのだ。
+  joinFocus: port
+  joinCard: "19132"
+  joinCardLabel: ポート
+  joinCardSub: はじめから入っている
+  joinTicker: ポートは 19132 のまま
+  scene: 2
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+- id: 10
+  character: metan
+  text: 入れるのは、それだけ？
+  joinRetort: 入れるのは、それだけ？
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画2.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+- id: 11
+  character: zundamon
+  text: 追加してプレイ、を押すのだ！
+  joinStep: 5
+  joinFocus: submit
+  joinPressed: true
+  joinCard: 追加してプレイ
+  joinCardLabel: STEP 5
+  scene: 2
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 3000
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+# ===== 入れた。ここでピントが合う（転換を文字で説明しない）=====
+- id: 12
+  character: zundamon
+  text: 入れたのだ！
+  joinTone: inside
+  joinClockStop: true
+  joinDone: 入れた
+  joinDoneSub: よもぎ生活サーバー
+  joinTicker: 参加費0円・24時間あそべます
+  scene: 3
+  # セリフが0.7秒しかないので、白フラッシュが引いて街がクリアに見えるまで
+  # しっかり間をとる（この行がこの型の転換点）
+  pauseAfter: 24
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # ぼけが取れる瞬間なので、この素材でいちばん明るいカットを当てる
+    startFrom: 3300
+  se:
+    src: item-get1.mp3
+    volume: 0.5
+
+- id: 13
+  character: metan
+  text: 本当に、1分もかかってないわ。
+  joinRetort: 本当に1分もかかってないわ
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 500
+  se:
+    src: correct1.mp3
+    volume: 0.45
+
+- id: 14
+  character: metan
+  text: で、まず何をすればいいの？
+  joinRetort: で、まず何をすればいいの？
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+# ===== 入ったあとにやること（＝そのまま機能紹介になる）=====
+- id: 15
+  character: zundamon
+  text: まず、ヤクショクを選ぶのだ。
+  displayText: まず、役職を選ぶのだ。
+  joinGot: 役職
+  joinCard: 役職を選ぶ
+  joinCardLabel: 最初に
+  joinCardSub: 無料。何度でも変えられる
+  joinTicker: 役職の変更は無料・クールタイムなし
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/roleコマンドで役職を変更している動画.mp4
+    animation: none
+    # f60 付近はフォームが開く前で暗い。f200 前後で役職の一覧が出ている
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+- id: 16
+  character: zundamon
+  text: 選ばないと、掘ってもお金が入らないのだ。
+  joinCard: 選ばないと報酬0
+  joinCardLabel: 注意
+  joinCardSub: 初期役職のままだと報酬が出ない
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/自然資源で採掘をしている動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: shock1.mp3
+    volume: 0.4
+
+- id: 17
+  character: zundamon
+  text: あとは、シゲンワールドで掘って稼ぐのだ。
+  displayText: あとは、資源ワールドで掘って稼ぐのだ。
+  joinGot: 採掘
+  joinCard: 資源ワールドで掘る
+  joinCardLabel: 次に
+  joinCardSub: 人工資源・天然資源ワールドがある
+  joinTicker: 資源ワールドで採掘・木こりができます
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/人工資源で原木を掘っている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.5
+
+- id: 18
+  character: zundamon
+  text: 稼いだお金で、土地を買うのだ。
+  joinGot: 土地
+  joinCard: 土地を買う
+  joinCardLabel: そして
+  joinCardSub: 買った土地は自分だけのもの
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/新しい土地を土地保護している動画.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.5
+
+- id: 19
+  character: zundamon
+  text: その土地に、家を建てるのだ。
+  joinGot: 家
+  joinCard: 家を建てる
+  joinCardLabel: 完成
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/土地保護をした土地で建築している動画.mp4
+    animation: none
+    # f150 は木材の寄りで何をしているか分からない。f259 で建物の形が見える
+    startFrom: 259
+  se:
+    src: 決定ボタンを押す4.mp3
+    volume: 0.5
+
+- id: 20
+  character: metan
+  text: もう暮らせるじゃない。
+  joinRetort: もう暮らせるじゃない
+  scene: 3
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: correct1.mp3
+    volume: 0.4
+
+- id: 21
+  character: zundamon
+  text: チェストを置けば、ムジンの店になるのだ。
+  displayText: チェストを置けば、無人の店になるのだ。
+  joinGot: 店
+  joinCard: 無人の店を出す
+  joinCardLabel: 店
+  joinCardSub: チェストショップ。店番はいらない
+  joinTicker: チェストショップは無人販売所
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    # 作成側の素材はフォームが暗くて読めないので、買われている画を当てる
+    # （「店番はいらない」＝客が勝手に買っていく、が伝わる）
+    src: 生活サーバー/チェストショップでオーブを購入している動画.mp4
+    animation: none
+    startFrom: 600
+  se:
+    src: 決定ボタンを押す5.mp3
+    volume: 0.5
+
+- id: 22
+  character: zundamon
+  text: 会社をつくって、人を雇えるのだ。
+  joinGot: 会社
+  joinCard: 会社をつくる
+  joinCardLabel: 会社
+  joinCardSub: 設立は無料。社員の人数は無制限
+  joinTicker: 会社は誰でも無料で設立できる（審査あり）
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 990
+  se:
+    src: 決定ボタンを押す22.mp3
+    volume: 0.5
+
+- id: 23
+  character: zundamon
+  text: 車にも、乗れるのだ。
+  joinGot: 車
+  joinCard: 車に乗る
+  joinCardLabel: 車
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    # f80 以降は夜の街で車が見えない。f60 前後なら明るく、車体も写っている
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す23.mp3
+    volume: 0.5
+
+- id: 24
+  character: zundamon
+  text: 釣れる魚は、ニヒャクナナジュウゴ種類なのだ。
+  displayText: 釣れる魚は、275種類なのだ。
+  joinGot: 釣り
+  joinCard: 魚は275種類
+  joinCardLabel: 釣り
+  joinCardSub: バニラにいない魚も釣れる
+  joinTicker: 釣りで釣れる魚は275種類
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 400
+  se:
+    src: 決定ボタンを押す31.mp3
+    volume: 0.5
+
+- id: 25
+  character: zundamon
+  text: 近くの人と、声でしゃべれるのだ。
+  joinGot: VC
+  joinCard: 声でしゃべる
+  joinCardLabel: VC
+  joinCardSub: 近距離VC。距離で音量が変わる
+  joinTicker: 近距離VCで近くの人と話せます
+  scene: 3
+  pauseAfter: -4
+  visual:
+    type: video
+    # 商店街の素材は f150 でインベントリ画面になり「しゃべる」と噛み合わない。
+    # 近距離VCの素材はないので、人がいる街並みを当てる
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1300
+  se:
+    src: 決定ボタンを押す32.mp3
+    volume: 0.5
+
+# ===== 参加費 → まとめ帯 → 検索CTA → ループ =====
+- id: 26
+  character: zundamon
+  text: ここまで、ぜんぶ参加費ゼロ円なのだ。
+  displayText: ここまで、ぜんぶ参加費0円なのだ。
+  joinPrice: 参加費 0円
+  joinPriceSub: ボランティア運営です
+  joinTicker: 参加費は0円
+  scene: 4
+  # スラムが着地するまで一拍おく
+  pauseAfter: 10
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1800
+  se:
+    src: jajean1.mp3
+    volume: 0.5
+
+- id: 27
+  character: metan
+  # 続けて書くと1句に潰れるので、読点なしの空白で3つに区切る
+  text: スイッチの人は、ワイエムジイ ニイヨン エムシイ をフレンド追加ね。
+  displayText: Switchの人は「ymg24mc」をフレンド追加でも入れるわ。
+  joinReveal: よもぎ生活サーバー
+  joinRevealSub: 統合版・24時間・参加費0円
+  joinTicker: フレンド追加なら ymg24mc
+  scene: 4
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 250
+  se:
+    src: correct1.mp3
+    volume: 0.45
+
+# 字幕を出すのはこの行だけ
+- id: 28
+  character: metan
+  text: まよったら、よもぎサーバーで検索ね。
+  displayText: 「よもぎサーバー」で検索
+  joinCta: よもぎサーバー
+  joinNote: ※統合版のみ・ボランティア運営です
+  scene: 4
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: zoomIn
+    backgroundSrc: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    backgroundStartFrom: 500
+  se:
+    src: 決定ボタンを押す1.mp3
+    volume: 0.5
+
+# ===== ループ＋コメント誘発。映像を id1 と同じ位置に返す =====
+- id: 29
+  character: zundamon
+  text: 入ったら、まずどこ行く？ コメントで待ってるのだ！
+  joinResult: 入ったら、まずどこ行く？
+  joinResultSub: コメントで待ってる
+  scene: 4
+  # 間を作らず言い終わりで即終了させる。すぐ id1 に戻るのでループが締まる
+  pauseAfter: 0
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    # id1 と同じカットに戻してループの継ぎ目を消す
+    startFrom: 500
+  se:
+    src: sceneswitch1.mp3
+    volume: 0.45

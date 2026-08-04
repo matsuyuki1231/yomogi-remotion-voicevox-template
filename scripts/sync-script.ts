@@ -263,6 +263,41 @@ interface ScriptLine {
   pvNote?: string;
   pvResult?: string;
   pvResultSub?: string;
+  joinTone?: string;
+  joinTitle?: string;
+  joinTag?: string;
+  joinTicker?: string;
+  joinStep?: number;
+  joinGot?: string;
+  joinClockStart?: boolean;
+  joinClockStop?: boolean;
+  joinScreen?: string;
+  joinFocus?: string;
+  joinName?: string;
+  joinAddress?: string;
+  joinPort?: string;
+  joinChannel?: string;
+  joinCommand?: string;
+  joinReply?: string;
+  joinCode?: string;
+  joinTyping?: string;
+  joinPressed?: boolean;
+  joinCard?: string;
+  joinCardLabel?: string;
+  joinCardSub?: string;
+  joinRetort?: string;
+  joinFlash?: string;
+  joinFlashSub?: string;
+  joinDone?: string;
+  joinDoneSub?: string;
+  joinPrice?: string;
+  joinPriceSub?: string;
+  joinReveal?: string;
+  joinRevealSub?: string;
+  joinCta?: string;
+  joinNote?: string;
+  joinResult?: string;
+  joinResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -675,6 +710,42 @@ export interface ScriptLine {
   pvNote?: string;           // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   pvResult?: string;         // ループ用リボン（冒頭の宣言に戻す）
   pvResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 参加導線ハウツー型（JoinHud）----
+  joinTone?: "setup" | "inside"; // 手順トーン。指定行から後ろに引き継がれる（手順中＝青・映像がぼける / 入ったあと＝蓬緑・ピントが合う）
+  joinTitle?: string;        // ヘッダ帯のサービス名（最初に指定した行のものを全体で使う）
+  joinTag?: string;          // ティッカー左の短いラベル（参加後）。最初に指定した行のものを全体で使う
+  joinTicker?: string;       // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  joinStep?: number;         // いま何ステップ目か（1→5）。指定がない行は直前の値を引き継ぐ。STEPバーの分母は最大値
+  joinGot?: string;          // 入ったあとに積み上がる「やったこと」チップ（後半の"あと何"メーター）
+  joinClockStart?: boolean;  // この行から経過時間カウンターを回し始める
+  joinClockStop?: boolean;   // この行で経過時間カウンターを止め、以降は確定値として出しっぱなしにする
+  joinScreen?: "play" | "servers" | "form" | "discord" | "code"; // パネルに映す画面。指定がない行はパネルを出さない。discord / code はマイクラ人狼版の連携手順用
+  joinFocus?: string;        // ハイライトする操作対象（play / tab / add / name / address / port / submit / rules / command / vc）
+  joinName?: string;         // フォームのサーバー名。指定した行から後ろに引き継がれる
+  joinAddress?: string;      // フォームのサーバーアドレス。指定した行から後ろに引き継がれる
+  joinPort?: string;         // フォームのポート。指定した行から後ろに引き継がれる
+  joinChannel?: string;      // Discord画面で開いているチャンネル名。指定した行から後ろに引き継がれる
+  joinCommand?: string;      // Discordの入力欄に打つコマンド（1! new / 1! auth）
+  joinReply?: string;        // Discord画面に出すメッセージ（1行目＝BOT / 2行目＝自分。改行で区切る）
+  joinCode?: string;         // 連携コード画面に出す8桁のコード
+  joinTyping?: string;       // この行でタイプされるフィールド（address / port / name / command）
+  joinPressed?: boolean;     // 「追加してプレイ」が押し込まれる行
+  joinCard?: string;         // 手順カード／ヒントカード本文（1カット1手順）
+  joinCardLabel?: string;    // カード左の短いラベル（アドレス / 役職 など）
+  joinCardSub?: string;      // カードの補足行
+  joinRetort?: string;       // ツッコミ吹き出し
+  joinFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  joinFlashSub?: string;     // テロップの上に出す小バッジ
+  joinDone?: string;         // 参加完了スラム（全画面・白フラッシュ。ここでトーンが反転して映像のぼけが取れる）
+  joinDoneSub?: string;      // 参加完了スラムの補足行
+  joinPrice?: string;        // 参加費0円スラム（全画面・金の集中線）
+  joinPriceSub?: string;     // 参加費スラムの補足行
+  joinReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  joinRevealSub?: string;    // まとめ帯の補足行
+  joinCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  joinNote?: string;         // CTA下の小さな注記（※統合版のみ 等の但し書き）
+  joinResult?: string;       // ループ用リボン（冒頭に戻す）
+  joinResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
