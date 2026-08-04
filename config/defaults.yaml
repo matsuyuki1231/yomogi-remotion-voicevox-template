@@ -19,12 +19,18 @@ bgm:
   src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # 正直CM・王道PR型（script.living-server-promo.yaml 用）:
-  # カタログ12連発（id1〜18）はポップで速い曲で駆け抜け、
-  # 参加費0円スラム＝トーンが close に反転する id:19 で明るい曲に切り替えて
-  # 締めの空気に変える
+  # 参加導線ハウツー型（script.living-server-join.yaml 用）:
+  # 手順の実演（id1〜11）はテキパキした曲で駆け抜け、
+  # 参加完了＝トーンが inside に反転する id:12 で明るい曲に切り替えて
+  # 「入ったあと」の空気に変える
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
+  #   参加導線ハウツー型・生活サーバー版（script.living-server-join.yaml）:
+  #     amacha_marbletechno1 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 12
+  #   正直CM・王道PR型（script.living-server-promo.yaml）:
+  #     amacha_picopicodisco 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 19
   #   クイズ$ミリオネア型（script.living-server-millionaire.yaml）:
   #     amacha_marbletechno1 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
@@ -50,13 +56,13 @@ bgm:
   #     amacha_technophobia 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
   segments:
-    # 「ピコピコディスコ」— ポップで速い。カタログ12連発を駆け抜けるパートに当てる
-    - src: "amacha_picopicodisco.mp3"
+    # 「マーブルテクノ」— 手順の実演パート（STEP 1〜5）をテキパキ駆け抜ける
+    - src: "amacha_marbletechno1.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 参加費0円スラム。トーンが緑→金に反転する行から切り替える
+    # 「ハッピータイム」— 連携完了。トーンが青→蓬緑に反転する行から切り替える
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 19
+      fromLineId: 14

@@ -615,7 +615,8 @@ public/
 
 | ファイル | 中身 | HUD |
 |----------|------|-----|
-| `config/script.living-server-join.yaml` | **生活サーバー版・参加導線ハウツー型（最新／56秒29行）** | `JoinHud` |
+| `config/script.werewolf-join.yaml` | **マイクラ人狼版・参加導線ハウツー型（最新／25行・Discord連携）** | `JoinHud` |
+| `config/script.living-server-join.yaml` | 生活サーバー版・参加導線ハウツー型（56秒29行） | `JoinHud` |
 | `config/script.living-server-promo.yaml` | 生活サーバー版・正直CM・王道PR型（45秒26行） | `PromoHud` |
 | `config/script.living-server-millionaire.yaml` | 生活サーバー版・クイズ$ミリオネア型（54秒26行） | `MillionHud` |
 | `config/script.werewolf-screenquiz.yaml` | マイクラ人狼版・画面当てクイズ型（21行） | `QuizHud` |
@@ -726,18 +727,42 @@ Switchはフレンド追加（`ymg24mc`）→ 検索CTA →「入ったら、ま
 f60 前後＝明るくて車体が写る位置）。
 **近距離VCの素材は存在しない**ので、人がいる街並みを当てて補う。
 
+**人狼版（`config/script.werewolf-join.yaml`）は同じHUD・同じフィールドのまま
+題材だけ差し替えてある**（25行）。**決定的な違いは手順そのものが別物**で、
+生活サーバーが「アドレスを入れて入るだけ」なのに対し**人狼はDiscord連携が必須**。
+そのぶん「面倒くさそう」という障壁が高いので、手順を最後まで実演して見せる
+この型との相性はむしろ人狼のほうが良い。パネルに映す画面も `discord`（チャンネル一覧＋
+チャットログ＋入力欄）と `code`（連携コード）を新設して対応した。進行は
+STEP 1 Discordに入る／STEP 2 `#おやくそく-rules` で ✅／STEP 3 `#bot操作-command` で
+「1! new ゲーマータグ」／STEP 4 マイクラで `ymgs.f5.si` につないで8桁の連携コードを確認／
+STEP 5 「1! auth コード」→ 連携完了 → 当日は土曜21:30に `#マイクラ人狼VC` に入るだけ →
+会議／PvP／役職47種類／初参加OK／参加費0円。
+
+**人狼のサーバーアドレスは `ymgs.f5.si`**。docs内で記述が矛盾しており
+`wolf/how-to-join/join-with-address.md` の本文④だけが `ymg24.org` になっているが、
+**同じページの要約を含む5箇所が `ymgs.f5.si` で一致している**ので本文④を生活版からの
+コピペ漏れと判断した（ユーザー確認ずみ）。役職数は intro.md の41種類ではなく、
+日付つきで新しい all_roles.md の47種類。**近距離VCはBasic人狼では使わない**ので謳わない。
+
+**人狼で実在する動画素材は4本だけ**なので、生活サーバー版の29行に対して**25行に抑えて**
+使い回しの目立ちを減らしてある。前半（setup）は暗幕＋blurで沈むので目立たない。
+いちばん明るいのは「殺し屋が霊媒師のフリ」の f24〜213（一人称視点の人狼HUD＝役職表示が
+右に映る）で、連携完了スラムと役職の行に当てた。
+
 #### スクリプトのフィールド（join*）
 
 | フィールド | 用途 |
 |-----------|------|
 | `joinTone` | `setup`（手順中・青・映像がぼける）/ `inside`（入ったあと・蓬緑・ピントが合う）。**指定した行から後ろに引き継がれる** |
+| `joinTitle` / `joinTag` | ヘッダ帯のサービス名と、ティッカー左の短いラベル。**最初に指定した行のものを動画全体で使う**（版を変えたらここを直す） |
 | `joinTicker` | 最下部を流れる1文。全行ぶんが連結されて常時流れる |
 | `joinStep` | 何ステップ目か（1→5）。**指定がない行は直前の値を引き継ぐ**。STEPバーの分母は最大値 |
 | `joinGot` | 入ったあとに積み上がる「やったこと」チップ |
 | `joinClockStart` / `joinClockStop` | 経過時間カウンターを回し始める行／止める行 |
-| `joinScreen` | パネルに映す画面（`play` / `servers` / `form`）。**指定した行から後ろに引き継がれ、`inside` で捨てられる** |
-| `joinFocus` | ハイライトする操作対象（`play` / `tab` / `add` / `name` / `address` / `port` / `submit`） |
+| `joinScreen` | パネルに映す画面（`play` / `servers` / `form` / `discord` / `code`）。**指定した行から後ろに引き継がれ、`inside` で捨てられる**。`discord` / `code` はマイクラ人狼版の連携手順用 |
+| `joinFocus` | ハイライトする操作対象（`play` / `tab` / `add` / `name` / `address` / `port` / `submit` / `rules` / `command` / `vc`） |
 | `joinName` / `joinAddress` / `joinPort` | フォームの入力値。**指定した行から後ろに引き継がれる** |
+| `joinChannel` / `joinCommand` / `joinReply` / `joinCode` | Discord画面のチャンネル名・入力欄に打つコマンド・表示するメッセージ（1行目＝BOT / 2行目＝自分。改行で区切る）・連携コード画面の8桁。**人狼版のみ** |
 | `joinTyping` | この行でタイプされるフィールド（`address` など） |
 | `joinPressed` | 「追加してプレイ」が押し込まれる行 |
 | `joinCard` / `joinCardLabel` / `joinCardSub` | 手順カード／ヒントカードの本文・ラベル（STEP 1 / アドレス / 役職 など）・補足行 |

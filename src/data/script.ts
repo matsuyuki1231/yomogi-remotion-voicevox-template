@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":19}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":14}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -300,6 +300,42 @@ export interface ScriptLine {
   pvNote?: string;           // CTA下の小さな注記（※ボランティア運営です 等の但し書き）
   pvResult?: string;         // ループ用リボン（冒頭の宣言に戻す）
   pvResultSub?: string;      // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 参加導線ハウツー型（JoinHud）----
+  joinTone?: "setup" | "inside"; // 手順トーン。指定行から後ろに引き継がれる（手順中＝青・映像がぼける / 入ったあと＝蓬緑・ピントが合う）
+  joinTitle?: string;        // ヘッダ帯のサービス名（最初に指定した行のものを全体で使う）
+  joinTag?: string;          // ティッカー左の短いラベル（参加後）。最初に指定した行のものを全体で使う
+  joinTicker?: string;       // 最下部を流れる1文（全行ぶんを連結して常時流す）
+  joinStep?: number;         // いま何ステップ目か（1→5）。指定がない行は直前の値を引き継ぐ。STEPバーの分母は最大値
+  joinGot?: string;          // 入ったあとに積み上がる「やったこと」チップ（後半の"あと何"メーター）
+  joinClockStart?: boolean;  // この行から経過時間カウンターを回し始める
+  joinClockStop?: boolean;   // この行で経過時間カウンターを止め、以降は確定値として出しっぱなしにする
+  joinScreen?: "play" | "servers" | "form" | "discord" | "code"; // パネルに映す画面。指定がない行はパネルを出さない。discord / code はマイクラ人狼版の連携手順用
+  joinFocus?: string;        // ハイライトする操作対象（play / tab / add / name / address / port / submit / rules / command / vc）
+  joinName?: string;         // フォームのサーバー名。指定した行から後ろに引き継がれる
+  joinAddress?: string;      // フォームのサーバーアドレス。指定した行から後ろに引き継がれる
+  joinPort?: string;         // フォームのポート。指定した行から後ろに引き継がれる
+  joinChannel?: string;      // Discord画面で開いているチャンネル名。指定した行から後ろに引き継がれる
+  joinCommand?: string;      // Discordの入力欄に打つコマンド（1! new / 1! auth）
+  joinReply?: string;        // Discord画面に出すメッセージ（1行目＝BOT / 2行目＝自分。改行で区切る）
+  joinCode?: string;         // 連携コード画面に出す8桁のコード
+  joinTyping?: string;       // この行でタイプされるフィールド（address / port / name / command）
+  joinPressed?: boolean;     // 「追加してプレイ」が押し込まれる行
+  joinCard?: string;         // 手順カード／ヒントカード本文（1カット1手順）
+  joinCardLabel?: string;    // カード左の短いラベル（アドレス / 役職 など）
+  joinCardSub?: string;      // カードの補足行
+  joinRetort?: string;       // ツッコミ吹き出し
+  joinFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  joinFlashSub?: string;     // テロップの上に出す小バッジ
+  joinDone?: string;         // 参加完了スラム（全画面・白フラッシュ。ここでトーンが反転して映像のぼけが取れる）
+  joinDoneSub?: string;      // 参加完了スラムの補足行
+  joinPrice?: string;        // 参加費0円スラム（全画面・金の集中線）
+  joinPriceSub?: string;     // 参加費スラムの補足行
+  joinReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  joinRevealSub?: string;    // まとめ帯の補足行
+  joinCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  joinNote?: string;         // CTA下の小さな注記（※統合版のみ 等の但し書き）
+  joinResult?: string;       // ループ用リボン（冒頭に戻す）
+  joinResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -328,589 +364,608 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "これは、宣伝なのだ！",
-    "pvTone": "pitch",
-    "pvTicker": "これは宣伝です",
-    "pvFlash": "これは\n宣伝です",
-    "pvFlashSub": "正直CM",
+    "text": "はいりかた、これだけなのだ！",
+    "displayText": "入り方、これだけなのだ！",
+    "joinTone": "inside",
+    "joinTitle": "よもぎサーバー マイクラ人狼",
+    "joinTag": "人狼",
+    "joinTicker": "よもぎサーバー マイクラ人狼の入り方",
+    "joinFlash": "入り方\nこれだけ",
+    "joinFlashSub": "よもぎサーバー マイクラ人狼",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 600
+      "startFrom": 120
     },
     "se": {
       "src": "don-1.mp3",
       "volume": 0.5
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 65
+    "durationInFrames": 70
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "隠す気、ゼロなのね。",
-    "pvRetort": "隠す気、ゼロなのね",
+    "text": "人狼、やってみたいのよね。",
+    "joinRetort": "人狼、やってみたいのよね",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 200
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "02_metan.wav",
-    "durationInFrames": 59
+    "durationInFrames": 71
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "よもぎサーバーの生活鯖、できることをぜんぶ見せるのだ！",
-    "pvTicker": "よもぎサーバーの生活鯖",
-    "pvFlash": "できること\nぜんぶ見せます",
-    "pvFlashSub": "よもぎサーバー 生活鯖",
+    "text": "毎週土曜、よる9時半から。参加費はゼロ円なのだ。",
+    "displayText": "毎週土曜21:30から。参加費は0円なのだ。",
+    "joinTone": "setup",
+    "joinClockStart": true,
+    "joinFlash": "毎週土曜 21:30\n参加費 0円",
+    "joinFlashSub": "マイクラ人狼",
+    "joinTicker": "Discordアカウント（13歳以上）と統合版マイクラが必要です",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 1400
+      "startFrom": 71
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.5
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 137
+    "durationInFrames": 145
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "土地を、買うのだ。",
-    "pvNo": 1,
-    "pvCard": "土地を買う",
-    "pvCardLabel": "土地",
-    "pvCardSub": "生活ワールドに自分の土地を持てる",
-    "pvTicker": "土地は生活ワールドで購入できる",
+    "text": "まず、よもぎサーバーのディスコードに入るのだ。",
+    "displayText": "まず、よもぎサーバーのDiscordに入るのだ。",
+    "joinStep": 1,
+    "joinScreen": "discord",
+    "joinChannel": "おやくそく-rules",
+    "joinReply": "よもぎサーバーへようこそ！",
+    "joinCard": "Discordに入る",
+    "joinCardLabel": "STEP 1",
+    "joinCardSub": "用意するのはDiscordと統合版マイクラだけ",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 24
     },
     "se": {
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.5
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 53
+    "durationInFrames": 112
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "家を、建てるのだ。",
-    "pvNo": 2,
-    "pvCard": "家を建てる",
-    "pvCardLabel": "家",
-    "pvCardSub": "買った土地は自分だけのもの",
+    "text": "おやくそくの部屋で、チェックを押すのだ。",
+    "joinStep": 2,
+    "joinFocus": "rules",
+    "joinReply": "利用規約に同意してください\n✅ を押しました",
+    "joinCard": "✅ を押す",
+    "joinCardLabel": "STEP 2",
+    "joinCardSub": "同意しないと次の部屋に入れない",
+    "joinTicker": "利用規約への同意が先。同意すると全チャンネルが見えます",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 150
+      "startFrom": 57
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.5
     },
     "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 62
+    "durationInFrames": 95
   },
   {
     "id": 6,
-    "character": "zundamon",
-    "text": "無人の店も、出せるのだ。",
-    "pvNo": 3,
-    "pvCard": "無人の店を出す",
-    "pvCardLabel": "店",
-    "pvCardSub": "チェストショップ。店番はいらない",
-    "pvTicker": "チェストショップは無人販売所",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "決定ボタンを押す3.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 73
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "チェストは、保護できるのだ。",
-    "pvNo": 4,
-    "pvCard": "チェストを守る",
-    "pvCardLabel": "保護",
-    "pvCardSub": "保護したチェストは自分だけが開けられる",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェスト保護をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "決定ボタンを押す4.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 69
-  },
-  {
-    "id": 8,
     "character": "metan",
-    "text": "もう暮らせるじゃない。",
-    "pvRetort": "もう暮らせるじゃない",
+    "text": "まだ、じゅうびょうも経ってないわ。",
+    "displayText": "まだ、10秒も経ってないわ。",
+    "joinRetort": "まだ10秒も経ってないわ",
     "scene": 2,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 250
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 40
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 69
   },
   {
-    "id": 9,
+    "id": 7,
     "character": "zundamon",
-    "text": "会社を、つくるのだ。",
-    "pvNo": 5,
-    "pvCard": "会社をつくる",
-    "pvCardLabel": "会社",
-    "pvCardSub": "設立は無料。社員の人数は無制限",
-    "pvTicker": "会社は誰でも無料で設立できる（審査あり）",
+    "text": "次の部屋で、イチビックリ ニュー、自分のゲーマータグ。",
+    "displayText": "「1! new 自分のゲーマータグ」とチャット。",
+    "joinStep": 3,
+    "joinChannel": "bot操作-command",
+    "joinFocus": "command",
+    "joinTyping": "command",
+    "joinCommand": "1! new YourGamerTag",
+    "joinReply": "ゲーマータグを教えてください",
+    "joinCard": "1! new ゲーマータグ",
+    "joinCardLabel": "STEP 3",
+    "joinCardSub": "bot操作-command の部屋で送る",
+    "joinTicker": "連携コマンドは 1! new＜ゲーマータグ＞",
     "scene": 2,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 990
+      "startFrom": 216
+    },
+    "se": {
+      "src": "typewriter-1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 164
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "大文字と小文字は、正確にするのだ。",
+    "joinCard": "大文字・小文字に注意",
+    "joinCardLabel": "注意",
+    "joinCardSub": "ここを間違えると連携できない",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 118
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 98
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "アドレスは、ワイエムジイエス ドット エフゴ ドット エスアイ！",
+    "displayText": "アドレスは ymgs.f5.si！",
+    "joinStep": 4,
+    "joinScreen": "form",
+    "joinFocus": "address",
+    "joinTyping": "address",
+    "joinName": "よもぎ人狼",
+    "joinAddress": "ymgs.f5.si",
+    "joinPort": "19132",
+    "joinCard": "ymgs.f5.si",
+    "joinCardLabel": "アドレス",
+    "joinCardSub": "生活サーバーとは別のアドレス",
+    "joinTicker": "人狼のサーバーアドレスは ymgs.f5.si",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 133
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 194
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "ポートは、イチキュウイチサンニのままなのだ。",
+    "displayText": "ポートは 19132 のままなのだ。",
+    "joinFocus": "port",
+    "joinCard": "19132",
+    "joinCardLabel": "ポート",
+    "joinCardSub": "はじめから入っている",
+    "joinTicker": "ポートは 19132 のまま",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "決定ボタンを押す4.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 100
+  },
+  {
+    "id": 11,
+    "character": "zundamon",
+    "text": "つなぐと、レンケイコードが出るのだ。",
+    "displayText": "つなぐと、連携コードが出るのだ。",
+    "joinScreen": "code",
+    "joinCode": "a4k9m2p7",
+    "joinCard": "8桁のコードをメモ",
+    "joinCardLabel": "コード",
+    "joinCardSub": "人によって違う。忘れたら入り直せば再表示される",
+    "scene": 2,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 166
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 93
+  },
+  {
+    "id": 12,
+    "character": "metan",
+    "text": "これを、どうするの？",
+    "joinRetort": "これを、どうするの？",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 264
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "12_metan.wav",
+    "durationInFrames": 49
+  },
+  {
+    "id": 13,
+    "character": "zundamon",
+    "text": "ディスコードに戻って、イチ ビックリ オース、コードなのだ。",
+    "displayText": "Discordに戻って「1! auth コード」。",
+    "joinStep": 5,
+    "joinScreen": "discord",
+    "joinChannel": "bot操作-command",
+    "joinFocus": "command",
+    "joinTyping": "command",
+    "joinCommand": "1! auth a4k9m2p7",
+    "joinReply": "連携しました！ありがとうございました\n1! auth a4k9m2p7",
+    "joinCard": "1! auth コード",
+    "joinCardLabel": "STEP 5",
+    "joinTicker": "連携は 1! auth＜連携コード＞で完了",
+    "scene": 2,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 208
     },
     "se": {
       "src": "決定ボタンを押す5.mp3",
       "volume": 0.5
     },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 59
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "釣り。魚は、ニヒャクナナジュウゴ種類なのだ。",
-    "displayText": "釣り。魚は、275種類なのだ。",
-    "pvNo": 6,
-    "pvCard": "魚は275種類",
-    "pvCardLabel": "釣り",
-    "pvCardSub": "バニラにいない魚も釣れる",
-    "pvTicker": "釣りで釣れる魚は275種類",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 400
-    },
-    "se": {
-      "src": "決定ボタンを押す22.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 123
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "農業も、できるのだ。",
-    "pvNo": 7,
-    "pvCard": "農業をする",
-    "pvCardLabel": "農業",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 80
-    },
-    "se": {
-      "src": "決定ボタンを押す23.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 63
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "素材は、資源ワールドで掘るのだ。",
-    "pvNo": 8,
-    "pvCard": "資源ワールドで掘る",
-    "pvCardLabel": "採掘",
-    "pvCardSub": "人工資源・天然資源ワールドがある",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "決定ボタンを押す31.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 89
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "バフを借りて、サクサク進めるのだ。",
-    "pvNo": 9,
-    "pvCard": "バフを借りる",
-    "pvCardLabel": "バフ",
-    "pvCardSub": "採掘速度上昇や暗視をレンタル",
-    "pvTicker": "バフは有料レンタル",
-    "scene": 2,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "animation": "none",
-      "startFrom": 40
-    },
-    "se": {
-      "src": "決定ボタンを押す32.mp3",
-      "volume": 0.5
-    },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 92
+    "durationInFrames": 177
   },
   {
     "id": 14,
-    "character": "metan",
-    "text": "コツコツやる人に、よさそうね。",
-    "pvRetort": "コツコツやる人に、よさそう",
-    "scene": 2,
-    "pauseAfter": -3,
+    "character": "zundamon",
+    "text": "レンケイ、完了なのだ！",
+    "displayText": "連携、完了なのだ！",
+    "joinTone": "inside",
+    "joinClockStop": true,
+    "joinDone": "連携 完了",
+    "joinDoneSub": "あとは土曜を待つだけ",
+    "joinTicker": "連携は一度だけ。次からは待つだけです",
+    "scene": 3,
+    "pauseAfter": 24,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/人工資源で原木を掘っている動画2.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 71
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
+      "src": "jajean1.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "14_metan.wav",
+    "voiceFile": "14_zundamon.wav",
     "durationInFrames": 72
   },
   {
     "id": 15,
-    "character": "zundamon",
-    "text": "車に、乗るのだ。",
-    "pvNo": 10,
-    "pvCard": "車に乗る",
-    "pvCardLabel": "車",
-    "pvCardSub": "生活ワールドを駆け回れる",
-    "scene": 2,
-    "pauseAfter": -4,
+    "character": "metan",
+    "text": "本当に、1分もかかってないわ。",
+    "joinRetort": "本当に1分もかかってないわ",
+    "scene": 3,
+    "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 168
     },
     "se": {
-      "src": "決定ボタンを押す42.mp3",
-      "volume": 0.5
+      "src": "correct1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 56
+    "voiceFile": "15_metan.wav",
+    "durationInFrames": 80
   },
   {
     "id": 16,
     "character": "zundamon",
-    "text": "ガチャを、引くのだ。",
-    "pvNo": 11,
-    "pvCard": "ガチャを引く",
-    "pvCardLabel": "ガチャ",
-    "pvCardSub": "レアアイテムが出る",
-    "pvTicker": "ガチャはチケットで引ける",
-    "scene": 2,
+    "text": "あとは土曜のよる9時半、人狼のブイシイに入るだけなのだ。",
+    "displayText": "あとは土曜21:30、人狼VCに入るだけなのだ。",
+    "joinGot": "土曜21:30",
+    "joinCard": "人狼VCに入る",
+    "joinCardLabel": "当日",
+    "joinCardSub": "Discordの #マイクラ人狼VC。聞き専でもOK",
+    "joinTicker": "当日は Discord の #マイクラ人狼VC に集合",
+    "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 300
     },
     "se": {
       "src": "決定ボタンを押す1.mp3",
       "volume": 0.5
     },
     "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 52
+    "durationInFrames": 149
   },
   {
     "id": 17,
-    "character": "zundamon",
-    "text": "称号も、つけられるのだ。",
-    "pvNo": 12,
-    "pvCard": "称号をつける",
-    "pvCardLabel": "称号",
-    "pvCardSub": "自作の称号も作れる",
-    "scene": 2,
+    "character": "metan",
+    "text": "で、どんなゲームなの？",
+    "joinRetort": "で、どんなゲームなの？",
+    "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/称号を購入して変更している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 350
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "17_metan.wav",
+    "durationInFrames": 65
+  },
+  {
+    "id": 18,
+    "character": "zundamon",
+    "text": "会議して、投票して、つるすのだ。",
+    "displayText": "会議して、投票して、吊るのだ。",
+    "joinGot": "会議",
+    "joinCard": "会議して投票する",
+    "joinCardLabel": "中身",
+    "joinCardSub": "カードの人狼と同じ流れ",
+    "scene": 3,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 171
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.5
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 70
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 99
   },
   {
-    "id": 18,
+    "id": 19,
     "character": "zundamon",
-    "text": "島をつくって、自分のワールドも持てるのだ。",
-    "pvNo": 13,
-    "pvCard": "自分の島を持つ",
-    "pvCardLabel": "島",
-    "pvCardSub": "島プラグインで自分だけのワールド",
-    "pvTicker": "島プラグインで自分だけのワールドを作れる",
-    "scene": 2,
+    "text": "外では、ユミやジュウで撃ち合うのだ。",
+    "displayText": "外では、弓や銃で撃ち合うのだ。",
+    "joinGot": "PvP",
+    "joinCard": "弓や銃で撃ち合う",
+    "joinCardLabel": "戦闘",
+    "joinCardSub": "マイクラならではの決着のつけ方",
+    "joinTicker": "会議と投票に加えて弓や狙撃銃でのPvPがあります",
+    "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 213
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
       "volume": 0.5
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 110
-  },
-  {
-    "id": 19,
-    "character": "metan",
-    "text": "もはや、別のゲームよ。",
-    "pvRetort": "もはや、別のゲームよ",
-    "scene": 2,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "19_metan.wav",
-    "durationInFrames": 61
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 91
   },
   {
     "id": 20,
     "character": "zundamon",
-    "text": "近くの人と、声でしゃべれるのだ。",
-    "pvNo": 14,
-    "pvCard": "声でしゃべる",
-    "pvCardLabel": "VC",
-    "pvCardSub": "近距離VC。距離で音量が変わる",
-    "pvTicker": "近距離VCは近くの人と話せる",
-    "scene": 2,
+    "text": "役職は、ヨンジュウナナ種類あるのだ。",
+    "displayText": "役職は、47種類あるのだ。",
+    "joinGot": "47役職",
+    "joinCard": "役職は47種類",
+    "joinCardLabel": "役職",
+    "joinCardSub": "基本役職＋このサーバー独自の役職",
+    "joinTicker": "役職は47種類（2026年7月19日時点）",
+    "scene": 3,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 24
     },
     "se": {
       "src": "決定ボタンを押す4.mp3",
       "volume": 0.5
     },
     "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 88
+    "durationInFrames": 96
   },
   {
     "id": 21,
-    "character": "metan",
-    "text": "で、おいくらなの？",
-    "pvRetort": "で、おいくらなの？",
-    "scene": 2,
-    "pauseAfter": -3,
+    "character": "zundamon",
+    "text": "初めてでも、開始時にルール説明があるのだ。",
+    "joinGot": "初心者OK",
+    "joinCard": "ルール説明つき",
+    "joinCardLabel": "初参加",
+    "joinCardSub": "21:30から参加すれば予習はいらない",
+    "joinTicker": "開始時にルール説明があるので初参加でも大丈夫",
+    "scene": 3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 72
     },
     "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
+      "src": "決定ボタンを押す5.mp3",
+      "volume": 0.5
     },
-    "voiceFile": "21_metan.wav",
-    "durationInFrames": 52
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 117
   },
   {
     "id": 22,
     "character": "zundamon",
-    "text": "参加費、ゼロ円なのだ！",
-    "pvTone": "close",
-    "pvNo": 15,
-    "pvPrice": "参加費 0円",
-    "pvPriceSub": "これも「できること」なのだ",
-    "pvTicker": "参加費0円",
-    "scene": 3,
+    "text": "参加費は、ゼロ円なのだ。",
+    "displayText": "参加費は、0円なのだ。",
+    "joinPrice": "参加費 0円",
+    "joinPriceSub": "ボランティア運営です",
+    "joinTicker": "参加費は0円",
+    "scene": 4,
     "pauseAfter": 10,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 3000
+      "startFrom": 166
     },
     "se": {
-      "src": "jajean1.mp3",
+      "src": "text-impact1.mp3",
       "volume": 0.5
     },
     "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 74
+    "durationInFrames": 75
   },
   {
     "id": 23,
     "character": "metan",
-    "text": "よもぎサーバーの生活鯖。24時間、あそべるわ。",
-    "pvReveal": "よもぎ生活サーバー",
-    "pvRevealSub": "統合版・24時間・参加費0円",
-    "pvTicker": "24時間あそべる生活・経済サーバー",
-    "scene": 3,
+    "text": "よもぎサーバーのマイクラジンロウ。毎週土曜、よる9時半ね。",
+    "displayText": "よもぎサーバーのマイクラ人狼。毎週土曜21:30ね。",
+    "joinReveal": "よもぎサーバー マイクラ人狼",
+    "joinRevealSub": "毎週土曜 21:30・統合版・参加費0円",
+    "joinTicker": "統合版マイクラで遊べる人狼イベント",
+    "scene": 4,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 380
+      "startFrom": 312
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.45
     },
     "voiceFile": "23_metan.wav",
-    "durationInFrames": 126
+    "durationInFrames": 141
   },
   {
     "id": 24,
-    "character": "zundamon",
-    "text": "統合版なら、スマホでも遊べるのだ。",
-    "pvFlash": "スマホでもOK",
-    "pvFlashSub": "統合版",
-    "pvTicker": "統合版で参加できる",
-    "scene": 3,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 2200
-    },
-    "se": {
-      "src": "text-impact1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "24_zundamon.wav",
-    "durationInFrames": 100
-  },
-  {
-    "id": 25,
     "character": "metan",
-    "text": "はいりかたは、よもぎサーバーで検索ね。",
+    "text": "まよったら、よもぎサーバーで検索ね。",
     "displayText": "「よもぎサーバー」で検索",
-    "pvCta": "よもぎサーバー",
-    "pvNote": "※統合版のみ・ボランティア運営です",
-    "scene": 3,
+    "joinCta": "よもぎサーバー",
+    "joinNote": "※統合版のみ・Discord連携が必要です",
+    "scene": 4,
     "pauseAfter": -3,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "zoomIn",
-      "backgroundSrc": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "backgroundStartFrom": 500
+      "backgroundSrc": "マイクラ人狼/会議中の風景2.mp4",
+      "backgroundStartFrom": 120
     },
     "se": {
-      "src": "決定ボタンを押す5.mp3",
+      "src": "決定ボタンを押す1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "25_metan.wav",
-    "durationInFrames": 87
+    "voiceFile": "24_metan.wav",
+    "durationInFrames": 85
   },
   {
-    "id": 26,
+    "id": 25,
     "character": "zundamon",
-    "text": "参加、待ってるのだ。どれから始めるか、コメントで！",
-    "pvResult": "参加、待ってる",
-    "pvResultSub": "どれから始める？ コメントで",
-    "scene": 3,
+    "text": "土曜の夜、待ってるのだ。役職、なにがいい？",
+    "joinResult": "土曜の夜、待ってる",
+    "joinResultSub": "役職、なにがいい？ コメントで",
+    "scene": 4,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 600
+      "startFrom": 120
     },
     "se": {
       "src": "sceneswitch1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 149
+    "voiceFile": "25_zundamon.wav",
+    "durationInFrames": 143
   }
 ];
 
