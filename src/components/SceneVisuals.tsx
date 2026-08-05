@@ -36,7 +36,23 @@ interface SceneVisualsProps {
    * **進行方向が変わってはいけない**ので常に右→左で固定する。
    */
   rail?: "moving" | "stopped";
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（認定試験・答案採点型）。
+   *
+   * この型は下半分を答案用紙が占めるので、映像が見えるのは 206〜1080 の
+   * 874px しかない。そこへいつもの 160%×125%（＝実質4倍以上）で敷くと
+   * プラグインのGUIも風景もドアップになって何が映っているか分からなくなる。
+   * エリアの高さに合わせて素材の縦を 125% に収め、上下だけを画面外へ逃がす
+   * （＝座標表示とホットバーは切れる）。横は素材の比率ぶんはみ出すので、
+   * その範囲でゆっくりパンする。
+   */
+  exam?: boolean;
 }
+
+// 映像エリア（ExamHud のレイアウトに合わせて固定）。
+// ここを変えるときは ExamHud 側の PAPER_TOP も一緒に見ること
+const EXAM_TOP = 206;
+const EXAM_HEIGHT = 874;
 
 // モニターの位置（画面当てクイズ型のレイアウトに合わせて固定）。
 // 素材は 1920×1012（比率 1.897）なので、画面幅いっぱいに置くと高さは約569になる。
@@ -148,6 +164,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   handheld = false,
   screen = false,
   rail,
+  exam = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -176,6 +193,53 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
 
   if (!visual || visual.type === "none") {
     return null;
+  }
+
+  if (visual.type === "video" && visual.src && exam) {
+    const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
+    // 素材（1920×1012）をエリアの高さ125%に合わせると幅は約2071px。
+    // はみ出した左右のぶんだけ、ゆっくり往復させる
+    const EXAM_PAN = 150;
+    const examPan = interpolate(
+      frame,
+      [0, 320],
+      lineId % 2 === 0 ? [EXAM_PAN, -EXAM_PAN] : [-EXAM_PAN, EXAM_PAN],
+      { extrapolateRight: "clamp" }
+    );
+    const punch = interpolate(frame, [0, fps * 0.4], [1.06, 1], {
+      extrapolateRight: "clamp",
+      easing: Easing.out(Easing.cubic),
+    });
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: EXAM_TOP,
+          left: 0,
+          right: 0,
+          height: EXAM_HEIGHT,
+          overflow: "hidden",
+          background: "#04060d",
+        }}
+      >
+        <OffthreadVideo
+          src={staticFile(`content/${visual.src}`)}
+          style={{
+            position: "absolute",
+            // 上下 12.5% ぶんを画面外へ逃がして座標表示とホットバーを切る
+            top: "-12%",
+            left: "50%",
+            height: "125%",
+            width: "auto",
+            maxWidth: "none",
+            transform: `translateX(calc(-50% + ${examPan}px)) scale(${punch})`,
+          }}
+          startFrom={startFrom}
+          muted
+        />
+      </div>
+    );
   }
 
   if (visual.type === "video" && visual.src && screen) {

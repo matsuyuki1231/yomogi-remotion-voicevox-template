@@ -326,6 +326,33 @@ interface ScriptLine {
   railNote?: string;
   railResult?: string;
   railResultSub?: string;
+  examTone?: string;
+  examTitle?: string;
+  examExaminee?: string;
+  examPass?: number;
+  examNo?: number;
+  examScore?: number;
+  examHook?: string;
+  examHookSub?: string;
+  examQ?: string;
+  examChoices?: string[];
+  examAnswer?: number;
+  examTimer?: boolean;
+  examShowAnswer?: boolean;
+  examExplain?: string;
+  examExplainSub?: string;
+  examSource?: string;
+  examRetort?: string;
+  examFlash?: string;
+  examFlashSub?: string;
+  examCert?: string;
+  examCertSub?: string;
+  examReveal?: string;
+  examRevealSub?: string;
+  examCta?: string;
+  examNote?: string;
+  examResult?: string;
+  examResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -803,6 +830,34 @@ export interface ScriptLine {
   railNote?: string;         // CTA下の小さな注記（※駅名は演出です 等の但し書き）
   railResult?: string;       // ループ用リボン（環状線＝冒頭の駅に戻す）
   railResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 認定試験・答案採点型（ExamHud）----
+  examTone?: "test" | "pass"; // 試験トーン。指定行から後ろに引き継がれる（試験中＝藍 / 合格＝金・紙が畳まれる）
+  examTitle?: string;        // 試験名。最初に指定した行のものを動画全体で使う
+  examExaminee?: string;     // 受験者名（あなた）。最初に指定した行のものを動画全体で使う
+  examPass?: number;         // 合格ライン（点）。得点メーターにマーカーが立つ
+  examNo?: number;           // 何問目か。指定がない行は直前の値を引き継ぐ
+  examScore?: number;        // 得点。指定がない行は直前の値を引き継ぐ（増えた行だけ弾む）
+  examHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  examHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  examQ?: string;            // 設問文（答案用紙の上段）
+  examChoices?: string[];    // 選択肢（3つ想定）。出題行と解答行の両方に同じ内容を書く
+  examAnswer?: number;       // 正解の位置（0始まり）
+  examTimer?: boolean;       // 出題行に true。制限時間バーがセリフの尺いっぱいで縮む
+  examShowAnswer?: boolean;  // 解答行に true。選択肢を畳んで正解だけ残し、赤ペンで丸が描かれる
+  examExplain?: string;      // 解説パネルの見出し（この型の本体）
+  examExplainSub?: string;   // 解説パネルの補足行（改行はYAML側で明示する）
+  examSource?: string;       // 解説パネルの出典（docs のページ名）
+  examRetort?: string;       // ツッコミ吹き出し
+  examFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  examFlashSub?: string;     // テロップの上に出す小バッジ
+  examCert?: string;         // 認定証（全画面・白フラッシュ＋朱印）。ここでトーンが金に反転する
+  examCertSub?: string;      // 認定証の補足行
+  examReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  examRevealSub?: string;    // まとめ帯の補足行
+  examCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  examNote?: string;         // CTA下の小さな注記（※得点と合格ラインは演出です 等）
+  examResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
+  examResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

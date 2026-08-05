@@ -112,11 +112,19 @@ import {
   RailHud,
   RailTone,
 } from "./components/RailHud";
+import {
+  ExamBackdrop,
+  ExamScrim,
+  ExamChrome,
+  ExamHud,
+  ExamTone,
+} from "./components/ExamHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "exam"
   | "rail"
   | "news"
   | "court"
@@ -133,6 +141,7 @@ type Format =
   | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
+// exam* なら認定試験・答案採点型、
 // rail* なら路線図・車内アナウンス型、join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
@@ -151,8 +160,10 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
-  // rail* は既存のどの接頭辞とも互いに素（r で始まるのは rw* / resp* / reply*）。
+  // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
+  // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("exam")) return "exam";
   if (hasPrefix("rail")) return "rail";
   if (hasPrefix("join")) return "join";
   if (hasPrefix("pv")) return "promo";
@@ -835,6 +846,102 @@ export const Main: React.FC = () => {
   const railDest = scriptData.find((line) => line.railDest)?.railDest ?? "";
   const railStops = scriptData.find((line) => line.railStops)?.railStops ?? [];
 
+  // ---- 試験トーン（試験中 / 合格）を解決。認定証の行から後ろに引き継がれる ----
+  // pass に入ると答案用紙を畳んで映像を全面に開き、色が藍から金に反転する
+  const examToneResolved: ExamTone[] = (() => {
+    let current: ExamTone = "test";
+    return scriptData.map((line) => {
+      if (line.examTone === "test" || line.examTone === "pass") {
+        current = line.examTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const examNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.examNo === "number") {
+        current = line.examNo;
+      }
+      return current;
+    });
+  })();
+
+  // 問番号の分母。スクリプト中でいちばん大きい問題番号を全問数とする
+  const examNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.examNo ?? 0),
+    1
+  );
+
+  // ---- 得点を解決。指定がない行は直前の値を引き継ぐ ----
+  const examScoreResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.examScore === "number") {
+        current = line.examScore;
+      }
+      return current;
+    });
+  })();
+
+  // 満点。スクリプト中でいちばん大きい得点を満点とする
+  const examScoreTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.examScore ?? 0),
+    1
+  );
+
+  // 試験名・受験者名・合格ラインは最初に指定した行のものを動画全体で使う
+  const examTitle =
+    scriptData.find((line) => line.examTitle)?.examTitle ?? "認定試験";
+  const examExaminee =
+    scriptData.find((line) => line.examExaminee)?.examExaminee ?? "あなた";
+  const examPassLine =
+    scriptData.find((line) => typeof line.examPass === "number")?.examPass ?? null;
+
+  // ---- 答案用紙の中身（設問・選択肢・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行で紙が空になると、下半分に白紙が出て間延びする。
+  // 直前の設問と解説をそのまま残し、めたんがそれを見て反応している画にする
+  // （この型は解説を読ませること自体が本体なので、残る時間が長いほうがよい）。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // 合格（pass）以降は紙ごと畳むので持ち越さない。
+  type ExamCard = {
+    q?: string;
+    choices?: string[];
+    answer?: number;
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const examCardResolved: (ExamCard | null)[] = (() => {
+    let current: ExamCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.examQ) {
+        current = {
+          q: line.examQ,
+          choices: line.examChoices,
+          answer: line.examAnswer,
+          showAnswer: line.examShowAnswer,
+          explain: line.examExplain,
+          explainSub: line.examExplainSub,
+          source: line.examSource,
+        };
+      }
+      return examToneResolved[i] === "test" ? current : null;
+    });
+  })();
+
+  // ---- 答案用紙を出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、合格したあと（認定証以降）は紙を出さず、
+  // 映像を全画面に開く。映像の敷き方（SceneVisuals の exam モード）も
+  // これと同じ条件で切り替えるので、紙のない行で下半分が黒く空くことがない
+  const examPaperShown = (index: number): boolean =>
+    index >= 0 &&
+    examToneResolved[index] === "test" &&
+    examNoResolved[index] !== null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -877,6 +984,10 @@ export const Main: React.FC = () => {
         return undefined;
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
+        return undefined;
+      // 認定試験型にもティッカーはない（最下部は答案用紙。
+      // 2026年8月5日以降の新フォーマットは流れる帯そのものを作らない方針）
+      case "exam":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1102,6 +1213,24 @@ export const Main: React.FC = () => {
       line.pvResult
     );
 
+  // 認定試験HUDのパーツが1つでも出るか。
+  // 設問カードは引き継ぎで出る行もあるので index で判定する
+  const hasExamHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      examCardResolved[index] ||
+      line.examHook ||
+      line.examQ ||
+      line.examChoices ||
+      line.examExplain ||
+      line.examRetort ||
+      line.examFlash ||
+      line.examCert ||
+      line.examReveal ||
+      line.examCta ||
+      line.examNote ||
+      line.examResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -1127,6 +1256,21 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 認定試験型は設問・選択肢・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときは答案用紙が畳まれている）
+      case "exam":
+        return !!(
+          line.examHook ||
+          line.examQ ||
+          line.examChoices ||
+          line.examExplain ||
+          line.examRetort ||
+          line.examFlash ||
+          line.examCert ||
+          line.examReveal ||
+          line.examResult
+        );
       // 路線図型は駅名標・説明プレート・テロップが画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ
       case "rail":
@@ -1297,6 +1441,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "exam":
+        return <ExamBackdrop />;
       case "rail":
         return <RailBackdrop />;
       case "join":
@@ -1339,6 +1485,11 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 認定試験型は上（ヘッダ・得点メーター）だけを落として、中央＝映像は
+      // できるだけ素通しにする（機能が動いている画を見せたい）。下は答案用紙が
+      // 乗るので落とさない。合格後は紙が畳まれるので全体を沈めて金を差す
+      case "exam":
+        return <ExamScrim tone={examToneResolved[index]} />;
       // 路線図型は上部（LED表示と路線図）を強めに落とし、中央＝窓の外は
       // できるだけ素通しにする。走行中だけ光の筋が流れる
       case "rail":
@@ -1392,6 +1543,23 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "exam":
+        return (
+          <ExamChrome
+            tone={currentIndex >= 0 ? examToneResolved[currentIndex] : "test"}
+            title={examTitle}
+            examinee={examExaminee}
+            no={currentIndex >= 0 ? examNoResolved[currentIndex] : null}
+            noTotal={examNoTotal}
+            score={currentIndex >= 0 ? examScoreResolved[currentIndex] : null}
+            scorePrev={currentIndex > 0 ? examScoreResolved[currentIndex - 1] : null}
+            scoreTotal={examScoreTotal}
+            passLine={examPassLine}
+            // 出題前と、合格（＝認定証）以降は答案用紙を畳んで映像を全面に開く
+            paper={examPaperShown(currentIndex)}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "rail":
         return (
           <RailChrome
@@ -1596,6 +1764,38 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "exam":
+        if (!hasExamHud(line, currentIndex)) return null;
+        return wrap(
+          <ExamHud
+            tone={examToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.examHook}
+            hookSub={line.examHookSub}
+            question={examCardResolved[currentIndex]?.q}
+            choices={examCardResolved[currentIndex]?.choices}
+            answer={examCardResolved[currentIndex]?.answer}
+            timer={line.examTimer}
+            showAnswer={examCardResolved[currentIndex]?.showAnswer}
+            explain={examCardResolved[currentIndex]?.explain}
+            explainSub={examCardResolved[currentIndex]?.explainSub}
+            source={examCardResolved[currentIndex]?.source}
+            // 自分で設問を出していない行は、前の設問と解説を残しているだけ
+            held={!line.examQ}
+            retort={line.examRetort}
+            flash={line.examFlash}
+            flashSub={line.examFlashSub}
+            cert={line.examCert}
+            certSub={line.examCertSub}
+            reveal={line.examReveal}
+            revealSub={line.examRevealSub}
+            cta={line.examCta}
+            note={line.examNote}
+            result={line.examResult}
+            resultSub={line.examResultSub}
+            durationInFrames={span}
+          />
+        );
       case "rail":
         if (!hasRailHud(line)) return null;
         return wrap(
@@ -2058,6 +2258,10 @@ export const Main: React.FC = () => {
                     : "stopped"
                   : undefined
               }
+              // 認定試験型は下半分を答案用紙が占めるので、映像は上部エリアだけに
+              // 収める（いつもの拡大だとGUIも風景もドアップになって読めない）。
+              // 合格後は紙が畳まれて画面が空くので、そこからは全画面に戻す
+              exam={FORMAT === "exam" && examPaperShown(index)}
             />
             {renderScrim(index)}
           </Sequence>
