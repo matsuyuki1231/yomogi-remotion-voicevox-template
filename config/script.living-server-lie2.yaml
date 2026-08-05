@@ -1,0 +1,743 @@
+# スクリプトデータ（よもぎ生活サーバー 宣伝ショート / ウソ発見器・ウソ当て型 第2弾）
+# セリフを編集後、npm run sync-script → npm run voices の順で反映
+#
+# ■ フォーマット: 「ウソ発見器・ウソ当て型（LIE）」よもぎ生活鯖 ウソ発見器（2本目）
+#   1本目（config/script.living-server-lie.yaml / 動画ID 2bB5E4z_XYY）と
+#   **同じHUD・同じフィールド・同じ構成**で、**出題を8問まるごと入れ替えた**版。
+#   HUDもフィールドも一切いじっていないので、コード側の変更は不要。
+#
+# ■ 1本目と重複しない要素だけで8問を組んである
+#   1本目で使ったのは エレベーター／役職の採掘単価／チェストショップと有人レジ／
+#   会社の設立と公認企業／処罰の点数制／土地の売買／ガチャ／参加費 の8つ。
+#   この2本目はそこを1つも使わず、**まだ一度も動画にしていない要素**で組んだ:
+#     エフェクトのレンタル（秒課金）／最低販売価格の適用範囲／チェストショップの
+#     遠隔購入と「検索機能をわざと作らなかった」設計思想／島の拡張と返金なし／
+#     称号の作成制限と色分け／チェスト・ドア保護／優良企業ガイドラインの労働条件。
+#   最終問題（参加費・スマホ・24時間）だけは型の締めとして1本目と共通。
+#
+# ■ この2本目でいちばん濃いのは第3問（チェストショップの遠隔購入）
+#   「ショップの検索機能がある」がウソで、**運営がわざと作らなかった**のが正解。
+#   スポーン地点に近い土地の価値が落ちるのを防ぐため、という理由まで docs に
+#   書いてある。機能の有無ではなく**設計思想**が出るので、
+#   「そこまで考えて作ってるのか」がいちばん伝わる。ここは尺を削らない。
+#
+# ■ この型の芯（1本目と同じ）
+#   **「ウソくさいほうが、本当だった」**。ウソ札は「自動で止まる」「検索機能がある」
+#   「返ってくる」「自由に作れる」「お金がいる」のような *いかにもありそうな親切/制限* で、
+#   逆に「走るとお金がへる」「消しても返金なし」「検索はわざと無い」のような
+#   *ありえない話* が本当。
+#
+#   残るウソが id19 で 0 になった直後に第8問が来て、そこには**ウソが1枚もない**。
+#
+# ■ 設計原則との対応
+#   1. 冒頭1秒は「転」… 前置きゼロで「マイクラで、はやく走るとお金がへるのだ」
+#   2. 常設の"あと何"メーター … 残るウソ 7→0
+#   3. 1カット1情報 … 1問3枚。すべて docs/yomogi で裏が取れる
+#   4. ループ … 最終行の映像を id1 と同じ位置に戻して冒頭へ返す
+#   5. 説明してよい型 … ウソ発見器のパロディUIなので画面が明示するのが本体
+#   6. ティッカーなし
+#
+# ■ 構造上のルール（1本目と同じ）
+#   - 供述カード（lieCards）は**15文字以内**、事実リスト（lieFacts）は**11文字以内**
+#   - 出題行と解答行の両方に lieTheme / lieCards / lieAnswer を書く
+#   - **ウソ札は解答行で必ず明示的に否定する**
+#   - **出題行のセリフは長めに書く（＝シンキングタイム）**。この型はセリフが終わると
+#     画面が切り替わるので、考える時間は出題行の音声の長さでしか作れない。
+#     問番号＋テーマ＋ひとこと（30文字前後）にして4.5〜6秒を確保する
+#   - 解説パネルの縦位置は残ったカードの枚数で変わる（2枚→1404 / 3枚→1546）。
+#     3枚残る最終問題では補足を2行までに抑える
+#
+# ■ 読みの注意（VOICEVOX の audio_query で確認ずみ）
+#   問番号は「第2問」〜「第6問」「第8問」を**カタカナ**（`ダイニモン`〜`ダイハチモン`）、
+#   「第1問」「第7問」を**ひらがな**（`だいいちもん` / `だいななもん`）。
+#   「24コ」は ジュウ'/ハチ'コ と割れるので**カタカナ**（`ニジュウヨンコ`）。
+#   「24時間」は ニ'ジュウ/ヨジ'カン と割れるので**セリフでは読ませない**（カードにだけ出す）。
+#   「200×200」「170%」「2300YG」「5000YG」もカードとテロップにだけ出す。
+#
+# ■ 情報ソース: docs/yomogi 配下（すべて出典つきで画面に出す）
+#   エフェクトのレンタル（living/commands/buff）… スピード/跳躍/採掘速度は2YG/秒、
+#     暗視は4YG/秒、空腹は0YG。2秒に1回2秒ぶんが自動で引かれる。複数同時は2×個数。
+#     **/buff で切るかサーバーを出るまで引かれ続ける**（切り忘れ注意の記載あり）
+#   最低販売価格（living/supplement/minimum-price）… 鉄300YG／ダイヤ2300YG／小麦3YG。
+#     クラフト品は材料の個数×最低価格（パン9YG／鉄のツルハシ900YG／金床9300YG）。
+#     **会社内の取引でも適用される**（社長が社員から買うときも2300YG以上）。
+#     /checkprice で手持ちアイテムの下限を確認できる
+#   チェストショップ（living/supplement/chest-shop）… 2025年5月15日から遠隔購入可、
+#     遠隔時の価格は本来の170%（うち70%が手数料）。**ショップの検索機能は
+#     スポーン地点に近い土地の価値低下を防ぐため意図的に設けていない**。
+#     遠隔購入は毎回ショップIDの入力が必要
+#   島プラグイン（living/commands/island）… 作成3,000,000YG、拡張1回目1,000,000YGで120×120、
+#     5回で200×200。**削除しても作成費は戻らず復元もできない**。他プレイヤーを招待できる
+#   称号プラグイン（living/commands/rank）… 作成5000YG。**太字斜体が入った称号は
+#     ユーザーが作成できない**。[]の色＝白:自作／オレンジ:看板購入／水色:アスレチック報酬／
+#     紫:イベント／黄緑:ミッション
+#   チェスト保護（living/commands/chest-protection）… /clock、/cpasslock でパスワード付き、
+#     **すべての機能が無料**。ドア保護（living/commands/door-protection）… /doorlock、無料
+#   優良企業ガイドライン（living/supplement/good-standing-company）… 第6条1 面接でため口禁止、
+#     第3条13 ノルマは週3時間未満、第5条8 **業務に必要な費用（ツール代など）を社員に
+#     負担させてはいけない**、第7条1 事実上の時給5000YG以上に努める
+#   参加方法（living/how-to-join、faq/device）… 統合版・参加費0円
+
+# ===== 冒頭3行。ゲームのルールを説明ゼロで飲み込ませる =====
+- id: 1
+  character: zundamon
+  text: マイクラで、はやく走るとお金がへるのだ。
+  lieTone: test
+  lieTitle: よもぎ生活鯖 ウソ発見器
+  lieHook: 走ると、お金がへる
+  lieHookSub: ウソ？ 本当？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: text-impact1.mp3
+    volume: 0.45
+
+- id: 2
+  character: metan
+  text: そんなの、ウソに決まってるわ。
+  lieRetort: そんなの、ウソに決まってるわ
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: 決定ボタンを押す3.mp3
+    volume: 0.4
+
+- id: 3
+  character: zundamon
+  text: 本当なのだ。よもぎ生活鯖の話に、ウソを7つ混ぜるのだ。
+  displayText: 本当なのだ。ここから、ウソを7つ混ぜるのだ。
+  lieFlash: ウソは、7つ
+  lieFlashSub: 残りは、ぜんぶ本当
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1350
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+# ===== 第1問 エフェクトのレンタル（秒課金）=====
+- id: 4
+  character: zundamon
+  text: だいいちもん。エフェクトの話なのだ。ウソは、どれなのだ？
+  lieNo: 1
+  lieLeft: 7
+  lieThemeLabel: バフ
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - スピード上昇は1秒2YG
+    - 空腹エフェクトは0円
+    - 切り忘れても自動で止まる
+  lieAnswer: 2
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4
+    animation: none
+    startFrom: 40
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+- id: 5
+  character: zundamon
+  text: ウソは、ウ。じぶんで切るまで、引かれ続けるのだ。
+  lieLeft: 6
+  lieThemeLabel: バフ
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - スピード上昇は1秒2YG
+    - 空腹エフェクトは0円
+    - 切り忘れても自動で止まる
+  lieAnswer: 2
+  lieShowAnswer: true
+  lieExplain: 切り忘れると 引かれ続ける
+  lieExplainSub: |-
+    2秒に1回、2秒ぶんが自動で引かれる。
+    暗視は1秒4YG、複数つけると2YG×個数
+  lieSource: living/commands/buff
+  lieFacts:
+    - エフェクトは秒課金
+    - 空腹だけ0円
+    - 切り忘れは引かれ続ける
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/自然資源で採掘をしている動画.mp4
+    animation: none
+    startFrom: 200
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+- id: 6
+  character: metan
+  text: 走るだけで、お金がへるの？
+  lieRetort: 走るだけで、お金がへるの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.4
+
+# ===== 第2問 最低販売価格（会社の中でも適用される）=====
+- id: 7
+  character: zundamon
+  text: ダイニモン。ねだんのルールの話なのだ。よく見てほしいのだ。
+  lieNo: 2
+  lieThemeLabel: 値段
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - ダイヤは2300YG以上で売る
+    - 会社の中の取引は対象外
+    - パン1個は9YG以上
+  lieAnswer: 1
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/公式ショップで商品を買っている動画.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 8
+  character: zundamon
+  text: ウソは、イ。会社の中でも、おなじルールなのだ。
+  lieLeft: 5
+  lieThemeLabel: 値段
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - ダイヤは2300YG以上で売る
+    - 会社の中の取引は対象外
+    - パン1個は9YG以上
+  lieAnswer: 1
+  lieShowAnswer: true
+  lieExplain: 会社の中でも 下限は同じ
+  lieExplainSub: |-
+    社長が社員からダイヤを買うときも2300YG以上。
+    手に持って /checkprice で下限を調べられる
+  lieSource: living/supplement/minimum-price
+  lieFacts:
+    - ダイヤ2300YG以上
+    - パンは9YG以上
+    - 会社の中でも適用
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/商店街で帽子を購入している動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+# ===== 第3問 チェストショップの遠隔購入（この2本目でいちばん濃い問）=====
+- id: 9
+  character: zundamon
+  text: ダイサンモン。お店の話なのだ。ふつうの感覚だと、間違えるのだ。
+  lieNo: 3
+  lieThemeLabel: 遠隔
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 家から遠隔でも買える
+    - 遠隔だと代金は170%
+    - ショップの検索機能がある
+  lieAnswer: 2
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップでオーブを購入している動画.mp4
+    animation: none
+    startFrom: 400
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+- id: 10
+  character: zundamon
+  text: ウソは、ウ。検索は、わざと作っていないのだ。
+  lieLeft: 4
+  lieThemeLabel: 遠隔
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 家から遠隔でも買える
+    - 遠隔だと代金は170%
+    - ショップの検索機能がある
+  lieAnswer: 2
+  lieShowAnswer: true
+  lieExplain: 検索は わざと作っていない
+  lieExplainSub: |-
+    スポーン近くの土地の価値が落ちるのを防ぐため。
+    遠隔で買うには毎回ショップのIDを入れる
+  lieSource: living/supplement/chest-shop
+  lieFacts:
+    - 遠隔でも買える
+    - 遠隔は代金170%
+    - 検索はわざと無し
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+- id: 11
+  character: metan
+  text: 検索、わざと作ってないの？
+  lieRetort: 検索、わざと作ってないの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェストショップで買い物をしている動画.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.4
+
+# ===== 第4問 島 =====
+- id: 12
+  character: zundamon
+  text: ダイヨンモン。島の話なのだ。ありえないほうが、本当かもしれないのだ。
+  lieNo: 4
+  lieThemeLabel: 島
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 消しても作成費は返ってくる
+    - 自分だけのワールドが作れる
+    - 5回拡張すると200×200
+  lieAnswer: 0
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーの建築風景.mp4
+    animation: none
+    startFrom: 250
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 13
+  character: zundamon
+  text: ウソは、ア。消しても、お金は戻らないのだ。
+  lieLeft: 3
+  lieThemeLabel: 島
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 消しても作成費は返ってくる
+    - 自分だけのワールドが作れる
+    - 5回拡張すると200×200
+  lieAnswer: 0
+  lieShowAnswer: true
+  lieExplain: 消しても お金は戻らない
+  lieExplainSub: |-
+    作成は300万YG、拡張は1回目が100万YG。
+    一度消すと復元もできない。招待はできる
+  lieSource: living/commands/island
+  lieFacts:
+    - 自分だけの島
+    - 拡張で200×200
+    - 消しても返金なし
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2600
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+# ===== 第5問 称号 =====
+- id: 14
+  character: zundamon
+  text: ダイゴモン。称号の話なのだ。どこまで自由だと思うのだ？
+  lieNo: 5
+  lieThemeLabel: 称号
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 称号は5000YGで作れる
+    - どんな文字でも自由に作れる
+    - カッコの色で入手方法が分かる
+  lieAnswer: 1
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/称号を購入して変更している動画.mp4
+    animation: none
+    startFrom: 30
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+- id: 15
+  character: zundamon
+  text: ウソは、イ。作れない称号も、あるのだ。
+  lieLeft: 2
+  lieThemeLabel: 称号
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 称号は5000YGで作れる
+    - どんな文字でも自由に作れる
+    - カッコの色で入手方法が分かる
+  lieAnswer: 1
+  lieShowAnswer: true
+  lieExplain: 作れない称号が ある
+  lieExplainSub: |-
+    太字や斜体が入った称号は運営専用。
+    白は自作、紫はイベント、黄緑はミッション
+  lieSource: living/commands/rank
+  lieFacts:
+    - 称号は5000YG
+    - 色で入手方法が分かる
+    - 作れない称号もある
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/称号を購入して変更している動画.mp4
+    animation: none
+    startFrom: 150
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+# ===== 第6問 チェスト保護・ドア保護 =====
+- id: 16
+  character: zundamon
+  text: ダイロクモン。カギの話なのだ。お金がかかると思うのだ？
+  lieNo: 6
+  lieThemeLabel: 保護
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 保護は1個ごとにお金がいる
+    - チェストに鍵をかけられる
+    - パスワード付きの鍵もある
+  lieAnswer: 0
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/チェスト保護をしている動画.mp4
+    animation: none
+    startFrom: 30
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 17
+  character: zundamon
+  text: ウソは、ア。保護は、ぜんぶ無料なのだ。
+  lieLeft: 1
+  lieThemeLabel: 保護
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 保護は1個ごとにお金がいる
+    - チェストに鍵をかけられる
+    - パスワード付きの鍵もある
+  lieAnswer: 0
+  lieShowAnswer: true
+  lieExplain: 保護は ぜんぶ無料
+  lieExplainSub: |-
+    チェストもドアも、コマンド1つで鍵がかかる。
+    パスワードを知っている人だけ開ける鍵もある
+  lieSource: living/commands/chest-protection・door-protection
+  lieFacts:
+    - チェストに鍵
+    - パスワード付きの鍵
+    - 保護はぜんぶ無料
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/チェスト保護をしている動画.mp4
+    animation: none
+    startFrom: 140
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+# ===== 第7問 優良企業ガイドライン（労働条件）=====
+- id: 18
+  character: zundamon
+  text: だいななもん。会社のルールの話なのだ。もう分かるはずなのだ。
+  lieNo: 7
+  lieThemeLabel: 労働
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 面接でため口は禁止
+    - ノルマは週3時間まで
+    - 道具代は社員の自腹
+  lieAnswer: 2
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4
+    animation: none
+    startFrom: 80
+  se:
+    src: question1.mp3
+    volume: 0.4
+
+- id: 19
+  character: zundamon
+  text: ウソは、ウ。道具代は、会社もちなのだ。
+  lieLeft: 0
+  lieThemeLabel: 労働
+  lieTheme: この中に、ウソが1つ
+  lieCards:
+    - 面接でため口は禁止
+    - ノルマは週3時間まで
+    - 道具代は社員の自腹
+  lieAnswer: 2
+  lieShowAnswer: true
+  lieExplain: 道具代は 会社が持つ
+  lieExplainSub: |-
+    業務に必要な費用を社員に負担させてはいけない。
+    時給は5000YG以上をめざす決まりもある
+  lieSource: living/supplement/good-standing-company
+  lieFacts:
+    - 面接でため口は禁止
+    - ノルマは週3時間まで
+    - 道具代は会社負担
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4
+    animation: none
+    startFrom: 1000
+  se:
+    src: blow3.mp3
+    volume: 0.4
+
+# ===== 残るウソが0になった直後に、まだ問題が残っている（この型の仕掛け）=====
+- id: 20
+  character: metan
+  text: ウソ、ぜんぶ見つけたわ。
+  lieRetort: ウソ、ぜんぶ見つけたわ
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバー内で農業をしている動画.mp4
+    animation: none
+    startFrom: 100
+  se:
+    src: correct1.mp3
+    volume: 0.4
+
+# ===== 第8問 参加（ウソなし。ここだけルールを裏切る）=====
+- id: 21
+  character: zundamon
+  text: ダイハチモン。さいごの問題なのだ。よく見てほしいのだ。
+  lieNo: 8
+  lieThemeLabel: 参加
+  lieTheme: 最後の3つ
+  lieCards:
+    - 参加費は0円
+    - スマホでも遊べる
+    - 24時間、あいている
+  lieAnswer: -1
+  lieTimer: true
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 960
+  se:
+    src: data_analysis.mp3
+    volume: 0.4
+
+- id: 22
+  character: metan
+  text: どれがウソなの？
+  lieRetort: どれがウソなの？
+  scene: 1
+  pauseAfter: -4
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 460
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.4
+
+- id: 23
+  character: zundamon
+  text: ウソは、ないのだ。
+  lieThemeLabel: 参加
+  lieTheme: 最後の3つ
+  lieCards:
+    - 参加費は0円
+    - スマホでも遊べる
+    - 24時間、あいている
+  lieAnswer: -1
+  lieShowAnswer: true
+  lieExplain: この3つに ウソはない
+  lieExplainSub: |-
+    統合版なら、スマホでもパソコンでも。
+    入るのに、お金は1円もかからない
+  lieSource: living/how-to-join
+  lieFacts:
+    - 参加費は0円
+    - スマホでも遊べる
+    - 24時間あそべる
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/釣りをしている動画.mp4
+    animation: none
+    startFrom: 300
+  se:
+    src: correct1.mp3
+    volume: 0.45
+
+- id: 24
+  character: metan
+  text: ぜんぶ、本当なの？
+  lieRetort: ぜんぶ、本当なの？
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活サーバーで車に乗っている動画.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.4
+
+# ===== 事実リスト（クライマックス。スクショされるための1枚）=====
+- id: 25
+  character: zundamon
+  text: 本当のことだけが、ニジュウヨンコ残ったのだ。
+  displayText: 本当のことだけが、24個残ったのだ。
+  lieTone: clear
+  lieList: 本当だったこと 24
+  lieListSub: この動画に出てきた、ウソ以外のぜんぶ
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1080
+  se:
+    src: jajean1.mp3
+    volume: 0.45
+
+- id: 26
+  character: zundamon
+  text: ぜんぶ、公式ドキュメントに書いてあるのだ。
+  lieList: 本当だったこと 24
+  lieListSub: 出典は、すべて公式ドキュメント
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 1160
+  se:
+    src: amount-display1.mp3
+    volume: 0.4
+
+# ===== まとめ帯 → 検索CTA =====
+- id: 27
+  character: zundamon
+  text: これ、よもぎサーバーの生活鯖なのだ。
+  lieReveal: よもぎ生活サーバー
+  lieRevealSub: 統合版・参加費0円・24時間あそべます
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: video
+    src: 生活サーバー/生活ワールドの街並みを散策している動画.mp4
+    animation: none
+    startFrom: 2860
+  se:
+    src: text-impact1.mp3
+    volume: 0.45
+
+- id: 28
+  character: zundamon
+  text: よもぎサーバーで、けんさくしてほしいのだ。
+  displayText: よもぎサーバーで、検索してほしいのだ。
+  lieCta: よもぎサーバー
+  lieNote: ※内容は2026年8月時点の公式ドキュメントの記載に基づきます
+  scene: 1
+  pauseAfter: -3
+  visual:
+    type: image
+    src: 生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png
+    animation: fadeIn
+    backgroundSrc: 生活サーバー/生活ワールドを散歩している様子.mp4
+    backgroundStartFrom: 500
+  se:
+    src: 決定ボタンを押す2.mp3
+    volume: 0.5
+
+# ===== ループ。冒頭の第1問へ返し、コメントで正解数を言わせる =====
+- id: 29
+  character: zundamon
+  text: あなたは、いくつ見破れたのだ？
+  displayText: あなたは、いくつ見破れた？
+  lieResult: あなたは、いくつ見破れた？
+  lieResultSub: コメントで教えてほしいのだ
+  scene: 1
+  pauseAfter: 0
+  visual:
+    type: video
+    # id1 と同じ位置。ループの継ぎ目を閉じる
+    src: 生活サーバー/生活ワールドを散歩している様子.mp4
+    animation: none
+    startFrom: 60
+  se:
+    src: item-get1.mp3
+    volume: 0.45
