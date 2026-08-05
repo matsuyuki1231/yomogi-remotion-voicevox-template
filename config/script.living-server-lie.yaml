@@ -131,7 +131,7 @@
 # ===== 第1問 移動（エレベーター）=====
 - id: 4
   character: zundamon
-  text: だいいちもん。ウソは、どれなのだ？
+  text: だいいちもん。エレベーターの話なのだ。ウソは、どれなのだ？
   lieNo: 1
   lieLeft: 7
   lieThemeLabel: 移動
@@ -204,7 +204,7 @@
 # ===== 第2問 採掘（役職制度）=====
 - id: 7
   character: zundamon
-  text: ダイニモン。掘る話なのだ。
+  text: ダイニモン。掘る話なのだ。数字にも、気をつけてほしいのだ。
   lieNo: 2
   lieThemeLabel: 採掘
   lieTheme: この中に、ウソが1つ
@@ -260,7 +260,7 @@
 # ===== 第3問 商売（チェストショップ・有人レジ）=====
 - id: 9
   character: zundamon
-  text: ダイサンモン。お店の話なのだ。
+  text: ダイサンモン。お店の話なのだ。ふつうの感覚だと、間違えるのだ。
   lieNo: 3
   lieThemeLabel: 商売
   lieTheme: この中に、ウソが1つ
@@ -331,7 +331,7 @@
 # ===== 第4問 会社（会社プラグイン・公認企業制度）=====
 - id: 12
   character: zundamon
-  text: ダイヨンモン。会社の話なのだ。
+  text: ダイヨンモン。会社の話なのだ。ありえないほうが、本当かもしれないのだ。
   lieNo: 4
   lieThemeLabel: 会社
   lieTheme: この中に、ウソが1つ
@@ -402,7 +402,7 @@
 # ===== 第5問 治安（処罰の点数制と処罰の独立性）=====
 - id: 15
   character: zundamon
-  text: ダイゴモン。治安の話なのだ。
+  text: ダイゴモン。治安の話なのだ。どこまで決まっていると思うのだ？
   lieNo: 5
   lieThemeLabel: 治安
   lieTheme: この中に、ウソが1つ
@@ -458,7 +458,7 @@
 # ===== 第6問 土地（土地保護）=====
 - id: 17
   character: zundamon
-  text: ダイロクモン。土地の話なのだ。
+  text: ダイロクモン。土地の話なのだ。買ったあとのことも、考えてほしいのだ。
   lieNo: 6
   lieThemeLabel: 土地
   lieTheme: この中に、ウソが1つ
@@ -514,7 +514,7 @@
 # ===== 第7問 ガチャ（排出確率の公開）=====
 - id: 19
   character: zundamon
-  text: だいななもん。ガチャの話なのだ。
+  text: だいななもん。ガチャの話なのだ。もう、分かるはずなのだ。
   lieNo: 7
   lieThemeLabel: ガチャ
   lieTheme: この中に、ウソが1つ
@@ -586,7 +586,7 @@
 # ===== 第8問 参加（ウソなし。ここだけルールを裏切る）=====
 - id: 22
   character: zundamon
-  text: ダイハチモン。さいごの問題なのだ。
+  text: ダイハチモン。さいごの問題なのだ。よく見てほしいのだ。
   lieNo: 8
   lieThemeLabel: 参加
   lieTheme: 最後の3つ

@@ -544,7 +544,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 4,
     "character": "zundamon",
-    "text": "だいいちもん。ウソは、どれなのだ？",
+    "text": "だいいちもん。エレベーターの話なのだ。ウソは、どれなのだ？",
     "lieNo": 1,
     "lieLeft": 7,
     "lieThemeLabel": "移動",
@@ -569,7 +569,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 100
+    "durationInFrames": 165
   },
   {
     "id": 5,
@@ -632,7 +632,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 7,
     "character": "zundamon",
-    "text": "ダイニモン。掘る話なのだ。",
+    "text": "ダイニモン。掘る話なのだ。数字にも、気をつけてほしいのだ。",
     "lieNo": 2,
     "lieThemeLabel": "採掘",
     "lieTheme": "この中に、ウソが1つ",
@@ -656,7 +656,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 74
+    "durationInFrames": 161
   },
   {
     "id": 8,
@@ -698,7 +698,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 9,
     "character": "zundamon",
-    "text": "ダイサンモン。お店の話なのだ。",
+    "text": "ダイサンモン。お店の話なのだ。ふつうの感覚だと、間違えるのだ。",
     "lieNo": 3,
     "lieThemeLabel": "商売",
     "lieTheme": "この中に、ウソが1つ",
@@ -722,7 +722,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 88
+    "durationInFrames": 184
   },
   {
     "id": 10,
@@ -784,7 +784,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 12,
     "character": "zundamon",
-    "text": "ダイヨンモン。会社の話なのだ。",
+    "text": "ダイヨンモン。会社の話なのだ。ありえないほうが、本当かもしれないのだ。",
     "lieNo": 4,
     "lieThemeLabel": "会社",
     "lieTheme": "この中に、ウソが1つ",
@@ -808,7 +808,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 89
+    "durationInFrames": 191
   },
   {
     "id": 13,
@@ -870,7 +870,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 15,
     "character": "zundamon",
-    "text": "ダイゴモン。治安の話なのだ。",
+    "text": "ダイゴモン。治安の話なのだ。どこまで決まっていると思うのだ？",
     "lieNo": 5,
     "lieThemeLabel": "治安",
     "lieTheme": "この中に、ウソが1つ",
@@ -894,7 +894,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 85
+    "durationInFrames": 161
   },
   {
     "id": 16,
@@ -936,7 +936,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 17,
     "character": "zundamon",
-    "text": "ダイロクモン。土地の話なのだ。",
+    "text": "ダイロクモン。土地の話なのだ。買ったあとのことも、考えてほしいのだ。",
     "lieNo": 6,
     "lieThemeLabel": "土地",
     "lieTheme": "この中に、ウソが1つ",
@@ -960,7 +960,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 84
+    "durationInFrames": 186
   },
   {
     "id": 18,
@@ -1002,7 +1002,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 19,
     "character": "zundamon",
-    "text": "だいななもん。ガチャの話なのだ。",
+    "text": "だいななもん。ガチャの話なのだ。もう、分かるはずなのだ。",
     "lieNo": 7,
     "lieThemeLabel": "ガチャ",
     "lieTheme": "この中に、ウソが1つ",
@@ -1026,7 +1026,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 88
+    "durationInFrames": 159
   },
   {
     "id": 20,
@@ -1088,7 +1088,7 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 22,
     "character": "zundamon",
-    "text": "ダイハチモン。さいごの問題なのだ。",
+    "text": "ダイハチモン。さいごの問題なのだ。よく見てほしいのだ。",
     "lieNo": 8,
     "lieThemeLabel": "参加",
     "lieTheme": "最後の3つ",
@@ -1112,7 +1112,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 93
+    "durationInFrames": 143
   },
   {
     "id": 23,
