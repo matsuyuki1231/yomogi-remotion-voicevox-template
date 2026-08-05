@@ -353,6 +353,34 @@ interface ScriptLine {
   examNote?: string;
   examResult?: string;
   examResultSub?: string;
+  mktTone?: string;
+  mktTitle?: string;
+  mktNo?: number;
+  mktFilled?: number;
+  mktHook?: string;
+  mktHookSub?: string;
+  mktItem?: string;
+  mktItemLabel?: string;
+  mktChoices?: string[];
+  mktAnswer?: number;
+  mktTimer?: boolean;
+  mktShowAnswer?: boolean;
+  mktExplain?: string;
+  mktExplainSub?: string;
+  mktSource?: string;
+  mktRowLabel?: string;
+  mktRowValue?: string;
+  mktRetort?: string;
+  mktFlash?: string;
+  mktFlashSub?: string;
+  mktTable?: string;
+  mktTableSub?: string;
+  mktReveal?: string;
+  mktRevealSub?: string;
+  mktCta?: string;
+  mktNote?: string;
+  mktResult?: string;
+  mktResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -858,6 +886,35 @@ export interface ScriptLine {
   examNote?: string;         // CTA下の小さな注記（※得点と合格ラインは演出です 等）
   examResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   examResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 相場クイズ・値札当て型（MarketHud）----
+  mktTone?: "deal" | "settled"; // 相場トーン。指定行から後ろに引き継がれる（取引中＝琥珀 / 記帳ずみ＝緑・売り場が畳まれる）
+  mktTitle?: string;         // クイズ名。最初に指定した行のものを動画全体で使う
+  mktNo?: number;            // 何問目か。指定がない行は直前の値を引き継ぐ（この値がない行では売り場を出さない）
+  mktFilled?: number;        // 相場表に記帳ずみの件数。指定がない行は直前の値を引き継ぐ（増えた行だけ弾む）
+  mktHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  mktHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  mktItem?: string;          // 商品プレート本文（何の値段を当てるのか）
+  mktItemLabel?: string;     // 商品プレート左のラベル（土地 / 採掘 / 店 など）
+  mktChoices?: string[];     // 値札の文字列（3枚想定）。出題行と解答行の両方に同じ内容を書く
+  mktAnswer?: number;        // 正解の位置（0始まり）
+  mktTimer?: boolean;        // 出題行に true。制限時間バーがセリフの尺いっぱいで縮む
+  mktShowAnswer?: boolean;   // 解答行に true。不正解の値札が落ちて、正解だけ残り「確定」が押される
+  mktExplain?: string;       // 解説パネルの見出し（この型の本体）
+  mktExplainSub?: string;    // 解説パネルの補足行（改行はYAML側で明示する）
+  mktSource?: string;        // 解説パネルの出典（docs のページ名）
+  mktRowLabel?: string;      // 価格表に載せる品目名（解答行に書く）
+  mktRowValue?: string;      // 価格表に載せる値段（解答行に書く）
+  mktRetort?: string;        // ツッコミ吹き出し
+  mktFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  mktFlashSub?: string;      // テロップの上に出す小バッジ
+  mktTable?: string;         // 価格表（全画面・白フラッシュ）。ここでトーンが緑に反転する
+  mktTableSub?: string;      // 価格表の副題
+  mktReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  mktRevealSub?: string;     // まとめ帯の補足行
+  mktCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  mktNote?: string;          // CTA下の小さな注記（※価格は○年○月時点です 等）
+  mktResult?: string;        // ループ用リボン（冒頭の第1問に戻す）
+  mktResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

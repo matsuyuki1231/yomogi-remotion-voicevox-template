@@ -61,14 +61,17 @@ bgm:
   #   認定試験・答案採点型（script.living-server-exam.yaml）:
   #     amacha_marbletechno1 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 29
+  #   相場クイズ・値札当て型（script.living-server-market.yaml）:
+  #     amacha_metropolis 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 28
   segments:
-    # 「マーブルテクノ」— 試験パート。淡々と問題が続く緊張感
-    - src: "amacha_marbletechno1.mp3"
+    # 「メトロポリス」— 出題パート。市場・取引所の慌ただしさ
+    - src: "amacha_metropolis.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 認定証が出てトーンが金に反転する行から
+    # 「ハッピータイム」— 価格表が完成してトーンが緑に反転する行から
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 29
+      fromLineId: 28

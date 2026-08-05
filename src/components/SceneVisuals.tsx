@@ -47,12 +47,25 @@ interface SceneVisualsProps {
    * その範囲でゆっくりパンする。
    */
   exam?: boolean;
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（相場クイズ・値札当て型）。
+   *
+   * 考え方は `exam` と同じ（下半分を値札と解説が占めるので、いつもの
+   * 160%×125% で敷くとGUIも風景もドアップになって読めない）。
+   * ただし売り場の吊り位置に合わせてエリアが違うので、定数ごと分けてある。
+   */
+  market?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
 // ここを変えるときは ExamHud 側の PAPER_TOP も一緒に見ること
 const EXAM_TOP = 206;
 const EXAM_HEIGHT = 874;
+
+// 映像エリア（MarketHud のレイアウトに合わせて固定）。
+// ここを変えるときは MarketHud 側の ITEM_TOP（=1024）も一緒に見ること
+const MARKET_TOP = 204;
+const MARKET_HEIGHT = 800;
 
 // モニターの位置（画面当てクイズ型のレイアウトに合わせて固定）。
 // 素材は 1920×1012（比率 1.897）なので、画面幅いっぱいに置くと高さは約569になる。
@@ -165,6 +178,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   screen = false,
   rail,
   exam = false,
+  market = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -195,7 +209,11 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
     return null;
   }
 
-  if (visual.type === "video" && visual.src && exam) {
+  // 認定試験型と相場クイズ型は、下半分をHUD（答案用紙 / 値札と解説）が占めるので
+  // 上部の映像エリアにだけ素材を収める。エリアの位置と高さだけが違う
+  if (visual.type === "video" && visual.src && (exam || market)) {
+    const areaTop = market ? MARKET_TOP : EXAM_TOP;
+    const areaHeight = market ? MARKET_HEIGHT : EXAM_HEIGHT;
     const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
     // 素材（1920×1012）をエリアの高さ125%に合わせると幅は約2071px。
     // はみ出した左右のぶんだけ、ゆっくり往復させる
@@ -215,10 +233,10 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
       <div
         style={{
           position: "absolute",
-          top: EXAM_TOP,
+          top: areaTop,
           left: 0,
           right: 0,
-          height: EXAM_HEIGHT,
+          height: areaHeight,
           overflow: "hidden",
           background: "#04060d",
         }}

@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":29}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_metropolis.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":28}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -393,6 +393,35 @@ export interface ScriptLine {
   examNote?: string;         // CTA下の小さな注記（※得点と合格ラインは演出です 等）
   examResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   examResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 相場クイズ・値札当て型（MarketHud）----
+  mktTone?: "deal" | "settled"; // 相場トーン。指定行から後ろに引き継がれる（取引中＝琥珀 / 記帳ずみ＝緑・売り場が畳まれる）
+  mktTitle?: string;         // クイズ名。最初に指定した行のものを動画全体で使う
+  mktNo?: number;            // 何問目か。指定がない行は直前の値を引き継ぐ（この値がない行では売り場を出さない）
+  mktFilled?: number;        // 相場表に記帳ずみの件数。指定がない行は直前の値を引き継ぐ（増えた行だけ弾む）
+  mktHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  mktHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  mktItem?: string;          // 商品プレート本文（何の値段を当てるのか）
+  mktItemLabel?: string;     // 商品プレート左のラベル（土地 / 採掘 / 店 など）
+  mktChoices?: string[];     // 値札の文字列（3枚想定）。出題行と解答行の両方に同じ内容を書く
+  mktAnswer?: number;        // 正解の位置（0始まり）
+  mktTimer?: boolean;        // 出題行に true。制限時間バーがセリフの尺いっぱいで縮む
+  mktShowAnswer?: boolean;   // 解答行に true。不正解の値札が落ちて、正解だけ残り「確定」が押される
+  mktExplain?: string;       // 解説パネルの見出し（この型の本体）
+  mktExplainSub?: string;    // 解説パネルの補足行（改行はYAML側で明示する）
+  mktSource?: string;        // 解説パネルの出典（docs のページ名）
+  mktRowLabel?: string;      // 価格表に載せる品目名（解答行に書く）
+  mktRowValue?: string;      // 価格表に載せる値段（解答行に書く）
+  mktRetort?: string;        // ツッコミ吹き出し
+  mktFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  mktFlashSub?: string;      // テロップの上に出す小バッジ
+  mktTable?: string;         // 価格表（全画面・白フラッシュ）。ここでトーンが緑に反転する
+  mktTableSub?: string;      // 価格表の副題
+  mktReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  mktRevealSub?: string;     // まとめ帯の補足行
+  mktCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  mktNote?: string;          // CTA下の小さな注記（※価格は○年○月時点です 等）
+  mktResult?: string;        // ループ用リボン（冒頭の第1問に戻す）
+  mktResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -421,14 +450,12 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "よもぎ生活サーバー、認定試験なのだ！",
-    "examTone": "test",
-    "examTitle": "よもぎ生活鯖 認定試験",
-    "examExaminee": "あなた",
-    "examPass": 70,
-    "examScore": 0,
-    "examHook": "全10問\nあなたは何点？",
-    "examHookSub": "認定試験",
+    "text": "マイクラの中に、値段のルールがあるのだ！",
+    "mktTone": "deal",
+    "mktTitle": "よもぎ生活鯖 相場クイズ",
+    "mktFilled": 0,
+    "mktHook": "全10問\n相場、当てられる？",
+    "mktHookSub": "相場クイズ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -442,14 +469,14 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.5
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 109
+    "durationInFrames": 104
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "え、わたしが受けるの？",
-    "displayText": "え、私が受けるの？",
-    "examRetort": "え、私が受けるの？",
+    "text": "値段のルール？　ゲームでしょ？",
+    "displayText": "値段のルール？ ゲームでしょ？",
+    "mktRetort": "値段のルール？ ゲームでしょ？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -463,43 +490,130 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "02_metan.wav",
-    "durationInFrames": 75
+    "durationInFrames": 76
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "ナナモン正解で、合格なのだ。",
-    "displayText": "7問正解で、合格なのだ。",
-    "examFlash": "7問正解で\n合格",
+    "text": "ダイヤを安く売ったら、規約違反なのだ。",
+    "mktFlash": "安売りは\n規約違反",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
       "animation": "none",
-      "startFrom": 1500
+      "startFrom": 400
     },
     "se": {
-      "src": "hyoushigi1.mp3",
+      "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 87
+    "durationInFrames": 101
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "だいいちもん。石を1個ほると、いくらもらえる？",
-    "displayText": "第1問。石を1個掘ると、いくらもらえる？",
-    "examNo": 1,
-    "examQ": "石を1個掘ると、いくら？",
-    "examChoices": [
-      "0円",
-      "2YG",
-      "100YG"
+    "text": "だいいちもん。土地は、1マスいくら？",
+    "displayText": "第1問。土地は、1マスいくら？",
+    "mktNo": 1,
+    "mktItem": "生活ワールドの土地 1マス",
+    "mktItemLabel": "土地",
+    "mktChoices": [
+      "無料",
+      "100YG",
+      "1万YG"
     ],
-    "examAnswer": 1,
-    "examTimer": true,
+    "mktAnswer": 1,
+    "mktTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 109
+  },
+  {
+    "id": 5,
+    "character": "zundamon",
+    "text": "ヒャクワイジイなのだ。他人は、さわれないのだ。",
+    "displayText": "100YGなのだ。他人は、触れないのだ。",
+    "mktNo": 1,
+    "mktFilled": 1,
+    "mktItem": "生活ワールドの土地 1マス",
+    "mktItemLabel": "土地",
+    "mktChoices": [
+      "無料",
+      "100YG",
+      "1万YG"
+    ],
+    "mktAnswer": 1,
+    "mktShowAnswer": true,
+    "mktExplain": "土地を買って、家を建てる",
+    "mktExplainSub": "生活ワールドは、1マス100YGから\n買った土地の中は、他人が触れない",
+    "mktSource": "土地保護（living/commands/land-protection）",
+    "mktRowLabel": "土地（1マス）",
+    "mktRowValue": "100YG",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
+      "animation": "none",
+      "startFrom": 180
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 119
+  },
+  {
+    "id": 6,
+    "character": "metan",
+    "text": "やす。それなら買えるわ。",
+    "displayText": "安っ。それなら買えるわ。",
+    "mktRetort": "安っ。それなら買えるわ。",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 58
+  },
+  {
+    "id": 7,
+    "character": "zundamon",
+    "text": "だいにもん。石を1個ほると、いくら？",
+    "displayText": "第2問。石を1個掘ると、いくら？",
+    "mktNo": 2,
+    "mktItem": "石を1個掘る（採掘者）",
+    "mktItemLabel": "採掘",
+    "mktChoices": [
+      "2YG",
+      "0YG",
+      "50YG"
+    ],
+    "mktAnswer": 0,
+    "mktTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -512,27 +626,30 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 136
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 116
   },
   {
-    "id": 5,
+    "id": 8,
     "character": "zundamon",
-    "text": "ニワイジイ。採掘者なら、ほるだけでお金になるのだ。",
-    "displayText": "2YG。採掘者なら、掘るだけでお金になるのだ。",
-    "examNo": 1,
-    "examScore": 10,
-    "examQ": "石を1個掘ると、いくら？",
-    "examChoices": [
-      "0円",
+    "text": "ニワイジイなのだ。ほるだけで、お金になるのだ。",
+    "displayText": "2YGなのだ。掘るだけで、お金になるのだ。",
+    "mktNo": 2,
+    "mktFilled": 2,
+    "mktItem": "石を1個掘る（採掘者）",
+    "mktItemLabel": "採掘",
+    "mktChoices": [
       "2YG",
-      "100YG"
+      "0YG",
+      "50YG"
     ],
-    "examAnswer": 1,
-    "examShowAnswer": true,
-    "examExplain": "掘るだけで、お金になる",
-    "examExplainSub": "石2YG・鉄5YG・ダイヤ20YG\n役職の変更は無料。何度でも変えられる",
-    "examSource": "役職制度（living/commands/role）",
+    "mktAnswer": 0,
+    "mktShowAnswer": true,
+    "mktExplain": "掘るだけで、お金になる",
+    "mktExplainSub": "石2YG・鉄5YG・ダイヤ20YG\n役職の変更は無料。何度でも変えられる",
+    "mktSource": "役職制度（living/commands/role）",
+    "mktRowLabel": "石を1個掘る",
+    "mktRowValue": "2YG",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -545,77 +662,60 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 139
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 115
   },
   {
-    "id": 6,
-    "character": "metan",
-    "text": "ダイヤで、ニジュウワイジイ？　やすくない？",
-    "displayText": "ダイヤで20YG？ 安くない？",
-    "examRetort": "ダイヤで20YG？ 安くない？",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 104
-  },
-  {
-    "id": 7,
+    "id": 9,
     "character": "zundamon",
-    "text": "ダイヤ1個の、さいてい販売価格は？",
-    "displayText": "ダイヤ1個の、最低販売価格は？",
-    "examNo": 2,
-    "examQ": "ダイヤの最低販売価格は？",
-    "examChoices": [
+    "text": "だいさんもん。ダイヤの、さいてい価格は？",
+    "displayText": "第3問。ダイヤの、最低価格は？",
+    "mktNo": 3,
+    "mktItem": "ダイヤ1個の最低販売価格",
+    "mktItemLabel": "規約",
+    "mktChoices": [
       "決まりなし",
-      "100YG",
+      "300YG",
       "2300YG"
     ],
-    "examAnswer": 2,
-    "examTimer": true,
+    "mktAnswer": 2,
+    "mktTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
       "animation": "none",
-      "startFrom": 400
+      "startFrom": 900
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 101
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 115
   },
   {
-    "id": 8,
+    "id": 10,
     "character": "zundamon",
-    "text": "ニセンサンビャクワイジイ。安売りは、禁止されてるのだ。",
-    "displayText": "2300YG。安売りは、禁止されてるのだ。",
-    "examNo": 2,
-    "examScore": 20,
-    "examQ": "ダイヤの最低販売価格は？",
-    "examChoices": [
+    "text": "ニセンサンビャクワイジイ。安売りは、違反なのだ。",
+    "displayText": "2300YG。安売りは、違反なのだ。",
+    "mktNo": 3,
+    "mktFilled": 3,
+    "mktItem": "ダイヤ1個の最低販売価格",
+    "mktItemLabel": "規約",
+    "mktChoices": [
       "決まりなし",
-      "100YG",
+      "300YG",
       "2300YG"
     ],
-    "examAnswer": 2,
-    "examShowAnswer": true,
-    "examExplain": "安売りは、禁止されている",
-    "examExplainSub": "鉄300YG・ダイヤ2300YG・小麦3YG\n産業を守るための、下限価格の決まり",
-    "examSource": "最低販売価格（living/supplement/minimum-price）",
+    "mktAnswer": 2,
+    "mktShowAnswer": true,
+    "mktExplain": "安売りは、禁止されている",
+    "mktExplainSub": "鉄300YG・ダイヤ2300YG・小麦3YG\n産業を守るための、下限価格の決まり",
+    "mktSource": "最低販売価格（living/supplement/minimum-price）",
+    "mktRowLabel": "ダイヤの最低価格",
+    "mktRowValue": "2300YG",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -628,15 +728,14 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 142
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 131
   },
   {
-    "id": 9,
+    "id": 11,
     "character": "metan",
-    "text": "ゲームなのに、そこまで決まってるの……？",
-    "displayText": "ゲームなのに、そこまで決まってるの？",
-    "examRetort": "ゲームなのに、そこまで決まってるの？",
+    "text": "ゲームなのに、そこまで決めてるの？",
+    "mktRetort": "ゲームなのに、そこまで決めてるの？",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -649,289 +748,131 @@ export const scriptData: ScriptLine[] = [
       "src": "shock1.mp3",
       "volume": 0.35
     },
-    "voiceFile": "09_metan.wav",
-    "durationInFrames": 81
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "家を建てるには、まず何がいる？",
-    "displayText": "家を建てるには、まず何がいる？",
-    "examNo": 3,
-    "examQ": "家を建てるには、何がいる？",
-    "examChoices": [
-      "運営に申請",
-      "土地を買う",
-      "何もいらない"
-    ],
-    "examAnswer": 1,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 2700
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 87
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "土地を買うのだ。買えば、ほかの人はさわれないのだ。",
-    "displayText": "土地を買うのだ。買えば、他の人は触れないのだ。",
-    "examNo": 3,
-    "examScore": 30,
-    "examQ": "家を建てるには、何がいる？",
-    "examChoices": [
-      "運営に申請",
-      "土地を買う",
-      "何もいらない"
-    ],
-    "examAnswer": 1,
-    "examShowAnswer": true,
-    "examExplain": "土地は、買って自分のものにする",
-    "examExplainSub": "生活ワールドは 100YG / 1マス から\n中の建築もチェストも、他人は触れない",
-    "examSource": "土地保護（living/commands/land-protection）",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
-      "animation": "none",
-      "startFrom": 360
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 132
+    "voiceFile": "11_metan.wav",
+    "durationInFrames": 79
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "お店をひらくとき、店番はなん時間ひつよう？",
-    "displayText": "お店を開くとき、店番は何時間必要？",
-    "examNo": 4,
-    "examQ": "店番は、何時間必要？",
-    "examChoices": [
-      "0時間",
-      "3時間",
-      "24時間"
+    "text": "だいよんもん。無人のお店の、手数料は？",
+    "displayText": "第4問。無人のお店の、手数料は？",
+    "mktNo": 4,
+    "mktItem": "無人販売所の手数料",
+    "mktItemLabel": "店",
+    "mktChoices": [
+      "0%",
+      "7%",
+      "30%"
     ],
-    "examAnswer": 0,
-    "examTimer": true,
+    "mktAnswer": 1,
+    "mktTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 120
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.45
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 121
+    "durationInFrames": 122
   },
   {
     "id": 13,
     "character": "zundamon",
-    "text": "ゼロ時間。無人で売れるのだ。",
-    "displayText": "0時間。無人で売れるのだ。",
-    "examNo": 4,
-    "examScore": 40,
-    "examQ": "店番は、何時間必要？",
-    "examChoices": [
-      "0時間",
-      "3時間",
-      "24時間"
+    "text": "ナナパーセントなのだ。看板を置けば、お店なのだ。",
+    "displayText": "7%なのだ。看板を置けば、お店なのだ。",
+    "mktNo": 4,
+    "mktFilled": 4,
+    "mktItem": "無人販売所の手数料",
+    "mktItemLabel": "店",
+    "mktChoices": [
+      "0%",
+      "7%",
+      "30%"
     ],
-    "examAnswer": 0,
-    "examShowAnswer": true,
-    "examExplain": "店番のいらない、無人販売所",
-    "examExplainSub": "チェストの前に、看板を置くだけ\n2025年5月からは、遠隔でも買える",
-    "examSource": "チェストショップ（living/commands/chest-shop）",
+    "mktAnswer": 1,
+    "mktShowAnswer": true,
+    "mktExplain": "店番のいらない、無人販売所",
+    "mktExplainSub": "設置は無料。売れたら7%が手数料\n2025年5月からは、遠隔でも買える",
+    "mktSource": "チェストショップ（living/commands/chest-shop）",
+    "mktRowLabel": "店の手数料",
+    "mktRowValue": "7%",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
       "animation": "none",
-      "startFrom": 100
+      "startFrom": 80
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.5
     },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 82
+    "durationInFrames": 135
   },
   {
     "id": 14,
-    "character": "metan",
-    "text": "それ、お店っていうか、自動販売機ね。",
-    "displayText": "それ、お店っていうか、自動販売機ね。",
-    "examRetort": "それ、自動販売機ね",
+    "character": "zundamon",
+    "text": "だいごもん。スピード上昇は、1秒いくら？",
+    "displayText": "第5問。スピード上昇は、1秒いくら？",
+    "mktNo": 5,
+    "mktItem": "スピード上昇 1秒ぶん",
+    "mktItemLabel": "バフ",
+    "mktChoices": [
+      "500YG",
+      "0YG",
+      "2YG"
+    ],
+    "mktAnswer": 2,
+    "mktTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
+      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
       "animation": "none",
-      "startFrom": 900
+      "startFrom": 40
     },
     "se": {
       "src": "question1.mp3",
-      "volume": 0.4
+      "volume": 0.45
     },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 100
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 126
   },
   {
     "id": 15,
     "character": "zundamon",
-    "text": "会社のしゃいんは、なん人までやとえる？",
-    "displayText": "会社の社員は、何人まで雇える？",
-    "examNo": 5,
-    "examQ": "会社の社員は、何人まで？",
-    "examChoices": [
-      "5人",
-      "20人",
-      "制限なし"
+    "text": "ニワイジイなのだ。エフェクトは、びょうでかりるのだ。",
+    "displayText": "2YGなのだ。エフェクトは、秒で借りるのだ。",
+    "mktNo": 5,
+    "mktFilled": 5,
+    "mktItem": "スピード上昇 1秒ぶん",
+    "mktItemLabel": "バフ",
+    "mktChoices": [
+      "500YG",
+      "0YG",
+      "2YG"
     ],
-    "examAnswer": 2,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 101
-  },
-  {
-    "id": 16,
-    "character": "zundamon",
-    "text": "せいげんなしなのだ。しゃいんは、何人でもいいのだ。",
-    "displayText": "制限なしなのだ。社員は、何人でもいいのだ。",
-    "examNo": 5,
-    "examScore": 50,
-    "examQ": "会社の社員は、何人まで？",
-    "examChoices": [
-      "5人",
-      "20人",
-      "制限なし"
-    ],
-    "examAnswer": 2,
-    "examShowAnswer": true,
-    "examExplain": "本格的な、会社経営ができる",
-    "examExplainSub": "社長・課長・社員。帳簿も、銀行もある\n設立は無料（運営の審査あり）",
-    "examSource": "会社プラグイン（living/commands/company）",
+    "mktAnswer": 2,
+    "mktShowAnswer": true,
+    "mktExplain": "効果は、秒で借りる",
+    "mktExplainSub": "スピード・跳躍・採掘速度は2YG／秒\n暗視は4YG／秒。空腹は0YG",
+    "mktSource": "エフェクトのレンタル（living/commands/buff）",
+    "mktRowLabel": "スピード上昇",
+    "mktRowValue": "2YG/秒",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 131
-  },
-  {
-    "id": 17,
-    "character": "metan",
-    "text": "マイクラで、ちょうぼ……？",
-    "displayText": "マイクラで、帳簿？",
-    "examRetort": "マイクラで、帳簿？",
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "shock1.mp3",
-      "volume": 0.35
-    },
-    "voiceFile": "17_metan.wav",
-    "durationInFrames": 52
-  },
-  {
-    "id": 18,
-    "character": "zundamon",
-    "text": "こうにん企業のじきゅうは、いくら以上？",
-    "displayText": "公認企業の時給は、いくら以上？",
-    "examNo": 6,
-    "examQ": "公認企業の時給は？",
-    "examChoices": [
-      "決まりなし",
-      "5000YG以上",
-      "100YG以上"
-    ],
-    "examAnswer": 1,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 900
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 99
-  },
-  {
-    "id": 19,
-    "character": "zundamon",
-    "text": "ゴセンワイジイからなのだ。ノルマも、週3時間までなのだ。",
-    "displayText": "5000YGからなのだ。ノルマも、週3時間までなのだ。",
-    "examNo": 6,
-    "examScore": 60,
-    "examQ": "公認企業の時給は？",
-    "examChoices": [
-      "決まりなし",
-      "5000YG以上",
-      "100YG以上"
-    ],
-    "examAnswer": 1,
-    "examShowAnswer": true,
-    "examExplain": "社員を守る、公認企業のきまり",
-    "examExplainSub": "時給5,000YG以上・ノルマは週3時間まで\n道具代は会社負担・面接でため口は禁止",
-    "examSource": "公認企業制度（living/supplement/good-standing-company）",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/人工資源で原木を掘っている動画.mp4",
+      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
       "animation": "none",
       "startFrom": 160
     },
@@ -939,144 +880,20 @@ export const scriptData: ScriptLine[] = [
       "src": "correct1.mp3",
       "volume": 0.5
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 146
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 121
   },
   {
-    "id": 20,
-    "character": "zundamon",
-    "text": "つれる魚は、なん種類？",
-    "displayText": "釣れる魚は、何種類？",
-    "examNo": 7,
-    "examQ": "釣れる魚は、何種類？",
-    "examChoices": [
-      "5種類",
-      "30種類",
-      "275種類"
-    ],
-    "examAnswer": 2,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 74
-  },
-  {
-    "id": 21,
-    "character": "zundamon",
-    "text": "ニヒャクナナジュウゴ種類。バニラにはいない魚だらけなのだ。",
-    "displayText": "275種類。バニラにはいない魚だらけなのだ。",
-    "examNo": 7,
-    "examScore": 70,
-    "examQ": "釣れる魚は、何種類？",
-    "examChoices": [
-      "5種類",
-      "30種類",
-      "275種類"
-    ],
-    "examAnswer": 2,
-    "examShowAnswer": true,
-    "examExplain": "釣れる魚は、275種類",
-    "examExplainSub": "バニラのマイクラにはいない魚がたくさん\n採掘・農業・木こりも、役職で稼げる",
-    "examSource": "はじめに（intro）",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
-      "animation": "none",
-      "startFrom": 800
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 143
-  },
-  {
-    "id": 22,
-    "character": "zundamon",
-    "text": "自分だけの島は、いくらで作れる？",
-    "displayText": "自分だけの島は、いくらで作れる？",
-    "examNo": 8,
-    "examQ": "自分だけの島は、いくら？",
-    "examChoices": [
-      "作れない",
-      "300万YG",
-      "無料"
-    ],
-    "examAnswer": 1,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 93
-  },
-  {
-    "id": 23,
-    "character": "zundamon",
-    "text": "サンビャクマンワイジイ。自分だけの島が、持てるのだ。",
-    "displayText": "300万YG。自分だけの島が、持てるのだ。",
-    "examNo": 8,
-    "examScore": 80,
-    "examQ": "自分だけの島は、いくら？",
-    "examChoices": [
-      "作れない",
-      "300万YG",
-      "無料"
-    ],
-    "examAnswer": 1,
-    "examShowAnswer": true,
-    "examExplain": "自分だけのワールドが持てる",
-    "examExplainSub": "作成に 3,000,000YG\n拡張すれば 200×200 まで広げられる",
-    "examSource": "島プラグイン（living/commands/island）",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 2550
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 136
-  },
-  {
-    "id": 24,
+    "id": 16,
     "character": "metan",
-    "text": "サンビャクマン……。はたらくしかないじゃない。",
-    "displayText": "300万。働くしかないじゃない。",
-    "examRetort": "300万。働くしかないじゃない",
+    "text": "びょうで課金？　こわいわ。",
+    "displayText": "秒で課金？ こわいわ。",
+    "mktRetort": "秒で課金？ こわいわ。",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "src": "生活サーバー/人工資源で原木を掘っている動画2.mp4",
       "animation": "none",
       "startFrom": 60
     },
@@ -1084,56 +901,407 @@ export const scriptData: ScriptLine[] = [
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "24_metan.wav",
-    "durationInFrames": 80
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 63
   },
   {
-    "id": 25,
+    "id": 17,
     "character": "zundamon",
-    "text": "近くの人と話す方法は？",
-    "displayText": "近くの人と話す方法は？",
-    "examNo": 9,
-    "examQ": "近くの人と話す方法は？",
-    "examChoices": [
-      "通話アプリを使う",
-      "文字チャットだけ",
-      "鯖の近距離VC"
+    "text": "ダイロクモン。称号を作ると、いくら？",
+    "displayText": "第6問。称号を作ると、いくら？",
+    "mktNo": 6,
+    "mktItem": "自分だけの称号を作る",
+    "mktItemLabel": "称号",
+    "mktChoices": [
+      "5000YG",
+      "無料",
+      "50万YG"
     ],
-    "examAnswer": 2,
-    "examTimer": true,
+    "mktAnswer": 0,
+    "mktTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/称号を購入して変更している動画.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 40
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.45
     },
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 112
+  },
+  {
+    "id": 18,
+    "character": "zundamon",
+    "text": "5000ワイジイなのだ。名前に、称号がつくのだ。",
+    "displayText": "5000YGなのだ。名前に、称号がつくのだ。",
+    "mktNo": 6,
+    "mktFilled": 6,
+    "mktItem": "自分だけの称号を作る",
+    "mktItemLabel": "称号",
+    "mktChoices": [
+      "5000YG",
+      "無料",
+      "50万YG"
+    ],
+    "mktAnswer": 0,
+    "mktShowAnswer": true,
+    "mktExplain": "名前の前に、称号がつく",
+    "mktExplainSub": "5000YG払えば、好きな文字で作れる\nチャットにも表示されます",
+    "mktSource": "称号プラグイン（living/commands/rank）",
+    "mktRowLabel": "称号を作る",
+    "mktRowValue": "5000YG",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/称号を購入して変更している動画.mp4",
+      "animation": "none",
+      "startFrom": 180
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 130
+  },
+  {
+    "id": 19,
+    "character": "zundamon",
+    "text": "だいななもん。ガチャチケットは、いくら？",
+    "displayText": "第7問。ガチャチケットは、いくら？",
+    "mktNo": 7,
+    "mktItem": "ガチャチケット 1枚",
+    "mktItemLabel": "ガチャ",
+    "mktChoices": [
+      "50YG",
+      "1200YG",
+      "無料"
+    ],
+    "mktAnswer": 1,
+    "mktTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 108
+  },
+  {
+    "id": 20,
+    "character": "zundamon",
+    "text": "1200ワイジイなのだ。アイテムでも買えるのだ。",
+    "displayText": "1200YGなのだ。アイテムでも買えるのだ。",
+    "mktNo": 7,
+    "mktFilled": 7,
+    "mktItem": "ガチャチケット 1枚",
+    "mktItemLabel": "ガチャ",
+    "mktChoices": [
+      "50YG",
+      "1200YG",
+      "無料"
+    ],
+    "mktAnswer": 1,
+    "mktShowAnswer": true,
+    "mktExplain": "お金でも、アイテムでも引ける",
+    "mktExplainSub": "1200YG、またはラピスラズリブロック1個\n昼だけ引ける、限定ガチャもあります",
+    "mktSource": "ガチャ（living/commands/gacha）",
+    "mktRowLabel": "ガチャ1回",
+    "mktRowValue": "1200YG",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 240
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 117
+  },
+  {
+    "id": 21,
+    "character": "zundamon",
+    "text": "ダイハチモン。露天掘り代行は、1チャンクいくら？",
+    "displayText": "第8問。露天掘り代行は、1チャンクいくら？",
+    "mktNo": 8,
+    "mktItem": "露天掘り代行 1チャンク",
+    "mktItemLabel": "代行",
+    "mktChoices": [
+      "言い値",
+      "5000YG",
+      "32050YG"
+    ],
+    "mktAnswer": 2,
+    "mktTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
+      "animation": "none",
+      "startFrom": 500
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 137
+  },
+  {
+    "id": 22,
+    "character": "zundamon",
+    "text": "サンマンニセンゴジュウワイジイ。期待値で、決まってるのだ。",
+    "displayText": "32050YG。期待値で、決まってるのだ。",
+    "mktNo": 8,
+    "mktFilled": 8,
+    "mktItem": "露天掘り代行 1チャンク",
+    "mktItemLabel": "代行",
+    "mktChoices": [
+      "言い値",
+      "5000YG",
+      "32050YG"
+    ],
+    "mktAnswer": 2,
+    "mktShowAnswer": true,
+    "mktExplain": "値段は、期待値で決まっている",
+    "mktExplainSub": "1チャンクに、平均ダイヤ3.5個と鉄80個\nその期待値が、そのまま最低価格になる",
+    "mktSource": "最低販売価格（living/supplement/minimum-price）",
+    "mktRowLabel": "露天掘り代行",
+    "mktRowValue": "32050YG",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "22_zundamon.wav",
+    "durationInFrames": 144
+  },
+  {
+    "id": 23,
+    "character": "metan",
+    "text": "そこまで計算するの、このサーバー。",
+    "mktRetort": "そこまで計算するの、このサーバー。",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1000
+    },
+    "se": {
+      "src": "shock1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "23_metan.wav",
+    "durationInFrames": 80
+  },
+  {
+    "id": 24,
+    "character": "zundamon",
+    "text": "だいきゅうもん。自分だけの島は、いくら？",
+    "displayText": "第9問。自分だけの島は、いくら？",
+    "mktNo": 9,
+    "mktItem": "自分だけの島をつくる",
+    "mktItemLabel": "島",
+    "mktChoices": [
+      "300万YG",
+      "3万YG",
+      "作れない"
+    ],
+    "mktAnswer": 0,
+    "mktTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "animation": "none",
+      "startFrom": 260
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 113
+  },
+  {
+    "id": 25,
+    "character": "zundamon",
+    "text": "300万ワイジイなのだ。自分のワールドが持てるのだ。",
+    "displayText": "300万YGなのだ。自分のワールドが持てるのだ。",
+    "mktNo": 9,
+    "mktFilled": 9,
+    "mktItem": "自分だけの島をつくる",
+    "mktItemLabel": "島",
+    "mktChoices": [
+      "300万YG",
+      "3万YG",
+      "作れない"
+    ],
+    "mktAnswer": 0,
+    "mktShowAnswer": true,
+    "mktExplain": "自分だけの、ワールドが持てる",
+    "mktExplainSub": "作成に300万YG。拡張すれば200×200まで\nほかの人を、招待することもできます",
+    "mktSource": "島プラグイン（living/commands/island）",
+    "mktRowLabel": "自分だけの島",
+    "mktRowValue": "300万YG",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 2600
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
     "voiceFile": "25_zundamon.wav",
-    "durationInFrames": 74
+    "durationInFrames": 132
   },
   {
     "id": 26,
     "character": "zundamon",
-    "text": "近距離ブイシイなのだ。近づくと、こえが大きくなるのだ。",
-    "displayText": "近距離VCなのだ。近づくと、声が大きくなるのだ。",
-    "examNo": 9,
-    "examScore": 90,
-    "examQ": "近くの人と話す方法は？",
-    "examChoices": [
-      "通話アプリを使う",
-      "文字チャットだけ",
-      "鯖の近距離VC"
+    "text": "最終問題。ここまで全部で、いくら？",
+    "mktNo": 10,
+    "mktItem": "ここまで全部の、参加費",
+    "mktItemLabel": "参加費",
+    "mktChoices": [
+      "月500円",
+      "買い切り2000円",
+      "0円"
     ],
-    "examAnswer": 2,
-    "examShowAnswer": true,
-    "examExplain": "近くの人と、声で話せる",
-    "examExplainSub": "離れると小さく、近づくと大きくなる\n車・ガチャ・称号・エレベーターもある",
-    "examSource": "近距離VC（living/commands/limited-vc）",
+    "mktAnswer": 2,
+    "mktTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 400
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.45
+    },
+    "voiceFile": "26_zundamon.wav",
+    "durationInFrames": 117
+  },
+  {
+    "id": 27,
+    "character": "zundamon",
+    "text": "ゼロ円なのだ。参加費は、無料なのだ。",
+    "displayText": "0円なのだ。参加費は、無料なのだ。",
+    "mktNo": 10,
+    "mktFilled": 10,
+    "mktItem": "ここまで全部の、参加費",
+    "mktItemLabel": "参加費",
+    "mktChoices": [
+      "月500円",
+      "買い切り2000円",
+      "0円"
+    ],
+    "mktAnswer": 2,
+    "mktShowAnswer": true,
+    "mktExplain": "参加費、0円",
+    "mktExplainSub": "マイクラ統合版があれば、だれでも\n24時間、いつでもあそべます",
+    "mktSource": "はじめに（intro）",
+    "mktRowLabel": "参加費",
+    "mktRowValue": "0円",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1000
+    },
+    "se": {
+      "src": "correct1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "27_zundamon.wav",
+    "durationInFrames": 110
+  },
+  {
+    "id": 28,
+    "character": "zundamon",
+    "text": "これで、相場表の完成なのだ。",
+    "mktTone": "settled",
+    "mktTable": "よもぎ生活鯖 相場表",
+    "mktTableSub": "全10件 記帳完了",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 2700
+    },
+    "se": {
+      "src": "roll-finish1.mp3",
+      "volume": 0.5
+    },
+    "voiceFile": "28_zundamon.wav",
+    "durationInFrames": 88
+  },
+  {
+    "id": 29,
+    "character": "zundamon",
+    "text": "10個ぜんぶ、公式のドキュメントに書いてある値段なのだ。",
+    "displayText": "10個全部、公式のドキュメントに書いてある値段なのだ。",
+    "mktTable": "よもぎ生活鯖 相場表",
+    "mktTableSub": "全10件 記帳完了",
+    "scene": 1,
+    "pauseAfter": 8,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 2780
+    },
+    "se": {
+      "src": "amount-display1.mp3",
+      "volume": 0.35
+    },
+    "voiceFile": "29_zundamon.wav",
+    "durationInFrames": 137
+  },
+  {
+    "id": 30,
+    "character": "metan",
+    "text": "ゲームの中に、経済があるのね。",
+    "mktRetort": "ゲームの中に、経済があるのね。",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1143,147 +1311,40 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 60
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 144
-  },
-  {
-    "id": 27,
-    "character": "zundamon",
-    "text": "最終問題。ここまで全部、いくらであそべる？",
-    "displayText": "最終問題。ここまで全部、いくらで遊べる？",
-    "examNo": 10,
-    "examQ": "ここまで全部、いくら？",
-    "examChoices": [
-      "月500円",
-      "0円",
-      "買い切り2000円"
-    ],
-    "examAnswer": 1,
-    "examTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "27_zundamon.wav",
-    "durationInFrames": 132
-  },
-  {
-    "id": 28,
-    "character": "zundamon",
-    "text": "ゼロ円なのだ。参加費は、無料なのだ。",
-    "displayText": "0円なのだ。参加費は、無料なのだ。",
-    "examNo": 10,
-    "examScore": 100,
-    "examQ": "ここまで全部、いくら？",
-    "examChoices": [
-      "月500円",
-      "0円",
-      "買い切り2000円"
-    ],
-    "examAnswer": 1,
-    "examShowAnswer": true,
-    "examExplain": "参加費、0円",
-    "examExplainSub": "マイクラ統合版があれば、だれでも\n24時間、いつでもあそべます",
-    "examSource": "はじめに（intro）",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "28_zundamon.wav",
-    "durationInFrames": 110
-  },
-  {
-    "id": 29,
-    "character": "zundamon",
-    "text": "ゼンモンセイカイで、ヒャクテン。合格なのだ！",
-    "displayText": "全問正解で、100点。合格なのだ！",
-    "examTone": "pass",
-    "examCert": "よもぎ生活鯖 認定試験",
-    "examCertSub": "全10問 100点 ／ 合格",
-    "scene": 1,
-    "pauseAfter": 6,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1200
-    },
-    "se": {
-      "src": "roll-finish1.mp3",
-      "volume": 0.5
-    },
-    "voiceFile": "29_zundamon.wav",
-    "durationInFrames": 119
-  },
-  {
-    "id": 30,
-    "character": "metan",
-    "text": "ちょっと待って。これ、ぜんぶ本当にあるの？",
-    "displayText": "ちょっと待って。これ、全部本当にあるの？",
-    "examRetort": "これ、全部本当にあるの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/称号を購入して変更している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "30_metan.wav",
-    "durationInFrames": 105
+    "durationInFrames": 81
   },
   {
     "id": 31,
     "character": "zundamon",
-    "text": "ぜんぶ、公式のドキュメントに書いてあるのだ。",
-    "displayText": "全部、公式のドキュメントに書いてあるのだ。",
-    "examReveal": "よもぎ生活サーバー",
-    "examRevealSub": "統合版・参加費0円・24時間あそべます",
+    "text": "これ、よもぎサーバーの生活鯖なのだ。",
+    "mktReveal": "よもぎ生活サーバー",
+    "mktRevealSub": "統合版・参加費0円・24時間あそべます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 3000
+      "startFrom": 2860
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "31_zundamon.wav",
-    "durationInFrames": 111
+    "durationInFrames": 103
   },
   {
     "id": 32,
     "character": "zundamon",
     "text": "よもぎサーバーで、けんさくしてほしいのだ。",
     "displayText": "よもぎサーバーで、検索してほしいのだ。",
-    "examCta": "よもぎサーバー",
-    "examNote": "※得点と合格ラインは演出です。機能は公式ドキュメントの記載に基づきます",
+    "mktCta": "よもぎサーバー",
+    "mktNote": "※価格は2026年8月時点の公式ドキュメントの記載に基づきます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1303,10 +1364,10 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 33,
     "character": "zundamon",
-    "text": "あなたは、なん点だったのだ？",
-    "displayText": "あなたは、何点だった？",
-    "examResult": "あなたは、何点だった？",
-    "examResultSub": "コメントで教えてほしいのだ",
+    "text": "あなたは、なん問あたったのだ？",
+    "displayText": "あなたは、何問当たった？",
+    "mktResult": "あなたは、何問当たった？",
+    "mktResultSub": "コメントで教えてほしいのだ",
     "scene": 1,
     "pauseAfter": 0,
     "visual": {
@@ -1320,7 +1381,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.45
     },
     "voiceFile": "33_zundamon.wav",
-    "durationInFrames": 78
+    "durationInFrames": 80
   }
 ];
 

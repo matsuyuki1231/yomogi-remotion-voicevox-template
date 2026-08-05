@@ -119,11 +119,19 @@ import {
   ExamHud,
   ExamTone,
 } from "./components/ExamHud";
+import {
+  MarketBackdrop,
+  MarketScrim,
+  MarketChrome,
+  MarketHud,
+  MarketTone,
+} from "./components/MarketHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "market"
   | "exam"
   | "rail"
   | "news"
@@ -141,7 +149,7 @@ type Format =
   | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// exam* なら認定試験・答案採点型、
+// mkt* なら相場クイズ・値札当て型、exam* なら認定試験・答案採点型、
 // rail* なら路線図・車内アナウンス型、join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
@@ -160,9 +168,11 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // mkt* も既存のどれとも互いに素（m で始まるのは mil* だけ）。
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("mkt")) return "market";
   if (hasPrefix("exam")) return "exam";
   if (hasPrefix("rail")) return "rail";
   if (hasPrefix("join")) return "join";
@@ -942,6 +952,102 @@ export const Main: React.FC = () => {
     examToneResolved[index] === "test" &&
     examNoResolved[index] !== null;
 
+  // ---- 相場トーン（取引中 / 記帳ずみ）を解決。価格表の行から後ろに引き継がれる ----
+  // settled に入ると売り場（値札）を畳んで映像を全面に開き、色が琥珀から緑に反転する
+  const mktToneResolved: MarketTone[] = (() => {
+    let current: MarketTone = "deal";
+    return scriptData.map((line) => {
+      if (line.mktTone === "deal" || line.mktTone === "settled") {
+        current = line.mktTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const mktNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.mktNo === "number") {
+        current = line.mktNo;
+      }
+      return current;
+    });
+  })();
+
+  // 問番号の分母＝相場表の行数。スクリプト中でいちばん大きい問題番号を全問数とする
+  const mktNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.mktNo ?? 0),
+    1
+  );
+
+  // ---- 相場表に記帳ずみの件数を解決。指定がない行は直前の値を引き継ぐ ----
+  const mktFilledResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.mktFilled === "number") {
+        current = line.mktFilled;
+      }
+      return current;
+    });
+  })();
+
+  // クイズ名は最初に指定した行のものを動画全体で使う
+  const mktTitle =
+    scriptData.find((line) => line.mktTitle)?.mktTitle ?? "相場クイズ";
+
+  // 価格表（この型のクライマックス）の中身。解答行に書かれた1行ぶんを順に集める
+  const mktRows = scriptData
+    .filter((line) => line.mktRowLabel)
+    .map((line) => ({
+      label: line.mktRowLabel as string,
+      value: line.mktRowValue ?? "",
+    }));
+
+  // ---- 売り場の中身（商品・値札・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行で値札が消えると、画面の下半分が丸ごと空いて間延びする。
+  // 直前の商品と値札と解説をそのまま残し、めたんがそれを見て反応している画にする
+  // （この型は解説を読ませること自体が本体なので、残る時間が長いほうがよい）。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // 記帳完了（settled）以降は売り場ごと畳むので持ち越さない。
+  type MarketCard = {
+    item?: string;
+    itemLabel?: string;
+    choices?: string[];
+    answer?: number;
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const mktCardResolved: (MarketCard | null)[] = (() => {
+    let current: MarketCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.mktItem) {
+        current = {
+          item: line.mktItem,
+          itemLabel: line.mktItemLabel,
+          choices: line.mktChoices,
+          answer: line.mktAnswer,
+          showAnswer: line.mktShowAnswer,
+          explain: line.mktExplain,
+          explainSub: line.mktExplainSub,
+          source: line.mktSource,
+        };
+      }
+      return mktToneResolved[i] === "deal" ? current : null;
+    });
+  })();
+
+  // ---- 売り場（値札の横棒）を出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、価格表が出たあとは売り場を畳んで映像を
+  // 全画面に開く。映像の敷き方（SceneVisuals の market モード）も
+  // これと同じ条件で切り替えるので、売り場がない行で下半分が黒く空くことがない
+  const mktBoardShown = (index: number): boolean =>
+    index >= 0 &&
+    mktToneResolved[index] === "deal" &&
+    mktNoResolved[index] !== null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -988,6 +1094,9 @@ export const Main: React.FC = () => {
       // 認定試験型にもティッカーはない（最下部は答案用紙。
       // 2026年8月5日以降の新フォーマットは流れる帯そのものを作らない方針）
       case "exam":
+        return undefined;
+      // 相場クイズ型にもティッカーはない（最下部は解説パネル）
+      case "market":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1231,6 +1340,24 @@ export const Main: React.FC = () => {
       line.examResult
     );
 
+  // 相場クイズHUDのパーツが1つでも出るか。
+  // 商品・値札・解説は引き継ぎで出る行もあるので index で判定する
+  const hasMarketHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      mktCardResolved[index] ||
+      line.mktHook ||
+      line.mktItem ||
+      line.mktChoices ||
+      line.mktExplain ||
+      line.mktRetort ||
+      line.mktFlash ||
+      line.mktTable ||
+      line.mktReveal ||
+      line.mktCta ||
+      line.mktNote ||
+      line.mktResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -1256,6 +1383,21 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 相場クイズ型は商品プレート・値札・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときは売り場が畳まれている）
+      case "market":
+        return !!(
+          line.mktHook ||
+          line.mktItem ||
+          line.mktChoices ||
+          line.mktExplain ||
+          line.mktRetort ||
+          line.mktFlash ||
+          line.mktTable ||
+          line.mktReveal ||
+          line.mktResult
+        );
       // 認定試験型は設問・選択肢・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときは答案用紙が畳まれている）
@@ -1441,6 +1583,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "market":
+        return <MarketBackdrop />;
       case "exam":
         return <ExamBackdrop />;
       case "rail":
@@ -1485,6 +1629,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 相場クイズ型は上（ヘッダ・記帳メーター）だけを落として、中央＝映像は
+      // できるだけ素通しにする。下は値札と解説が乗るので落とす
+      case "market":
+        return <MarketScrim tone={mktToneResolved[index]} />;
       // 認定試験型は上（ヘッダ・得点メーター）だけを落として、中央＝映像は
       // できるだけ素通しにする（機能が動いている画を見せたい）。下は答案用紙が
       // 乗るので落とさない。合格後は紙が畳まれるので全体を沈めて金を差す
@@ -1543,6 +1691,22 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "market":
+        return (
+          <MarketChrome
+            tone={currentIndex >= 0 ? mktToneResolved[currentIndex] : "deal"}
+            title={mktTitle}
+            no={currentIndex >= 0 ? mktNoResolved[currentIndex] : null}
+            noTotal={mktNoTotal}
+            filled={currentIndex >= 0 ? mktFilledResolved[currentIndex] : null}
+            filledPrev={
+              currentIndex > 0 ? mktFilledResolved[currentIndex - 1] : null
+            }
+            // 出題前と、価格表以降は売り場を畳んで映像を全面に開く
+            board={mktBoardShown(currentIndex)}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "exam":
         return (
           <ExamChrome
@@ -1764,6 +1928,49 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "market":
+        if (!hasMarketHud(line, currentIndex)) return null;
+        return wrap(
+          <MarketHud
+            tone={mktToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.mktHook}
+            hookSub={line.mktHookSub}
+            item={mktCardResolved[currentIndex]?.item}
+            itemLabel={mktCardResolved[currentIndex]?.itemLabel}
+            choices={mktCardResolved[currentIndex]?.choices}
+            answer={mktCardResolved[currentIndex]?.answer}
+            timer={line.mktTimer}
+            showAnswer={mktCardResolved[currentIndex]?.showAnswer}
+            explain={mktCardResolved[currentIndex]?.explain}
+            explainSub={mktCardResolved[currentIndex]?.explainSub}
+            source={mktCardResolved[currentIndex]?.source}
+            // 自分で商品を出していない行は、前の値札と解説を残しているだけ
+            held={!line.mktItem}
+            retort={line.mktRetort}
+            flash={line.mktFlash}
+            flashSub={line.mktFlashSub}
+            table={line.mktTable}
+            tableSub={line.mktTableSub}
+            // 価格表は10行あるので2行にまたがって出す。2行目は完成形から始める
+            tableHeld={
+              currentIndex > 0 && !!scriptData[currentIndex - 1].mktTable
+            }
+            rows={mktRows}
+            // 出題中の下半分に出す「ここまでの記帳」。表が育っていくのが見える
+            rowsSoFar={mktRows.slice(
+              0,
+              (currentIndex >= 0 ? mktFilledResolved[currentIndex] : 0) ?? 0
+            )}
+            reveal={line.mktReveal}
+            revealSub={line.mktRevealSub}
+            cta={line.mktCta}
+            note={line.mktNote}
+            result={line.mktResult}
+            resultSub={line.mktResultSub}
+            durationInFrames={span}
+          />
+        );
       case "exam":
         if (!hasExamHud(line, currentIndex)) return null;
         return wrap(
@@ -2262,6 +2469,9 @@ export const Main: React.FC = () => {
               // 収める（いつもの拡大だとGUIも風景もドアップになって読めない）。
               // 合格後は紙が畳まれて画面が空くので、そこからは全画面に戻す
               exam={FORMAT === "exam" && examPaperShown(index)}
+              // 相場クイズ型も同じ考え方。下半分を値札と解説が占めるので
+              // 映像は上部エリアだけに収め、価格表以降は全画面に戻す
+              market={FORMAT === "market" && mktBoardShown(index)}
             />
             {renderScrim(index)}
           </Sequence>
