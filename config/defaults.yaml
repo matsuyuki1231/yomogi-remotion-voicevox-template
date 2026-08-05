@@ -67,6 +67,9 @@ bgm:
   #   ウソ発見器・ウソ当て型（script.living-server-lie.yaml）:
   #     amacha_technophobia 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 26
+  #   ウソ発見器・ウソ当て型／人狼版（script.werewolf-lie.yaml）:
+  #     amacha_technophobia 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 25
   segments:
     # 「テクノフォビア」— 測定パート。計器が回っている無機質さ
     - src: "amacha_technophobia.mp3"
@@ -77,4 +80,4 @@ bgm:
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 26
+      fromLineId: 25

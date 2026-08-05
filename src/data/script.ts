@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":26}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":25}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -478,26 +478,25 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "マイクラで、上下50メートル、とべるのだ。",
-    "displayText": "マイクラで、上下50m、動けるのだ。",
+    "text": "マイクラで、壁をつらぬく銃が撃てるのだ。",
     "lieTone": "test",
-    "lieTitle": "よもぎ生活鯖 ウソ発見器",
-    "lieHook": "上下50m、動ける",
+    "lieTitle": "マイクラ人狼 ウソ発見器",
+    "lieHook": "壁をつらぬく銃",
     "lieHookSub": "ウソ？ 本当？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 1350
+      "startFrom": 30
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 117
+    "durationInFrames": 106
   },
   {
     "id": 2,
@@ -508,9 +507,9 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 30
     },
     "se": {
       "src": "決定ボタンを押す3.mp3",
@@ -522,37 +521,37 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 3,
     "character": "zundamon",
-    "text": "本当なのだ。この鯖の話に、ウソを7つ混ぜるのだ。",
-    "displayText": "本当なのだ。ここから、ウソを7つ混ぜるのだ。",
+    "text": "本当なのだ。マイクラジンロウの話に、ウソを7つ混ぜるのだ。",
+    "displayText": "本当なのだ。マイクラ人狼の話に、ウソを7つ混ぜるのだ。",
     "lieFlash": "ウソは、7つ",
     "lieFlashSub": "残りは、ぜんぶ本当",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 90
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 145
+    "durationInFrames": 161
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "だいいちもん。エレベーターの話なのだ。ウソは、どれなのだ？",
+    "text": "だいいちもん。武器の話なのだ。ウソは、どれなのだ？",
     "lieNo": 1,
     "lieLeft": 7,
-    "lieThemeLabel": "移動",
+    "lieThemeLabel": "武器",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "鉄ブロックと感圧板で作れる",
-      "ジャンプで上、スニークで下",
-      "動けるのは8マスまで"
+      "全員に一撃弓が配られる",
+      "矢は50秒に1度わいてくる",
+      "味方は撃てない"
     ],
     "lieAnswer": 2,
     "lieTimer": true,
@@ -560,197 +559,44 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 90
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 165
+    "durationInFrames": 148
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "ウソは、ウ。ダイヤブロックなら、上下50メートルなのだ。",
-    "displayText": "ウソは、ウ。ダイヤ製なら上下50m動けるのだ。",
+    "text": "ウソは、ウ。味方も、撃てるのだ。",
     "lieLeft": 6,
-    "lieThemeLabel": "移動",
+    "lieThemeLabel": "武器",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "鉄ブロックと感圧板で作れる",
-      "ジャンプで上、スニークで下",
-      "動けるのは8マスまで"
+      "全員に一撃弓が配られる",
+      "矢は50秒に1度わいてくる",
+      "味方は撃てない"
     ],
     "lieAnswer": 2,
     "lieShowAnswer": true,
-    "lieExplain": "ダイヤ製なら 上下50m",
-    "lieExplainSub": "鉄ブロックの上に、鉄の感圧板。\nそれだけでエレベーターになる",
-    "lieSource": "living/commands/elevator",
+    "lieExplain": "味方も 撃てる",
+    "lieExplainSub": "同じ陣営でも倒せる。誤射も有効。\n人狼陣営の狙撃手は、壁をつらぬく銃を持つ",
+    "lieSource": "wolf/how-to-play/minecraft-wolf",
     "lieFacts": [
-      "エレベーターが作れる",
-      "ジャンプで上へ",
-      "ダイヤ製なら上下50m"
+      "全員に一撃弓",
+      "矢は50秒ごと",
+      "味方も撃てる"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 2600
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 164
-  },
-  {
-    "id": 6,
-    "character": "metan",
-    "text": "マイクラに、エレベーターがあるの？",
-    "lieRetort": "マイクラに、エレベーターがあるの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 400
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "06_metan.wav",
-    "durationInFrames": 77
-  },
-  {
-    "id": 7,
-    "character": "zundamon",
-    "text": "ダイニモン。掘る話なのだ。数字にも、気をつけてほしいのだ。",
-    "lieNo": 2,
-    "lieThemeLabel": "採掘",
-    "lieTheme": "この中に、ウソが1つ",
-    "lieCards": [
-      "役職を変えるのに1万YG",
-      "石を掘るだけで2YG",
-      "ダイヤ鉱石は1個20YG"
-    ],
-    "lieAnswer": 0,
-    "lieTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 120
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 161
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "ウソは、ア。役職はタダで変えられるのだ。",
-    "lieLeft": 5,
-    "lieThemeLabel": "採掘",
-    "lieTheme": "この中に、ウソが1つ",
-    "lieCards": [
-      "役職を変えるのに1万YG",
-      "石を掘るだけで2YG",
-      "ダイヤ鉱石は1個20YG"
-    ],
-    "lieAnswer": 0,
-    "lieShowAnswer": true,
-    "lieExplain": "役職の変更は 無料・何度でも",
-    "lieExplainSub": "木こり・採掘者・農家・エンチャンター。\nクールタイムもなし",
-    "lieSource": "living/commands/role",
-    "lieFacts": [
-      "石を掘って2YG",
-      "ダイヤ鉱石で20YG",
-      "役職の変更は無料"
-    ],
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/roleコマンドで役職を変更している動画.mp4",
-      "animation": "none",
-      "startFrom": 210
-    },
-    "se": {
-      "src": "blow3.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 127
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "ダイサンモン。お店の話なのだ。ふつうの感覚だと、間違えるのだ。",
-    "lieNo": 3,
-    "lieThemeLabel": "商売",
-    "lieTheme": "この中に、ウソが1つ",
-    "lieCards": [
-      "無人の販売所が作れる",
-      "店を開くには審査がいる",
-      "店員のいるレジは手数料0円"
-    ],
-    "lieAnswer": 1,
-    "lieTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
-      "animation": "none",
-      "startFrom": 400
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 184
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "ウソは、イ。だれでも、すぐ開けるのだ。",
-    "lieLeft": 4,
-    "lieThemeLabel": "商売",
-    "lieTheme": "この中に、ウソが1つ",
-    "lieCards": [
-      "無人の販売所が作れる",
-      "店を開くには審査がいる",
-      "店員のいるレジは手数料0円"
-    ],
-    "lieAnswer": 1,
-    "lieShowAnswer": true,
-    "lieExplain": "店は 誰でもすぐ開ける",
-    "lieExplainSub": "無人のチェストショップは手数料7%。\n有人レジは設置500YGで手数料なし",
-    "lieSource": "living/commands/chest-shop・staffed-register",
-    "lieFacts": [
-      "無人の販売所",
-      "有人レジは手数料0円",
-      "店を開くのは自由"
-    ],
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自身が土地保護した土地の中にチェストショップを作成している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
       "startFrom": 150
     },
@@ -758,40 +604,192 @@ export const scriptData: ScriptLine[] = [
       "src": "blow3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 124
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 114
   },
   {
-    "id": 11,
+    "id": 6,
     "character": "metan",
-    "text": "お店、勝手に開けるのね。",
-    "lieRetort": "お店、勝手に開けるのね",
+    "text": "味方も、撃てるの？",
+    "lieRetort": "味方も、撃てるの？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 90
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 51
+  },
+  {
+    "id": 7,
+    "character": "zundamon",
+    "text": "ダイニモン。会議の話なのだ。よく見てほしいのだ。",
+    "lieNo": 2,
+    "lieThemeLabel": "会議",
+    "lieTheme": "この中に、ウソが1つ",
+    "lieCards": [
+      "投票先はだれにも分からない",
+      "中央のボタンで会議が始まる",
+      "同数票なら、処刑されない"
+    ],
+    "lieAnswer": 0,
+    "lieTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景.mp4",
+      "animation": "none",
+      "startFrom": 30
+    },
+    "se": {
+      "src": "data_analysis.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 136
+  },
+  {
+    "id": 8,
+    "character": "zundamon",
+    "text": "ウソは、ア。だれが誰に入れたか、ぜんぶ出るのだ。",
+    "lieLeft": 5,
+    "lieThemeLabel": "会議",
+    "lieTheme": "この中に、ウソが1つ",
+    "lieCards": [
+      "投票先はだれにも分からない",
+      "中央のボタンで会議が始まる",
+      "同数票なら、処刑されない"
+    ],
+    "lieAnswer": 0,
+    "lieShowAnswer": true,
+    "lieExplain": "投票先は 全員に公開",
+    "lieExplainSub": "処刑のときに、誰が誰に入れたかが公表される。\n会議のあいだは、攻撃できない",
+    "lieSource": "wolf/how-to-play/session",
+    "lieFacts": [
+      "会議はボタンで開始",
+      "同数票なら処刑なし",
+      "投票先は全員に公開"
+    ],
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 149
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "ダイサンモン。カミングアウトの話なのだ。",
+    "lieNo": 3,
+    "lieThemeLabel": "CO",
+    "lieTheme": "この中に、ウソが1つ",
+    "lieCards": [
+      "レンガを持つとCO画面が開く",
+      "COでウソはつけない",
+      "誰が何をCOしたか一覧で出る"
+    ],
+    "lieAnswer": 1,
+    "lieTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
+      "animation": "none",
+      "startFrom": 150
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 104
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "ウソは、イ。ウソのカミングアウトも、していいのだ。",
+    "lieLeft": 4,
+    "lieThemeLabel": "CO",
+    "lieTheme": "この中に、ウソが1つ",
+    "lieCards": [
+      "レンガを持つとCO画面が開く",
+      "COでウソはつけない",
+      "誰が何をCOしたか一覧で出る"
+    ],
+    "lieAnswer": 1,
+    "lieShowAnswer": true,
+    "lieExplain": "COで ウソをつける",
+    "lieExplainSub": "人狼が占い師をかたるのも自由。\nCOの一覧は、画面の左下に出っぱなし",
+    "lieSource": "wolf/how-to-play/session",
+    "lieFacts": [
+      "レンガでCO",
+      "COは左下に一覧",
+      "COでウソをつける"
+    ],
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
+      "animation": "none",
+      "startFrom": 210
+    },
+    "se": {
+      "src": "blow3.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 148
+  },
+  {
+    "id": 11,
+    "character": "metan",
+    "text": "ウソつき放題なのね。",
+    "lieRetort": "ウソつき放題なのね",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
+      "animation": "none",
+      "startFrom": 250
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
     "voiceFile": "11_metan.wav",
-    "durationInFrames": 67
+    "durationInFrames": 47
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "ダイヨンモン。会社の話なのだ。ありえないほうが、本当かもしれないのだ。",
+    "text": "ダイヨンモン。役職の話なのだ。ありえないほうが、本当かもしれないのだ。",
     "lieNo": 4,
-    "lieThemeLabel": "会社",
+    "lieThemeLabel": "役職",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "社員の人数に制限なし",
-      "公認企業は月3万YGもらえる",
-      "会社の設立に10万YG"
+      "役職は47種類ある",
+      "人狼はなかまが誰か分かる",
+      "占い師は死んだ人を占える"
     ],
     "lieAnswer": 2,
     "lieTimer": true,
@@ -799,85 +797,65 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 90
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
     "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 191
+    "durationInFrames": 195
   },
   {
     "id": 13,
     "character": "zundamon",
-    "text": "ウソは、ウ。設立にお金は、いらないのだ。",
+    "text": "ウソは、ウ。死んだ人は、霊媒師のたんとうなのだ。",
     "lieLeft": 3,
-    "lieThemeLabel": "会社",
+    "lieThemeLabel": "役職",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "社員の人数に制限なし",
-      "公認企業は月3万YGもらえる",
-      "会社の設立に10万YG"
+      "役職は47種類ある",
+      "人狼はなかまが誰か分かる",
+      "占い師は死んだ人を占える"
     ],
     "lieAnswer": 2,
     "lieShowAnswer": true,
-    "lieExplain": "会社の設立は 無料",
-    "lieExplainSub": "社長は1人、課長と社員は人数制限なし。\n公認企業には運営から月30000YGの支援金",
-    "lieSource": "living/commands/company・supplement/good-standing-company",
+    "lieExplain": "死んだ人は 霊媒師",
+    "lieExplainSub": "占い師は生きている1人、霊媒師は死んだ1人。\nどちらもゲーム中に一度だけ",
+    "lieSource": "wolf/supplement/all_roles・how-to-play/roles",
     "lieFacts": [
-      "社員の人数は無制限",
-      "公認企業に月3万YG",
-      "会社の設立は無料"
+      "役職は47種類",
+      "人狼は仲間が見える",
+      "占いは生者、霊媒は死者"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 1000
+      "startFrom": 150
     },
     "se": {
       "src": "blow3.mp3",
       "volume": 0.4
     },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 140
+    "durationInFrames": 153
   },
   {
     "id": 14,
-    "character": "metan",
-    "text": "運営が、お金をくれるの？",
-    "lieRetort": "運営が、お金をくれるの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 68
-  },
-  {
-    "id": 15,
     "character": "zundamon",
-    "text": "ダイゴモン。治安の話なのだ。どこまで決まっていると思うのだ？",
+    "text": "ダイゴモン。タスクの話なのだ。だれが解けると思うのだ？",
     "lieNo": 5,
-    "lieThemeLabel": "治安",
+    "lieThemeLabel": "タスク",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "生活鯖のBANは人狼にも及ぶ",
-      "違反は点数制。5点で永久BAN",
-      "点数は1か月ごとに1つ減る"
+      "タスクは市民しか解けない",
+      "ステージに4か所ある",
+      "全部解けば市民陣営の勝ち"
     ],
     "lieAnswer": 0,
     "lieTimer": true,
@@ -885,65 +863,65 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/チェスト保護をしている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 270
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 161
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 150
   },
   {
-    "id": 16,
+    "id": 15,
     "character": "zundamon",
-    "text": "ウソは、ア。処罰は、鯖ごとに別なのだ。",
+    "text": "ウソは、ア。タスクは、だれでも解けるのだ。",
     "lieLeft": 2,
-    "lieThemeLabel": "治安",
+    "lieThemeLabel": "タスク",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "生活鯖のBANは人狼にも及ぶ",
-      "違反は点数制。5点で永久BAN",
-      "点数は1か月ごとに1つ減る"
+      "タスクは市民しか解けない",
+      "ステージに4か所ある",
+      "全部解けば市民陣営の勝ち"
     ],
     "lieAnswer": 0,
     "lieShowAnswer": true,
-    "lieExplain": "処罰は サービスごとに独立",
-    "lieExplainSub": "生活鯖・マイクラ人狼・Discordで別々。\n点数と処罰の基準まで公開されている",
-    "lieSource": "living/supplement/sanction",
+    "lieExplain": "タスクは 誰でも解ける",
+    "lieExplainSub": "20秒スニークで1つ解決。手に物を持つと解けない。\n「市民」役職だけ2倍速の10秒",
+    "lieSource": "wolf/how-to-play/task",
     "lieFacts": [
-      "違反は点数制",
-      "点数は1か月で1つ減る",
-      "処罰はサービスごと独立"
+      "タスクは4か所",
+      "20秒スニークで解決",
+      "市民は2倍速の10秒"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 1000
+      "startFrom": 30
     },
     "se": {
       "src": "blow3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 135
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 128
   },
   {
-    "id": 17,
+    "id": 16,
     "character": "zundamon",
-    "text": "ダイロクモン。土地の話なのだ。買ったあとのことも、考えてほしいのだ。",
+    "text": "ダイロクモン。サボタージュの話なのだ。",
     "lieNo": 6,
-    "lieThemeLabel": "土地",
+    "lieThemeLabel": "サボ",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "土地は1マス100YGから",
-      "買った土地は売れない",
-      "1か月放置で所有権が消える"
+      "発動すると2か所が赤くなる",
+      "解除しても何ももらえない",
+      "60秒で解除しないと負け"
     ],
     "lieAnswer": 1,
     "lieTimer": true,
@@ -951,65 +929,65 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/新しい土地を土地保護している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 120
+      "startFrom": 210
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 186
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 99
   },
   {
-    "id": 18,
+    "id": 17,
     "character": "zundamon",
-    "text": "ウソは、イ。土地は、いつでも売れるのだ。",
+    "text": "ウソは、イ。解除すると、アイテムがもらえるのだ。",
     "lieLeft": 1,
-    "lieThemeLabel": "土地",
+    "lieThemeLabel": "サボ",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "土地は1マス100YGから",
-      "買った土地は売れない",
-      "1か月放置で所有権が消える"
+      "発動すると2か所が赤くなる",
+      "解除しても何ももらえない",
+      "60秒で解除しないと負け"
     ],
     "lieAnswer": 1,
     "lieShowAnswer": true,
-    "lieExplain": "土地は いつでも売れる",
-    "lieExplainSub": "買うのも売るのも、コマンド1つ。\n放置された土地はオークションに出る",
-    "lieSource": "living/commands/land-protection",
+    "lieExplain": "解除すると 特殊アイテム",
+    "lieExplainSub": "解除した人からランダムで1人がもらえる。\n解除は、参加者ならだれでもできる",
+    "lieSource": "wolf/how-to-play/sabotage",
     "lieFacts": [
-      "土地は1マス100YG",
-      "土地はいつでも売れる",
-      "放置土地は競売へ"
+      "サボタージュは60秒",
+      "解除は誰でもできる",
+      "解除で特殊アイテム"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 200
+      "startFrom": 320
     },
     "se": {
       "src": "blow3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 124
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 150
   },
   {
-    "id": 19,
+    "id": 18,
     "character": "zundamon",
-    "text": "だいななもん。ガチャの話なのだ。もう、分かるはずなのだ。",
+    "text": "だいななもん。死んだあとの話なのだ。もう分かるはずなのだ。",
     "lieNo": 7,
-    "lieThemeLabel": "ガチャ",
+    "lieThemeLabel": "死亡後",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "小麦の俵12個でも引ける",
-      "昼だけ引けるガチャがある",
-      "排出確率は公開されていない"
+      "死んだ人の声は生存者に届かない",
+      "会議のほかは半径10mだけ",
+      "死んだら、もう復活できない"
     ],
     "lieAnswer": 2,
     "lieTimer": true,
@@ -1017,56 +995,56 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 90
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 159
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 147
   },
   {
-    "id": 20,
+    "id": 19,
     "character": "zundamon",
-    "text": "ウソは、ウ。確率は、ぜんぶ見られるのだ。",
+    "text": "ウソは、ウ。死神が、1人だけ生き返らせるのだ。",
     "lieLeft": 0,
-    "lieThemeLabel": "ガチャ",
+    "lieThemeLabel": "死亡後",
     "lieTheme": "この中に、ウソが1つ",
     "lieCards": [
-      "小麦の俵12個でも引ける",
-      "昼だけ引けるガチャがある",
-      "排出確率は公開されていない"
+      "死んだ人の声は生存者に届かない",
+      "会議のほかは半径10mだけ",
+      "死んだら、もう復活できない"
     ],
     "lieAnswer": 2,
     "lieShowAnswer": true,
-    "lieExplain": "排出確率は 全部公開",
-    "lieExplainSub": "統計画面で、鯖全体と個人の記録が見られる。\n昼限定ガチャは11時から15時",
-    "lieSource": "living/commands/gacha",
+    "lieExplain": "死神が 1人だけ生き返らせる",
+    "lieExplainSub": "市民陣営の「死神」がゲーム中に一度だけ使える。\nただし、退出した人は復活できない",
+    "lieSource": "wolf/how-to-play/roles",
     "lieFacts": [
-      "小麦の俵でガチャ",
-      "昼だけのガチャがある",
-      "排出確率は全部公開"
+      "死者の声は届かない",
+      "会議外は半径10m",
+      "死神が1人だけ復活"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 250
+      "startFrom": 150
     },
     "se": {
       "src": "blow3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 134
+    "voiceFile": "19_zundamon.wav",
+    "durationInFrames": 153
   },
   {
-    "id": 21,
+    "id": 20,
     "character": "metan",
     "text": "ウソ、ぜんぶ見つけたわ。",
     "lieRetort": "ウソ、ぜんぶ見つけたわ",
@@ -1074,19 +1052,19 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 240
+      "startFrom": 150
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "21_metan.wav",
+    "voiceFile": "20_metan.wav",
     "durationInFrames": 66
   },
   {
-    "id": 22,
+    "id": 21,
     "character": "zundamon",
     "text": "ダイハチモン。さいごの問題なのだ。よく見てほしいのだ。",
     "lieNo": 8,
@@ -1094,8 +1072,8 @@ export const scriptData: ScriptLine[] = [
     "lieTheme": "最後の3つ",
     "lieCards": [
       "参加費は0円",
-      "スマホでも遊べる",
-      "24時間あそべる"
+      "毎週土曜の21時半から",
+      "初参加でもルール説明つき"
     ],
     "lieAnswer": -1,
     "lieTimer": true,
@@ -1103,19 +1081,19 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 2700
+      "startFrom": 150
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
-    "voiceFile": "22_zundamon.wav",
+    "voiceFile": "21_zundamon.wav",
     "durationInFrames": 143
   },
   {
-    "id": 23,
+    "id": 22,
     "character": "metan",
     "text": "どれがウソなの？",
     "lieRetort": "どれがウソなの？",
@@ -1123,55 +1101,55 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "マイクラ人狼/会議中の風景.mp4",
       "animation": "none",
-      "startFrom": 460
+      "startFrom": 30
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "23_metan.wav",
+    "voiceFile": "22_metan.wav",
     "durationInFrames": 38
   },
   {
-    "id": 24,
+    "id": 23,
     "character": "zundamon",
     "text": "ウソは、ないのだ。",
     "lieThemeLabel": "参加",
     "lieTheme": "最後の3つ",
     "lieCards": [
       "参加費は0円",
-      "スマホでも遊べる",
-      "24時間あそべる"
+      "毎週土曜の21時半から",
+      "初参加でもルール説明つき"
     ],
     "lieAnswer": -1,
     "lieShowAnswer": true,
     "lieExplain": "この3つに ウソはない",
-    "lieExplainSub": "統合版なら、スマホでもパソコンでも。\n入るのに、お金は1円もかからない",
-    "lieSource": "living/how-to-join",
+    "lieExplainSub": "統合版なら、スマホでもパソコンでも。\n21時半から入れば、主催者がルールを説明してくれる",
+    "lieSource": "wolf/how-to-join",
     "lieFacts": [
       "参加費は0円",
-      "スマホでも遊べる",
-      "24時間あそべる"
+      "毎週土曜21:30",
+      "初参加もルール説明"
     ],
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 250
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "23_zundamon.wav",
     "durationInFrames": 50
   },
   {
-    "id": 25,
+    "id": 24,
     "character": "metan",
     "text": "ぜんぶ、本当なの？",
     "lieRetort": "ぜんぶ、本当なの？",
@@ -1179,19 +1157,19 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 210
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "25_metan.wav",
+    "voiceFile": "24_metan.wav",
     "durationInFrames": 56
   },
   {
-    "id": 26,
+    "id": 25,
     "character": "zundamon",
     "text": "本当のことだけが、ニジュウヨンコ残ったのだ。",
     "displayText": "本当のことだけが、24個残ったのだ。",
@@ -1202,19 +1180,19 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 1080
+      "startFrom": 270
     },
     "se": {
       "src": "jajean1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "26_zundamon.wav",
+    "voiceFile": "25_zundamon.wav",
     "durationInFrames": 111
   },
   {
-    "id": 27,
+    "id": 26,
     "character": "zundamon",
     "text": "ぜんぶ、公式ドキュメントに書いてあるのだ。",
     "lieList": "本当だったこと 24",
@@ -1223,83 +1201,64 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/霊媒師で市民勝利.mp4",
       "animation": "none",
-      "startFrom": 1160
+      "startFrom": 320
     },
     "se": {
       "src": "amount-display1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "27_zundamon.wav",
+    "voiceFile": "26_zundamon.wav",
     "durationInFrames": 107
   },
   {
-    "id": 28,
-    "character": "metan",
-    "text": "ゲームの中に、社会があるのね。",
-    "lieRetort": "ゲームの中に、社会があるのね",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "28_metan.wav",
-    "durationInFrames": 76
-  },
-  {
-    "id": 29,
+    "id": 27,
     "character": "zundamon",
-    "text": "これ、よもぎサーバーの生活鯖なのだ。",
-    "lieReveal": "よもぎ生活サーバー",
-    "lieRevealSub": "統合版・参加費0円・24時間あそべます",
+    "text": "これ、よもぎサーバーのマイクラジンロウなのだ。",
+    "displayText": "これ、よもぎサーバーのマイクラ人狼なのだ。",
+    "lieReveal": "よもぎサーバー マイクラ人狼",
+    "lieRevealSub": "毎週土曜 21:30・統合版・参加費0円",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/会議中の風景2.mp4",
       "animation": "none",
-      "startFrom": 2860
+      "startFrom": 90
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "29_zundamon.wav",
-    "durationInFrames": 103
+    "voiceFile": "27_zundamon.wav",
+    "durationInFrames": 109
   },
   {
-    "id": 30,
+    "id": 28,
     "character": "zundamon",
     "text": "よもぎサーバーで、けんさくしてほしいのだ。",
     "displayText": "よもぎサーバーで、検索してほしいのだ。",
     "lieCta": "よもぎサーバー",
-    "lieNote": "※内容は2026年8月時点の公式ドキュメントの記載に基づきます",
+    "lieNote": "※統合版のみ・Discord連携が必要です（2026年8月時点）",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "fadeIn",
-      "backgroundSrc": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "backgroundStartFrom": 500
+      "backgroundSrc": "マイクラ人狼/会議中の風景2.mp4",
+      "backgroundStartFrom": 150
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.5
     },
-    "voiceFile": "30_zundamon.wav",
+    "voiceFile": "28_zundamon.wav",
     "durationInFrames": 102
   },
   {
-    "id": 31,
+    "id": 29,
     "character": "zundamon",
     "text": "あなたは、いくつ見破れたのだ？",
     "displayText": "あなたは、いくつ見破れた？",
@@ -1309,15 +1268,15 @@ export const scriptData: ScriptLine[] = [
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "マイクラ人狼/殺し屋が霊媒師のフリ.mp4",
       "animation": "none",
-      "startFrom": 1350
+      "startFrom": 30
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "31_zundamon.wav",
+    "voiceFile": "29_zundamon.wav",
     "durationInFrames": 82
   }
 ];
