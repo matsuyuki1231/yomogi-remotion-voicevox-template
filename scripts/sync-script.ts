@@ -381,6 +381,33 @@ interface ScriptLine {
   mktNote?: string;
   mktResult?: string;
   mktResultSub?: string;
+  lieTone?: string;
+  lieTitle?: string;
+  lieNo?: number;
+  lieLeft?: number;
+  lieHook?: string;
+  lieHookSub?: string;
+  lieTheme?: string;
+  lieThemeLabel?: string;
+  lieCards?: string[];
+  lieAnswer?: number;
+  lieTimer?: boolean;
+  lieShowAnswer?: boolean;
+  lieExplain?: string;
+  lieExplainSub?: string;
+  lieSource?: string;
+  lieFacts?: string[];
+  lieRetort?: string;
+  lieFlash?: string;
+  lieFlashSub?: string;
+  lieList?: string;
+  lieListSub?: string;
+  lieReveal?: string;
+  lieRevealSub?: string;
+  lieCta?: string;
+  lieNote?: string;
+  lieResult?: string;
+  lieResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -915,6 +942,34 @@ export interface ScriptLine {
   mktNote?: string;          // CTA下の小さな注記（※価格は○年○月時点です 等）
   mktResult?: string;        // ループ用リボン（冒頭の第1問に戻す）
   mktResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- ウソ発見器・ウソ当て型（LieHud）----
+  lieTone?: "test" | "clear"; // 鑑定トーン。指定行から後ろに引き継がれる（測定中＝シアン / 鑑定終了＝金・カードが畳まれる）
+  lieTitle?: string;         // 番組名。最初に指定した行のものを動画全体で使う
+  lieNo?: number;            // 何問目か。指定がない行は直前の値を引き継ぐ（この値がない行ではカードを出さない）
+  lieLeft?: number;          // まだ見破っていないウソの件数。指定がない行は直前の値を引き継ぐ（減った行だけ演出）
+  lieHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  lieHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  lieTheme?: string;         // テーマプレート本文（何の話をしているのか）
+  lieThemeLabel?: string;    // テーマプレート左のラベル（移動 / 採掘 / 会社 など）
+  lieCards?: string[];       // 供述カード（3枚想定）。出題行と解答行の両方に同じ内容を書く
+  lieAnswer?: number;        // ウソの位置（0始まり）。-1 ならウソなし（最終問題）
+  lieTimer?: boolean;        // 出題行に true。ポリグラフの制限時間バーが尺いっぱいで縮む
+  lieShowAnswer?: boolean;   // 解答行に true。ウソ札が裂けて落ち、残りに「本当」が押される
+  lieExplain?: string;       // 解説パネルの見出し（この型の本体。ウソをここで明示的に否定する）
+  lieExplainSub?: string;    // 解説パネルの補足行（改行はYAML側で明示する）
+  lieSource?: string;        // 解説パネルの出典（docs のページ名）
+  lieFacts?: string[];       // 事実リストに載せる項目（解答行に書く。11文字以内）
+  lieRetort?: string;        // ツッコミ吹き出し
+  lieFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  lieFlashSub?: string;      // テロップの上に出す小バッジ
+  lieList?: string;          // 事実リスト（全画面・白フラッシュ）。ここでトーンが金に反転する
+  lieListSub?: string;       // 事実リストの副題
+  lieReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  lieRevealSub?: string;     // まとめ帯の補足行
+  lieCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  lieNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
+  lieResult?: string;        // ループ用リボン（冒頭の第1問に戻す）
+  lieResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

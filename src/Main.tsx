@@ -126,11 +126,19 @@ import {
   MarketHud,
   MarketTone,
 } from "./components/MarketHud";
+import {
+  LieBackdrop,
+  LieScrim,
+  LieChrome,
+  LieHud,
+  LieTone,
+} from "./components/LieHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "lie"
   | "market"
   | "exam"
   | "rail"
@@ -149,6 +157,7 @@ type Format =
   | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
+// lie* ならウソ発見器・ウソ当て型、
 // mkt* なら相場クイズ・値札当て型、exam* なら認定試験・答案採点型、
 // rail* なら路線図・車内アナウンス型、join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
@@ -168,10 +177,12 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // lie* も既存のどれとも互いに素（l で始まる接頭辞はほかにない）。
   // mkt* も既存のどれとも互いに素（m で始まるのは mil* だけ）。
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("lie")) return "lie";
   if (hasPrefix("mkt")) return "market";
   if (hasPrefix("exam")) return "exam";
   if (hasPrefix("rail")) return "rail";
@@ -1048,6 +1059,103 @@ export const Main: React.FC = () => {
     mktToneResolved[index] === "deal" &&
     mktNoResolved[index] !== null;
 
+  // ---- 鑑定トーン（測定中 / 鑑定終了）を解決。事実リストの行から後ろに引き継がれる ----
+  // clear に入ると供述カードを畳んで映像を全面に開き、色がシアンから金に反転する
+  const lieToneResolved: LieTone[] = (() => {
+    let current: LieTone = "test";
+    return scriptData.map((line) => {
+      if (line.lieTone === "test" || line.lieTone === "clear") {
+        current = line.lieTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const lieNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.lieNo === "number") {
+        current = line.lieNo;
+      }
+      return current;
+    });
+  })();
+
+  // 問番号の分母。スクリプト中でいちばん大きい問題番号を全問数とする
+  const lieNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.lieNo ?? 0),
+    1
+  );
+
+  // ---- まだ見破っていないウソの件数を解決。指定がない行は直前の値を引き継ぐ ----
+  const lieLeftResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.lieLeft === "number") {
+        current = line.lieLeft;
+      }
+      return current;
+    });
+  })();
+
+  // ウソランプの個数。スクリプト中でいちばん多い残件数を総数とする
+  const lieLeftTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.lieLeft ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const lieTitle =
+    scriptData.find((line) => line.lieTitle)?.lieTitle ?? "ウソ発見器";
+
+  // 事実リスト（この型のクライマックス）の中身。解答行に書かれたぶんを順に集める
+  const lieFacts = scriptData.flatMap((line) => line.lieFacts ?? []);
+
+  // ---- 供述カードの中身（テーマ・3枚のカード・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行でカードが消えると、画面の下半分が丸ごと空いて間延びする。
+  // 直前のカードと解説をそのまま残し、めたんがそれを見て反応している画にする
+  // （この型は解説を読ませること自体が本体なので、残る時間が長いほうがよい）。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // 鑑定終了（clear）以降はカードごと畳むので持ち越さない。
+  type LieCard = {
+    theme?: string;
+    themeLabel?: string;
+    cards?: string[];
+    answer?: number;
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const lieCardResolved: (LieCard | null)[] = (() => {
+    let current: LieCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.lieCards) {
+        current = {
+          theme: line.lieTheme,
+          themeLabel: line.lieThemeLabel,
+          cards: line.lieCards,
+          answer: line.lieAnswer,
+          showAnswer: line.lieShowAnswer,
+          explain: line.lieExplain,
+          explainSub: line.lieExplainSub,
+          source: line.lieSource,
+        };
+      }
+      return lieToneResolved[i] === "test" ? current : null;
+    });
+  })();
+
+  // ---- 供述カードを出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、事実リストが出たあとはカードを畳んで
+  // 映像を全画面に開く。映像の敷き方（SceneVisuals の lie モード）も
+  // これと同じ条件で切り替えるので、カードがない行で下半分が黒く空くことがない
+  const lieBoardShown = (index: number): boolean =>
+    index >= 0 &&
+    lieToneResolved[index] === "test" &&
+    lieNoResolved[index] !== null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -1097,6 +1205,9 @@ export const Main: React.FC = () => {
         return undefined;
       // 相場クイズ型にもティッカーはない（最下部は解説パネル）
       case "market":
+        return undefined;
+      // ウソ発見器型にもティッカーはない（最下部はポリグラフと解説パネル）
+      case "lie":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1358,6 +1469,23 @@ export const Main: React.FC = () => {
       line.mktResult
     );
 
+  // ウソ発見器HUDのパーツが1つでも出るか。
+  // 供述カード・解説は引き継ぎで出る行もあるので index で判定する
+  const hasLieHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      lieCardResolved[index] ||
+      line.lieHook ||
+      line.lieCards ||
+      line.lieExplain ||
+      line.lieRetort ||
+      line.lieFlash ||
+      line.lieList ||
+      line.lieReveal ||
+      line.lieCta ||
+      line.lieNote ||
+      line.lieResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -1383,6 +1511,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // ウソ発見器型は供述カード・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
+      case "lie":
+        return !!(
+          line.lieHook ||
+          line.lieCards ||
+          line.lieExplain ||
+          line.lieRetort ||
+          line.lieFlash ||
+          line.lieList ||
+          line.lieReveal ||
+          line.lieResult
+        );
       // 相場クイズ型は商品プレート・値札・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときは売り場が畳まれている）
@@ -1583,6 +1725,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "lie":
+        return <LieBackdrop />;
       case "market":
         return <MarketBackdrop />;
       case "exam":
@@ -1629,6 +1773,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // ウソ発見器型は上（ヘッダ・ウソメーター）だけを落として、中央＝映像は
+      // できるだけ素通しにする。下は供述カードと解説が乗るので落とす
+      case "lie":
+        return <LieScrim tone={lieToneResolved[index]} />;
       // 相場クイズ型は上（ヘッダ・記帳メーター）だけを落として、中央＝映像は
       // できるだけ素通しにする。下は値札と解説が乗るので落とす
       case "market":
@@ -1691,6 +1839,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "lie":
+        return (
+          <LieChrome
+            tone={currentIndex >= 0 ? lieToneResolved[currentIndex] : "test"}
+            title={lieTitle}
+            no={currentIndex >= 0 ? lieNoResolved[currentIndex] : null}
+            noTotal={lieNoTotal}
+            left={currentIndex >= 0 ? lieLeftResolved[currentIndex] : null}
+            leftPrev={currentIndex > 0 ? lieLeftResolved[currentIndex - 1] : null}
+            leftTotal={lieLeftTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "market":
         return (
           <MarketChrome
@@ -1928,6 +2089,42 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "lie":
+        if (!hasLieHud(line, currentIndex)) return null;
+        return wrap(
+          <LieHud
+            tone={lieToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.lieHook}
+            hookSub={line.lieHookSub}
+            theme={lieCardResolved[currentIndex]?.theme}
+            themeLabel={lieCardResolved[currentIndex]?.themeLabel}
+            cards={lieCardResolved[currentIndex]?.cards}
+            answer={lieCardResolved[currentIndex]?.answer}
+            timer={line.lieTimer}
+            showAnswer={lieCardResolved[currentIndex]?.showAnswer}
+            explain={lieCardResolved[currentIndex]?.explain}
+            explainSub={lieCardResolved[currentIndex]?.explainSub}
+            source={lieCardResolved[currentIndex]?.source}
+            // 自分でカードを出していない行は、前のカードと解説を残しているだけ
+            held={!line.lieCards}
+            retort={line.lieRetort}
+            flash={line.lieFlash}
+            flashSub={line.lieFlashSub}
+            list={line.lieList}
+            listSub={line.lieListSub}
+            // 事実リストは件数が多いので2行にまたがって出す。2行目は完成形から始める
+            listHeld={currentIndex > 0 && !!scriptData[currentIndex - 1].lieList}
+            facts={lieFacts}
+            reveal={line.lieReveal}
+            revealSub={line.lieRevealSub}
+            cta={line.lieCta}
+            note={line.lieNote}
+            result={line.lieResult}
+            resultSub={line.lieResultSub}
+            durationInFrames={span}
+          />
+        );
       case "market":
         if (!hasMarketHud(line, currentIndex)) return null;
         return wrap(
@@ -2472,6 +2669,9 @@ export const Main: React.FC = () => {
               // 相場クイズ型も同じ考え方。下半分を値札と解説が占めるので
               // 映像は上部エリアだけに収め、価格表以降は全画面に戻す
               market={FORMAT === "market" && mktBoardShown(index)}
+              // ウソ発見器型も同じ考え方。下半分を供述カードと解説が占めるので
+              // 映像は上部エリアだけに収め、事実リスト以降は全画面に戻す
+              lie={FORMAT === "lie" && lieBoardShown(index)}
             />
             {renderScrim(index)}
           </Sequence>

@@ -64,14 +64,17 @@ bgm:
   #   相場クイズ・値札当て型（script.living-server-market.yaml）:
   #     amacha_metropolis 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 28
+  #   ウソ発見器・ウソ当て型（script.living-server-lie.yaml）:
+  #     amacha_technophobia 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 26
   segments:
-    # 「メトロポリス」— 出題パート。市場・取引所の慌ただしさ
-    - src: "amacha_metropolis.mp3"
+    # 「テクノフォビア」— 測定パート。計器が回っている無機質さ
+    - src: "amacha_technophobia.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 価格表が完成してトーンが緑に反転する行から
+    # 「ハッピータイム」— 事実リストが出てトーンが金に反転する行から
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 28
+      fromLineId: 26

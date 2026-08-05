@@ -55,6 +55,14 @@ interface SceneVisualsProps {
    * ただし売り場の吊り位置に合わせてエリアが違うので、定数ごと分けてある。
    */
   market?: boolean;
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（ウソ発見器・ウソ当て型）。
+   *
+   * 考え方は `exam` / `market` と同じ（下半分を供述カードと解説パネルが
+   * 占めるので、いつもの 160%×125% で敷くとGUIも風景もドアップになって
+   * 読めない）。エリアは相場クイズ型と同じ 204〜1004 なので定数も共用する。
+   */
+  lie?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
@@ -63,7 +71,8 @@ const EXAM_TOP = 206;
 const EXAM_HEIGHT = 874;
 
 // 映像エリア（MarketHud のレイアウトに合わせて固定）。
-// ここを変えるときは MarketHud 側の ITEM_TOP（=1024）も一緒に見ること
+// ここを変えるときは MarketHud 側の ITEM_TOP（=1024）も一緒に見ること。
+// ウソ発見器型（LieHud）も同じエリアを使う（THEME_TOP = 1024）
 const MARKET_TOP = 204;
 const MARKET_HEIGHT = 800;
 
@@ -179,6 +188,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   rail,
   exam = false,
   market = false,
+  lie = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -209,11 +219,12 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
     return null;
   }
 
-  // 認定試験型と相場クイズ型は、下半分をHUD（答案用紙 / 値札と解説）が占めるので
-  // 上部の映像エリアにだけ素材を収める。エリアの位置と高さだけが違う
-  if (visual.type === "video" && visual.src && (exam || market)) {
-    const areaTop = market ? MARKET_TOP : EXAM_TOP;
-    const areaHeight = market ? MARKET_HEIGHT : EXAM_HEIGHT;
+  // 認定試験型・相場クイズ型・ウソ発見器型は、下半分をHUD（答案用紙 /
+  // 値札と解説 / 供述カードと解説）が占めるので、上部の映像エリアにだけ
+  // 素材を収める。エリアの位置と高さだけが違う（相場クイズ型とウソ発見器型は同じ）
+  if (visual.type === "video" && visual.src && (exam || market || lie)) {
+    const areaTop = market || lie ? MARKET_TOP : EXAM_TOP;
+    const areaHeight = market || lie ? MARKET_HEIGHT : EXAM_HEIGHT;
     const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
     // 素材（1920×1012）をエリアの高さ125%に合わせると幅は約2071px。
     // はみ出した左右のぶんだけ、ゆっくり往復させる
