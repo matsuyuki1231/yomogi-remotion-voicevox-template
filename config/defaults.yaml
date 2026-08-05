@@ -19,12 +19,15 @@ bgm:
   src: "amacha_sanjinooyatsu.mp3"
   volume: 0.18
   loop: true
-  # 参加導線ハウツー型（script.living-server-join.yaml 用）:
-  # 手順の実演（id1〜11）はテキパキした曲で駆け抜け、
-  # 参加完了＝トーンが inside に反転する id:12 で明るい曲に切り替えて
-  # 「入ったあと」の空気に変える
+  # 路線図・車内アナウンス型（script.living-server-rail.yaml 用）:
+  # 走行パート（id1〜25）は移動感のある曲で各駅を駆け抜け、
+  # 終点で運賃が0円に確定する id:26 で明るい曲に切り替えて
+  # 「着いた」空気に変える
   #
   # ※版を切り替えたら、この segments も版に合わせて差し替えること
+  #   路線図・車内アナウンス型（script.living-server-rail.yaml）:
+  #     amacha_metropolis 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 26
   #   参加導線ハウツー型・生活サーバー版（script.living-server-join.yaml）:
   #     amacha_marbletechno1 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 12
@@ -56,13 +59,13 @@ bgm:
   #     amacha_technophobia 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 19
   segments:
-    # 「マーブルテクノ」— 手順の実演パート（STEP 1〜5）をテキパキ駆け抜ける
-    - src: "amacha_marbletechno1.mp3"
+    # 「メトロポリス」— 走行パート。各駅を移動していく空気を作る
+    - src: "amacha_metropolis.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 連携完了。トーンが青→蓬緑に反転する行から切り替える
+    # 「ハッピータイム」— 終点。運賃が0円に確定してトーンが金に反転する行から
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 14
+      fromLineId: 26

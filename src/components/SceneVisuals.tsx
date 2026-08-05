@@ -26,6 +26,16 @@ interface SceneVisualsProps {
    * 原寸比で置き、上下はスタジオの暗がりとして残す。
    */
   screen?: boolean;
+  /**
+   * 電車の走行感を足すか（路線図・車内アナウンス型の窓の外）。
+   *
+   * `moving` … 景色が右から左へ高速で流れ、車体が細かく揺れる。
+   * `stopped` … 駅に停まっている。パンをほぼ止めて、アイドリングの揺れだけ残す。
+   *
+   * ほかの型のパンは lineId の偶奇で左右に振っているが、この型では
+   * **進行方向が変わってはいけない**ので常に右→左で固定する。
+   */
+  rail?: "moving" | "stopped";
 }
 
 // モニターの位置（画面当てクイズ型のレイアウトに合わせて固定）。
@@ -46,6 +56,21 @@ const handheldOffset = (frame: number, enabled: boolean) => {
     x: Math.sin(frame / 7.3) * 6 + Math.sin(frame / 3.1) * 2.8,
     y: Math.cos(frame / 5.9) * 5 + Math.sin(frame / 2.7) * 2.4,
     rotate: Math.sin(frame / 11.4) * 0.35,
+  };
+};
+
+/**
+ * 車体の揺れ（路線図型）。走行中はレールの継ぎ目を拾って上下に細かく跳ね、
+ * 停車中はアイドリングぶんだけ残す。手持ちカメラの揺れより周期が速く、
+ * 横方向にはほとんど動かないのが「乗り物」に見せるコツ
+ */
+const railShake = (frame: number, rail?: "moving" | "stopped") => {
+  if (!rail) return { x: 0, y: 0, rotate: 0 };
+  const amp = rail === "moving" ? 1 : 0.25;
+  return {
+    x: Math.sin(frame / 4.1) * 1.6 * amp,
+    y: (Math.sin(frame / 1.9) * 3.2 + Math.sin(frame / 5.3) * 2.2) * amp,
+    rotate: Math.sin(frame / 6.7) * 0.16 * amp,
   };
 };
 
@@ -122,22 +147,32 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   lineId = 0,
   handheld = false,
   screen = false,
+  rail,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
   const animationStyle = useAnimationStyle(frame, fps, visual?.animation);
 
-  // 全画面映像・背景映像で共通のパン量。lineId の偶奇で方向を交互に切り替える
+  // 全画面映像・背景映像で共通のパン量。lineId の偶奇で方向を交互に切り替える。
+  // 路線図型だけは進行方向が変わってはいけないので右→左に固定し、
+  // 走行中は端から端まで一気に流す（＝窓の外が高速で過ぎていく）
   const SCALE = 1.6;
   const overhang = (width * SCALE - width) / 2;
+  const panDuration = rail === "moving" ? 130 : rail === "stopped" ? 1600 : 600;
   const panX = interpolate(
     frame,
-    [0, 600],
-    lineId % 2 === 0 ? [overhang, -overhang] : [-overhang, overhang],
+    [0, panDuration],
+    rail || lineId % 2 === 0 ? [overhang, -overhang] : [-overhang, overhang],
     { extrapolateRight: "clamp" }
   );
 
-  const shake = handheldOffset(frame, handheld);
+  const hand = handheldOffset(frame, handheld);
+  const train = railShake(frame, rail);
+  const shake = {
+    x: hand.x + train.x,
+    y: hand.y + train.y,
+    rotate: hand.rotate + train.rotate,
+  };
 
   if (!visual || visual.type === "none") {
     return null;

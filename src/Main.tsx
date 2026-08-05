@@ -105,11 +105,19 @@ import {
   JoinScreen,
   JoinFocus,
 } from "./components/JoinHud";
+import {
+  RailBackdrop,
+  RailScrim,
+  RailChrome,
+  RailHud,
+  RailTone,
+} from "./components/RailHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "rail"
   | "news"
   | "court"
   | "shop"
@@ -125,7 +133,7 @@ type Format =
   | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// join* なら参加導線ハウツー型、
+// rail* なら路線図・車内アナウンス型、join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
 // quiz* なら画面当てクイズ型、rw* なら巻き戻し型、resp* ならリスポーン型、
 // job* なら求人票・募集要項型、drama* なら縦型ショートドラマ・逆転劇型、
@@ -143,7 +151,9 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // rail* は既存のどの接頭辞とも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("rail")) return "rail";
   if (hasPrefix("join")) return "join";
   if (hasPrefix("pv")) return "promo";
   if (hasPrefix("mil")) return "million";
@@ -766,6 +776,65 @@ export const Main: React.FC = () => {
   const joinClockStop =
     joinClockStopIndex >= 0 ? getLineStartFrame(joinClockStopIndex) : null;
 
+  // ---- 路線トーン（乗車中 / 終点）を解決。指定した行から後ろに引き継がれる ----
+  const railToneResolved: RailTone[] = (() => {
+    let current: RailTone = "ride";
+    return scriptData.map((line) => {
+      if (line.railTone === "ride" || line.railTone === "arrive") {
+        current = line.railTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- いま何駅目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const railNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.railNo === "number") {
+        current = line.railNo;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 走行中か停車中か ----
+  // この型だけは引き継がない。**書いていない行は走行中**で、駅に着いた行にだけ
+  // railMoving: false を書く。窓の外（映像）の流れ方と、路線図の電車の位置が
+  // この1つで決まるので、行ごとに明示するほうが事故が少ない
+  const railMovingResolved: boolean[] = scriptData.map(
+    (line) => line.railMoving !== false
+  );
+
+  // ---- 「次は」の自由文を解決。指定がない行は直前の値を引き継ぐ ----
+  // 駅番号がある行では路線図の駅名が優先されるので、これが効くのは
+  // まだ発車していない導入部だけ（＝この動画のフック「あなたの家」）
+  const railNextResolved: (string | null)[] = (() => {
+    let current: string | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.railNext === "string") {
+        current = line.railNext;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 常設の運賃表示を解決。指定がない行は直前の値を引き継ぐ ----
+  const railFareResolved: (string | null)[] = (() => {
+    let current: string | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.railFare === "string") {
+        current = line.railFare;
+      }
+      return current;
+    });
+  })();
+
+  // 路線名・行き先・駅の一覧は最初に指定した行のものを動画全体で使う
+  const railLine = scriptData.find((line) => line.railLine)?.railLine ?? "";
+  const railDest = scriptData.find((line) => line.railDest)?.railDest ?? "";
+  const railStops = scriptData.find((line) => line.railStops)?.railStops ?? [];
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -809,6 +878,8 @@ export const Main: React.FC = () => {
       // リスポーン型にもティッカーはない（最下部はマイクラのホットバー）
       case "respawn":
         return undefined;
+      case "rail":
+        return line.railTicker;
       case "join":
         return line.joinTicker;
       case "promo":
@@ -1004,6 +1075,20 @@ export const Main: React.FC = () => {
       line.joinResult
     );
 
+  // 路線図HUDのパーツが1つでも出るか
+  const hasRailHud = (line: ScriptLine): boolean =>
+    !!(
+      line.railSign ||
+      line.railInfo ||
+      line.railRetort ||
+      line.railFlash ||
+      line.railFareSlam ||
+      line.railReveal ||
+      line.railCta ||
+      line.railNote ||
+      line.railResult
+    );
+
   // 正直CM HUDのパーツが1つでも出るか
   const hasPromoHud = (line: ScriptLine): boolean =>
     !!(
@@ -1042,6 +1127,18 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 路線図型は駅名標・説明プレート・テロップが画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ
+      case "rail":
+        return !!(
+          line.railSign ||
+          line.railInfo ||
+          line.railRetort ||
+          line.railFlash ||
+          line.railFareSlam ||
+          line.railReveal ||
+          line.railResult
+        );
       // 参加導線型は手順カード・テロップ・スラムが画面テロップを兼ねる。
       // マイクラUIパネルが出ている行も、パネル自体を読ませたいので字幕は出さない。
       // 字幕を出すのは検索CTAの行だけ
@@ -1200,6 +1297,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "rail":
+        return <RailBackdrop />;
       case "join":
         return <JoinBackdrop />;
       case "promo":
@@ -1240,6 +1339,15 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 路線図型は上部（LED表示と路線図）を強めに落とし、中央＝窓の外は
+      // できるだけ素通しにする。走行中だけ光の筋が流れる
+      case "rail":
+        return (
+          <RailScrim
+            tone={railToneResolved[index]}
+            moving={railMovingResolved[index]}
+          />
+        );
       // 参加導線型は手順パートで映像をぼかして沈める（＝マイクラのメニュー画面の
       // 背景に見える）。入れた瞬間にぼけが取れて実映像がクリアになる。
       // 「入った」を文字ではなくピントで伝えるので、ここがこの型の転換点
@@ -1284,6 +1392,23 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "rail":
+        return (
+          <RailChrome
+            tone={currentIndex >= 0 ? railToneResolved[currentIndex] : "ride"}
+            lineName={railLine}
+            dest={railDest}
+            stops={railStops}
+            no={currentIndex >= 0 ? railNoResolved[currentIndex] : null}
+            noPrev={currentIndex > 0 ? railNoResolved[currentIndex - 1] : null}
+            moving={currentIndex >= 0 ? railMovingResolved[currentIndex] : true}
+            next={currentIndex >= 0 ? railNextResolved[currentIndex] : null}
+            fare={currentIndex >= 0 ? railFareResolved[currentIndex] : null}
+            farePrev={currentIndex > 0 ? railFareResolved[currentIndex - 1] : null}
+            ticker={tickerText}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "join":
         return (
           <JoinChrome
@@ -1471,6 +1596,34 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "rail":
+        if (!hasRailHud(line)) return null;
+        return wrap(
+          <RailHud
+            tone={railToneResolved[currentIndex]}
+            character={line.character}
+            sign={line.railSign}
+            signSub={line.railSignSub}
+            signCode={line.railSignCode}
+            signPrev={line.railSignPrev}
+            signNext={line.railSignNext}
+            info={line.railInfo}
+            infoLabel={line.railInfoLabel}
+            infoSub={line.railInfoSub}
+            retort={line.railRetort}
+            flash={line.railFlash}
+            flashSub={line.railFlashSub}
+            fareSlam={line.railFareSlam}
+            fareSlamSub={line.railFareSlamSub}
+            reveal={line.railReveal}
+            revealSub={line.railRevealSub}
+            cta={line.railCta}
+            note={line.railNote}
+            result={line.railResult}
+            resultSub={line.railResultSub}
+            durationInFrames={span}
+          />
+        );
       case "join":
         if (!hasJoinHud(line, currentIndex)) return null;
         return wrap(
@@ -1896,6 +2049,15 @@ export const Main: React.FC = () => {
               lineId={line.id}
               handheld={FORMAT === "interview"}
               screen={FORMAT === "quiz" && !!line.quizChoices}
+              // 路線図型では窓の外が主役。走行中は景色が右から左へ高速で
+              // 流れて車体が揺れ、駅に着いた行では止まる
+              rail={
+                FORMAT === "rail"
+                  ? railMovingResolved[index]
+                    ? "moving"
+                    : "stopped"
+                  : undefined
+              }
             />
             {renderScrim(index)}
           </Sequence>

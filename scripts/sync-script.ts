@@ -298,6 +298,34 @@ interface ScriptLine {
   joinNote?: string;
   joinResult?: string;
   joinResultSub?: string;
+  railTone?: string;
+  railLine?: string;
+  railDest?: string;
+  railStops?: string[];
+  railTicker?: string;
+  railNo?: number;
+  railMoving?: boolean;
+  railNext?: string;
+  railFare?: string;
+  railSign?: string;
+  railSignSub?: string;
+  railSignCode?: string;
+  railSignPrev?: string;
+  railSignNext?: string;
+  railInfo?: string;
+  railInfoLabel?: string;
+  railInfoSub?: string;
+  railRetort?: string;
+  railFlash?: string;
+  railFlashSub?: string;
+  railFareSlam?: string;
+  railFareSlamSub?: string;
+  railReveal?: string;
+  railRevealSub?: string;
+  railCta?: string;
+  railNote?: string;
+  railResult?: string;
+  railResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -746,6 +774,35 @@ export interface ScriptLine {
   joinNote?: string;         // CTA下の小さな注記（※統合版のみ 等の但し書き）
   joinResult?: string;       // ループ用リボン（冒頭に戻す）
   joinResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 路線図・車内アナウンス型（RailHud）----
+  railTone?: "ride" | "arrive"; // 路線トーン。指定行から後ろに引き継がれる（乗車中＝蓬緑 / 終点＝金）
+  railLine?: string;         // 路線名（よもぎ生活線）。最初に指定した行のものを全体で使う
+  railDest?: string;         // 行き先（あなたの家）。最初に指定した行のものを全体で使う
+  railStops?: string[];      // 全駅の駅名。路線図はこれで描く。最初に指定した行のものを全体で使う
+  railTicker?: string;       // 最下部のLEDティッカーを流れる文（全行ぶんを連結して常時流す）
+  railNo?: number;           // いま何駅目か（1始まり）。指定がない行は直前の値を引き継ぐ
+  railMoving?: boolean;      // 走行中か。**引き継がない**。false を書いた行だけ停車（映像が止まり、電車が駅に着く）
+  railNext?: string;         // 「次は」に出す文字列。駅番号がない導入部で自由文を出すため
+  railFare?: string;         // 常設の運賃表示（？？？円 → 0円）。指定がない行は直前の値を引き継ぐ
+  railSign?: string;         // 駅名標の駅名（この型の主役。1カット1駅）
+  railSignSub?: string;      // 駅名標のローマ字表記
+  railSignCode?: string;     // 駅ナンバリング（YG-04 など）
+  railSignPrev?: string;     // 駅名標の左下に出す前の駅
+  railSignNext?: string;     // 駅名標の右下に出す次の駅
+  railInfo?: string;         // 駅の説明プレート本文（1カット1機能）
+  railInfoLabel?: string;    // 説明プレート左のラベル（土地 / 会社 など）
+  railInfoSub?: string;      // 説明プレートの補足行
+  railRetort?: string;       // ツッコミ吹き出し
+  railFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  railFlashSub?: string;     // テロップの上に出す小バッジ
+  railFareSlam?: string;     // 運賃0円スラム（全画面・白フラッシュ）
+  railFareSlamSub?: string;  // 運賃スラムの補足行
+  railReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  railRevealSub?: string;    // まとめ帯の補足行
+  railCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  railNote?: string;         // CTA下の小さな注記（※駅名は演出です 等の但し書き）
+  railResult?: string;       // ループ用リボン（環状線＝冒頭の駅に戻す）
+  railResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
