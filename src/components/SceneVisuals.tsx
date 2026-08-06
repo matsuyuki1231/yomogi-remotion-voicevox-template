@@ -63,6 +63,13 @@ interface SceneVisualsProps {
    * 読めない）。エリアは相場クイズ型と同じ 204〜1004 なので定数も共用する。
    */
   lie?: boolean;
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（複数選択クイズ・ぜんぶ選べ型）。
+   *
+   * 考え方は `market` / `lie` と同じ（下半分をチェックリスト4枚と解説パネルが
+   * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
+   */
+  pick?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
@@ -72,7 +79,8 @@ const EXAM_HEIGHT = 874;
 
 // 映像エリア（MarketHud のレイアウトに合わせて固定）。
 // ここを変えるときは MarketHud 側の ITEM_TOP（=1024）も一緒に見ること。
-// ウソ発見器型（LieHud）も同じエリアを使う（THEME_TOP = 1024）
+// ウソ発見器型（LieHud）とぜんぶ選べ型（PickHud）も同じエリアを使う
+// （どちらも THEME_TOP = 1024）
 const MARKET_TOP = 204;
 const MARKET_HEIGHT = 800;
 
@@ -189,6 +197,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   exam = false,
   market = false,
   lie = false,
+  pick = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -219,12 +228,14 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
     return null;
   }
 
-  // 認定試験型・相場クイズ型・ウソ発見器型は、下半分をHUD（答案用紙 /
-  // 値札と解説 / 供述カードと解説）が占めるので、上部の映像エリアにだけ
-  // 素材を収める。エリアの位置と高さだけが違う（相場クイズ型とウソ発見器型は同じ）
-  if (visual.type === "video" && visual.src && (exam || market || lie)) {
-    const areaTop = market || lie ? MARKET_TOP : EXAM_TOP;
-    const areaHeight = market || lie ? MARKET_HEIGHT : EXAM_HEIGHT;
+  // 認定試験型・相場クイズ型・ウソ発見器型・ぜんぶ選べ型は、下半分をHUD
+  // （答案用紙 / 値札と解説 / 供述カードと解説 / チェックリストと解説）が
+  // 占めるので、上部の映像エリアにだけ素材を収める。エリアの位置と高さだけが
+  // 違う（相場クイズ型・ウソ発見器型・ぜんぶ選べ型は同じ）
+  if (visual.type === "video" && visual.src && (exam || market || lie || pick)) {
+    const wide = market || lie || pick;
+    const areaTop = wide ? MARKET_TOP : EXAM_TOP;
+    const areaHeight = wide ? MARKET_HEIGHT : EXAM_HEIGHT;
     const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
     // 素材（1920×1012）をエリアの高さ125%に合わせると幅は約2071px。
     // はみ出した左右のぶんだけ、ゆっくり往復させる
@@ -256,10 +267,13 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
           src={staticFile(`content/${visual.src}`)}
           style={{
             position: "absolute",
-            // 上下 12.5% ぶんを画面外へ逃がして座標表示とホットバーを切る
-            top: "-12%",
+            // 上下ぶんを画面外へ逃がして座標表示とホットバーを切る。
+            // ぜんぶ選べ型（pick）だけ深めに逃がしてあるのは、下端の
+            // 体力ハートとホットバーが 125% では切れ残るため（エリアが
+            // 800pxしかないので、素材の下端が10%も逃げない）
+            top: pick ? "-13%" : "-12%",
             left: "50%",
-            height: "125%",
+            height: pick ? "138%" : "125%",
             width: "auto",
             maxWidth: "none",
             transform: `translateX(calc(-50% + ${examPan}px)) scale(${punch})`,

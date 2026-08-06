@@ -133,11 +133,19 @@ import {
   LieHud,
   LieTone,
 } from "./components/LieHud";
+import {
+  PickBackdrop,
+  PickScrim,
+  PickChrome,
+  PickHud,
+  PickTone,
+} from "./components/PickHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "pick"
   | "lie"
   | "market"
   | "exam"
@@ -157,7 +165,7 @@ type Format =
   | "join";
 
 // 使っているフォーマットをスクリプトのフィールド接頭辞から判定する。
-// lie* ならウソ発見器・ウソ当て型、
+// pick* なら複数選択クイズ・ぜんぶ選べ型、lie* ならウソ発見器・ウソ当て型、
 // mkt* なら相場クイズ・値札当て型、exam* なら認定試験・答案採点型、
 // rail* なら路線図・車内アナウンス型、join* なら参加導線ハウツー型、
 // pv* なら正直CM・王道PR型、mil* ならクイズ$ミリオネア型、
@@ -177,11 +185,13 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // pick* も既存のどれとも互いに素（p で始まるのは pv* だけで、p-i と p-v）。
   // lie* も既存のどれとも互いに素（l で始まる接頭辞はほかにない）。
   // mkt* も既存のどれとも互いに素（m で始まるのは mil* だけ）。
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("pick")) return "pick";
   if (hasPrefix("lie")) return "lie";
   if (hasPrefix("mkt")) return "market";
   if (hasPrefix("exam")) return "exam";
@@ -1156,6 +1166,103 @@ export const Main: React.FC = () => {
     lieToneResolved[index] === "test" &&
     lieNoResolved[index] !== null;
 
+  // ---- 選択トーン（出題中 / 集計終了）を解決。事実リストの行から後ろに引き継がれる ----
+  // done に入るとチェックリストを畳んで映像を全面に開き、色が緑から金に反転する
+  const pickToneResolved: PickTone[] = (() => {
+    let current: PickTone = "select";
+    return scriptData.map((line) => {
+      if (line.pickTone === "select" || line.pickTone === "done") {
+        current = line.pickTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const pickNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.pickNo === "number") {
+        current = line.pickNo;
+      }
+      return current;
+    });
+  })();
+
+  // 問番号の分母。スクリプト中でいちばん大きい問題番号を全問数とする
+  const pickNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.pickNo ?? 0),
+    1
+  );
+
+  // ---- ここまでに出た「できること」の累計を解決。指定がない行は直前の値を引き継ぐ ----
+  const pickGotResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.pickGot === "number") {
+        current = line.pickGot;
+      }
+      return current;
+    });
+  })();
+
+  // メーターの分母。スクリプト中でいちばん大きい累計を総数とする
+  const pickGotTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.pickGot ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const pickTitle =
+    scriptData.find((line) => line.pickTitle)?.pickTitle ?? "ぜんぶ選べクイズ";
+
+  // 事実リスト（この型のクライマックス）の中身。解答行に書かれたぶんを順に集める
+  const pickFacts = scriptData.flatMap((line) => line.pickFacts ?? []);
+
+  // ---- チェックリストの中身（テーマ・4枚のカード・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行でカードが消えると、画面の下半分が丸ごと空いて間延びする。
+  // 直前のカードと解説をそのまま残し、めたんがそれを見て反応している画にする
+  // （この型は解説を読ませること自体が本体なので、残る時間が長いほうがよい）。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // 集計終了（done）以降はカードごと畳むので持ち越さない。
+  type PickCard = {
+    theme?: string;
+    themeLabel?: string;
+    cards?: string[];
+    answers?: number[];
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const pickCardResolved: (PickCard | null)[] = (() => {
+    let current: PickCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.pickCards) {
+        current = {
+          theme: line.pickTheme,
+          themeLabel: line.pickThemeLabel,
+          cards: line.pickCards,
+          answers: line.pickAnswers,
+          showAnswer: line.pickShowAnswer,
+          explain: line.pickExplain,
+          explainSub: line.pickExplainSub,
+          source: line.pickSource,
+        };
+      }
+      return pickToneResolved[i] === "select" ? current : null;
+    });
+  })();
+
+  // ---- チェックリストを出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、事実リストが出たあとはカードを畳んで
+  // 映像を全画面に開く。映像の敷き方（SceneVisuals の pick モード）も
+  // これと同じ条件で切り替えるので、カードがない行で下半分が黒く空くことがない
+  const pickBoardShown = (index: number): boolean =>
+    index >= 0 &&
+    pickToneResolved[index] === "select" &&
+    pickNoResolved[index] !== null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -1208,6 +1315,9 @@ export const Main: React.FC = () => {
         return undefined;
       // ウソ発見器型にもティッカーはない（最下部はポリグラフと解説パネル）
       case "lie":
+        return undefined;
+      // ぜんぶ選べ型にもティッカーはない（最下部はアクションバーと解説パネル）
+      case "pick":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1486,6 +1596,23 @@ export const Main: React.FC = () => {
       line.lieResult
     );
 
+  // ぜんぶ選べHUDのパーツが1つでも出るか。
+  // チェックリスト・解説は引き継ぎで出る行もあるので index で判定する
+  const hasPickHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      pickCardResolved[index] ||
+      line.pickHook ||
+      line.pickCards ||
+      line.pickExplain ||
+      line.pickRetort ||
+      line.pickFlash ||
+      line.pickList ||
+      line.pickReveal ||
+      line.pickCta ||
+      line.pickNote ||
+      line.pickResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -1511,6 +1638,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // ぜんぶ選べ型はチェックリスト・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
+      case "pick":
+        return !!(
+          line.pickHook ||
+          line.pickCards ||
+          line.pickExplain ||
+          line.pickRetort ||
+          line.pickFlash ||
+          line.pickList ||
+          line.pickReveal ||
+          line.pickResult
+        );
       // ウソ発見器型は供述カード・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
@@ -1725,6 +1866,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "pick":
+        return <PickBackdrop />;
       case "lie":
         return <LieBackdrop />;
       case "market":
@@ -1773,6 +1916,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // ぜんぶ選べ型は上（ヘッダ・できることメーター）だけを落として、
+      // 中央＝映像はできるだけ素通しにする。下はチェックリストと解説が乗るので落とす
+      case "pick":
+        return <PickScrim tone={pickToneResolved[index]} />;
       // ウソ発見器型は上（ヘッダ・ウソメーター）だけを落として、中央＝映像は
       // できるだけ素通しにする。下は供述カードと解説が乗るので落とす
       case "lie":
@@ -1839,6 +1986,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "pick":
+        return (
+          <PickChrome
+            tone={currentIndex >= 0 ? pickToneResolved[currentIndex] : "select"}
+            title={pickTitle}
+            no={currentIndex >= 0 ? pickNoResolved[currentIndex] : null}
+            noTotal={pickNoTotal}
+            got={currentIndex >= 0 ? pickGotResolved[currentIndex] : null}
+            gotPrev={currentIndex > 0 ? pickGotResolved[currentIndex - 1] : null}
+            gotTotal={pickGotTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "lie":
         return (
           <LieChrome
@@ -2089,6 +2249,42 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "pick":
+        if (!hasPickHud(line, currentIndex)) return null;
+        return wrap(
+          <PickHud
+            tone={pickToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.pickHook}
+            hookSub={line.pickHookSub}
+            theme={pickCardResolved[currentIndex]?.theme}
+            themeLabel={pickCardResolved[currentIndex]?.themeLabel}
+            cards={pickCardResolved[currentIndex]?.cards}
+            answers={pickCardResolved[currentIndex]?.answers}
+            timer={line.pickTimer}
+            showAnswer={pickCardResolved[currentIndex]?.showAnswer}
+            explain={pickCardResolved[currentIndex]?.explain}
+            explainSub={pickCardResolved[currentIndex]?.explainSub}
+            source={pickCardResolved[currentIndex]?.source}
+            // 自分でカードを出していない行は、前のカードと解説を残しているだけ
+            held={!line.pickCards}
+            retort={line.pickRetort}
+            flash={line.pickFlash}
+            flashSub={line.pickFlashSub}
+            list={line.pickList}
+            listSub={line.pickListSub}
+            // 事実リストは件数が多いので2行にまたがって出す。2行目は完成形から始める
+            listHeld={currentIndex > 0 && !!scriptData[currentIndex - 1].pickList}
+            facts={pickFacts}
+            reveal={line.pickReveal}
+            revealSub={line.pickRevealSub}
+            cta={line.pickCta}
+            note={line.pickNote}
+            result={line.pickResult}
+            resultSub={line.pickResultSub}
+            durationInFrames={span}
+          />
+        );
       case "lie":
         if (!hasLieHud(line, currentIndex)) return null;
         return wrap(
@@ -2672,6 +2868,8 @@ export const Main: React.FC = () => {
               // ウソ発見器型も同じ考え方。下半分を供述カードと解説が占めるので
               // 映像は上部エリアだけに収め、事実リスト以降は全画面に戻す
               lie={FORMAT === "lie" && lieBoardShown(index)}
+              // ぜんぶ選べ型も同じ考え方。下半分をチェックリストと解説が占める
+              pick={FORMAT === "pick" && pickBoardShown(index)}
             />
             {renderScrim(index)}
           </Sequence>

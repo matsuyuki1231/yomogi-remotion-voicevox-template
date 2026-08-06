@@ -408,6 +408,33 @@ interface ScriptLine {
   lieNote?: string;
   lieResult?: string;
   lieResultSub?: string;
+  pickTone?: string;
+  pickTitle?: string;
+  pickNo?: number;
+  pickGot?: number;
+  pickHook?: string;
+  pickHookSub?: string;
+  pickTheme?: string;
+  pickThemeLabel?: string;
+  pickCards?: string[];
+  pickAnswers?: number[];
+  pickTimer?: boolean;
+  pickShowAnswer?: boolean;
+  pickExplain?: string;
+  pickExplainSub?: string;
+  pickSource?: string;
+  pickFacts?: string[];
+  pickRetort?: string;
+  pickFlash?: string;
+  pickFlashSub?: string;
+  pickList?: string;
+  pickListSub?: string;
+  pickReveal?: string;
+  pickRevealSub?: string;
+  pickCta?: string;
+  pickNote?: string;
+  pickResult?: string;
+  pickResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -970,6 +997,34 @@ export interface ScriptLine {
   lieNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
   lieResult?: string;        // ループ用リボン（冒頭の第1問に戻す）
   lieResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 複数選択クイズ・ぜんぶ選べ型（PickHud）----
+  pickTone?: "select" | "done"; // 選択トーン。指定行から後ろに引き継がれる（出題中＝緑 / 集計終了＝金・カードが畳まれる）
+  pickTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
+  pickNo?: number;           // 何問目か。指定がない行は直前の値を引き継ぐ（この値がない行ではカードを出さない）
+  pickGot?: number;          // ここまでに出た「できること」の累計件数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  pickHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  pickHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  pickTheme?: string;        // テーマプレート本文（何の話をしているのか）
+  pickThemeLabel?: string;   // テーマプレート左のラベル（土地 / 商売 / 会社 など）
+  pickCards?: string[];      // チェックリスト（4枚想定）。出題行と解答行の両方に同じ内容を書く
+  pickAnswers?: number[];    // 正解の位置（0始まり）の配列。**何枚正解かは問題ごとに変える**
+  pickTimer?: boolean;       // 出題行に true。アクションバーの制限時間バーが尺いっぱいで縮む
+  pickShowAnswer?: boolean;  // 解答行に true。正解に✓が入り、ハズレに打ち消し線が引かれる
+  pickExplain?: string;      // 解説パネルの見出し（この型の本体。ハズレをここで明示的に否定する）
+  pickExplainSub?: string;   // 解説パネルの補足行（改行はYAML側で明示する）
+  pickSource?: string;       // 解説パネルの出典（docs のページ名）
+  pickFacts?: string[];      // 事実リストに載せる項目（解答行に書く。11文字以内）
+  pickRetort?: string;       // ツッコミ吹き出し
+  pickFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  pickFlashSub?: string;     // テロップの上に出す小バッジ
+  pickList?: string;         // 事実リスト（全画面・白フラッシュ）。ここでトーンが金に反転する
+  pickListSub?: string;      // 事実リストの副題
+  pickReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  pickRevealSub?: string;    // まとめ帯の補足行
+  pickCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  pickNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
+  pickResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
+  pickResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
