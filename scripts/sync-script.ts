@@ -462,6 +462,33 @@ interface ScriptLine {
   jdgNote?: string;
   jdgResult?: string;
   jdgResultSub?: string;
+  hintTone?: string;
+  hintTitle?: string;
+  hintNo?: number;
+  hintGot?: number;
+  hintHook?: string;
+  hintHookSub?: string;
+  hintCards?: string[];
+  hintLabel?: string;
+  hintAnswer?: string;
+  hintTimer?: boolean;
+  hintShowAnswer?: boolean;
+  hintExplain?: string;
+  hintExplainSub?: string;
+  hintSource?: string;
+  hintRowName?: string;
+  hintRowNote?: string;
+  hintRetort?: string;
+  hintFlash?: string;
+  hintFlashSub?: string;
+  hintList?: string;
+  hintListSub?: string;
+  hintReveal?: string;
+  hintRevealSub?: string;
+  hintCta?: string;
+  hintNote?: string;
+  hintResult?: string;
+  hintResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -1080,6 +1107,34 @@ export interface ScriptLine {
   jdgNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
   jdgResult?: string;        // ループ用リボン（冒頭のケース1に戻す）
   jdgResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- スリーヒント・独自機能図鑑型（HintHud）----
+  hintTone?: "quiz" | "comp"; // クイズトーン。指定行から後ろに引き継がれる（出題中＝コーラル / コンプ＝金・カードが畳まれる）
+  hintTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
+  hintNo?: number;           // 何問目か。指定がない行は直前の値を引き継ぐ（この値がない行ではカードを出さない）
+  hintGot?: number;          // 図鑑に収まった件数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  hintHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  hintHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  hintCards?: string[];      // ヒントカード（最大3枚。出題行ではセリフに合わせて時間差で積まれる）
+  hintLabel?: string;        // ジャンルのラベル（移動 / 商売 / あそび / 見た目 / 防犯 / 土地 / 参加）
+  hintAnswer?: string;       // 答え（機能名）。解答行でスラムする
+  hintTimer?: boolean;       // 出題行に true。アクションバーの制限時間バーが尺いっぱいで縮む
+  hintShowAnswer?: boolean;  // 解答行に true。機能名がスラムし、答えプレートと解説パネルが開く
+  hintExplain?: string;      // 解説パネルの見出し（この型の本体）
+  hintExplainSub?: string;   // 解説パネルの補足行（改行はYAML側で明示する）
+  hintSource?: string;       // 解説パネルの出典（docs のページ名）
+  hintRowName?: string;      // 図鑑に載せる機能名（解答行に書く。12文字以内）
+  hintRowNote?: string;      // 図鑑に載せるひとことスペック（11文字以内）
+  hintRetort?: string;       // ツッコミ吹き出し
+  hintFlash?: string;        // 巨大テロップ（改行はYAML側で明示する）
+  hintFlashSub?: string;     // テロップの上に出す小バッジ
+  hintList?: string;         // 図鑑（全画面・白フラッシュ）。ここでトーンが金に反転する
+  hintListSub?: string;      // 図鑑の副題
+  hintReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  hintRevealSub?: string;    // まとめ帯の補足行
+  hintCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  hintNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
+  hintResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
+  hintResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

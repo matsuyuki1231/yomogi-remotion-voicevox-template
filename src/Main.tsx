@@ -147,11 +147,19 @@ import {
   JudgeHud,
   JudgeTone,
 } from "./components/JudgeHud";
+import {
+  HintBackdrop,
+  HintScrim,
+  HintChrome,
+  HintHud,
+  HintTone,
+} from "./components/HintHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "hint"
   | "judge"
   | "pick"
   | "lie"
@@ -193,6 +201,7 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // hint* も既存のどれとも互いに素（h で始まる接頭辞はほかにない）。
   // jdg* も既存のどれとも互いに素（j で始まるのは join* / job* で、j-d は使っていない）。
   // pick* も既存のどれとも互いに素（p で始まるのは pv* だけで、p-i と p-v）。
   // lie* も既存のどれとも互いに素（l で始まる接頭辞はほかにない）。
@@ -200,6 +209,7 @@ const detectFormat = (): Format => {
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("hint")) return "hint";
   if (hasPrefix("jdg")) return "judge";
   if (hasPrefix("pick")) return "pick";
   if (hasPrefix("lie")) return "lie";
@@ -1273,6 +1283,105 @@ export const Main: React.FC = () => {
     pickToneResolved[index] === "select" &&
     pickNoResolved[index] !== null;
 
+  // ---- クイズトーン（出題中 / コンプ）を解決。図鑑の行から後ろに引き継がれる ----
+  // comp に入るとヒントカードを畳んで映像を全面に開き、色がコーラルから金に反転する
+  const hintToneResolved: HintTone[] = (() => {
+    let current: HintTone = "quiz";
+    return scriptData.map((line) => {
+      if (line.hintTone === "quiz" || line.hintTone === "comp") {
+        current = line.hintTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何問目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const hintNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.hintNo === "number") {
+        current = line.hintNo;
+      }
+      return current;
+    });
+  })();
+
+  // 問番号の分母。スクリプト中でいちばん大きい番号を全問数とする
+  const hintNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.hintNo ?? 0),
+    1
+  );
+
+  // ---- 図鑑に収まった件数を解決。指定がない行は直前の値を引き継ぐ ----
+  const hintGotResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.hintGot === "number") {
+        current = line.hintGot;
+      }
+      return current;
+    });
+  })();
+
+  // メーターの分母。スクリプト中でいちばん大きい件数を総数とする
+  const hintGotTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.hintGot ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const hintTitle =
+    scriptData.find((line) => line.hintTitle)?.hintTitle ?? "スリーヒントクイズ";
+
+  // 図鑑の中身。解答行に書かれた機能名とひとことを順に集める
+  const hintRows = scriptData
+    .filter((line) => line.hintRowName)
+    .map((line) => ({
+      n: line.hintRowName as string,
+      note: line.hintRowNote ?? "",
+    }));
+
+  // ---- ヒントカードの中身（カード・答え・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行でカードが消えると、画面の下半分が丸ごと空いて間延びする。
+  // 直前のカードと解説をそのまま残し、めたんがそれを見て反応している画にする。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // コンプ（comp）以降はカードごと畳むので持ち越さない。
+  type HintCard = {
+    cards?: string[];
+    label?: string;
+    answer?: string;
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const hintCardResolved: (HintCard | null)[] = (() => {
+    let current: HintCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.hintCards) {
+        current = {
+          cards: line.hintCards,
+          label: line.hintLabel,
+          answer: line.hintAnswer,
+          showAnswer: line.hintShowAnswer,
+          explain: line.hintExplain,
+          explainSub: line.hintExplainSub,
+          source: line.hintSource,
+        };
+      }
+      return hintToneResolved[i] === "quiz" ? current : null;
+    });
+  })();
+
+  // ---- ヒントカードを出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、図鑑が出たあとはカードを畳んで
+  // 映像を全画面に開く。映像の敷き方（SceneVisuals の hint モード）も
+  // これと同じ条件で切り替えるので、カードがない行で下半分が黒く空くことがない
+  const hintBoardShown = (index: number): boolean =>
+    index >= 0 &&
+    hintToneResolved[index] === "quiz" &&
+    hintNoResolved[index] !== null;
+
   // ---- 裁定トーン（裁定中 / 閉廷）を解決。判例集の行から後ろに引き継がれる ----
   // done に入ると事件ファイルを畳んで映像を全面に開き、色が青紫から金に反転する
   const jdgToneResolved: JudgeTone[] = (() => {
@@ -1433,6 +1542,9 @@ export const Main: React.FC = () => {
         return undefined;
       // 裁定クイズ型にもティッカーはない（最下部はアクションバーと解説パネル）
       case "judge":
+        return undefined;
+      // スリーヒント型にもティッカーはない（最下部はアクションバーと解説パネル）
+      case "hint":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1728,6 +1840,23 @@ export const Main: React.FC = () => {
       line.pickResult
     );
 
+  // スリーヒントHUDのパーツが1つでも出るか。
+  // ヒントカード・解説は引き継ぎで出る行もあるので index で判定する
+  const hasHintHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      hintCardResolved[index] ||
+      line.hintHook ||
+      line.hintCards ||
+      line.hintExplain ||
+      line.hintRetort ||
+      line.hintFlash ||
+      line.hintList ||
+      line.hintReveal ||
+      line.hintCta ||
+      line.hintNote ||
+      line.hintResult
+    );
+
   // 裁定クイズHUDのパーツが1つでも出るか。
   // 事件ファイル・解説は引き継ぎで出る行もあるので index で判定する
   const hasJudgeHud = (line: ScriptLine, index: number): boolean =>
@@ -1770,6 +1899,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // スリーヒント型はヒントカード・答えプレート・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
+      case "hint":
+        return !!(
+          line.hintHook ||
+          line.hintCards ||
+          line.hintExplain ||
+          line.hintRetort ||
+          line.hintFlash ||
+          line.hintList ||
+          line.hintReveal ||
+          line.hintResult
+        );
       // 裁定クイズ型は事件ファイル・裁定ボタン・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
@@ -2012,6 +2155,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "hint":
+        return <HintBackdrop />;
       case "judge":
         return <JudgeBackdrop />;
       case "pick":
@@ -2064,6 +2209,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // スリーヒント型は上（ヘッダ・図鑑メーター）だけを落として、
+      // 中央＝映像はできるだけ素通しにする。下はヒントカードと解説が乗るので落とす
+      case "hint":
+        return <HintScrim tone={hintToneResolved[index]} />;
       // 裁定クイズ型は上（ヘッダ・判例メーター）だけを落として、
       // 中央＝映像はできるだけ素通しにする。下は事件ファイルと裁定ボタンが乗るので落とす
       case "judge":
@@ -2138,6 +2287,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "hint":
+        return (
+          <HintChrome
+            tone={currentIndex >= 0 ? hintToneResolved[currentIndex] : "quiz"}
+            title={hintTitle}
+            no={currentIndex >= 0 ? hintNoResolved[currentIndex] : null}
+            noTotal={hintNoTotal}
+            got={currentIndex >= 0 ? hintGotResolved[currentIndex] : null}
+            gotPrev={currentIndex > 0 ? hintGotResolved[currentIndex - 1] : null}
+            gotTotal={hintGotTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "judge":
         return (
           <JudgeChrome
@@ -2414,6 +2576,41 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "hint":
+        if (!hasHintHud(line, currentIndex)) return null;
+        return wrap(
+          <HintHud
+            tone={hintToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.hintHook}
+            hookSub={line.hintHookSub}
+            cards={hintCardResolved[currentIndex]?.cards}
+            label={hintCardResolved[currentIndex]?.label}
+            answer={hintCardResolved[currentIndex]?.answer}
+            timer={line.hintTimer}
+            showAnswer={hintCardResolved[currentIndex]?.showAnswer}
+            explain={hintCardResolved[currentIndex]?.explain}
+            explainSub={hintCardResolved[currentIndex]?.explainSub}
+            source={hintCardResolved[currentIndex]?.source}
+            // 自分でカードを出していない行は、前のカードと解説を残しているだけ
+            held={!line.hintCards}
+            retort={line.hintRetort}
+            flash={line.hintFlash}
+            flashSub={line.hintFlashSub}
+            list={line.hintList}
+            listSub={line.hintListSub}
+            // 図鑑は8件を読ませるので2行にまたがって出す。2行目は完成形から始める
+            listHeld={currentIndex > 0 && !!scriptData[currentIndex - 1].hintList}
+            rows={hintRows}
+            reveal={line.hintReveal}
+            revealSub={line.hintRevealSub}
+            cta={line.hintCta}
+            note={line.hintNote}
+            result={line.hintResult}
+            resultSub={line.hintResultSub}
+            durationInFrames={span}
+          />
+        );
       case "judge":
         if (!hasJudgeHud(line, currentIndex)) return null;
         return wrap(
@@ -3073,6 +3270,8 @@ export const Main: React.FC = () => {
               pick={FORMAT === "pick" && pickBoardShown(index)}
               // 裁定クイズ型も同じ考え方。下半分を事件ファイルと裁定ボタンが占める
               judge={FORMAT === "judge" && judgeBoardShown(index)}
+              // スリーヒント型も同じ考え方。下半分をヒントカードと解説が占める
+              hint={FORMAT === "hint" && hintBoardShown(index)}
             />
             {renderScrim(index)}
           </Sequence>

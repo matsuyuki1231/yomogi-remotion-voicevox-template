@@ -77,6 +77,13 @@ interface SceneVisualsProps {
    * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
    */
   judge?: boolean;
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（スリーヒント・独自機能図鑑型）。
+   *
+   * 考え方は `market` / `lie` と同じ（下半分をヒントカードと解説パネルが
+   * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
+   */
+  hint?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
@@ -206,6 +213,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   lie = false,
   pick = false,
   judge = false,
+  hint = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -243,9 +251,9 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   if (
     visual.type === "video" &&
     visual.src &&
-    (exam || market || lie || pick || judge)
+    (exam || market || lie || pick || judge || hint)
   ) {
-    const wide = market || lie || pick || judge;
+    const wide = market || lie || pick || judge || hint;
     const areaTop = wide ? MARKET_TOP : EXAM_TOP;
     const areaHeight = wide ? MARKET_HEIGHT : EXAM_HEIGHT;
     const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
