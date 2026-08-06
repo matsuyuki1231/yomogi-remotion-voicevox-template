@@ -70,6 +70,13 @@ interface SceneVisualsProps {
    * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
    */
   pick?: boolean;
+  /**
+   * 画面上部の「映像エリア」だけに素材を収めるか（裁定クイズ・セーフ？アウト？型）。
+   *
+   * 考え方は `market` / `lie` と同じ（下半分を事件ファイルと裁定ボタンが
+   * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
+   */
+  judge?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
@@ -198,6 +205,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   market = false,
   lie = false,
   pick = false,
+  judge = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -232,8 +240,12 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   // （答案用紙 / 値札と解説 / 供述カードと解説 / チェックリストと解説）が
   // 占めるので、上部の映像エリアにだけ素材を収める。エリアの位置と高さだけが
   // 違う（相場クイズ型・ウソ発見器型・ぜんぶ選べ型は同じ）
-  if (visual.type === "video" && visual.src && (exam || market || lie || pick)) {
-    const wide = market || lie || pick;
+  if (
+    visual.type === "video" &&
+    visual.src &&
+    (exam || market || lie || pick || judge)
+  ) {
+    const wide = market || lie || pick || judge;
     const areaTop = wide ? MARKET_TOP : EXAM_TOP;
     const areaHeight = wide ? MARKET_HEIGHT : EXAM_HEIGHT;
     const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);

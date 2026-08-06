@@ -435,6 +435,33 @@ interface ScriptLine {
   pickNote?: string;
   pickResult?: string;
   pickResultSub?: string;
+  jdgTone?: string;
+  jdgTitle?: string;
+  jdgNo?: number;
+  jdgDone?: number;
+  jdgHook?: string;
+  jdgHookSub?: string;
+  jdgCase?: string;
+  jdgCaseLabel?: string;
+  jdgAnswer?: number;
+  jdgTimer?: boolean;
+  jdgShowAnswer?: boolean;
+  jdgExplain?: string;
+  jdgExplainSub?: string;
+  jdgSource?: string;
+  jdgRowCase?: string;
+  jdgRowVerdict?: string;
+  jdgRetort?: string;
+  jdgFlash?: string;
+  jdgFlashSub?: string;
+  jdgList?: string;
+  jdgListSub?: string;
+  jdgReveal?: string;
+  jdgRevealSub?: string;
+  jdgCta?: string;
+  jdgNote?: string;
+  jdgResult?: string;
+  jdgResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -1025,6 +1052,34 @@ export interface ScriptLine {
   pickNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
   pickResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   pickResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 裁定クイズ・セーフ？アウト？型（JudgeHud）----
+  jdgTone?: "judging" | "done"; // 裁定トーン。指定行から後ろに引き継がれる（裁定中＝青紫 / 閉廷＝金・カードが畳まれる）
+  jdgTitle?: string;         // 番組名。最初に指定した行のものを動画全体で使う
+  jdgNo?: number;            // 何件目のケースか。指定がない行は直前の値を引き継ぐ（この値がない行ではカードを出さない）
+  jdgDone?: number;          // 裁定ずみの判例の数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  jdgHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  jdgHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  jdgCase?: string;          // 事件ファイルの本文（2行まで。出題行と解答行の両方に同じ内容を書く）
+  jdgCaseLabel?: string;     // 事件ファイル右上のラベル（商売 / 返品 / くじ / 代行 / 採用 / 運営 / 参加）
+  jdgAnswer?: number;        // 正解の判定（0=セーフ / 1=アウト / 2=きまってない。2は一度も正解にしない）
+  jdgTimer?: boolean;        // 出題行に true。アクションバーの制限時間バーが尺いっぱいで縮む
+  jdgShowAnswer?: boolean;   // 解答行に true。正解のボタンに判が押され、裁定スタンプが叩き込まれる
+  jdgExplain?: string;       // 解説パネルの見出し（この型の本体。判定の根拠をここで明示する）
+  jdgExplainSub?: string;    // 解説パネルの補足行（改行はYAML側で明示する）
+  jdgSource?: string;        // 解説パネルの出典（条文・docs のページ名）
+  jdgRowCase?: string;       // 判例集に載せるケース名（解答行に書く。12文字以内）
+  jdgRowVerdict?: string;    // 判例集に載せる判定（セーフ / アウト のみ）
+  jdgRetort?: string;        // ツッコミ吹き出し
+  jdgFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  jdgFlashSub?: string;      // テロップの上に出す小バッジ
+  jdgList?: string;          // 判例集（全画面・白フラッシュ）。ここでトーンが金に反転する
+  jdgListSub?: string;       // 判例集の副題
+  jdgReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  jdgRevealSub?: string;     // まとめ帯の補足行
+  jdgCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  jdgNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
+  jdgResult?: string;        // ループ用リボン（冒頭のケース1に戻す）
+  jdgResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

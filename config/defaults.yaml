@@ -73,13 +73,16 @@ bgm:
   #   複数選択クイズ・ぜんぶ選べ型（script.living-server-pick.yaml）:
   #     amacha_picopicodisco 0.15 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 23
+  #   裁定クイズ・セーフ？アウト？型（script.living-server-judge.yaml）:
+  #     amacha_technophobia 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 23
   segments:
-    # 「ピコピコディスコ」— 出題パート。チェックが刻まれていくテンポ
-    - src: "amacha_picopicodisco.mp3"
-      volume: 0.15
+    # 「テクノフォビア」— 裁定パート。ケースが積まれていく緊張
+    - src: "amacha_technophobia.mp3"
+      volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 事実リストが出てトーンが金に反転する行から
+    # 「ハッピータイム」— 判例集が出てトーンが金に反転する行から
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true

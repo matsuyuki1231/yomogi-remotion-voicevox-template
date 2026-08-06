@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":23}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_technophobia.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":23}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -478,6 +478,34 @@ export interface ScriptLine {
   pickNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
   pickResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   pickResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 裁定クイズ・セーフ？アウト？型（JudgeHud）----
+  jdgTone?: "judging" | "done"; // 裁定トーン。指定行から後ろに引き継がれる（裁定中＝青紫 / 閉廷＝金・カードが畳まれる）
+  jdgTitle?: string;         // 番組名。最初に指定した行のものを動画全体で使う
+  jdgNo?: number;            // 何件目のケースか。指定がない行は直前の値を引き継ぐ（この値がない行ではカードを出さない）
+  jdgDone?: number;          // 裁定ずみの判例の数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  jdgHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  jdgHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  jdgCase?: string;          // 事件ファイルの本文（2行まで。出題行と解答行の両方に同じ内容を書く）
+  jdgCaseLabel?: string;     // 事件ファイル右上のラベル（商売 / 返品 / くじ / 代行 / 採用 / 運営 / 参加）
+  jdgAnswer?: number;        // 正解の判定（0=セーフ / 1=アウト / 2=きまってない。2は一度も正解にしない）
+  jdgTimer?: boolean;        // 出題行に true。アクションバーの制限時間バーが尺いっぱいで縮む
+  jdgShowAnswer?: boolean;   // 解答行に true。正解のボタンに判が押され、裁定スタンプが叩き込まれる
+  jdgExplain?: string;       // 解説パネルの見出し（この型の本体。判定の根拠をここで明示する）
+  jdgExplainSub?: string;    // 解説パネルの補足行（改行はYAML側で明示する）
+  jdgSource?: string;        // 解説パネルの出典（条文・docs のページ名）
+  jdgRowCase?: string;       // 判例集に載せるケース名（解答行に書く。12文字以内）
+  jdgRowVerdict?: string;    // 判例集に載せる判定（セーフ / アウト のみ）
+  jdgRetort?: string;        // ツッコミ吹き出し
+  jdgFlash?: string;         // 巨大テロップ（改行はYAML側で明示する）
+  jdgFlashSub?: string;      // テロップの上に出す小バッジ
+  jdgList?: string;          // 判例集（全画面・白フラッシュ）。ここでトーンが金に反転する
+  jdgListSub?: string;       // 判例集の副題
+  jdgReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  jdgRevealSub?: string;     // まとめ帯の補足行
+  jdgCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  jdgNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
+  jdgResult?: string;        // ループ用リボン（冒頭のケース1に戻す）
+  jdgResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;
@@ -506,31 +534,32 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "マイクラの中で、会社の社長になれるのだ。",
-    "pickTone": "select",
-    "pickTitle": "よもぎ生活鯖 ぜんぶ選べクイズ",
-    "pickHook": "社長に、なれる",
-    "pickHookSub": "マイクラの話です",
+    "text": "マイクラの面接で、タメぐちを使うと、違反なのだ。",
+    "displayText": "マイクラの面接で、ため口を使うと、違反なのだ。",
+    "jdgTone": "judging",
+    "jdgTitle": "よもぎ生活鯖 裁定クイズ",
+    "jdgHook": "ため口は、違反",
+    "jdgHookSub": "マイクラの話です",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 1350
+      "startFrom": 2700
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 110
+    "durationInFrames": 141
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "それ、ゲームの話じゃないでしょ。",
-    "pickRetort": "それ、ゲームの話じゃないでしょ",
+    "text": "面接って何よ。マイクラでしょ？",
+    "jdgRetort": "面接って何よ。マイクラでしょ？",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -544,123 +573,203 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "02_metan.wav",
-    "durationInFrames": 75
+    "durationInFrames": 78
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "こういうのを、ニジュウヨンコ出すのだ。ぜんぶ選ぶのだ。",
-    "displayText": "こういうのを24こ出すのだ。あてはまるもの、ぜんぶ選ぶのだ。",
-    "pickGot": 0,
-    "pickFlash": "あてはまるもの、ぜんぶ",
-    "pickFlashSub": "4つのうち、何こ？",
+    "text": "本物のルールで、あなたがジャッジするのだ。",
+    "jdgDone": 0,
+    "jdgFlash": "あなたが、運営",
+    "jdgFlashSub": "セーフ？アウト？",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 2600
+      "startFrom": 1000
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
     "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 134
+    "durationInFrames": 104
   },
   {
     "id": 4,
     "character": "zundamon",
-    "text": "だいいちもん。土地の話なのだ。何こあるかは、言わないのだ。",
-    "pickNo": 1,
-    "pickThemeLabel": "土地",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "土地を買って家を建てられる",
-      "空いている土地は早い者勝ち",
-      "買った土地は他の人に売れる",
-      "一度買ったら永久に自分のもの"
-    ],
-    "pickAnswers": [
-      0,
-      2
-    ],
-    "pickTimer": true,
+    "text": "だいいちもん。新規に、ダイヤを5000ワイジイで売りつけたのだ。あり？",
+    "displayText": "第1問。新規に、ダイヤを5000YGで売りつけたのだ。あり？",
+    "jdgNo": 1,
+    "jdgCaseLabel": "商売",
+    "jdgCase": "新規に、ダイヤを1個\n5000YGで売りつけた",
+    "jdgAnswer": 1,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
       "animation": "none",
-      "startFrom": 0
+      "startFrom": 80
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
     "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 163
+    "durationInFrames": 184
   },
   {
     "id": 5,
     "character": "zundamon",
-    "text": "できるのは、2つ。土地は、買って、売れるのだ。",
-    "pickGot": 2,
-    "pickThemeLabel": "土地",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "土地を買って家を建てられる",
-      "空いている土地は早い者勝ち",
-      "買った土地は他の人に売れる",
-      "一度買ったら永久に自分のもの"
-    ],
-    "pickAnswers": [
-      0,
-      2
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "土地は 買って、売れる",
-    "pickExplainSub": "生活ワールドは 1マス100YGで買える。早い者勝ちではない。\n1か月ログインしないと 所有権が外れる",
-    "pickSource": "living/commands/land-protection",
-    "pickFacts": [
-      "土地を買って家",
-      "土地は売れる"
-    ],
+    "text": "アウトなのだ。ダイヤは、2990ワイジイまでなのだ。",
+    "displayText": "アウトなのだ。ダイヤは2990YGまでなのだ。",
+    "jdgDone": 1,
+    "jdgCaseLabel": "商売",
+    "jdgCase": "新規に、ダイヤを1個\n5000YGで売りつけた",
+    "jdgAnswer": 1,
+    "jdgShowAnswer": true,
+    "jdgExplain": "ぼったくりは、上限つきで禁止",
+    "jdgExplainSub": "ダイヤの最低価格2300YGの、1.3倍まで。\n売り値の上限まで、数字で決まっている",
+    "jdgSource": "優良企業ガイドライン 10.4",
+    "jdgRowCase": "ダイヤ5000YG売り",
+    "jdgRowVerdict": "アウト",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
+      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
       "animation": "none",
-      "startFrom": 250
+      "startFrom": 60
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 158
+  },
+  {
+    "id": 6,
+    "character": "zundamon",
+    "text": "ダイニモン。買った翌日に、返品したいと言われたのだ。断っていい？",
+    "displayText": "第2問。買った翌日に「返品したい」と言われたのだ。断っていい？",
+    "jdgNo": 2,
+    "jdgCaseLabel": "返品",
+    "jdgCase": "新規が、買った翌日に\n「返品したい」と言った",
+    "jdgAnswer": 0,
+    "jdgTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "data_analysis.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "06_zundamon.wav",
+    "durationInFrames": 192
+  },
+  {
+    "id": 7,
+    "character": "zundamon",
+    "text": "セーフなのだ。むしろ、断るほうがアウトなのだ。",
+    "jdgDone": 2,
+    "jdgCaseLabel": "返品",
+    "jdgCase": "新規が、買った翌日に\n「返品したい」と言った",
+    "jdgAnswer": 0,
+    "jdgShowAnswer": true,
+    "jdgExplain": "新規は 24時間、返品できる",
+    "jdgExplainSub": "理由は、問われない。断るほうがルール違反。\n買い物で失敗しても、やり直せる",
+    "jdgSource": "優良企業ガイドライン 10.3",
+    "jdgRowCase": "翌日の返品",
+    "jdgRowVerdict": "セーフ",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/公式ショップで商品を買っている動画.mp4",
+      "animation": "none",
+      "startFrom": 100
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 142
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 125
   },
   {
-    "id": 6,
+    "id": 8,
     "character": "zundamon",
-    "text": "ダイニモン。お店の話なのだ。あてはまるもの、ぜんぶ選ぶのだ。",
-    "pickNo": 2,
-    "pickThemeLabel": "商売",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "店番のいらない無人販売所",
-      "店を出すには運営の許可がいる",
-      "売れると手数料が7%",
-      "店員がいるレジも作れる"
-    ],
-    "pickAnswers": [
-      0,
-      2,
-      3
-    ],
-    "pickTimer": true,
+    "text": "ダイサンモン。このくじを、300ワイジイで売ったのだ。良心的？",
+    "displayText": "第3問。このくじを、300YGで売ったのだ。良心的？",
+    "jdgNo": 3,
+    "jdgCaseLabel": "くじ",
+    "jdgCase": "鉄30%・ダイヤ10%のくじを\n300YGで売った",
+    "jdgAnswer": 1,
+    "jdgTimer": true,
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "animation": "none",
+      "startFrom": 190
+    },
+    "se": {
+      "src": "question1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 176
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "アウトなのだ。このくじ、安すぎるのだ。",
+    "jdgDone": 3,
+    "jdgCaseLabel": "くじ",
+    "jdgCase": "鉄30%・ダイヤ10%のくじを\n300YGで売った",
+    "jdgAnswer": 1,
+    "jdgShowAnswer": true,
+    "jdgExplain": "くじは、期待値320YGが下限",
+    "jdgExplainSub": "300×0.3 ＋ 2300×0.1 ＝ 320YG。\n運営が、確率から計算して決めている",
+    "jdgSource": "最低販売価格の補足資料",
+    "jdgRowCase": "期待値以下のくじ",
+    "jdgRowVerdict": "アウト",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 80
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 111
+  },
+  {
+    "id": 10,
+    "character": "zundamon",
+    "text": "ダイヨンモン。最低価格ちょうどで売ったら、手数料で手取りが下回ったのだ。",
+    "displayText": "第4問。最低価格ちょうどで売ったら、手数料で手取りが下回ったのだ。",
+    "jdgNo": 4,
+    "jdgCaseLabel": "商売",
+    "jdgCase": "ダイヤを、最低価格ちょうどの\n2300YGで売った",
+    "jdgAnswer": 0,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -673,285 +782,99 @@ export const scriptData: ScriptLine[] = [
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 172
+    "voiceFile": "10_zundamon.wav",
+    "durationInFrames": 185
   },
   {
-    "id": 7,
+    "id": 11,
     "character": "zundamon",
-    "text": "できるのは、3つ。お店は、だれでも出せるのだ。",
-    "pickGot": 5,
-    "pickThemeLabel": "商売",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "店番のいらない無人販売所",
-      "店を出すには運営の許可がいる",
-      "売れると手数料が7%",
-      "店員がいるレジも作れる"
-    ],
-    "pickAnswers": [
-      0,
-      2,
-      3
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "お店は だれでも出せる",
-    "pickExplainSub": "自分の土地なら 申請なしでお店を開ける。\n無人は手数料7%、有人レジは0%（設置500YG）",
-    "pickSource": "living/commands/chest-shop・staffed-register",
-    "pickFacts": [
-      "無人の店を作れる",
-      "手数料は7%",
-      "有人レジも作れる"
-    ],
+    "text": "セーフなのだ。手数料は、売った側もちなのだ。",
+    "jdgDone": 4,
+    "jdgCaseLabel": "商売",
+    "jdgCase": "ダイヤを、最低価格ちょうどの\n2300YGで売った",
+    "jdgAnswer": 0,
+    "jdgShowAnswer": true,
+    "jdgExplain": "手取りが下回っても、セーフ",
+    "jdgExplainSub": "判定は「売った値段」で行われる。手数料7%を\n引いた手取り2139YGでも、違反ではない",
+    "jdgSource": "チェストショップの補足資料",
+    "jdgRowCase": "2300YGちょうど売り",
+    "jdgRowVerdict": "セーフ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
       "animation": "none",
-      "startFrom": 80
+      "startFrom": 250
     },
     "se": {
       "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 136
-  },
-  {
-    "id": 8,
-    "character": "metan",
-    "text": "許可、いらないの？",
-    "pickRetort": "許可、いらないの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "決定ボタンを押す2.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "08_metan.wav",
-    "durationInFrames": 50
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "ダイサンモン。会社の話なのだ。2つか、3つか、4つか。",
-    "pickNo": 3,
-    "pickThemeLabel": "会社",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "会社をつくって社員をやとえる",
-      "社員の人数に制限はない",
-      "設立にはお金がかかる",
-      "取引が帳簿にぜんぶ残る"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      3
-    ],
-    "pickTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社プラグインで、銀行の取引履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 80
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 180
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "できるのは、3つ。会社の設立は、無料なのだ。",
-    "pickGot": 8,
-    "pickThemeLabel": "会社",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "会社をつくって社員をやとえる",
-      "社員の人数に制限はない",
-      "設立にはお金がかかる",
-      "取引が帳簿にぜんぶ残る"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      3
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "設立は 無料。ただし審査あり",
-    "pickExplainSub": "社長は1人、課長と社員の人数に制限はない。\n銀行と帳簿つきで、取引がぜんぶ記録される",
-    "pickSource": "living/commands/company",
-    "pickFacts": [
-      "会社をつくれる",
-      "社員は無制限",
-      "帳簿が残る"
-    ],
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 147
-  },
-  {
-    "id": 11,
-    "character": "zundamon",
-    "text": "ダイヨンモン。かせぎ方の話なのだ。まちがえると、損をするのだ。",
-    "pickNo": 4,
-    "pickThemeLabel": "かせぐ",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "石を掘ると2YGもらえる",
-      "ダイヤ鉱石は1個20YG",
-      "役職は無料で何度でも変更",
-      "最初のままでもお金が入る"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/roleコマンドで役職を変更している動画.mp4",
-      "animation": "none",
-      "startFrom": 180
-    },
-    "se": {
-      "src": "data_analysis.mp3",
       "volume": 0.4
     },
     "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 176
+    "durationInFrames": 126
   },
   {
     "id": 12,
     "character": "zundamon",
-    "text": "できるのは、3つ。さいしょの役職のままだと、ゼロエンなのだ。",
-    "displayText": "できるのは、3つ。最初の役職のままだと、0円なのだ。",
-    "pickGot": 11,
-    "pickThemeLabel": "かせぐ",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "石を掘ると2YGもらえる",
-      "ダイヤ鉱石は1個20YG",
-      "役職は無料で何度でも変更",
-      "最初のままでもお金が入る"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "最初のままだと 0円",
-    "pickExplainSub": "初期役職の「鯖民」は 何を掘っても報酬が入らない。\n入ったらまず /role で役職を変える。何度でも無料",
-    "pickSource": "living/commands/role",
-    "pickFacts": [
-      "石を掘ると2YG",
-      "ダイヤ鉱石は20YG",
-      "役職は無料で変更"
-    ],
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 200
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 172
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "ダイゴモン。あそびの話なのだ。ありえない話ほど、本当なのだ。",
-    "pickNo": 5,
-    "pickThemeLabel": "あそび",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "釣れる魚は275種類",
-      "生活ワールドで車に乗れる",
-      "ガチャが引ける",
-      "車は他の人に売れる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickTimer": true,
+    "text": "ダイゴモン。土地保護の代行で、1000ワイジイもらったのだ。相場、ある？",
+    "displayText": "第5問。土地保護の代行で、1000YGもらったのだ。相場、ある？",
+    "jdgNo": 5,
+    "jdgCaseLabel": "代行",
+    "jdgCase": "土地保護の代行で\n1000YGもらった",
+    "jdgAnswer": 1,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/釣りをしている動画.mp4",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 100
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 192
+  },
+  {
+    "id": 13,
+    "character": "zundamon",
+    "text": "アウトなのだ。かんたんな代行は、1分で200ワイジイまでなのだ。",
+    "displayText": "アウトなのだ。かんたんな代行は、1分200YGまでなのだ。",
+    "jdgDone": 5,
+    "jdgCaseLabel": "代行",
+    "jdgCase": "土地保護の代行で\n1000YGもらった",
+    "jdgAnswer": 1,
+    "jdgShowAnswer": true,
+    "jdgExplain": "かんたんな代行は、1分200YGまで",
+    "jdgExplainSub": "「だれでもできる操作だ」と、先に伝える義務もある。\n知らない人から、ふんだくれない",
+    "jdgSource": "優良企業ガイドライン 10.1・10.2",
+    "jdgRowCase": "代行1000YG",
+    "jdgRowVerdict": "アウト",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 300
+    },
+    "se": {
+      "src": "don-1.mp3",
+      "volume": 0.4
+    },
     "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 175
+    "durationInFrames": 167
   },
   {
     "id": 14,
-    "character": "zundamon",
-    "text": "できるのは、3つ。車を人に売るのは、禁止なのだ。",
-    "pickGot": 14,
-    "pickThemeLabel": "あそび",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "釣れる魚は275種類",
-      "生活ワールドで車に乗れる",
-      "ガチャが引ける",
-      "車は他の人に売れる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "車を売るのは 禁止",
-    "pickExplainSub": "自分で乗るのは自由。転売と譲渡だけが規約で禁止。\n昼限定ガチャは 11時から15時まで",
-    "pickSource": "tos/minecraft-terms-and-conditions・living/commands/gacha",
-    "pickFacts": [
-      "魚は275種類",
-      "車に乗れる",
-      "ガチャがある"
-    ],
+    "character": "metan",
+    "text": "ねえ、きまってないは、いつ正解になるのよ。",
+    "displayText": "ねえ、「きまってない」はいつ正解になるのよ。",
+    "jdgRetort": "「きまってない」、いつ正解になるのよ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -961,169 +884,105 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 60
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "14_zundamon.wav",
-    "durationInFrames": 149
-  },
-  {
-    "id": 15,
-    "character": "metan",
-    "text": "車、売れないの？",
-    "pickRetort": "車、売れないの？",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "15_metan.wav",
-    "durationInFrames": 52
+    "voiceFile": "14_metan.wav",
+    "durationInFrames": 111
   },
   {
-    "id": 16,
+    "id": 15,
     "character": "zundamon",
-    "text": "ダイロクモン。声の話なのだ。よく読んで、ぜんぶ選ぶのだ。",
-    "pickNo": 6,
-    "pickThemeLabel": "声",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "近くの人と声で話せる",
-      "はなれると声が小さくなる",
-      "Discord連携がいる",
-      "マイクラのアプリだけで話せる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickTimer": true,
+    "text": "ダイロクモン。面接で、ジュウヨンサイ以上ですか、と聞いたのだ。",
+    "displayText": "第6問。面接で「14歳以上ですか」と聞いたのだ。",
+    "jdgNo": 6,
+    "jdgCaseLabel": "採用",
+    "jdgCase": "面接で「14歳以上？」\nと聞いた",
+    "jdgAnswer": 0,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
       "animation": "none",
-      "startFrom": 300
+      "startFrom": 1000
     },
     "se": {
       "src": "data_analysis.mp3",
       "volume": 0.4
     },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 163
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 165
   },
   {
-    "id": 17,
+    "id": 16,
     "character": "zundamon",
-    "text": "できるのは、3つ。声は、ブラウザからつなぐのだ。",
-    "pickGot": 17,
-    "pickThemeLabel": "声",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "近くの人と声で話せる",
-      "はなれると声が小さくなる",
-      "Discord連携がいる",
-      "マイクラのアプリだけで話せる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "声は ブラウザでつなぐ",
-    "pickExplainSub": "vc.ymg24.org にDiscordでログインして参加する。\n鯖内で近づくほど 相手の声が大きくなる",
-    "pickSource": "living/commands/limited-vc",
-    "pickFacts": [
-      "近くの人と話せる",
-      "距離で音量が変わる",
-      "Discord連携で使う"
-    ],
+    "text": "セーフなのだ。これだけは、聞いていいのだ。",
+    "jdgDone": 6,
+    "jdgCaseLabel": "採用",
+    "jdgCase": "面接で「14歳以上？」\nと聞いた",
+    "jdgAnswer": 0,
+    "jdgShowAnswer": true,
+    "jdgExplain": "「14歳以上？」だけは、聞いていい",
+    "jdgExplainSub": "個人情報の開示要求は、原則ぜんぶ禁止。\nDiscordの規約を守るための、ただ1つの例外",
+    "jdgSource": "優良企業ガイドライン 6.2",
+    "jdgRowCase": "「14歳以上？」",
+    "jdgRowVerdict": "セーフ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/会社プラグインを使用して会社を検索している動画.mp4",
       "animation": "none",
-      "startFrom": 1000
+      "startFrom": 150
     },
     "se": {
       "src": "correct1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 141
+    "voiceFile": "16_zundamon.wav",
+    "durationInFrames": 108
   },
   {
-    "id": 18,
+    "id": 17,
     "character": "zundamon",
-    "text": "だいななもん。ルールの話なのだ。いちばん作りこまれているのだ。",
-    "pickNo": 7,
-    "pickThemeLabel": "ルール",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "5点たまると永久Ban",
-      "4点までは1か月で1点消える",
-      "処罰に異議は言えない",
-      "生活鯖と人狼で処罰は別"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      3
-    ],
-    "pickTimer": true,
+    "text": "だいななもん。運営が1人で、永久追放を決めたのだ。あり？",
+    "displayText": "第7問。運営が1人で、永久Banを決めたのだ。あり？",
+    "jdgNo": 7,
+    "jdgCaseLabel": "運営",
+    "jdgCase": "運営が1人で、いきなり\n永久Banを決めた",
+    "jdgAnswer": 1,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活サーバー内の商店街で帽子を見ている動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 10
+      "startFrom": 1080
     },
     "se": {
       "src": "question1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 164
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 186
   },
   {
-    "id": 19,
+    "id": 18,
     "character": "zundamon",
-    "text": "できるのは、3つ。処罰には、異議を出せるのだ。",
-    "pickGot": 20,
-    "pickThemeLabel": "ルール",
-    "pickTheme": "この中に、できることは？",
-    "pickCards": [
-      "5点たまると永久Ban",
-      "4点までは1か月で1点消える",
-      "処罰に異議は言えない",
-      "生活鯖と人狼で処罰は別"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      3
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "処罰には 異議を出せる",
-    "pickExplainSub": "運営が再判断したり、運営投票をとることもある。\n※Xrayなどの重大な違反は、点数によらず即時Banもある",
-    "pickSource": "living/supplement/sanction",
-    "pickFacts": [
-      "5点で永久Ban",
-      "点数は1か月で消える",
-      "生活鯖と人狼は別"
-    ],
+    "text": "アウトなのだ。運営でも、1人では決められないのだ。",
+    "jdgDone": 7,
+    "jdgCaseLabel": "運営",
+    "jdgCase": "運営が1人で、いきなり\n永久Banを決めた",
+    "jdgAnswer": 1,
+    "jdgShowAnswer": true,
+    "jdgExplain": "運営1人では、Banにできない",
+    "jdgExplainSub": "まず仮処分 → 理由の掲載 → 運営どうしで投票。\nまちがいなら、補償まで検討される",
+    "jdgSource": "運営ポリシー（処分内容決定の流れ）",
+    "jdgRowCase": "運営単独のBan",
+    "jdgRowVerdict": "アウト",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1133,52 +992,62 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 100
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "don-1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "19_zundamon.wav",
+    "voiceFile": "18_zundamon.wav",
     "durationInFrames": 136
   },
   {
-    "id": 20,
+    "id": 19,
     "character": "metan",
-    "text": "もう、ぜんぶ選んだほうが早いわ。",
-    "pickRetort": "もう、ぜんぶ選んだほうが早いわ",
+    "text": "運営まで、縛られてるの。",
+    "jdgRetort": "運営まで、縛られてるの",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
+      "src": "生活サーバー/釣りをしている動画.mp4",
       "animation": "none",
-      "startFrom": 190
+      "startFrom": 300
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "20_metan.wav",
-    "durationInFrames": 85
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 66
+  },
+  {
+    "id": 20,
+    "character": "zundamon",
+    "text": "そうなのだ。ぜんぶ、先に決まってるのだ。",
+    "jdgFlash": "ぜんぶ、先に決まってる",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 2600
+    },
+    "se": {
+      "src": "text-impact3.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 115
   },
   {
     "id": 21,
     "character": "zundamon",
-    "text": "ダイハチモン。さいごの問題なのだ。参加のことを聞くのだ。",
-    "pickNo": 8,
-    "pickThemeLabel": "参加",
-    "pickTheme": "最後の4つ",
-    "pickCards": [
-      "参加費は0円",
-      "スマホでも遊べる",
-      "24時間、あいている",
-      "統合版ならすぐ入れる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2,
-      3
-    ],
-    "pickTimer": true,
+    "text": "ダイハチモン。1か月遊んだら、請求書がとどいたのだ。",
+    "displayText": "第8問。1か月遊んだら、請求書がとどいたのだ。",
+    "jdgNo": 8,
+    "jdgCaseLabel": "参加",
+    "jdgCase": "1か月遊んだら、\n請求書がとどいた",
+    "jdgAnswer": 1,
+    "jdgTimer": true,
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -1192,81 +1061,45 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 152
+    "durationInFrames": 157
   },
   {
     "id": 22,
     "character": "zundamon",
-    "text": "できるのは、4つ。ぜんぶ、本当なのだ。",
-    "pickGot": 24,
-    "pickThemeLabel": "参加",
-    "pickTheme": "最後の4つ",
-    "pickCards": [
-      "参加費は0円",
-      "スマホでも遊べる",
-      "24時間、あいている",
-      "統合版ならすぐ入れる"
-    ],
-    "pickAnswers": [
-      0,
-      1,
-      2,
-      3
-    ],
-    "pickShowAnswer": true,
-    "pickExplain": "この4つに ハズレはない",
-    "pickExplainSub": "アドレスを入れるだけ。統合版ならスマホでもPCでも。\n入るのに お金は1円もかからない",
-    "pickSource": "living/how-to-join",
-    "pickFacts": [
-      "参加費は0円",
-      "スマホでも遊べる",
-      "24時間あそべる",
-      "統合版で入れる"
-    ],
+    "text": "アウトなのだ。何か月遊んでも、ゼロエンなのだ。",
+    "displayText": "アウトなのだ。何か月遊んでも、0円なのだ。",
+    "jdgDone": 8,
+    "jdgCaseLabel": "参加",
+    "jdgCase": "1か月遊んだら、\n請求書がとどいた",
+    "jdgAnswer": 1,
+    "jdgShowAnswer": true,
+    "jdgExplain": "請求は、来ない。0円",
+    "jdgExplainSub": "ボランティア運営。参加費も月額も0円。\n統合版なら、スマホでも今日から入れる",
+    "jdgSource": "運営ポリシー 5",
+    "jdgRowCase": "参加費の請求",
+    "jdgRowVerdict": "アウト",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "src": "生活サーバー/自然資源で採掘をしている動画.mp4",
       "animation": "none",
-      "startFrom": 2700
+      "startFrom": 200
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "don-1.mp3",
       "volume": 0.45
     },
     "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 130
+    "durationInFrames": 131
   },
   {
     "id": 23,
     "character": "zundamon",
-    "text": "できることが、ニジュウヨンコ、ならんだのだ。",
-    "displayText": "できることが、24こならんだのだ。",
-    "pickTone": "done",
-    "pickList": "できること 24",
-    "pickListSub": "この動画で「できる」と出たもの、ぜんぶ",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1080
-    },
-    "se": {
-      "src": "jajean1.mp3",
-      "volume": 0.45
-    },
-    "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 112
-  },
-  {
-    "id": 24,
-    "character": "zundamon",
-    "text": "ぜんぶ、公式ドキュメントに書いてあるのだ。",
-    "pickList": "できること 24",
-    "pickListSub": "出典は、すべて公式ドキュメント",
+    "text": "8つの判定が、そろったのだ。",
+    "jdgTone": "done",
+    "jdgList": "よもぎ生活鯖 判例集",
+    "jdgListSub": "今日の裁定、ぜんぶ",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1276,18 +1109,18 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 1160
     },
     "se": {
-      "src": "amount-display1.mp3",
-      "volume": 0.4
+      "src": "jajean1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "24_zundamon.wav",
-    "durationInFrames": 107
+    "voiceFile": "23_zundamon.wav",
+    "durationInFrames": 84
   },
   {
-    "id": 25,
+    "id": 24,
     "character": "zundamon",
-    "text": "これ、よもぎサーバーの生活鯖なのだ。",
-    "pickReveal": "よもぎ生活サーバー",
-    "pickRevealSub": "統合版・参加費0円・24時間あそべます",
+    "text": "ぜんぶ、公式のルールに書いてある判定なのだ。",
+    "jdgList": "よもぎ生活鯖 判例集",
+    "jdgListSub": "出典は、すべて公式ドキュメント",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1297,27 +1130,48 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 2860
     },
     "se": {
+      "src": "amount-display1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 122
+  },
+  {
+    "id": 25,
+    "character": "zundamon",
+    "text": "これ、よもぎサーバーの生活鯖のルールなのだ。",
+    "jdgReveal": "よもぎ生活サーバー",
+    "jdgRevealSub": "あなたを守るルールが、先に決まってます",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 500
+    },
+    "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "25_zundamon.wav",
-    "durationInFrames": 103
+    "durationInFrames": 117
   },
   {
     "id": 26,
     "character": "zundamon",
     "text": "よもぎサーバーで、けんさくしてほしいのだ。",
     "displayText": "よもぎサーバーで、検索してほしいのだ。",
-    "pickCta": "よもぎサーバー",
-    "pickNote": "※内容は2026年8月時点の公式ドキュメントの記載に基づきます",
+    "jdgCta": "よもぎサーバー",
+    "jdgNote": "※内容は2026年8月時点の公式ドキュメント・規約の記載に基づきます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "image",
       "src": "生活サーバー/googleで_よもぎサーバー_と検索した画面のスクリーンショット.png",
       "animation": "fadeIn",
-      "backgroundSrc": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "backgroundStartFrom": 500
+      "backgroundSrc": "生活サーバー/生活サーバーの建築風景.mp4",
+      "backgroundStartFrom": 250
     },
     "se": {
       "src": "決定ボタンを押す2.mp3",
@@ -1329,24 +1183,23 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 27,
     "character": "zundamon",
-    "text": "あなたは、いくつ選べたのだ？",
-    "displayText": "あなたは、いくつ選べた？",
-    "pickResult": "あなたは、いくつ選べた？",
-    "pickResultSub": "コメントで教えてほしいのだ",
+    "text": "あなたの判定、いくつ合ってた？",
+    "jdgResult": "あなたの判定、いくつ合ってた？",
+    "jdgResultSub": "コメントで教えてほしいのだ",
     "scene": 1,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 1350
+      "startFrom": 2700
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
     "voiceFile": "27_zundamon.wav",
-    "durationInFrames": 79
+    "durationInFrames": 87
   }
 ];
 

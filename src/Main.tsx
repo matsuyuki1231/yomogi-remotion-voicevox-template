@@ -140,11 +140,19 @@ import {
   PickHud,
   PickTone,
 } from "./components/PickHud";
+import {
+  JudgeBackdrop,
+  JudgeScrim,
+  JudgeChrome,
+  JudgeHud,
+  JudgeTone,
+} from "./components/JudgeHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "judge"
   | "pick"
   | "lie"
   | "market"
@@ -185,12 +193,14 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // jdg* も既存のどれとも互いに素（j で始まるのは join* / job* で、j-d は使っていない）。
   // pick* も既存のどれとも互いに素（p で始まるのは pv* だけで、p-i と p-v）。
   // lie* も既存のどれとも互いに素（l で始まる接頭辞はほかにない）。
   // mkt* も既存のどれとも互いに素（m で始まるのは mil* だけ）。
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("jdg")) return "judge";
   if (hasPrefix("pick")) return "pick";
   if (hasPrefix("lie")) return "lie";
   if (hasPrefix("mkt")) return "market";
@@ -1263,6 +1273,108 @@ export const Main: React.FC = () => {
     pickToneResolved[index] === "select" &&
     pickNoResolved[index] !== null;
 
+  // ---- 裁定トーン（裁定中 / 閉廷）を解決。判例集の行から後ろに引き継がれる ----
+  // done に入ると事件ファイルを畳んで映像を全面に開き、色が青紫から金に反転する
+  const jdgToneResolved: JudgeTone[] = (() => {
+    let current: JudgeTone = "judging";
+    return scriptData.map((line) => {
+      if (line.jdgTone === "judging" || line.jdgTone === "done") {
+        current = line.jdgTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何件目のケースかを解決。指定がない行は直前の値を引き継ぐ ----
+  const jdgNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.jdgNo === "number") {
+        current = line.jdgNo;
+      }
+      return current;
+    });
+  })();
+
+  // ケース番号の分母。スクリプト中でいちばん大きい番号を全件数とする
+  const jdgNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.jdgNo ?? 0),
+    1
+  );
+
+  // ---- 裁定ずみの判例の数を解決。指定がない行は直前の値を引き継ぐ ----
+  const jdgDoneResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.jdgDone === "number") {
+        current = line.jdgDone;
+      }
+      return current;
+    });
+  })();
+
+  // メーターの分母。スクリプト中でいちばん大きい件数を総数とする
+  const jdgDoneTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.jdgDone ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const jdgTitle =
+    scriptData.find((line) => line.jdgTitle)?.jdgTitle ?? "裁定クイズ";
+
+  // 判例集の中身。解答行に書かれたケース名と判定を順に集める
+  const jdgRows = scriptData
+    .filter((line) => line.jdgRowCase)
+    .map((line) => ({
+      c: line.jdgRowCase as string,
+      v: line.jdgRowVerdict ?? "アウト",
+    }));
+
+  // ---- 事件ファイルの中身（ケース・ラベル・判定・解説）を後続の行に引き継ぐ ----
+  // ツッコミだけの行でカードが消えると、画面の下半分が丸ごと空いて間延びする。
+  // 直前のカードと解説をそのまま残し、めたんがそれを見て反応している画にする
+  // （この型は根拠の条文を読ませること自体が本体なので、残る時間が長いほうがよい）。
+  // 引き継ぎの行では held を立ててアニメーションを焼き直さない。
+  // 閉廷（done）以降はカードごと畳むので持ち越さない。
+  type JudgeCard = {
+    caseText?: string;
+    caseLabel?: string;
+    caseNo?: number | null;
+    answer?: number;
+    showAnswer?: boolean;
+    explain?: string;
+    explainSub?: string;
+    source?: string;
+  };
+  const jdgCardResolved: (JudgeCard | null)[] = (() => {
+    let current: JudgeCard | null = null;
+    return scriptData.map((line, i) => {
+      if (line.jdgCase) {
+        current = {
+          caseText: line.jdgCase,
+          caseLabel: line.jdgCaseLabel,
+          caseNo: line.jdgNo ?? jdgNoResolved[i],
+          answer: line.jdgAnswer,
+          showAnswer: line.jdgShowAnswer,
+          explain: line.jdgExplain,
+          explainSub: line.jdgExplainSub,
+          source: line.jdgSource,
+        };
+      }
+      return jdgToneResolved[i] === "judging" ? current : null;
+    });
+  })();
+
+  // ---- 事件ファイルを出す行かどうか ----
+  // 出題が始まる前（導入の数行）と、判例集が出たあとはカードを畳んで
+  // 映像を全画面に開く。映像の敷き方（SceneVisuals の judge モード）も
+  // これと同じ条件で切り替えるので、カードがない行で下半分が黒く空くことがない
+  const judgeBoardShown = (index: number): boolean =>
+    index >= 0 &&
+    jdgToneResolved[index] === "judging" &&
+    jdgNoResolved[index] !== null;
+
   // 番組タイトル・挑戦者名・賞金ラダーは最初に指定した行のものを動画全体で使う
   const milTitle =
     scriptData.find((line) => line.milTitle)?.milTitle ?? "ミリオネア";
@@ -1318,6 +1430,9 @@ export const Main: React.FC = () => {
         return undefined;
       // ぜんぶ選べ型にもティッカーはない（最下部はアクションバーと解説パネル）
       case "pick":
+        return undefined;
+      // 裁定クイズ型にもティッカーはない（最下部はアクションバーと解説パネル）
+      case "judge":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1613,6 +1728,23 @@ export const Main: React.FC = () => {
       line.pickResult
     );
 
+  // 裁定クイズHUDのパーツが1つでも出るか。
+  // 事件ファイル・解説は引き継ぎで出る行もあるので index で判定する
+  const hasJudgeHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      jdgCardResolved[index] ||
+      line.jdgHook ||
+      line.jdgCase ||
+      line.jdgExplain ||
+      line.jdgRetort ||
+      line.jdgFlash ||
+      line.jdgList ||
+      line.jdgReveal ||
+      line.jdgCta ||
+      line.jdgNote ||
+      line.jdgResult
+    );
+
   // 巻き戻しHUDのパーツが1つでも出るか
   const hasRewindHud = (line: ScriptLine): boolean =>
     !!(
@@ -1638,6 +1770,20 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 裁定クイズ型は事件ファイル・裁定ボタン・解説パネルが画面テロップを兼ねる。
+      // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
+      case "judge":
+        return !!(
+          line.jdgHook ||
+          line.jdgCase ||
+          line.jdgExplain ||
+          line.jdgRetort ||
+          line.jdgFlash ||
+          line.jdgList ||
+          line.jdgReveal ||
+          line.jdgResult
+        );
       // ぜんぶ選べ型はチェックリスト・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
@@ -1866,6 +2012,8 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      case "judge":
+        return <JudgeBackdrop />;
       case "pick":
         return <PickBackdrop />;
       case "lie":
@@ -1916,6 +2064,10 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // 裁定クイズ型は上（ヘッダ・判例メーター）だけを落として、
+      // 中央＝映像はできるだけ素通しにする。下は事件ファイルと裁定ボタンが乗るので落とす
+      case "judge":
+        return <JudgeScrim tone={jdgToneResolved[index]} />;
       // ぜんぶ選べ型は上（ヘッダ・できることメーター）だけを落として、
       // 中央＝映像はできるだけ素通しにする。下はチェックリストと解説が乗るので落とす
       case "pick":
@@ -1986,6 +2138,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "judge":
+        return (
+          <JudgeChrome
+            tone={currentIndex >= 0 ? jdgToneResolved[currentIndex] : "judging"}
+            title={jdgTitle}
+            no={currentIndex >= 0 ? jdgNoResolved[currentIndex] : null}
+            noTotal={jdgNoTotal}
+            done={currentIndex >= 0 ? jdgDoneResolved[currentIndex] : null}
+            donePrev={currentIndex > 0 ? jdgDoneResolved[currentIndex - 1] : null}
+            doneTotal={jdgDoneTotal}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "pick":
         return (
           <PickChrome
@@ -2249,6 +2414,42 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "judge":
+        if (!hasJudgeHud(line, currentIndex)) return null;
+        return wrap(
+          <JudgeHud
+            tone={jdgToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.jdgHook}
+            hookSub={line.jdgHookSub}
+            caseText={jdgCardResolved[currentIndex]?.caseText}
+            caseLabel={jdgCardResolved[currentIndex]?.caseLabel}
+            caseNo={jdgCardResolved[currentIndex]?.caseNo}
+            answer={jdgCardResolved[currentIndex]?.answer}
+            timer={line.jdgTimer}
+            showAnswer={jdgCardResolved[currentIndex]?.showAnswer}
+            explain={jdgCardResolved[currentIndex]?.explain}
+            explainSub={jdgCardResolved[currentIndex]?.explainSub}
+            source={jdgCardResolved[currentIndex]?.source}
+            // 自分でカードを出していない行は、前のカードと解説を残しているだけ
+            held={!line.jdgCase}
+            retort={line.jdgRetort}
+            flash={line.jdgFlash}
+            flashSub={line.jdgFlashSub}
+            list={line.jdgList}
+            listSub={line.jdgListSub}
+            // 判例集は8件を読ませるので2行にまたがって出す。2行目は完成形から始める
+            listHeld={currentIndex > 0 && !!scriptData[currentIndex - 1].jdgList}
+            rows={jdgRows}
+            reveal={line.jdgReveal}
+            revealSub={line.jdgRevealSub}
+            cta={line.jdgCta}
+            note={line.jdgNote}
+            result={line.jdgResult}
+            resultSub={line.jdgResultSub}
+            durationInFrames={span}
+          />
+        );
       case "pick":
         if (!hasPickHud(line, currentIndex)) return null;
         return wrap(
@@ -2870,6 +3071,8 @@ export const Main: React.FC = () => {
               lie={FORMAT === "lie" && lieBoardShown(index)}
               // ぜんぶ選べ型も同じ考え方。下半分をチェックリストと解説が占める
               pick={FORMAT === "pick" && pickBoardShown(index)}
+              // 裁定クイズ型も同じ考え方。下半分を事件ファイルと裁定ボタンが占める
+              judge={FORMAT === "judge" && judgeBoardShown(index)}
             />
             {renderScrim(index)}
           </Sequence>
