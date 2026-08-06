@@ -462,6 +462,30 @@ interface ScriptLine {
   jdgNote?: string;
   jdgResult?: string;
   jdgResultSub?: string;
+  packTone?: string;
+  packTitle?: string;
+  packNo?: number;
+  packGot?: number;
+  packHook?: string;
+  packHookSub?: string;
+  packCard?: string;
+  packLabel?: string;
+  packRarity?: string;
+  packSpecs?: string[];
+  packSource?: string;
+  packRowName?: string;
+  packRowNote?: string;
+  packRetort?: string;
+  packFlash?: string;
+  packFlashSub?: string;
+  packList?: string;
+  packListSub?: string;
+  packReveal?: string;
+  packRevealSub?: string;
+  packCta?: string;
+  packNote?: string;
+  packResult?: string;
+  packResultSub?: string;
   hintTone?: string;
   hintTitle?: string;
   hintNo?: number;
@@ -1107,6 +1131,31 @@ export interface ScriptLine {
   jdgNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
   jdgResult?: string;        // ループ用リボン（冒頭のケース1に戻す）
   jdgResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- カードパック開封型（PackHud）----
+  packTone?: "open" | "comp"; // 開封トーン。指定行から後ろに引き継がれる（開封中＝紫 / コンプ＝金・カードが畳まれる）
+  packTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
+  packNo?: number;           // 何枚目か。指定がない行は直前の値を引き継ぐ
+  packGot?: number;          // コレクションに収まった枚数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  packHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  packHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  packCard?: string;         // カードの機能名。書いた行が開封行（パックが裂けてカードが出る）
+  packLabel?: string;        // ジャンルのラベル（土地 / 商売 / あそび / 仕事 / 声 / 移動 / 参加）
+  packRarity?: string;       // レアリティ（R / SR / SSR / UR / FREE）。演出なのでCTA注記で明示する
+  packSpecs?: string[];      // カード下段のスペック（2行まで・1行15文字以内）
+  packSource?: string;       // カード最下部の出典（docs のページ名）
+  packRowName?: string;      // コレクション一覧に載せる機能名（開封行に書く。12文字以内）
+  packRowNote?: string;      // コレクション一覧に載せるひとこと（11文字以内）
+  packRetort?: string;       // ツッコミ吹き出し（カードの下の帯。直前のカードは持ち越される）
+  packFlash?: string;        // 巨大テロップ（この行ではカードを出さない。改行はYAML側で明示）
+  packFlashSub?: string;     // テロップの上に出す小バッジ
+  packList?: string;         // コレクション一覧（全画面・白フラッシュ）。ここでトーンが金に反転する
+  packListSub?: string;      // コレクション一覧の副題
+  packReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  packRevealSub?: string;    // まとめ帯の補足行
+  packCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  packNote?: string;         // CTA下の小さな注記（※レアリティは演出です 等）
+  packResult?: string;       // ループ用リボン（冒頭に戻す）
+  packResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   // ---- スリーヒント・独自機能図鑑型（HintHud）----
   hintTone?: "quiz" | "comp"; // クイズトーン。指定行から後ろに引き継がれる（出題中＝コーラル / コンプ＝金・カードが畳まれる）
   hintTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う

@@ -84,6 +84,16 @@ interface SceneVisualsProps {
    * 占める）。エリアも 204〜1004 で同じなので定数を共用する。
    */
   hint?: boolean;
+  /**
+   * カードのイラスト窓にだけ素材を収めるか（カードパック開封型）。
+   *
+   * この型は画面中央に巨大なトレカが立ち、**カードのイラスト窓の中で
+   * 実映像が動く**。窓は PackHud のカード枠（リング）の内側なので、
+   * 位置とサイズは PackHud 側の定数（CARD_TOP + RING + BAND_H など）と
+   * 一致させること。カードのない行（導入・テロップ・一覧・CTA）では
+   * 全画面に戻す。
+   */
+  pack?: boolean;
 }
 
 // 映像エリア（ExamHud のレイアウトに合わせて固定）。
@@ -97,6 +107,14 @@ const EXAM_HEIGHT = 874;
 // （どちらも THEME_TOP = 1024）
 const MARKET_TOP = 204;
 const MARKET_HEIGHT = 800;
+
+// カードのイラスト窓（カードパック開封型のレイアウトに合わせて固定）。
+// PackHud 側: CARD_LEFT 100 + RING 12 = 112、CARD_TOP 240 + RING 12 + BAND_H 84 = 336。
+// ここを変えるときは PackHud 側の定数も一緒に直すこと
+const PACK_ART_TOP = 336;
+const PACK_ART_LEFT = 112;
+const PACK_ART_WIDTH = 856;
+const PACK_ART_HEIGHT = 600;
 
 // モニターの位置（画面当てクイズ型のレイアウトに合わせて固定）。
 // 素材は 1920×1012（比率 1.897）なので、画面幅いっぱいに置くと高さは約569になる。
@@ -214,6 +232,7 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
   pick = false,
   judge = false,
   hint = false,
+  pack = false,
 }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
@@ -242,6 +261,49 @@ export const SceneVisuals: React.FC<SceneVisualsProps> = ({
 
   if (!visual || visual.type === "none") {
     return null;
+  }
+
+  // カードパック開封型は、素材を**カードのイラスト窓の中**にだけ収める。
+  // 窓の外は PackBackdrop（開封卓）と PackHud（カード枠）が占める。
+  // 上下ぶんを窓の外へ逃がして、素材の座標表示とホットバーを切る
+  if (visual.type === "video" && visual.src && pack) {
+    const startFrom = visual.startFrom ?? seededStartFrom(lineId, visual.src);
+    const PACK_PAN = 110;
+    const packPan = interpolate(
+      frame,
+      [0, 320],
+      lineId % 2 === 0 ? [PACK_PAN, -PACK_PAN] : [-PACK_PAN, PACK_PAN],
+      { extrapolateRight: "clamp" }
+    );
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: PACK_ART_TOP,
+          left: PACK_ART_LEFT,
+          width: PACK_ART_WIDTH,
+          height: PACK_ART_HEIGHT,
+          overflow: "hidden",
+          background: "#04060d",
+        }}
+      >
+        <OffthreadVideo
+          src={staticFile(`content/${visual.src}`)}
+          style={{
+            position: "absolute",
+            top: "-12%",
+            left: "50%",
+            height: "125%",
+            width: "auto",
+            maxWidth: "none",
+            transform: `translateX(calc(-50% + ${packPan}px))`,
+          }}
+          startFrom={startFrom}
+          muted
+        />
+      </div>
+    );
   }
 
   // 認定試験型・相場クイズ型・ウソ発見器型・ぜんぶ選べ型は、下半分をHUD

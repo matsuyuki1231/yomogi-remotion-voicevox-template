@@ -38,7 +38,7 @@ export interface BGMSegment extends BGMConfig {
 export const bgmConfig: BGMConfig | null = {"src":"amacha_sanjinooyatsu.mp3","volume":0.18,"loop":true};
 
 // BGM区間指定（指定時は bgmConfig より優先し、区間ごとに曲を切り替える）
-export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_picopicodisco.mp3","volume":0.15,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":22}];
+export const bgmSegments: BGMSegment[] | null = [{"src":"amacha_marbletechno1.mp3","volume":0.16,"loop":true,"fromLineId":1},{"src":"amacha_happytime.mp3","volume":0.2,"loop":true,"fromLineId":20}];
 
 // セリフデータの型定義
 export interface ScriptLine {
@@ -506,6 +506,31 @@ export interface ScriptLine {
   jdgNote?: string;          // CTA下の小さな注記（※記載は○年○月時点です 等）
   jdgResult?: string;        // ループ用リボン（冒頭のケース1に戻す）
   jdgResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- カードパック開封型（PackHud）----
+  packTone?: "open" | "comp"; // 開封トーン。指定行から後ろに引き継がれる（開封中＝紫 / コンプ＝金・カードが畳まれる）
+  packTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
+  packNo?: number;           // 何枚目か。指定がない行は直前の値を引き継ぐ
+  packGot?: number;          // コレクションに収まった枚数。指定がない行は直前の値を引き継ぐ（増えた行だけ演出）
+  packHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  packHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  packCard?: string;         // カードの機能名。書いた行が開封行（パックが裂けてカードが出る）
+  packLabel?: string;        // ジャンルのラベル（土地 / 商売 / あそび / 仕事 / 声 / 移動 / 参加）
+  packRarity?: string;       // レアリティ（R / SR / SSR / UR / FREE）。演出なのでCTA注記で明示する
+  packSpecs?: string[];      // カード下段のスペック（2行まで・1行15文字以内）
+  packSource?: string;       // カード最下部の出典（docs のページ名）
+  packRowName?: string;      // コレクション一覧に載せる機能名（開封行に書く。12文字以内）
+  packRowNote?: string;      // コレクション一覧に載せるひとこと（11文字以内）
+  packRetort?: string;       // ツッコミ吹き出し（カードの下の帯。直前のカードは持ち越される）
+  packFlash?: string;        // 巨大テロップ（この行ではカードを出さない。改行はYAML側で明示）
+  packFlashSub?: string;     // テロップの上に出す小バッジ
+  packList?: string;         // コレクション一覧（全画面・白フラッシュ）。ここでトーンが金に反転する
+  packListSub?: string;      // コレクション一覧の副題
+  packReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  packRevealSub?: string;    // まとめ帯の補足行
+  packCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  packNote?: string;         // CTA下の小さな注記（※レアリティは演出です 等）
+  packResult?: string;       // ループ用リボン（冒頭に戻す）
+  packResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   // ---- スリーヒント・独自機能図鑑型（HintHud）----
   hintTone?: "quiz" | "comp"; // クイズトーン。指定行から後ろに引き継がれる（出題中＝コーラル / コンプ＝金・カードが畳まれる）
   hintTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
@@ -562,32 +587,32 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 1,
     "character": "zundamon",
-    "text": "マイクラで、暗視をレンタルすると、1秒4ワイジイなのだ。",
-    "displayText": "マイクラで、暗視をレンタルすると、1秒4YGなのだ。",
-    "hintTone": "quiz",
-    "hintTitle": "よもぎ生活鯖 スリーヒントクイズ",
-    "hintHook": "暗視レンタル、1秒4YG",
-    "hintHookSub": "マイクラの話です",
+    "text": "エスエスアールしか出ないパックが、あるのだ。",
+    "displayText": "SSRしか出ないパックが、あるのだ。",
+    "packTone": "open",
+    "packTitle": "よもぎ生活鯖パック",
+    "packHook": "SSRしか、出ない",
+    "packHookSub": "封入率100%",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 1000
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
     "voiceFile": "01_zundamon.wav",
-    "durationInFrames": 157
+    "durationInFrames": 101
   },
   {
     "id": 2,
     "character": "metan",
-    "text": "単位が、ぜんぶおかしいわよ。",
-    "hintRetort": "単位が、ぜんぶおかしいわよ",
+    "text": "レアの意味、なくなってるわよ。",
+    "packRetort": "レアの意味、なくなってるわよ",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
@@ -601,108 +626,16 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "02_metan.wav",
-    "durationInFrames": 70
+    "durationInFrames": 67
   },
   {
     "id": 3,
     "character": "zundamon",
-    "text": "こういう独自機能を、ヒント3つで当てるのだ。",
-    "hintGot": 0,
-    "hintFlash": "これ、なんでしょう",
-    "hintFlashSub": "ヒントは3つ",
+    "text": "よもぎサーバー生活鯖の、暮らしパックなのだ。ぜんぶ開けるのだ。",
+    "packGot": 0,
+    "packFlash": "全8種\\nぜんぶ開封",
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "03_zundamon.wav",
-    "durationInFrames": 113
-  },
-  {
-    "id": 4,
-    "character": "zundamon",
-    "text": "だいいちもん。ジャンプで、上の階へ。ダイヤ製なら、50メートル。",
-    "displayText": "第1問。①鉄ブロックに感圧板。②ジャンプで上の階へ。③ダイヤ製なら50m。",
-    "hintNo": 1,
-    "hintLabel": "移動",
-    "hintCards": [
-      "鉄ブロックの上に、感圧板",
-      "ジャンプで上の階へ",
-      "ダイヤ製なら、上下50m"
-    ],
-    "hintAnswer": "エレベーター",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1350
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "04_zundamon.wav",
-    "durationInFrames": 187
-  },
-  {
-    "id": 5,
-    "character": "zundamon",
-    "text": "せいかいは、エレベーターなのだ。電気は、いらないのだ。",
-    "hintGot": 1,
-    "hintLabel": "移動",
-    "hintCards": [
-      "鉄ブロックの上に、感圧板",
-      "ジャンプで上の階へ",
-      "ダイヤ製なら、上下50m"
-    ],
-    "hintAnswer": "エレベーター",
-    "hintShowAnswer": true,
-    "hintExplain": "エレベーターが、作れる",
-    "hintExplainSub": "鉄ブロックと感圧板を置くだけ。ジャンプで上、スニークで下。\nダイヤブロック製は、上下50mまで届く",
-    "hintSource": "living/commands/elevator",
-    "hintRowName": "エレベーター",
-    "hintRowNote": "ダイヤ製は50m",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバーの建築風景.mp4",
-      "animation": "none",
-      "startFrom": 250
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "05_zundamon.wav",
-    "durationInFrames": 147
-  },
-  {
-    "id": 6,
-    "character": "zundamon",
-    "text": "ダイニモン。店番のいるレジ。設置500ワイジイ。手数料ゼロ。",
-    "displayText": "第2問。①店番のいるレジ。②設置に500YG。③手数料は0。",
-    "hintNo": 2,
-    "hintLabel": "商売",
-    "hintCards": [
-      "店番のいる、レジ",
-      "設置に500YG",
-      "手数料は0%"
-    ],
-    "hintAnswer": "有人レジ",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
@@ -710,218 +643,63 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 0
     },
     "se": {
-      "src": "data_analysis.mp3",
+      "src": "drum-roll1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "06_zundamon.wav",
-    "durationInFrames": 189
+    "voiceFile": "03_zundamon.wav",
+    "durationInFrames": 162
   },
   {
-    "id": 7,
+    "id": 4,
     "character": "zundamon",
-    "text": "せいかいは、有人レジなのだ。売り上げが、ぜんぶ残るのだ。",
-    "hintGot": 2,
-    "hintLabel": "商売",
-    "hintCards": [
-      "店番のいる、レジ",
-      "設置に500YG",
-      "手数料は0%"
+    "text": "1枚目。自分の土地なのだ。1マス、100ワイジイなのだ。",
+    "displayText": "1枚目。自分の土地なのだ。1マス100YGなのだ。",
+    "packNo": 1,
+    "packGot": 1,
+    "packCard": "自分の土地",
+    "packLabel": "土地",
+    "packRarity": "R",
+    "packSpecs": [
+      "1マス 100YG",
+      "買った土地は、荒らされない"
     ],
-    "hintAnswer": "有人レジ",
-    "hintShowAnswer": true,
-    "hintExplain": "店員のいるレジも、作れる",
-    "hintExplainSub": "無人のチェストショップは手数料7%、有人レジは0%。\nお金のやりとりだけを、レジが代行する",
-    "hintSource": "living/commands/staffed-register",
-    "hintRowName": "有人レジ",
-    "hintRowNote": "手数料0%",
+    "packSource": "living/commands/land-protection",
+    "packRowName": "自分の土地",
+    "packRowNote": "1マス100YG",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/商店街で帽子を購入している動画.mp4",
-      "animation": "none",
-      "startFrom": 150
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "07_zundamon.wav",
-    "durationInFrames": 161
-  },
-  {
-    "id": 8,
-    "character": "zundamon",
-    "text": "ダイサンモン。チケット1枚。小麦の俵でも引ける。確率は公開。",
-    "displayText": "第3問。①1回チケット1枚。②小麦の俵でも引ける。③確率は公開。",
-    "hintNo": 3,
-    "hintLabel": "あそび",
-    "hintCards": [
-      "1回、チケット1枚",
-      "小麦の俵12個で、1枚",
-      "確率は、ぜんぶ公開"
-    ],
-    "hintAnswer": "ガチャ",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 2600
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "08_zundamon.wav",
-    "durationInFrames": 190
-  },
-  {
-    "id": 9,
-    "character": "zundamon",
-    "text": "せいかいは、ガチャなのだ。昼だけのガチャも、あるのだ。",
-    "hintGot": 3,
-    "hintLabel": "あそび",
-    "hintCards": [
-      "1回、チケット1枚",
-      "小麦の俵12個で、1枚",
-      "確率は、ぜんぶ公開"
-    ],
-    "hintAnswer": "ガチャ",
-    "hintShowAnswer": true,
-    "hintExplain": "ガチャが、引ける",
-    "hintExplainSub": "チケットは1200YG。小麦の俵12個でも交換できる。\n昼限定ガチャは11時〜15時、チケット2枚",
-    "hintSource": "living/commands/gacha",
-    "hintRowName": "ガチャ",
-    "hintRowNote": "俵12個で1回",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/ガチャを引いている動画.mp4",
-      "animation": "none",
-      "startFrom": 190
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "09_zundamon.wav",
-    "durationInFrames": 137
-  },
-  {
-    "id": 10,
-    "character": "zundamon",
-    "text": "ダイヨンモン。名前の横につく。自作5000ワイジイ。色に意味がある。",
-    "displayText": "第4問。①名前の横につく。②自作は5000YG。③色に、意味がある。",
-    "hintNo": 4,
-    "hintLabel": "見た目",
-    "hintCards": [
-      "名前の横につく、肩書き",
-      "自作は5000YG",
-      "色で、入手方法が分かる"
-    ],
-    "hintAnswer": "称号",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活サーバー内で農業をしている動画.mp4",
+      "src": "生活サーバー/土地保護をした土地で建築している動画.mp4",
       "animation": "none",
       "startFrom": 100
     },
     "se": {
-      "src": "data_analysis.mp3",
+      "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "10_zundamon.wav",
-    "durationInFrames": 192
+    "voiceFile": "04_zundamon.wav",
+    "durationInFrames": 163
   },
   {
-    "id": 11,
+    "id": 5,
     "character": "zundamon",
-    "text": "せいかいは、称号なのだ。色は、5種類あるのだ。",
-    "hintGot": 4,
-    "hintLabel": "見た目",
-    "hintCards": [
-      "名前の横につく、肩書き",
-      "自作は5000YG",
-      "色で、入手方法が分かる"
+    "text": "2枚目。無人のお店なのだ。寝てるあいだも、売れるのだ。",
+    "displayText": "2枚目。無人のお店なのだ。寝てるあいだも売れるのだ。",
+    "packNo": 2,
+    "packGot": 2,
+    "packCard": "無人のお店",
+    "packLabel": "商売",
+    "packRarity": "SR",
+    "packSpecs": [
+      "看板をタップで、売れる",
+      "手数料は7%"
     ],
-    "hintAnswer": "称号",
-    "hintShowAnswer": true,
-    "hintExplain": "好きな称号を、名乗れる",
-    "hintExplainSub": "[ ]の色が入手経路。白=自作、オレンジ=看板購入、\n紫=イベント、黄緑=ミッション、水色=アスレチック",
-    "hintSource": "living/commands/rank",
-    "hintRowName": "称号",
-    "hintRowNote": "色で来歴が分かる",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/称号を購入して変更している動画.mp4",
-      "animation": "none",
-      "startFrom": 60
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "11_zundamon.wav",
-    "durationInFrames": 142
-  },
-  {
-    "id": 12,
-    "character": "zundamon",
-    "text": "ダイゴモン。よその店の品を、家から買える。代金は、170パーセント。",
-    "displayText": "第5問。①家から、よその店で買える。②代金は170%。③検索は、わざと無い。",
-    "hintNo": 5,
-    "hintLabel": "商売",
-    "hintCards": [
-      "家から、よその店で買える",
-      "代金は170%",
-      "検索機能は、わざと無い"
-    ],
-    "hintAnswer": "遠隔購入",
-    "hintTimer": true,
+    "packSource": "living/commands/chest-shop",
+    "packRowName": "無人のお店",
+    "packRowNote": "寝てても売れる",
     "scene": 1,
     "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1000
-    },
-    "se": {
-      "src": "question1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "12_zundamon.wav",
-    "durationInFrames": 219
-  },
-  {
-    "id": 13,
-    "character": "zundamon",
-    "text": "せいかいは、遠隔購入なのだ。わざと、不便にしてあるのだ。",
-    "hintGot": 5,
-    "hintLabel": "商売",
-    "hintCards": [
-      "家から、よその店で買える",
-      "代金は170%",
-      "検索機能は、わざと無い"
-    ],
-    "hintAnswer": "遠隔購入",
-    "hintShowAnswer": true,
-    "hintExplain": "よその店から、遠隔で買える",
-    "hintExplainSub": "割増の70%は、便利さの手数料。検索を作らないのは、\nスポーン近くの土地の価値を守るため",
-    "hintSource": "living/supplement/chest-shop",
-    "hintRowName": "遠隔購入",
-    "hintRowNote": "検索はわざと無い",
-    "scene": 1,
-    "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/チェストショップでオーブを購入している動画.mp4",
@@ -929,19 +707,19 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 1000
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "item-get1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "13_zundamon.wav",
-    "durationInFrames": 173
+    "voiceFile": "05_zundamon.wav",
+    "durationInFrames": 153
   },
   {
-    "id": 14,
+    "id": 6,
     "character": "metan",
-    "text": "わざと作らない機能が、あるのね。",
-    "hintRetort": "わざと作らない機能が、あるのね",
+    "text": "ちょっと待って。ぜんぶに、100パーセントって書いてあるわよ。",
+    "packRetort": "ぜんぶに「100%」って書いてあるわよ",
     "scene": 1,
-    "pauseAfter": -3,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/チェストショップで買い物をしている動画.mp4",
@@ -949,123 +727,243 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 300
     },
     "se": {
-      "src": "決定ボタンを押す2.mp3",
+      "src": "shock1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "14_metan.wav",
-    "durationInFrames": 72
+    "voiceFile": "06_metan.wav",
+    "durationInFrames": 135
   },
   {
-    "id": 15,
+    "id": 7,
     "character": "zundamon",
-    "text": "ダイロクモン。チェストにかける鍵。パスワード対応。ぜんぶ無料。",
-    "displayText": "第6問。①チェストにかける鍵。②パスワードもかけられる。③ぜんぶ無料。",
-    "hintNo": 6,
-    "hintLabel": "防犯",
-    "hintCards": [
-      "チェストにかける、鍵",
-      "パスワードも、かけられる",
-      "ぜんぶ無料"
-    ],
-    "hintAnswer": "チェスト保護",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
-      "animation": "none",
-      "startFrom": 300
-    },
-    "se": {
-      "src": "data_analysis.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "15_zundamon.wav",
-    "durationInFrames": 174
-  },
-  {
-    "id": 16,
-    "character": "zundamon",
-    "text": "せいかいは、チェスト保護なのだ。",
-    "hintGot": 6,
-    "hintLabel": "防犯",
-    "hintCards": [
-      "チェストにかける、鍵",
-      "パスワードも、かけられる",
-      "ぜんぶ無料"
-    ],
-    "hintAnswer": "チェスト保護",
-    "hintShowAnswer": true,
-    "hintExplain": "チェストに、鍵がかかる",
-    "hintExplainSub": "パスワード付きの鍵は、知っている人みんなが開けられる。\nマンション経営や、共同倉庫に使える",
-    "hintSource": "living/commands/chest-protection",
-    "hintRowName": "チェスト保護",
-    "hintRowNote": "パスワード対応",
+    "text": "このパック、ハズレが入ってないのだ。ぜんぶ、100パーセントなのだ。",
+    "packFlash": "ハズレ、入ってない",
+    "packFlashSub": "封入率ぜんぶ100%",
     "scene": 1,
     "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/チェスト保護をしている動画.mp4",
-      "animation": "none",
-      "startFrom": 100
-    },
-    "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "16_zundamon.wav",
-    "durationInFrames": 80
-  },
-  {
-    "id": 17,
-    "character": "zundamon",
-    "text": "だいななもん。自分だけのワールド。お値段、300万ワイジイ。",
-    "displayText": "第7問。①自分だけのワールド。②お値段300万YG。③最大200×200。",
-    "hintNo": 7,
-    "hintLabel": "土地",
-    "hintCards": [
-      "自分だけの、ワールド",
-      "お値段、300万YG",
-      "最大200×200まで拡張"
-    ],
-    "hintAnswer": "島",
-    "hintTimer": true,
-    "scene": 1,
-    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 2860
+      "startFrom": 1350
     },
     "se": {
-      "src": "question1.mp3",
+      "src": "text-impact3.mp3",
       "volume": 0.4
     },
-    "voiceFile": "17_zundamon.wav",
-    "durationInFrames": 176
+    "voiceFile": "07_zundamon.wav",
+    "durationInFrames": 181
   },
   {
-    "id": 18,
+    "id": 8,
     "character": "zundamon",
-    "text": "せいかいは、島なのだ。ここまで来ると、もう引っ越しなのだ。",
-    "hintGot": 7,
-    "hintLabel": "土地",
-    "hintCards": [
-      "自分だけの、ワールド",
-      "お値段、300万YG",
-      "最大200×200まで拡張"
+    "text": "3枚目。釣りなのだ。魚が、275種類いるのだ。",
+    "displayText": "3枚目。釣りなのだ。魚が275種類いるのだ。",
+    "packNo": 3,
+    "packGot": 3,
+    "packCard": "魚275種類",
+    "packLabel": "あそび",
+    "packRarity": "SR",
+    "packSpecs": [
+      "バニラにない魚が、釣れる",
+      "ぜんぶで275種類"
     ],
-    "hintAnswer": "島",
-    "hintShowAnswer": true,
-    "hintExplain": "自分だけの島が、持てる",
-    "hintExplainSub": "拡張は5段階で、費用は1.5倍ずつ増える。\n消すと戻せない。返金もない",
-    "hintSource": "living/commands/island",
-    "hintRowName": "島",
-    "hintRowNote": "最大200×200",
+    "packSource": "docs.ymg24.org（はじめに）",
+    "packRowName": "魚275種類",
+    "packRowNote": "バニラにない魚",
     "scene": 1,
     "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/釣りをしている動画.mp4",
+      "animation": "none",
+      "startFrom": 200
+    },
+    "se": {
+      "src": "item-get1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "08_zundamon.wav",
+    "durationInFrames": 168
+  },
+  {
+    "id": 9,
+    "character": "zundamon",
+    "text": "4枚目。会社の社長なのだ。設立は、無料なのだ。",
+    "displayText": "4枚目。会社の社長なのだ。設立は無料なのだ。",
+    "packNo": 4,
+    "packGot": 4,
+    "packCard": "会社の社長",
+    "packLabel": "仕事",
+    "packRarity": "SSR",
+    "packSpecs": [
+      "だれでも設立できる（審査あり）",
+      "社員の人数は、制限なし"
+    ],
+    "packSource": "living/commands/company",
+    "packRowName": "会社の社長",
+    "packRowNote": "設立は無料",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1000
+    },
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "09_zundamon.wav",
+    "durationInFrames": 156
+  },
+  {
+    "id": 10,
+    "character": "metan",
+    "text": "マイクラの話よね、これ。",
+    "packRetort": "マイクラの話よね、これ",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/会社の社員一覧や売上履歴を見ている動画.mp4",
+      "animation": "none",
+      "startFrom": 1100
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "10_metan.wav",
+    "durationInFrames": 63
+  },
+  {
+    "id": 11,
+    "character": "zundamon",
+    "text": "5枚目。近距離ボイスチャットなのだ。近くの人にだけ、聞こえるのだ。",
+    "displayText": "5枚目。近距離VCなのだ。近くの人にだけ聞こえるのだ。",
+    "packNo": 5,
+    "packGot": 5,
+    "packCard": "近距離VC",
+    "packLabel": "声",
+    "packRarity": "SSR",
+    "packSpecs": [
+      "近くの人と、しゃべれる",
+      "離れると、小さくなる"
+    ],
+    "packSource": "living/commands/limited-vc",
+    "packRowName": "近距離VC",
+    "packRowNote": "距離で聞こえる",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 1080
+    },
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "11_zundamon.wav",
+    "durationInFrames": 177
+  },
+  {
+    "id": 12,
+    "character": "zundamon",
+    "text": "6枚目。車なのだ。マイクラで、乗れるのだ。",
+    "displayText": "6枚目。車なのだ。マイクラで乗れるのだ。",
+    "packNo": 6,
+    "packGot": 6,
+    "packCard": "車",
+    "packLabel": "移動",
+    "packRarity": "SSR",
+    "packSpecs": [
+      "マイクラの中で、車に乗れる",
+      "生活ワールドを、駆け回れる"
+    ],
+    "packSource": "docs.ymg24.org（はじめに）",
+    "packRowName": "車",
+    "packRowNote": "乗って走れる",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画.mp4",
+      "animation": "none",
+      "startFrom": 60
+    },
+    "se": {
+      "src": "spotlight.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "12_zundamon.wav",
+    "durationInFrames": 131
+  },
+  {
+    "id": 13,
+    "character": "metan",
+    "text": "エスエスアール、連発しすぎじゃない？",
+    "displayText": "SSR、連発しすぎじゃない？",
+    "packRetort": "SSR、連発しすぎじゃない？",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活サーバーで車に乗っている動画2.mp4",
+      "animation": "none",
+      "startFrom": 120
+    },
+    "se": {
+      "src": "決定ボタンを押す3.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "13_metan.wav",
+    "durationInFrames": 88
+  },
+  {
+    "id": 14,
+    "character": "zundamon",
+    "text": "のこり2枚。つぎは、ユーアールなのだ。",
+    "displayText": "残り2枚。次は、URなのだ。",
+    "packFlash": "次は、UR",
+    "packFlashSub": "残り2枚",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
+      "animation": "none",
+      "startFrom": 2600
+    },
+    "se": {
+      "src": "tympani-roll1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "14_zundamon.wav",
+    "durationInFrames": 109
+  },
+  {
+    "id": 15,
+    "character": "zundamon",
+    "text": "7枚目。自分だけの島なのだ。300万ワイジイなのだ。",
+    "displayText": "7枚目。自分だけの島なのだ。300万YGなのだ。",
+    "packNo": 7,
+    "packGot": 7,
+    "packCard": "自分だけの島",
+    "packLabel": "土地",
+    "packRarity": "UR",
+    "packSpecs": [
+      "まるごと自分の、ワールド",
+      "最大200×200まで拡張"
+    ],
+    "packSource": "living/commands/island",
+    "packRowName": "自分だけの島",
+    "packRowNote": "300万YG",
+    "scene": 1,
+    "pauseAfter": -4,
     "visual": {
       "type": "video",
       "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
@@ -1073,76 +971,38 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 100
     },
     "se": {
-      "src": "correct1.mp3",
-      "volume": 0.4
+      "src": "jajean1.mp3",
+      "volume": 0.45
     },
-    "voiceFile": "18_zundamon.wav",
-    "durationInFrames": 153
+    "voiceFile": "15_zundamon.wav",
+    "durationInFrames": 154
   },
   {
-    "id": 19,
-    "character": "zundamon",
-    "text": "さいごの問題は、ヒント1つで分かるのだ。",
-    "hintFlash": "ヒントは、1つ",
-    "hintFlashSub": "ラスト1問",
-    "scene": 1,
-    "pauseAfter": -3,
-    "visual": {
-      "type": "video",
-      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
-      "animation": "none",
-      "startFrom": 1160
-    },
-    "se": {
-      "src": "text-impact3.mp3",
-      "volume": 0.4
-    },
-    "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 110
-  },
-  {
-    "id": 20,
-    "character": "zundamon",
-    "text": "ダイハチモン。ヒントは、ゼロエン。いじょうなのだ。",
-    "displayText": "第8問。ヒントは「0円」。以上なのだ。",
-    "hintNo": 8,
-    "hintLabel": "参加",
-    "hintCards": [
-      "0円"
-    ],
-    "hintAnswer": "参加費",
-    "hintTimer": true,
+    "id": 16,
+    "character": "metan",
+    "text": "300万は、当たりって言っていいのかしら。",
+    "packRetort": "300万は、当たりなのかしら",
     "scene": 1,
     "pauseAfter": -4,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "src": "生活サーバー/イベント会場を見て回り採掘スキルを上げている動画.mp4",
       "animation": "none",
-      "startFrom": 420
+      "startFrom": 250
     },
     "se": {
-      "src": "data_analysis.mp3",
+      "src": "決定ボタンを押す2.mp3",
       "volume": 0.4
     },
-    "voiceFile": "20_zundamon.wav",
-    "durationInFrames": 136
+    "voiceFile": "16_metan.wav",
+    "durationInFrames": 88
   },
   {
-    "id": 21,
+    "id": 17,
     "character": "zundamon",
-    "text": "せいかいは、参加費なのだ。統合版なら、今日から入れるのだ。",
-    "hintGot": 8,
-    "hintLabel": "参加",
-    "hintCards": [
-      "0円"
-    ],
-    "hintAnswer": "参加費",
-    "hintShowAnswer": true,
-    "hintExplain": "参加費、0円",
-    "hintExplainSub": "スマホでもPCでも、統合版ならそのまま入れる。\n24時間、いつでもあいている",
-    "hintSource": "living/how-to-join",
-    "hintRowName": "参加費0円",
-    "hintRowNote": "スマホでもOK",
+    "text": "はたらけば、稼げる額なのだ。そして、のこりは、あと1枚なのだ。",
+    "displayText": "働けば、稼げる額なのだ。そして、残りはあと1枚なのだ。",
+    "packFlash": "ラスト1枚",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1152,19 +1012,72 @@ export const scriptData: ScriptLine[] = [
       "startFrom": 200
     },
     "se": {
-      "src": "correct1.mp3",
+      "src": "drum-roll1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "21_zundamon.wav",
-    "durationInFrames": 160
+    "voiceFile": "17_zundamon.wav",
+    "durationInFrames": 179
   },
   {
-    "id": 22,
+    "id": 18,
     "character": "zundamon",
-    "text": "独自機能の図鑑が、8件うまったのだ。",
-    "hintTone": "comp",
-    "hintList": "よもぎ生活鯖 独自機能図鑑",
-    "hintListSub": "今日あてた8件",
+    "text": "8枚目。参加費、ゼロエンなのだ。今日から、遊べるのだ。",
+    "displayText": "8枚目。参加費、0円なのだ。今日から遊べるのだ。",
+    "packNo": 8,
+    "packGot": 8,
+    "packCard": "参加費 0円",
+    "packLabel": "参加",
+    "packRarity": "FREE",
+    "packSpecs": [
+      "統合版なら、そのまま入れる",
+      "24時間、あいてる"
+    ],
+    "packSource": "living/how-to-join",
+    "packRowName": "参加費0円",
+    "packRowNote": "今日から遊べる",
+    "scene": 1,
+    "pauseAfter": -4,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 420
+    },
+    "se": {
+      "src": "people-performance-cheer1.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "18_zundamon.wav",
+    "durationInFrames": 169
+  },
+  {
+    "id": 19,
+    "character": "metan",
+    "text": "いちばんの当たり、それじゃないの。",
+    "packRetort": "いちばんの当たり、それじゃないの",
+    "scene": 1,
+    "pauseAfter": -3,
+    "visual": {
+      "type": "video",
+      "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
+      "animation": "none",
+      "startFrom": 500
+    },
+    "se": {
+      "src": "決定ボタンを押す2.mp3",
+      "volume": 0.4
+    },
+    "voiceFile": "19_metan.wav",
+    "durationInFrames": 70
+  },
+  {
+    "id": 20,
+    "character": "zundamon",
+    "text": "8枚、コンプリートなのだ。",
+    "displayText": "8枚、コンプリートなのだ。",
+    "packTone": "comp",
+    "packList": "よもぎ生活鯖パック 全8種",
+    "packListSub": "本日の開封結果",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1177,15 +1090,15 @@ export const scriptData: ScriptLine[] = [
       "src": "jajean1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "22_zundamon.wav",
-    "durationInFrames": 107
+    "voiceFile": "20_zundamon.wav",
+    "durationInFrames": 78
   },
   {
-    "id": 23,
+    "id": 21,
     "character": "zundamon",
-    "text": "ぜんぶ、公式ドキュメントに書いてあるのだ。",
-    "hintList": "よもぎ生活鯖 独自機能図鑑",
-    "hintListSub": "出典は、すべて公式ドキュメント",
+    "text": "レアに見えて、ぜんぶ配布なのだ。参加すれば、全員もらえるのだ。",
+    "packList": "よもぎ生活鯖パック 全8種",
+    "packListSub": "ぜんぶ、参加すれば全員もらえます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1198,37 +1111,37 @@ export const scriptData: ScriptLine[] = [
       "src": "amount-display1.mp3",
       "volume": 0.4
     },
-    "voiceFile": "23_zundamon.wav",
-    "durationInFrames": 107
+    "voiceFile": "21_zundamon.wav",
+    "durationInFrames": 183
   },
   {
-    "id": 24,
+    "id": 22,
     "character": "zundamon",
     "text": "これ、よもぎサーバーの生活鯖なのだ。",
-    "hintReveal": "よもぎ生活サーバー",
-    "hintRevealSub": "独自機能、まだまだあります",
+    "packReveal": "よもぎ生活サーバー",
+    "packRevealSub": "SSRの暮らし、封入率100%",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
       "type": "video",
       "src": "生活サーバー/生活ワールドを散歩している様子.mp4",
       "animation": "none",
-      "startFrom": 500
+      "startFrom": 300
     },
     "se": {
       "src": "text-impact1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "24_zundamon.wav",
+    "voiceFile": "22_zundamon.wav",
     "durationInFrames": 103
   },
   {
-    "id": 25,
+    "id": 23,
     "character": "zundamon",
     "text": "よもぎサーバーで、けんさくしてほしいのだ。",
     "displayText": "よもぎサーバーで、検索してほしいのだ。",
-    "hintCta": "よもぎサーバー",
-    "hintNote": "※内容は2026年8月時点の公式ドキュメントの記載に基づきます",
+    "packCta": "よもぎサーバー",
+    "packNote": "※レアリティは演出です。内容は2026年8月時点の公式ドキュメントに基づきます",
     "scene": 1,
     "pauseAfter": -3,
     "visual": {
@@ -1242,29 +1155,29 @@ export const scriptData: ScriptLine[] = [
       "src": "決定ボタンを押す2.mp3",
       "volume": 0.5
     },
-    "voiceFile": "25_zundamon.wav",
+    "voiceFile": "23_zundamon.wav",
     "durationInFrames": 102
   },
   {
-    "id": 26,
+    "id": 24,
     "character": "zundamon",
-    "text": "あなたは、いくつ当てられた？",
-    "hintResult": "あなたは、いくつ当てられた？",
-    "hintResultSub": "何個目のヒントで分かったかも、コメントで",
+    "text": "あなたなら、どれから引く？",
+    "packResult": "あなたなら、どれから引く？",
+    "packResultSub": "ほしいカードを、コメントで",
     "scene": 1,
     "pauseAfter": 0,
     "visual": {
       "type": "video",
-      "src": "生活サーバー/buffコマンドで暗視と採掘速度上昇のバフをつけて採掘している動画.mp4",
+      "src": "生活サーバー/生活ワールドの街並みを散策している動画.mp4",
       "animation": "none",
-      "startFrom": 60
+      "startFrom": 1000
     },
     "se": {
       "src": "item-get1.mp3",
       "volume": 0.45
     },
-    "voiceFile": "26_zundamon.wav",
-    "durationInFrames": 73
+    "voiceFile": "24_zundamon.wav",
+    "durationInFrames": 69
   }
 ];
 

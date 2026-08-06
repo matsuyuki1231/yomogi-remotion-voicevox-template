@@ -154,11 +154,19 @@ import {
   HintHud,
   HintTone,
 } from "./components/HintHud";
+import {
+  PackBackdrop,
+  PackScrim,
+  PackChrome,
+  PackHud,
+  PackTone,
+} from "./components/PackHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "pack"
   | "hint"
   | "judge"
   | "pick"
@@ -201,6 +209,8 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // pack* も既存のどれとも互いに素（p で始まるのは pv* / pick* で、
+  // p-a はどちらとも重ならない）。
   // hint* も既存のどれとも互いに素（h で始まる接頭辞はほかにない）。
   // jdg* も既存のどれとも互いに素（j で始まるのは join* / job* で、j-d は使っていない）。
   // pick* も既存のどれとも互いに素（p で始まるのは pv* だけで、p-i と p-v）。
@@ -209,6 +219,7 @@ const detectFormat = (): Format => {
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("pack")) return "pack";
   if (hasPrefix("hint")) return "hint";
   if (hasPrefix("jdg")) return "judge";
   if (hasPrefix("pick")) return "pick";
@@ -1382,6 +1393,108 @@ export const Main: React.FC = () => {
     hintToneResolved[index] === "quiz" &&
     hintNoResolved[index] !== null;
 
+  // ---- 開封トーン（開封中 / コンプ）を解決。一覧の行から後ろに引き継がれる ----
+  // comp に入るとカードを畳んで映像を全面に開き、色が紫から金に反転する
+  const packToneResolved: PackTone[] = (() => {
+    let current: PackTone = "open";
+    return scriptData.map((line) => {
+      if (line.packTone === "open" || line.packTone === "comp") {
+        current = line.packTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 何枚目かを解決。指定がない行は直前の値を引き継ぐ ----
+  const packNoResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.packNo === "number") {
+        current = line.packNo;
+      }
+      return current;
+    });
+  })();
+
+  // 枚数の分母。スクリプト中でいちばん大きい番号を全枚数とする
+  const packNoTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.packNo ?? 0),
+    1
+  );
+
+  // ---- コレクションに収まった枚数を解決。指定がない行は直前の値を引き継ぐ ----
+  const packGotResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (typeof line.packGot === "number") {
+        current = line.packGot;
+      }
+      return current;
+    });
+  })();
+
+  // メーターの分母。スクリプト中でいちばん大きい枚数を総数とする
+  const packGotTotal = scriptData.reduce(
+    (max, line) => Math.max(max, line.packGot ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const packTitle =
+    scriptData.find((line) => line.packTitle)?.packTitle ?? "パック開封";
+
+  // コレクション一覧の中身。開封行に書かれた1行ぶんを順に集める。
+  // レアリティはメーターのスロット色にも使う
+  const packRows = scriptData
+    .filter((line) => line.packRowName)
+    .map((line) => ({
+      n: line.packRowName as string,
+      note: line.packRowNote ?? "",
+      rarity: line.packRarity ?? "R",
+    }));
+  const packRarities = packRows.map((row) => row.rarity);
+
+  // ---- カードの中身（機能名・レアリティ・スペック・出典）を後続の行に引き継ぐ ----
+  // ツッコミだけの行でカードが消えると画面の中央が空くので、直前のカードを
+  // そのまま残し、めたんがそれを見て反応している画にする。
+  // 引き継ぎの行では held を立てて開封演出を焼き直さない。
+  // コンプ（comp）以降はカードごと畳むので持ち越さない。
+  type PackCardData = {
+    name: string;
+    label?: string;
+    rarity?: string;
+    specs?: string[];
+    source?: string;
+    no?: number | null;
+  };
+  const packCardResolved: (PackCardData | null)[] = (() => {
+    let current: PackCardData | null = null;
+    return scriptData.map((line, i) => {
+      if (line.packCard) {
+        current = {
+          name: line.packCard,
+          label: line.packLabel,
+          rarity: line.packRarity,
+          specs: line.packSpecs,
+          source: line.packSource,
+          no: line.packNo ?? packNoResolved[i],
+        };
+      }
+      return packToneResolved[i] === "open" ? current : null;
+    });
+  })();
+
+  // ---- カードを出す行かどうか ----
+  // 開封が始まる前（導入）と、テロップ・大テロップの行、一覧以降はカードを
+  // 畳んで映像を全画面に開く。映像の敷き方（SceneVisuals の pack モード＝
+  // イラスト窓に収める）もこれと同じ条件で切り替える
+  const packShown = (index: number): boolean =>
+    index >= 0 &&
+    packToneResolved[index] === "open" &&
+    packCardResolved[index] !== null &&
+    !scriptData[index].packFlash &&
+    !scriptData[index].packHook;
+
   // ---- 裁定トーン（裁定中 / 閉廷）を解決。判例集の行から後ろに引き継がれる ----
   // done に入ると事件ファイルを畳んで映像を全面に開き、色が青紫から金に反転する
   const jdgToneResolved: JudgeTone[] = (() => {
@@ -1545,6 +1658,9 @@ export const Main: React.FC = () => {
         return undefined;
       // スリーヒント型にもティッカーはない（最下部はアクションバーと解説パネル）
       case "hint":
+        return undefined;
+      // カードパック開封型にもティッカーはない（最下部はカードの下パネル）
+      case "pack":
         return undefined;
       case "rail":
         return line.railTicker;
@@ -1840,6 +1956,22 @@ export const Main: React.FC = () => {
       line.pickResult
     );
 
+  // カードパック開封HUDのパーツが1つでも出るか。
+  // カードは引き継ぎで出る行もあるので index で判定する
+  const hasPackHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      packCardResolved[index] ||
+      line.packHook ||
+      line.packCard ||
+      line.packRetort ||
+      line.packFlash ||
+      line.packList ||
+      line.packReveal ||
+      line.packCta ||
+      line.packNote ||
+      line.packResult
+    );
+
   // スリーヒントHUDのパーツが1つでも出るか。
   // ヒントカード・解説は引き継ぎで出る行もあるので index で判定する
   const hasHintHud = (line: ScriptLine, index: number): boolean =>
@@ -1899,6 +2031,19 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // カードパック開封型はカード（機能名・スペック・出典）が画面テロップを兼ねる。
+      // カードは読ませること自体が本体なので、字幕と二重にしない。
+      // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
+      case "pack":
+        return !!(
+          line.packHook ||
+          line.packCard ||
+          line.packRetort ||
+          line.packFlash ||
+          line.packList ||
+          line.packReveal ||
+          line.packResult
+        );
       // スリーヒント型はヒントカード・答えプレート・解説パネルが画面テロップを兼ねる。
       // 解説パネルは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
@@ -2155,6 +2300,10 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      // カードパック開封型は、カード行では映像がイラスト窓の中にしかないので、
+      // 背景（開封卓のフェルト）が常に地になる
+      case "pack":
+        return <PackBackdrop />;
       case "hint":
         return <HintBackdrop />;
       case "judge":
@@ -2209,6 +2358,12 @@ export const Main: React.FC = () => {
   // 逆転後＝暖色）ので、ここで index が要る
   const renderScrim = (index: number) => {
     switch (FORMAT) {
+      // カードパック開封型は、カード行ではイラスト窓の映像を沈めないよう
+      // 暗幕をほぼ消し、全画面映像の行だけ上下を落としてテロップを読ませる
+      case "pack":
+        return (
+          <PackScrim tone={packToneResolved[index]} board={packShown(index)} />
+        );
       // スリーヒント型は上（ヘッダ・図鑑メーター）だけを落として、
       // 中央＝映像はできるだけ素通しにする。下はヒントカードと解説が乗るので落とす
       case "hint":
@@ -2287,6 +2442,20 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "pack":
+        return (
+          <PackChrome
+            tone={currentIndex >= 0 ? packToneResolved[currentIndex] : "open"}
+            title={packTitle}
+            no={currentIndex >= 0 ? packNoResolved[currentIndex] : null}
+            noTotal={packNoTotal}
+            got={currentIndex >= 0 ? packGotResolved[currentIndex] : null}
+            gotPrev={currentIndex > 0 ? packGotResolved[currentIndex - 1] : null}
+            gotTotal={packGotTotal}
+            rarities={packRarities}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "hint":
         return (
           <HintChrome
@@ -2576,6 +2745,45 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "pack":
+        if (!hasPackHud(line, currentIndex)) return null;
+        return wrap(
+          <PackHud
+            tone={packToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.packHook}
+            hookSub={line.packHookSub}
+            // テロップ・大テロップの行ではカードを畳む（映像が全画面に開く）
+            card={
+              packShown(currentIndex)
+                ? packCardResolved[currentIndex]?.name
+                : undefined
+            }
+            label={packCardResolved[currentIndex]?.label}
+            rarity={packCardResolved[currentIndex]?.rarity}
+            specs={packCardResolved[currentIndex]?.specs}
+            source={packCardResolved[currentIndex]?.source}
+            no={packCardResolved[currentIndex]?.no ?? null}
+            noTotal={packNoTotal}
+            // 自分でカードを出していない行は、前のカードを残しているだけ
+            held={!line.packCard}
+            retort={line.packRetort}
+            flash={line.packFlash}
+            flashSub={line.packFlashSub}
+            list={line.packList}
+            listSub={line.packListSub}
+            // 一覧は8枚を読ませるので2行にまたがって出す。2行目は完成形から始める
+            listHeld={currentIndex > 0 && !!scriptData[currentIndex - 1].packList}
+            rows={packRows}
+            reveal={line.packReveal}
+            revealSub={line.packRevealSub}
+            cta={line.packCta}
+            note={line.packNote}
+            result={line.packResult}
+            resultSub={line.packResultSub}
+            durationInFrames={span}
+          />
+        );
       case "hint":
         if (!hasHintHud(line, currentIndex)) return null;
         return wrap(
@@ -3272,6 +3480,8 @@ export const Main: React.FC = () => {
               judge={FORMAT === "judge" && judgeBoardShown(index)}
               // スリーヒント型も同じ考え方。下半分をヒントカードと解説が占める
               hint={FORMAT === "hint" && hintBoardShown(index)}
+              // カードパック開封型は、カード行では映像をイラスト窓に収める
+              pack={FORMAT === "pack" && packShown(index)}
             />
             {renderScrim(index)}
           </Sequence>
