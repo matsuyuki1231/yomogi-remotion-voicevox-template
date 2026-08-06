@@ -1073,7 +1073,7 @@ export const scriptData: ScriptLine[] = [
     "pickCards": [
       "5点たまると永久Ban",
       "4点までは1か月で1点消える",
-      "1回の違反でいきなり永久Ban",
+      "処罰に異議は言えない",
       "生活鯖と人狼で処罰は別"
     ],
     "pickAnswers": [
@@ -1100,15 +1100,14 @@ export const scriptData: ScriptLine[] = [
   {
     "id": 19,
     "character": "zundamon",
-    "text": "できるのは、3つ。いきなり永久バンには、ならないのだ。",
-    "displayText": "できるのは、3つ。いきなり永久Banには、ならないのだ。",
+    "text": "できるのは、3つ。処罰には、異議を出せるのだ。",
     "pickGot": 20,
     "pickThemeLabel": "ルール",
     "pickTheme": "この中に、できることは？",
     "pickCards": [
       "5点たまると永久Ban",
       "4点までは1か月で1点消える",
-      "1回の違反でいきなり永久Ban",
+      "処罰に異議は言えない",
       "生活鯖と人狼で処罰は別"
     ],
     "pickAnswers": [
@@ -1117,8 +1116,8 @@ export const scriptData: ScriptLine[] = [
       3
     ],
     "pickShowAnswer": true,
-    "pickExplain": "いきなり永久Banには ならない",
-    "pickExplainSub": "1点は処罰なし、2点で警告、3点で設置と発言の禁止。\n自分の点数は /sanctionhistory で見られる",
+    "pickExplain": "処罰には 異議を出せる",
+    "pickExplainSub": "運営が再判断したり、運営投票をとることもある。\n※Xrayなどの重大な違反は、点数によらず即時Banもある",
     "pickSource": "living/supplement/sanction",
     "pickFacts": [
       "5点で永久Ban",
@@ -1138,7 +1137,7 @@ export const scriptData: ScriptLine[] = [
       "volume": 0.4
     },
     "voiceFile": "19_zundamon.wav",
-    "durationInFrames": 153
+    "durationInFrames": 136
   },
   {
     "id": 20,
