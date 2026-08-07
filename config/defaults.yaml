@@ -85,14 +85,17 @@ bgm:
   #   無限ズーム・入れ子型（script.living-server-zoom.yaml）:
   #     amacha_milkyway 0.16 / fromLineId 1
   #     amacha_happytime 0.2 / fromLineId 21
+  #   同時中継・マルチ画面型（script.living-server-multi.yaml）:
+  #     amacha_metropolis 0.16 / fromLineId 1
+  #     amacha_happytime 0.2 / fromLineId 23
   segments:
-    # 「ミルキーウェイ」— 潜行パート。カットが切れないので曲も途切れさせない
-    - src: "amacha_milkyway.mp3"
+    # 「メトロポリス」— 中継パート。画面が賑やかになっていくのに合わせる
+    - src: "amacha_metropolis.mp3"
       volume: 0.16
       loop: true
       fromLineId: 1
-    # 「ハッピータイム」— 最下層（参加費0円）でトーンが金に反転する行から
+    # 「ハッピータイム」— 12枚が1枚に合流してトーンが金に反転する行から
     - src: "amacha_happytime.mp3"
       volume: 0.2
       loop: true
-      fromLineId: 21
+      fromLineId: 23

@@ -513,6 +513,30 @@ interface ScriptLine {
   hintNote?: string;
   hintResult?: string;
   hintResultSub?: string;
+  mulTone?: string;
+  mulTitle?: string;
+  mulSrc?: string;
+  mulStart?: number;
+  mulSpan?: number;
+  mulName?: string;
+  mulLabel?: string;
+  mulSpec?: string;
+  mulSource?: string;
+  mulHook?: string;
+  mulHookSub?: string;
+  mulRetort?: string;
+  mulFlash?: string;
+  mulFlashSub?: string;
+  mulWall?: string;
+  mulWallSub?: string;
+  mulMerge?: string;
+  mulMergeSub?: string;
+  mulReveal?: string;
+  mulRevealSub?: string;
+  mulCta?: string;
+  mulNote?: string;
+  mulResult?: string;
+  mulResultSub?: string;
   zoomTone?: string;
   zoomTitle?: string;
   zoomSrc?: string;
@@ -1205,6 +1229,33 @@ export interface ScriptLine {
   hintNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
   hintResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   hintResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 同時中継・マルチ画面型（MultiHud）----
+  // この型だけは**出した中継が1つも消えない**。行ごとの visual は使わず、
+  // MultiStage が全中継をグローバルフレームで描く
+  mulTone?: "live" | "wall" | "merge"; // 中継トーン。指定行から後ろに引き継がれる（中継中＝緑 / 12分割＝クライマックス / 合流＝金）
+  mulTitle?: string;         // 番組名。最初に指定した行のものを動画全体で使う
+  mulSrc?: string;           // **この行から新しい中継が始まる**（メインモニターに乗る）
+  mulStart?: number;         // 中継の映像の開始位置（フレーム）。尽きたら頭から繰り返す
+  mulSpan?: number;          // 繰り返す長さ（フレーム）。使える区間が狭い素材でその区間だけをループさせる
+  mulName?: string;          // 中継の名前（キャプションの見出しとモニターのチップ）
+  mulLabel?: string;         // ジャンルのラベル（土地 / 商売 / 仕事 など）
+  mulSpec?: string;          // キャプションのスペック1行（画面に出る文字なので YG や % はそのまま書く）
+  mulSource?: string;        // キャプションの出典（docs のページ名）
+  mulHook?: string;          // 冒頭の大テロップ（改行はYAML側で明示する）
+  mulHookSub?: string;       // 冒頭テロップの上に出す小バッジ
+  mulRetort?: string;        // ツッコミ吹き出し
+  mulFlash?: string;         // 巨大テロップ（この行ではキャプションを畳む）
+  mulFlashSub?: string;      // テロップの上に出す小バッジ
+  mulWall?: string;          // 12分割スラム（クライマックス）。この行から tone を wall にする
+  mulWallSub?: string;       // 12分割スラムの副題
+  mulMerge?: string;         // 合流スラム（12枚が1枚になる）。この行から tone を merge にする
+  mulMergeSub?: string;      // 合流スラムの副題
+  mulReveal?: string;        // まとめ帯（正式名称と条件を大きく出す）
+  mulRevealSub?: string;     // まとめ帯の補足行
+  mulCta?: string;           // 検索バー風CTA（文字がタイプされる）
+  mulNote?: string;          // CTA下の小さな注記（※別々に撮影した映像を並べています 等）
+  mulResult?: string;        // ループ用リボン（冒頭に戻す）
+  mulResultSub?: string;     // ループ用リボンの補足行（コメント誘発の一言）
   // ---- 無限ズーム・入れ子型（ZoomHud）----
   // この型だけは映像が行ごとに切り替わらない。動画全体でひとつながりのズームで、
   // いま映っている画の中央の窓へ潜り込むと次の層になる（visual は使わない）

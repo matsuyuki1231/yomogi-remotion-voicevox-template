@@ -170,11 +170,22 @@ import {
   ZoomTone,
   ZoomLevel,
 } from "./components/ZoomHud";
+import {
+  MultiBackdrop,
+  MultiScrim,
+  MultiStage,
+  MultiChrome,
+  MultiHud,
+  MultiTone,
+  MultiFeed,
+  SLOTS as MULTI_SLOTS,
+} from "./components/MultiHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "multi"
   | "zoom"
   | "pack"
   | "hint"
@@ -230,6 +241,9 @@ const detectFormat = (): Format => {
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  // mul* は m で始まる既存の mil*（ミリオネア）/ mkt*（相場）と互いに素
+  // （m-u と m-i / m-k で分かれる）
+  if (hasPrefix("mul")) return "multi";
   if (hasPrefix("zoom")) return "zoom";
   if (hasPrefix("pack")) return "pack";
   if (hasPrefix("hint")) return "hint";
@@ -1508,6 +1522,108 @@ export const Main: React.FC = () => {
     !scriptData[index].packHook;
 
   // ============================================================
+  // 同時中継・マルチ画面型（MULTI）
+  // ============================================================
+  // この型だけは**出した中継が1つも消えない**。新しい中継が入るたび
+  // いままでのメインが縮んで壁のスロットへ移り、そこで動き続ける。
+  // 映像は行ごとの Sequence ではなく、Main 直下の MultiStage が
+  // グローバルフレームで描く（無限ズーム型と同じ考え方）。
+
+  // ---- 中継トーン（中継中 / 12分割 / 合流）を解決 ----
+  const mulToneResolved: MultiTone[] = (() => {
+    let current: MultiTone = "live";
+    return scriptData.map((line) => {
+      if (
+        line.mulTone === "live" ||
+        line.mulTone === "wall" ||
+        line.mulTone === "merge"
+      ) {
+        current = line.mulTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 中継の一覧 ----
+  // mulSrc を書いた行が新しい中継の入口。その行の頭でメインモニターに乗る
+  const mulFeedIndices = scriptData
+    .map((line, i) => (line.mulSrc ? i : -1))
+    .filter((i) => i >= 0);
+
+  const mulFeeds: MultiFeed[] = mulFeedIndices.map((i) => ({
+    src: scriptData[i].mulSrc as string,
+    startFrom: scriptData[i].mulStart ?? 0,
+    span: scriptData[i].mulSpan,
+    name: scriptData[i].mulName,
+    label: scriptData[i].mulLabel,
+  }));
+
+  const mulKeyframes: number[] = mulFeedIndices.map((i) => getLineStartFrame(i));
+
+  // 12分割へ組み変わる行／合流する行のグローバルフレーム
+  const mulWallIndex = scriptData.findIndex((line) => line.mulTone === "wall");
+  const mulMergeIndex = scriptData.findIndex((line) => line.mulTone === "merge");
+  const mulWallFrame =
+    mulWallIndex >= 0 ? getLineStartFrame(mulWallIndex) : null;
+  const mulMergeFrame =
+    mulMergeIndex >= 0 ? getLineStartFrame(mulMergeIndex) : null;
+
+  // 合流後に全画面で流す中継（＝合流の行で宣言した mulSrc）
+  const mulMergeFeed =
+    mulMergeIndex >= 0
+      ? mulFeedIndices.findIndex((i) => i >= mulMergeIndex)
+      : -1;
+
+  // ---- 行ごとの同時中継数（ヘッダのカウンター） ----
+  // 合流の行で宣言した中継は「13本目」ではないので数に入れない
+  const mulCountResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line, i) => {
+      if (line.mulSrc && (mulMergeIndex < 0 || i < mulMergeIndex)) {
+        current = (current ?? 0) + 1;
+      }
+      return current;
+    });
+  })();
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const mulTitle =
+    scriptData.find((line) => line.mulTitle)?.mulTitle ?? "同時中継";
+
+  // ---- 中継キャプションを後続の行に引き継ぐ ----
+  // ツッコミだけの行でキャプションが消えると画面が空くので、直前の中継を残す。
+  // 12分割（wall）以降はキャプションごと畳む（画面いっぱいが壁になるため）
+  type MulCaption = {
+    name: string;
+    label?: string;
+    spec?: string;
+    source?: string;
+    no: number;
+  };
+  const mulCaptionResolved: (MulCaption | null)[] = (() => {
+    let current: MulCaption | null = null;
+    return scriptData.map((line, i) => {
+      if (line.mulName && (mulMergeIndex < 0 || i < mulMergeIndex)) {
+        current = {
+          name: line.mulName,
+          label: line.mulLabel,
+          spec: line.mulSpec,
+          source: line.mulSource,
+          no: mulCountResolved[i] ?? 1,
+        };
+      }
+      return mulToneResolved[i] === "live" ? current : null;
+    });
+  })();
+
+  // ---- キャプションを出す行かどうか ----
+  const mulCaptionShown = (index: number): boolean => {
+    if (index < 0 || !mulCaptionResolved[index]) return false;
+    const line = scriptData[index];
+    return !(line.mulHook || line.mulFlash);
+  };
+
+  // ============================================================
   // 無限ズーム・入れ子型（ZOOM）
   // ============================================================
   // この型だけは映像がセリフごとに切り替わらない。動画全体でひとつながりの
@@ -2088,6 +2204,22 @@ export const Main: React.FC = () => {
 
   // カードパック開封HUDのパーツが1つでも出るか。
   // カードは引き継ぎで出る行もあるので index で判定する
+  // 同時中継HUDのパーツが1つでも出るか。
+  // キャプションは引き継ぎで出る行もあるので index で判定する
+  const hasMultiHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      mulCaptionShown(index) ||
+      line.mulHook ||
+      line.mulRetort ||
+      line.mulFlash ||
+      line.mulWall ||
+      line.mulMerge ||
+      line.mulReveal ||
+      line.mulCta ||
+      line.mulNote ||
+      line.mulResult
+    );
+
   // 無限ズームHUDのパーツが1つでも出るか。
   // 機能プレートは引き継ぎで出る行もあるので index で判定する
   const hasZoomHud = (line: ScriptLine, index: number): boolean =>
@@ -2175,6 +2307,19 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 同時中継型は中継キャプション（機能名・スペック・出典）が画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ（そのときはキャプションが畳まれている）
+      case "multi":
+        return !!(
+          mulCaptionShown(currentIndex) ||
+          line.mulHook ||
+          line.mulRetort ||
+          line.mulFlash ||
+          line.mulWall ||
+          line.mulMerge ||
+          line.mulReveal ||
+          line.mulResult
+        );
       // 無限ズーム型は機能プレート（層名・スペック・出典）が画面テロップを兼ねる。
       // 字幕を出すのは検索CTAの行だけ（そのときはプレートが畳まれている）
       case "zoom":
@@ -2455,6 +2600,9 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      // 同時中継型はモニターの隙間に見える中継センターの壁
+      case "multi":
+        return <MultiBackdrop />;
       // 無限ズーム型はズームステージが常に画面を覆うので、これは保険の地
       case "zoom":
         return <ZoomBackdrop />;
@@ -2600,6 +2748,19 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "multi":
+        return (
+          <MultiChrome
+            tone={currentIndex >= 0 ? mulToneResolved[currentIndex] : "live"}
+            title={mulTitle}
+            count={currentIndex >= 0 ? mulCountResolved[currentIndex] : null}
+            countPrev={
+              currentIndex > 0 ? mulCountResolved[currentIndex - 1] : null
+            }
+            total={MULTI_SLOTS}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "zoom":
         return (
           <ZoomChrome
@@ -2917,6 +3078,41 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "multi":
+        if (!hasMultiHud(line, currentIndex)) return null;
+        return wrap(
+          <MultiHud
+            tone={mulToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.mulHook}
+            hookSub={line.mulHookSub}
+            name={
+              mulCaptionShown(currentIndex)
+                ? mulCaptionResolved[currentIndex]?.name
+                : undefined
+            }
+            label={mulCaptionResolved[currentIndex]?.label}
+            spec={mulCaptionResolved[currentIndex]?.spec}
+            source={mulCaptionResolved[currentIndex]?.source}
+            no={mulCaptionResolved[currentIndex]?.no ?? null}
+            // 自分で中継を出していない行は、前のキャプションを残しているだけ
+            held={!line.mulName}
+            retort={line.mulRetort}
+            flash={line.mulFlash}
+            flashSub={line.mulFlashSub}
+            wall={line.mulWall}
+            wallSub={line.mulWallSub}
+            merge={line.mulMerge}
+            mergeSub={line.mulMergeSub}
+            reveal={line.mulReveal}
+            revealSub={line.mulRevealSub}
+            cta={line.mulCta}
+            note={line.mulNote}
+            result={line.mulResult}
+            resultSub={line.mulResultSub}
+            durationInFrames={span}
+          />
+        );
       case "zoom":
         if (!hasZoomHud(line, currentIndex)) return null;
         return wrap(
@@ -3638,6 +3834,26 @@ export const Main: React.FC = () => {
         </Sequence>
       ))}
 
+      {/* 同時中継型の映像。**この型だけは出した中継が1つも消えない**ので、
+          セリフの Sequence の外側に置いてグローバルなフレームで動かす。
+          新しい中継が入ると、いままでのメインが縮んで壁のスロットへ移る */}
+      {FORMAT === "multi" && (
+        <>
+          <MultiStage
+            feeds={mulFeeds}
+            keyframes={mulKeyframes}
+            wallFrame={mulWallFrame}
+            mergeFrame={mulMergeFrame}
+            mergeIndex={mulMergeFeed >= 0 ? mulMergeFeed : null}
+            totalFrames={totalFrames}
+            tone={currentIndex >= 0 ? mulToneResolved[currentIndex] : "live"}
+          />
+          <MultiScrim
+            tone={currentIndex >= 0 ? mulToneResolved[currentIndex] : "live"}
+          />
+        </>
+      )}
+
       {/* 無限ズーム型の映像。**この型だけは行ごとにカットを切らない**ので、
           セリフの Sequence の外側に置いてグローバルなフレームで潜り続ける。
           暗幕も動画全体でひとつだけ（行ごとに切り替えるものがない） */}
@@ -3658,6 +3874,7 @@ export const Main: React.FC = () => {
       {/* 各セリフの映像。1問1カットで切り替わるので premount しておかないと
           デコードが間に合わずカット頭が黒コマになる */}
       {FORMAT !== "zoom" &&
+        FORMAT !== "multi" &&
         scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
         return (
