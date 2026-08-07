@@ -513,6 +513,27 @@ interface ScriptLine {
   hintNote?: string;
   hintResult?: string;
   hintResultSub?: string;
+  zoomTone?: string;
+  zoomTitle?: string;
+  zoomSrc?: string;
+  zoomStart?: number;
+  zoomRate?: number;
+  zoomLayer?: string;
+  zoomLabel?: string;
+  zoomSpec?: string;
+  zoomSource?: string;
+  zoomLoop?: boolean;
+  zoomHook?: string;
+  zoomHookSub?: string;
+  zoomRetort?: string;
+  zoomFlash?: string;
+  zoomFlashSub?: string;
+  zoomReveal?: string;
+  zoomRevealSub?: string;
+  zoomCta?: string;
+  zoomNote?: string;
+  zoomResult?: string;
+  zoomResultSub?: string;
   scene: number;
   pauseAfter: number;
   emotion?: string;
@@ -1184,6 +1205,30 @@ export interface ScriptLine {
   hintNote?: string;         // CTA下の小さな注記（※記載は○年○月時点です 等）
   hintResult?: string;       // ループ用リボン（冒頭の第1問に戻す）
   hintResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
+  // ---- 無限ズーム・入れ子型（ZoomHud）----
+  // この型だけは映像が行ごとに切り替わらない。動画全体でひとつながりのズームで、
+  // いま映っている画の中央の窓へ潜り込むと次の層になる（visual は使わない）
+  zoomTone?: "dive" | "core"; // 潜行トーン。指定行から後ろに引き継がれる（潜行中＝アクア / 最下層＝金）
+  zoomTitle?: string;        // 番組名。最初に指定した行のものを動画全体で使う
+  zoomSrc?: string;          // **この行から新しい層が始まる**。層の映像素材（public/content/ からの相対パス）
+  zoomStart?: number;        // 層の映像の開始位置（フレーム）
+  zoomRate?: number;         // 層の再生速度。書かないと素材の残り尺から自動で決まる（使える区間が狭い素材で使う）
+  zoomLayer?: string;        // 層の名前（機能プレートの見出しと、窓に貼るタグに出る）
+  zoomLabel?: string;        // ジャンルのラベル（土地 / 商売 / 仕事 など）
+  zoomSpec?: string;         // 機能プレートのスペック1行（数字は docs で裏を取る）
+  zoomSource?: string;       // 機能プレートの出典（docs のページ名）
+  zoomLoop?: boolean;        // 最後のループ層に true。この層のキーフレームは動画の終端になる
+  zoomHook?: string;         // 冒頭の大テロップ（改行はYAML側で明示する）
+  zoomHookSub?: string;      // 冒頭テロップの上に出す小バッジ
+  zoomRetort?: string;       // ツッコミ吹き出し（機能プレートの下）
+  zoomFlash?: string;        // 巨大テロップ（この行ではプレートを畳む。改行はYAML側で明示）
+  zoomFlashSub?: string;     // テロップの上に出す小バッジ
+  zoomReveal?: string;       // まとめ帯（正式名称と条件を大きく出す）
+  zoomRevealSub?: string;    // まとめ帯の補足行
+  zoomCta?: string;          // 検索バー風CTA（文字がタイプされる）
+  zoomNote?: string;         // CTA下の小さな注記（※ズーム倍率は演出です 等）
+  zoomResult?: string;       // ループ用リボン（冒頭に戻す）
+  zoomResultSub?: string;    // ループ用リボンの補足行（コメント誘発の一言）
   scene: number;
   voiceFile: string;
   durationInFrames: number;

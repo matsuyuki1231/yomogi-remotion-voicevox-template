@@ -161,11 +161,21 @@ import {
   PackHud,
   PackTone,
 } from "./components/PackHud";
+import {
+  ZoomBackdrop,
+  ZoomScrim,
+  ZoomStage,
+  ZoomChrome,
+  ZoomHud,
+  ZoomTone,
+  ZoomLevel,
+} from "./components/ZoomHud";
 
 // Google Fontsをロード
 const { fontFamily } = loadFont();
 
 type Format =
+  | "zoom"
   | "pack"
   | "hint"
   | "judge"
@@ -209,6 +219,7 @@ const detectFormat = (): Format => {
       Object.keys(line).some((key) => key.startsWith(prefix))
     );
 
+  // zoom* も既存のどれとも互いに素（z で始まる接頭辞はほかにない）。
   // pack* も既存のどれとも互いに素（p で始まるのは pv* / pick* で、
   // p-a はどちらとも重ならない）。
   // hint* も既存のどれとも互いに素（h で始まる接頭辞はほかにない）。
@@ -219,6 +230,7 @@ const detectFormat = (): Format => {
   // exam* は既存のどの接頭辞とも互いに素（e で始まるものが他にない）。
   // rail* も既存のどれとも互いに素（r で始まるのは rw* / resp* / reply*）。
   // join* は job* と互いに素なので順序に依存しないが、新しい型から先に見る
+  if (hasPrefix("zoom")) return "zoom";
   if (hasPrefix("pack")) return "pack";
   if (hasPrefix("hint")) return "hint";
   if (hasPrefix("jdg")) return "judge";
@@ -1495,6 +1507,124 @@ export const Main: React.FC = () => {
     !scriptData[index].packFlash &&
     !scriptData[index].packHook;
 
+  // ============================================================
+  // 無限ズーム・入れ子型（ZOOM）
+  // ============================================================
+  // この型だけは映像がセリフごとに切り替わらない。動画全体でひとつながりの
+  // ズームになっていて、いま映っている画の中央の窓へ潜り込むと次の層になる。
+  // そのため映像は行ごとの Sequence ではなく、Main 直下の ZoomStage が
+  // グローバルフレームで描く。
+
+  // ---- 潜行トーン（潜行中 / 最下層）を解決。指定した行から後ろに引き継がれる ----
+  const zoomToneResolved: ZoomTone[] = (() => {
+    let current: ZoomTone = "dive";
+    return scriptData.map((line) => {
+      if (line.zoomTone === "dive" || line.zoomTone === "core") {
+        current = line.zoomTone;
+      }
+      return current;
+    });
+  })();
+
+  // ---- 層の一覧 ----
+  // zoomSrc を書いた行が新しい層の入口。**その行の頭でちょうどその層が
+  // 画面いっぱいになる**ようにキーフレームを置く。
+  // ただし最後の層（ループ層 = zoomLoop）だけは動画の終端をキーフレームにする。
+  // こうすると最終フレームで最初の層と同じ画が全画面に戻り、
+  // ループ再生の継ぎ目が構造的に消える（この型のいちばんの仕掛け）。
+  const zoomLevelIndices = scriptData
+    .map((line, i) => (line.zoomSrc ? i : -1))
+    .filter((i) => i >= 0);
+
+  // 窓のタグに出す層番号。ループ層は「また第1層」なので 1 に戻す
+  // （名前のない層はタグ自体を描かないので番号は使われない）
+  const zoomLevelDepths: number[] = (() => {
+    let depth = 0;
+    return zoomLevelIndices.map((i) => {
+      if (scriptData[i].zoomLoop) return 1;
+      if (scriptData[i].zoomLayer) depth += 1;
+      return depth;
+    });
+  })();
+
+  const zoomLevels: ZoomLevel[] = zoomLevelIndices.map((i, k) => ({
+    src: scriptData[i].zoomSrc as string,
+    startFrom: scriptData[i].zoomStart ?? 0,
+    layer: scriptData[i].zoomLayer,
+    depth: zoomLevelDepths[k],
+    loop: scriptData[i].zoomLoop,
+    rate: scriptData[i].zoomRate,
+  }));
+
+  const zoomKeyframes: number[] = zoomLevelIndices.map((i, k) =>
+    k === zoomLevelIndices.length - 1 ? totalFrames : getLineStartFrame(i)
+  );
+
+  // ---- 行ごとの深度（深度メーター用） ----
+  // ループ層と、**名前のない層**（まとめ帯の裏で画を変えるためだけの層）では
+  // 深度を進めない。最下層＝参加費0円 という約束を崩さないため
+  const zoomDepthResolved: (number | null)[] = (() => {
+    let current: number | null = null;
+    return scriptData.map((line) => {
+      if (line.zoomSrc && line.zoomLayer && !line.zoomLoop) {
+        current = (current ?? 0) + 1;
+      }
+      return current;
+    });
+  })();
+
+  // メーターの分母＝最下層の番号
+  const zoomDepthTotal = zoomDepthResolved.reduce<number>(
+    (max, d) => Math.max(max, d ?? 0),
+    1
+  );
+
+  // 番組名は最初に指定した行のものを動画全体で使う
+  const zoomTitle =
+    scriptData.find((line) => line.zoomTitle)?.zoomTitle ?? "無限ズーム";
+
+  // ---- 機能プレートの中身を後続の行に引き継ぐ ----
+  // ツッコミだけの行でプレートが消えると画面の下が空いて間延びするので、
+  // 直前の層をそのまま残す（held を立ててアニメーションは焼き直さない）。
+  // ループ層は機能の紹介ではないのでプレートを更新しない
+  type ZoomPlate = {
+    layer: string;
+    label?: string;
+    spec?: string;
+    source?: string;
+    depth: number;
+  };
+  const zoomPlateResolved: (ZoomPlate | null)[] = (() => {
+    let current: ZoomPlate | null = null;
+    return scriptData.map((line, i) => {
+      if (line.zoomLayer && !line.zoomLoop) {
+        current = {
+          layer: line.zoomLayer,
+          label: line.zoomLabel,
+          spec: line.zoomSpec,
+          source: line.zoomSource,
+          depth: zoomDepthResolved[i] ?? 1,
+        };
+      }
+      return current;
+    });
+  })();
+
+  // ---- 機能プレートを出す行かどうか ----
+  // 大テロップ・まとめ帯・CTA・ループリボンの行では畳んで、映像と大きな文字だけにする
+  const zoomPlateShown = (index: number): boolean => {
+    if (index < 0 || !zoomPlateResolved[index]) return false;
+    const line = scriptData[index];
+    return !(
+      line.zoomHook ||
+      line.zoomFlash ||
+      line.zoomReveal ||
+      line.zoomCta ||
+      line.zoomResult ||
+      line.zoomLoop
+    );
+  };
+
   // ---- 裁定トーン（裁定中 / 閉廷）を解決。判例集の行から後ろに引き継がれる ----
   // done に入ると事件ファイルを畳んで映像を全面に開き、色が青紫から金に反転する
   const jdgToneResolved: JudgeTone[] = (() => {
@@ -1958,6 +2088,20 @@ export const Main: React.FC = () => {
 
   // カードパック開封HUDのパーツが1つでも出るか。
   // カードは引き継ぎで出る行もあるので index で判定する
+  // 無限ズームHUDのパーツが1つでも出るか。
+  // 機能プレートは引き継ぎで出る行もあるので index で判定する
+  const hasZoomHud = (line: ScriptLine, index: number): boolean =>
+    !!(
+      zoomPlateShown(index) ||
+      line.zoomHook ||
+      line.zoomRetort ||
+      line.zoomFlash ||
+      line.zoomReveal ||
+      line.zoomCta ||
+      line.zoomNote ||
+      line.zoomResult
+    );
+
   const hasPackHud = (line: ScriptLine, index: number): boolean =>
     !!(
       packCardResolved[index] ||
@@ -2031,6 +2175,17 @@ export const Main: React.FC = () => {
       // セリフを読ませること自体が主役なので、常に HUD 側に出す
       case "drama":
         return true;
+      // 無限ズーム型は機能プレート（層名・スペック・出典）が画面テロップを兼ねる。
+      // 字幕を出すのは検索CTAの行だけ（そのときはプレートが畳まれている）
+      case "zoom":
+        return !!(
+          zoomPlateShown(currentIndex) ||
+          line.zoomHook ||
+          line.zoomRetort ||
+          line.zoomFlash ||
+          line.zoomReveal ||
+          line.zoomResult
+        );
       // カードパック開封型はカード（機能名・スペック・出典）が画面テロップを兼ねる。
       // カードは読ませること自体が本体なので、字幕と二重にしない。
       // 字幕を出すのは検索CTAの行だけ（そのときはカードが畳まれている）
@@ -2300,6 +2455,9 @@ export const Main: React.FC = () => {
 
   const renderBackdrop = () => {
     switch (FORMAT) {
+      // 無限ズーム型はズームステージが常に画面を覆うので、これは保険の地
+      case "zoom":
+        return <ZoomBackdrop />;
       // カードパック開封型は、カード行では映像がイラスト窓の中にしかないので、
       // 背景（開封卓のフェルト）が常に地になる
       case "pack":
@@ -2442,6 +2600,20 @@ export const Main: React.FC = () => {
 
   const renderChrome = () => {
     switch (FORMAT) {
+      case "zoom":
+        return (
+          <ZoomChrome
+            tone={currentIndex >= 0 ? zoomToneResolved[currentIndex] : "dive"}
+            title={zoomTitle}
+            depth={currentIndex >= 0 ? zoomDepthResolved[currentIndex] : null}
+            depthPrev={
+              currentIndex > 0 ? zoomDepthResolved[currentIndex - 1] : null
+            }
+            depthTotal={zoomDepthTotal}
+            keyframes={zoomKeyframes}
+            lineStartFrame={currentLineStartFrame}
+          />
+        );
       case "pack":
         return (
           <PackChrome
@@ -2745,6 +2917,38 @@ export const Main: React.FC = () => {
     );
 
     switch (FORMAT) {
+      case "zoom":
+        if (!hasZoomHud(line, currentIndex)) return null;
+        return wrap(
+          <ZoomHud
+            tone={zoomToneResolved[currentIndex]}
+            character={line.character}
+            hook={line.zoomHook}
+            hookSub={line.zoomHookSub}
+            // テロップ・まとめ帯・CTA・ループの行ではプレートを畳む
+            layer={
+              zoomPlateShown(currentIndex)
+                ? zoomPlateResolved[currentIndex]?.layer
+                : undefined
+            }
+            layerLabel={zoomPlateResolved[currentIndex]?.label}
+            spec={zoomPlateResolved[currentIndex]?.spec}
+            source={zoomPlateResolved[currentIndex]?.source}
+            depth={zoomPlateResolved[currentIndex]?.depth ?? null}
+            // 自分で層を開いていない行は、前のプレートを残しているだけ
+            held={!line.zoomLayer}
+            retort={line.zoomRetort}
+            flash={line.zoomFlash}
+            flashSub={line.zoomFlashSub}
+            reveal={line.zoomReveal}
+            revealSub={line.zoomRevealSub}
+            cta={line.zoomCta}
+            note={line.zoomNote}
+            result={line.zoomResult}
+            resultSub={line.zoomResultSub}
+            durationInFrames={span}
+          />
+        );
       case "pack":
         if (!hasPackHud(line, currentIndex)) return null;
         return wrap(
@@ -3434,9 +3638,27 @@ export const Main: React.FC = () => {
         </Sequence>
       ))}
 
+      {/* 無限ズーム型の映像。**この型だけは行ごとにカットを切らない**ので、
+          セリフの Sequence の外側に置いてグローバルなフレームで潜り続ける。
+          暗幕も動画全体でひとつだけ（行ごとに切り替えるものがない） */}
+      {FORMAT === "zoom" && (
+        <>
+          <ZoomStage
+            levels={zoomLevels}
+            keyframes={zoomKeyframes}
+            totalFrames={totalFrames}
+            tone={currentIndex >= 0 ? zoomToneResolved[currentIndex] : "dive"}
+          />
+          <ZoomScrim
+            tone={currentIndex >= 0 ? zoomToneResolved[currentIndex] : "dive"}
+          />
+        </>
+      )}
+
       {/* 各セリフの映像。1問1カットで切り替わるので premount しておかないと
           デコードが間に合わずカット頭が黒コマになる */}
-      {scriptData.map((line, index) => {
+      {FORMAT !== "zoom" &&
+        scriptData.map((line, index) => {
         if (!line.visual || line.visual.type === "none") return null;
         return (
           <Sequence
@@ -3486,7 +3708,7 @@ export const Main: React.FC = () => {
             {renderScrim(index)}
           </Sequence>
         );
-      })}
+        })}
 
       {/* 常設のUI（ヘッダ帯・ティッカー・心証メーター・未回答カウンター等）。
           Sequence の外に置いてグローバルなフレームで動かすので、
